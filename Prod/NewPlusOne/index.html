@@ -69,9 +69,6 @@
   .filter-group{
     flex:0 0 auto;
   }
-  .filter-group.rate-group{
-    min-width:220px;
-  }
   .filter-group.cat-group{
     flex:1 1 260px;
     min-width:0;
@@ -84,8 +81,8 @@
     min-width:0;
   }
   @media (max-width:640px){
-    .filter-grid{ gap:12px 20px; }
-    .filter-group{ width:100%; }
+    .filter-grid{ gap:10px 20px; }
+    .filter-group.cat-group{ width:100%; }
   }
   .filter-group h3{
     font-size:12px;
@@ -95,6 +92,10 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
+  }
+  .filter-group.cat-group h3{
+    justify-content:flex-start;
+    gap:8px;
   }
   .filter-group h3 .mini-link{
     font-size:10.5px;
@@ -129,21 +130,17 @@
     color:#fff;
     font-weight:600;
   }
-  .chip .dot{
-    width:8px;height:8px;border-radius:50%;
-    display:inline-block;
-    flex:none;
-  }
   .select-all-btn{
     display:inline-flex;
     align-items:center;
-    gap:4px;
-    padding:4px 11px;
-    border-radius:14px;
-    border:1.5px dashed var(--accent);
+    gap:3px;
+    padding:0 7px;
+    border-radius:10px;
+    border:1px dashed var(--accent);
     background:var(--accent-soft);
     color:var(--accent);
-    font-size:12px;
+    font-size:10.5px;
+    line-height:1.2;
     font-weight:800;
     cursor:pointer;
     user-select:none;
@@ -159,70 +156,6 @@
     flex-wrap:wrap;
     align-items:center;
     gap:6px;
-  }
-
-  .rate-box{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-  }
-  .rate-values{
-    font-size:12px;
-    color:var(--sub);
-    display:flex;
-    justify-content:space-between;
-  }
-  .rate-values b{color:var(--text);}
-  .slider-wrap{
-    position:relative;
-    height:26px;
-  }
-  .slider-wrap input[type=range]{
-    position:absolute;
-    left:0;right:0;top:8px;
-    width:100%;
-    margin:0;
-    -webkit-appearance:none;
-    appearance:none;
-    background:transparent;
-    pointer-events:none;
-  }
-  .slider-wrap input[type=range]::-webkit-slider-thumb{
-    -webkit-appearance:none;
-    pointer-events:auto;
-    width:15px;height:15px;
-    border-radius:50%;
-    background:var(--accent);
-    border:2px solid #fff;
-    box-shadow:0 0 0 1px var(--accent);
-    cursor:pointer;
-    margin-top:0;
-  }
-  .slider-wrap input[type=range]::-moz-range-thumb{
-    pointer-events:auto;
-    width:15px;height:15px;
-    border-radius:50%;
-    background:var(--accent);
-    border:2px solid #fff;
-    box-shadow:0 0 0 1px var(--accent);
-    cursor:pointer;
-  }
-  .slider-wrap input[type=range]::-webkit-slider-runnable-track{
-    height:4px;background:transparent;
-  }
-  .slider-track{
-    position:absolute;
-    left:0;right:0;top:12px;
-    height:4px;
-    background:var(--border);
-    border-radius:2px;
-  }
-  .slider-range{
-    position:absolute;
-    top:12px;
-    height:4px;
-    background:var(--accent);
-    border-radius:2px;
   }
 
   .search-row{
@@ -389,22 +322,9 @@
         <div class="chip-set" id="f-gender"></div>
       </div>
       <div class="filter-group cat-group">
-        <h3>구분</h3>
+        <h3>구분 <span class="select-all-btn" id="catSelectAll">✓ 전체선택</span></h3>
         <div class="cat-set-row">
-          <span class="select-all-btn" id="catSelectAll">✓ 전체선택</span>
           <div class="chip-set" id="f-cat"></div>
-        </div>
-      </div>
-      <div class="filter-group rate-group">
-        <h3>환급률(%) 범위</h3>
-        <div class="rate-box">
-          <div class="rate-values">최소 <b id="rateMinLabel"></b>% ~ 최대 <b id="rateMaxLabel"></b>%</div>
-          <div class="slider-wrap">
-            <div class="slider-track"></div>
-            <div class="slider-range" id="rateRangeBar"></div>
-            <input type="range" id="rateMin">
-            <input type="range" id="rateMax">
-          </div>
         </div>
       </div>
     </div>
@@ -439,7 +359,7 @@
 const DATA = [{"term": 7, "gender": "남", "rank": 1, "name": "(체증형)중증간병연금특약T", "cat": "간병/치매", "rate": 112.3}, {"term": 7, "gender": "남", "rank": 2, "name": "경증이상간병진단특약C", "cat": "간병/치매", "rate": 108.9}, {"term": 7, "gender": "남", "rank": 3, "name": "보험료납입지원및사망보장특약T", "cat": "기타", "rate": 108.8}, {"term": 7, "gender": "남", "rank": 4, "name": "경증이상치매진단특약C", "cat": "간병/치매", "rate": 108.5}, {"term": 7, "gender": "남", "rank": 5, "name": "경증이상장기요양진단특약C", "cat": "간병/치매", "rate": 108.0}, {"term": 7, "gender": "남", "rank": 6, "name": "중증치매연금특약T", "cat": "간병/치매", "rate": 107.4}, {"term": 7, "gender": "남", "rank": 7, "name": "중증장기요양연금특약T", "cat": "간병/치매", "rate": 104.6}, {"term": 7, "gender": "남", "rank": 8, "name": "주보험", "cat": "기타", "rate": 104.2}, {"term": 7, "gender": "남", "rank": 9, "name": "(체증형)통합뇌관련질환진단특약C", "cat": "뇌진단", "rate": 101.7}, {"term": 7, "gender": "남", "rank": 10, "name": "(체증형)통합암진단특약C", "cat": "암진단", "rate": 98.7}, {"term": 7, "gender": "남", "rank": 11, "name": "(체증형)주요순환계질환특정치료보장특약C", "cat": "순환계치료", "rate": 98.7}, {"term": 7, "gender": "남", "rank": 12, "name": "(체증형)통합심장관련질환진단특약C", "cat": "심장진단", "rate": 98.2}, {"term": 7, "gender": "남", "rank": 13, "name": "(체증형)통합암III진단특약C", "cat": "암진단", "rate": 97.5}, {"term": 7, "gender": "남", "rank": 14, "name": "통합뇌관련질환진단특약C", "cat": "뇌진단", "rate": 95.9}, {"term": 7, "gender": "남", "rank": 15, "name": "통합암(전이포함)진단특약C", "cat": "암진단", "rate": 95.3}, {"term": 7, "gender": "남", "rank": 16, "name": "(체증형)뇌출혈진단특약C", "cat": "뇌진단", "rate": 95.0}, {"term": 7, "gender": "남", "rank": 17, "name": "입원간병인사용(180일 한도, 요양병원)특약C", "cat": "기타", "rate": 94.2}, {"term": 7, "gender": "남", "rank": 18, "name": "통합암진단특약C", "cat": "암진단", "rate": 94.0}, {"term": 7, "gender": "남", "rank": 19, "name": "암진단특약C", "cat": "암진단", "rate": 93.9}, {"term": 7, "gender": "남", "rank": 20, "name": "통합암III진단특약C", "cat": "암진단", "rate": 93.8}, {"term": 7, "gender": "여", "rank": 1, "name": "(체증형)중증간병연금특약T", "cat": "간병/치매", "rate": 112.1}, {"term": 7, "gender": "여", "rank": 2, "name": "보험료납입지원및사망보장특약T", "cat": "기타", "rate": 110.9}, {"term": 7, "gender": "여", "rank": 3, "name": "경증이상장기요양진단특약C", "cat": "간병/치매", "rate": 108.6}, {"term": 7, "gender": "여", "rank": 4, "name": "경증이상간병진단특약C", "cat": "간병/치매", "rate": 108.5}, {"term": 7, "gender": "여", "rank": 5, "name": "경증이상치매진단특약C", "cat": "간병/치매", "rate": 107.5}, {"term": 7, "gender": "여", "rank": 6, "name": "중증치매연금특약T", "cat": "간병/치매", "rate": 107.0}, {"term": 7, "gender": "여", "rank": 7, "name": "중증장기요양연금특약T", "cat": "간병/치매", "rate": 106.7}, {"term": 7, "gender": "여", "rank": 8, "name": "주보험", "cat": "기타", "rate": 104.9}, {"term": 7, "gender": "여", "rank": 9, "name": "(체증형)통합심장관련질환진단특약C", "cat": "심장진단", "rate": 102.4}, {"term": 7, "gender": "여", "rank": 10, "name": "(체증형)통합뇌관련질환진단특약C", "cat": "뇌진단", "rate": 102.3}, {"term": 7, "gender": "여", "rank": 11, "name": "(체증형)급성심근경색증진단특약C", "cat": "심장진단", "rate": 101.3}, {"term": 7, "gender": "여", "rank": 12, "name": "(체증형)주요순환계질환특정치료보장특약C", "cat": "순환계치료", "rate": 101.0}, {"term": 7, "gender": "여", "rank": 13, "name": "급성심근경색증진단특약C", "cat": "심장진단", "rate": 99.4}, {"term": 7, "gender": "여", "rank": 14, "name": "(체증형)통합암III진단특약C", "cat": "암진단", "rate": 98.0}, {"term": 7, "gender": "여", "rank": 15, "name": "(체증형)뇌출혈진단특약C", "cat": "뇌진단", "rate": 97.8}, {"term": 7, "gender": "여", "rank": 16, "name": "주요순환계질환통합치료특약C_5천한도", "cat": "순환계치료", "rate": 97.4}, {"term": 7, "gender": "여", "rank": 17, "name": "통합뇌관련질환진단특약C", "cat": "뇌진단", "rate": 96.9}, {"term": 7, "gender": "여", "rank": 18, "name": "주요순환계질환통합치료특약C_1억한도", "cat": "순환계치료", "rate": 96.8}, {"term": 7, "gender": "여", "rank": 19, "name": "주요순환계질환통합치료특약C_8천한도", "cat": "순환계치료", "rate": 96.5}, {"term": 7, "gender": "여", "rank": 20, "name": "통합심장관련질환진단특약C", "cat": "심장진단", "rate": 96.1}, {"term": 10, "gender": "남", "rank": 1, "name": "(체증형)중증간병연금특약T", "cat": "간병/치매", "rate": 111.4}, {"term": 10, "gender": "남", "rank": 2, "name": "중증치매연금특약T", "cat": "간병/치매", "rate": 107.7}, {"term": 10, "gender": "남", "rank": 3, "name": "보험료납입지원및사망보장특약T", "cat": "기타", "rate": 107.5}, {"term": 10, "gender": "남", "rank": 4, "name": "경증이상치매진단특약C", "cat": "간병/치매", "rate": 107.5}, {"term": 10, "gender": "남", "rank": 5, "name": "경증이상간병진단특약C", "cat": "간병/치매", "rate": 107.3}, {"term": 10, "gender": "남", "rank": 6, "name": "경증이상장기요양진단특약C", "cat": "간병/치매", "rate": 106.9}, {"term": 10, "gender": "남", "rank": 7, "name": "주보험", "cat": "기타", "rate": 106.8}, {"term": 10, "gender": "남", "rank": 8, "name": "중증장기요양연금특약T", "cat": "간병/치매", "rate": 105.6}, {"term": 10, "gender": "남", "rank": 9, "name": "(체증형)통합뇌관련질환진단특약C", "cat": "뇌진단", "rate": 101.3}, {"term": 10, "gender": "남", "rank": 10, "name": "(체증형)통합암진단특약C", "cat": "암진단", "rate": 99.6}, {"term": 10, "gender": "남", "rank": 11, "name": "(체증형)통합암III진단특약C", "cat": "암진단", "rate": 98.6}, {"term": 10, "gender": "남", "rank": 12, "name": "(체증형)주요순환계질환특정치료보장특약C", "cat": "순환계치료", "rate": 98.0}, {"term": 10, "gender": "남", "rank": 13, "name": "(체증형)통합심장관련질환진단특약C", "cat": "심장진단", "rate": 97.4}, {"term": 10, "gender": "남", "rank": 14, "name": "(체증형)뇌출혈진단특약C", "cat": "뇌진단", "rate": 96.6}, {"term": 10, "gender": "남", "rank": 15, "name": "(체증형)급성심근경색증진단특약C", "cat": "심장진단", "rate": 95.2}, {"term": 10, "gender": "남", "rank": 16, "name": "통합뇌관련질환진단특약C", "cat": "뇌진단", "rate": 94.5}, {"term": 10, "gender": "남", "rank": 17, "name": "통합암(전이포함)진단특약C", "cat": "암진단", "rate": 94.3}, {"term": 10, "gender": "남", "rank": 18, "name": "통합암진단특약C", "cat": "암진단", "rate": 94.2}, {"term": 10, "gender": "남", "rank": 19, "name": "입원간병인사용(180일 한도, 요양병원)특약C", "cat": "기타", "rate": 93.2}, {"term": 10, "gender": "남", "rank": 20, "name": "암진단특약C", "cat": "암진단", "rate": 92.9}, {"term": 10, "gender": "여", "rank": 1, "name": "(체증형)중증간병연금특약T", "cat": "간병/치매", "rate": 111.2}, {"term": 10, "gender": "여", "rank": 2, "name": "보험료납입지원및사망보장특약T", "cat": "간병/치매", "rate": 110.3}, {"term": 10, "gender": "여", "rank": 3, "name": "주보험", "cat": "기타", "rate": 107.8}, {"term": 10, "gender": "여", "rank": 4, "name": "경증이상장기요양진단특약C", "cat": "간병/치매", "rate": 107.7}, {"term": 10, "gender": "여", "rank": 5, "name": "경증이상간병진단특약C", "cat": "간병/치매", "rate": 107.1}, {"term": 10, "gender": "여", "rank": 6, "name": "중증치매연금특약T", "cat": "간병/치매", "rate": 107.0}, {"term": 10, "gender": "여", "rank": 7, "name": "중증장기요양연금특약T", "cat": "기타", "rate": 106.8}, {"term": 10, "gender": "여", "rank": 8, "name": "경증이상치매진단특약C", "cat": "간병/치매", "rate": 106.5}, {"term": 10, "gender": "여", "rank": 9, "name": "(체증형)급성심근경색증진단특약C", "cat": "심장진단", "rate": 102.5}, {"term": 10, "gender": "여", "rank": 10, "name": "(체증형)통합뇌관련질환진단특약C", "cat": "뇌진단", "rate": 101.8}, {"term": 10, "gender": "여", "rank": 11, "name": "(체증형)통합심장관련질환진단특약C", "cat": "심장진단", "rate": 101.0}, {"term": 10, "gender": "여", "rank": 12, "name": "(체증형)주요순환계질환특정치료보장특약C", "cat": "순환계치료", "rate": 99.9}, {"term": 10, "gender": "여", "rank": 13, "name": "(체증형)뇌출혈진단특약C", "cat": "뇌진단", "rate": 99.1}, {"term": 10, "gender": "여", "rank": 14, "name": "(체증형)통합암III진단특약C", "cat": "암진단", "rate": 99.0}, {"term": 10, "gender": "여", "rank": 15, "name": "급성심근경색증진단특약C", "cat": "심장진단", "rate": 99.0}, {"term": 10, "gender": "여", "rank": 16, "name": "주요순환계질환통합치료특약C_5천한도", "cat": "순환계치료", "rate": 96.7}, {"term": 10, "gender": "여", "rank": 17, "name": "(체증형)통합암진단특약C", "cat": "암진단", "rate": 96.1}, {"term": 10, "gender": "여", "rank": 18, "name": "주요순환계질환통합치료특약C_1억한도", "cat": "순환계치료", "rate": 96.0}, {"term": 10, "gender": "여", "rank": 19, "name": "통합뇌관련질환진단특약C", "cat": "뇌진단", "rate": 95.7}, {"term": 10, "gender": "여", "rank": 20, "name": "주요순환계질환통합치료특약C_8천한도", "cat": "순환계치료", "rate": 95.7}, {"term": 20, "gender": "남", "rank": 1, "name": "(체증형)중증간병연금특약T", "cat": "간병/치매", "rate": 122.8}, {"term": 20, "gender": "남", "rank": 2, "name": "중증치매연금특약T", "cat": "간병/치매", "rate": 119.6}, {"term": 20, "gender": "남", "rank": 3, "name": "경증이상치매진단특약C", "cat": "기타", "rate": 119.4}, {"term": 20, "gender": "남", "rank": 4, "name": "경증이상간병진단특약C", "cat": "간병/치매", "rate": 117.2}, {"term": 20, "gender": "남", "rank": 5, "name": "경증이상장기요양진단특약C", "cat": "간병/치매", "rate": 116.1}, {"term": 20, "gender": "남", "rank": 6, "name": "주보험", "cat": "간병/치매", "rate": 116.0}, {"term": 20, "gender": "남", "rank": 7, "name": "보험료납입지원및사망보장특약T", "cat": "기타", "rate": 115.7}, {"term": 20, "gender": "남", "rank": 8, "name": "중증장기요양연금특약T", "cat": "간병/치매", "rate": 108.9}, {"term": 20, "gender": "남", "rank": 9, "name": "질병장해특약C", "cat": "기타", "rate": 104.1}, {"term": 20, "gender": "남", "rank": 10, "name": "(체증형)통합뇌관련질환진단특약C", "cat": "뇌진단", "rate": 101.5}, {"term": 20, "gender": "남", "rank": 11, "name": "입원간병인사용(180일 한도, 요양병원)특약C", "cat": "기타", "rate": 99.1}, {"term": 20, "gender": "남", "rank": 12, "name": "(체증형)통합암진단특약C", "cat": "암진단", "rate": 99.0}, {"term": 20, "gender": "남", "rank": 13, "name": "(체증형)주요순환계질환특정치료보장특약C", "cat": "순환계치료", "rate": 98.3}, {"term": 20, "gender": "남", "rank": 14, "name": "(체증형)뇌출혈진단특약C", "cat": "뇌진단", "rate": 97.9}, {"term": 20, "gender": "남", "rank": 15, "name": "(체증형)통합암III진단특약C", "cat": "암진단", "rate": 97.1}, {"term": 20, "gender": "남", "rank": 16, "name": "(체증형)통합심장관련질환진단특약C", "cat": "심장진단", "rate": 93.8}, {"term": 20, "gender": "남", "rank": 17, "name": "(체증형)급성심근경색증진단특약C", "cat": "심장진단", "rate": 93.5}, {"term": 20, "gender": "남", "rank": 18, "name": "(체증형)항암방사선치료특약C", "cat": "암치료", "rate": 90.4}, {"term": 20, "gender": "남", "rank": 19, "name": "통합암(전이포함)진단특약C", "cat": "암진단", "rate": 90.3}, {"term": 20, "gender": "남", "rank": 20, "name": "암진단특약C", "cat": "암진단", "rate": 89.8}, {"term": 20, "gender": "여", "rank": 1, "name": "보험료납입지원및사망보장특약T", "cat": "기타", "rate": 123.5}, {"term": 20, "gender": "여", "rank": 2, "name": "(체증형)중증간병연금특약T", "cat": "간병/치매", "rate": 121.9}, {"term": 20, "gender": "여", "rank": 3, "name": "주보험", "cat": "기타", "rate": 120.7}, {"term": 20, "gender": "여", "rank": 4, "name": "경증이상장기요양진단특약C", "cat": "간병/치매", "rate": 118.8}, {"term": 20, "gender": "여", "rank": 5, "name": "중증치매연금특약T", "cat": "간병/치매", "rate": 116.4}, {"term": 20, "gender": "여", "rank": 6, "name": "경증이상간병진단특약C", "cat": "간병/치매", "rate": 116.2}, {"term": 20, "gender": "여", "rank": 7, "name": "경증이상치매진단특약C", "cat": "간병/치매", "rate": 115.9}, {"term": 20, "gender": "여", "rank": 8, "name": "중증장기요양연금특약T", "cat": "간병/치매", "rate": 115.0}, {"term": 20, "gender": "여", "rank": 9, "name": "(체증형)급성심근경색증진단특약C", "cat": "심장진단", "rate": 109.0}, {"term": 20, "gender": "여", "rank": 10, "name": "(체증형)뇌출혈진단특약C", "cat": "뇌진단", "rate": 103.6}, {"term": 20, "gender": "여", "rank": 11, "name": "(체증형)통합뇌관련질환진단특약C", "cat": "뇌진단", "rate": 103.2}, {"term": 20, "gender": "여", "rank": 12, "name": "(체증형)주요순환계질환특정치료보장특약C", "cat": "순환계치료", "rate": 102.6}, {"term": 20, "gender": "여", "rank": 13, "name": "(체증형)통합심장관련질환진단특약C", "cat": "심장진단", "rate": 102.0}, {"term": 20, "gender": "여", "rank": 14, "name": "입원간병인사용(180일 한도, 요양병원)특약C", "cat": "기타", "rate": 101.7}, {"term": 20, "gender": "여", "rank": 15, "name": "(체증형)통합암III진단특약C", "cat": "암진단", "rate": 99.8}, {"term": 20, "gender": "여", "rank": 16, "name": "급성심근경색증진단특약C", "cat": "심장진단", "rate": 97.2}, {"term": 20, "gender": "여", "rank": 17, "name": "질병장해특약C", "cat": "기타", "rate": 96.7}, {"term": 20, "gender": "여", "rank": 18, "name": "주요순환계질환통합치료특약C_5천한도", "cat": "순환계치료", "rate": 95.7}, {"term": 20, "gender": "여", "rank": 19, "name": "(체증형)통합암진단특약C", "cat": "암진단", "rate": 94.3}, {"term": 20, "gender": "여", "rank": 20, "name": "주요순환계질환통합치료특약C_1억한도", "cat": "순환계치료", "rate": 93.5}]
 ;
 
-const CATS = ["간병/치매","뇌진단","심장진단","암진단","순환계치료","암치료","기타"];
+const CATS = ["암진단","암치료","뇌진단","심장진단","순환계치료","간병/치매","기타"];
 const CAT_CLASS = {
   "간병/치매":"tag-간병치매",
   "뇌진단":"tag-뇌진단",
@@ -449,23 +369,14 @@ const CAT_CLASS = {
   "암치료":"tag-암치료",
   "기타":"tag-기타"
 };
-const CAT_DOT = {
-  "간병/치매":"#2a6f7f","뇌진단":"#ffcf33","심장진단":"#ff9f43",
-  "암진단":"#7cc576","순환계치료":"#4fc3e8","암치료":"#9b4fa8","기타":"#b7bec6"
-};
-
 const state = {
   term: 7,
   gender: "남",
   cat: new Set(CATS),
-  rateMin: 89.8,
-  rateMax: 123.5,
   keyword: "",
   sortKey: "rate",
   sortDir: "desc"
 };
-
-const RATE_LO = 89.8, RATE_HI = 123.5;
 
 // 단일 선택 칩 (년납, 성별) - 라디오 방식, 항상 하나만 활성
 function buildSingleChips(containerId, values, getVal, setVal, labelFn){
@@ -517,53 +428,12 @@ function resetChipGroup(containerId, values, stateSet){
 
 buildSingleChips("f-term", [7,10,20], ()=>state.term, v=>{state.term=v;}, v=>v+"년납");
 buildSingleChips("f-gender", ["남","여"], ()=>state.gender, v=>{state.gender=v;}, v=> v==="남" ? "남성" : "여성");
-buildChips("f-cat", CATS, state.cat, v=>v, v=>CAT_DOT[v]);
+buildChips("f-cat", CATS, state.cat, v=>v);
 
 document.getElementById("catSelectAll").addEventListener("click", ()=>{
   resetChipGroup("f-cat", CATS, state.cat);
   render();
 });
-
-const rateMinInput = document.getElementById("rateMin");
-const rateMaxInput = document.getElementById("rateMax");
-const rateRangeBar = document.getElementById("rateRangeBar");
-const rateMinLabel = document.getElementById("rateMinLabel");
-const rateMaxLabel = document.getElementById("rateMaxLabel");
-
-[rateMinInput, rateMaxInput].forEach(inp=>{
-  inp.min = RATE_LO;
-  inp.max = RATE_HI;
-  inp.step = 0.1;
-});
-rateMinInput.value = RATE_LO;
-rateMaxInput.value = RATE_HI;
-
-function updateRateUI(){
-  let lo = parseFloat(rateMinInput.value);
-  let hi = parseFloat(rateMaxInput.value);
-  if(lo > hi){ [lo,hi] = [hi,lo]; }
-  state.rateMin = lo;
-  state.rateMax = hi;
-  rateMinLabel.textContent = lo.toFixed(1);
-  rateMaxLabel.textContent = hi.toFixed(1);
-  const pctLo = ((lo - RATE_LO)/(RATE_HI-RATE_LO))*100;
-  const pctHi = ((hi - RATE_LO)/(RATE_HI-RATE_LO))*100;
-  rateRangeBar.style.left = pctLo + "%";
-  rateRangeBar.style.width = (pctHi-pctLo) + "%";
-}
-rateMinInput.addEventListener("input", ()=>{
-  if(parseFloat(rateMinInput.value) > parseFloat(rateMaxInput.value)){
-    rateMinInput.value = rateMaxInput.value;
-  }
-  updateRateUI(); render();
-});
-rateMaxInput.addEventListener("input", ()=>{
-  if(parseFloat(rateMaxInput.value) < parseFloat(rateMinInput.value)){
-    rateMaxInput.value = rateMinInput.value;
-  }
-  updateRateUI(); render();
-});
-updateRateUI();
 
 document.getElementById("nameSearch").addEventListener("input", (e)=>{
   state.keyword = e.target.value.trim();
@@ -576,9 +446,6 @@ document.getElementById("resetAll").addEventListener("click", ()=>{
   document.querySelectorAll("#f-term .chip").forEach(c=>c.classList.toggle("active", c.dataset.value == "7"));
   document.querySelectorAll("#f-gender .chip").forEach(c=>c.classList.toggle("active", c.dataset.value === "남"));
   resetChipGroup("f-cat", CATS, state.cat);
-  rateMinInput.value = RATE_LO;
-  rateMaxInput.value = RATE_HI;
-  updateRateUI();
   document.getElementById("nameSearch").value = "";
   state.keyword = "";
   render();
@@ -614,7 +481,6 @@ function render(){
   const baseRows = DATA.filter(r=> r.term === state.term && r.gender === state.gender);
   let rows = baseRows.filter(r=>
     state.cat.has(r.cat) &&
-    r.rate >= state.rateMin && r.rate <= state.rateMax &&
     (state.keyword === "" || r.name.includes(state.keyword))
   );
   rows = sortRows(rows);
