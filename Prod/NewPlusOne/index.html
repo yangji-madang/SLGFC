@@ -61,12 +61,31 @@
     box-shadow:0 1px 2px rgba(20,30,50,0.04);
   }
   .filter-grid{
-    display:grid;
-    grid-template-columns:repeat(4, minmax(150px,1fr));
-    gap:10px 22px;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-start;
+    gap:14px 30px;
   }
-  @media (max-width:980px){
-    .filter-grid{grid-template-columns:repeat(2,minmax(140px,1fr));}
+  .filter-group{
+    flex:0 0 auto;
+  }
+  .filter-group.rate-group{
+    min-width:220px;
+  }
+  .filter-group.cat-group{
+    flex:1 1 260px;
+    min-width:0;
+    max-width:100%;
+  }
+  .cat-set-row{
+    min-width:0;
+  }
+  .cat-set-row .chip-set{
+    min-width:0;
+  }
+  @media (max-width:640px){
+    .filter-grid{ gap:12px 20px; }
+    .filter-group{ width:100%; }
   }
   .filter-group h3{
     font-size:12px;
@@ -242,11 +261,17 @@
   .result-count b{color:var(--accent);font-size:14px;}
 
   .table-panel{
+    display:inline-block;
+    max-width:100%;
+    vertical-align:top;
     background:var(--panel);
     border:1px solid var(--border);
     border-radius:10px;
     overflow:hidden;
     box-shadow:0 1px 2px rgba(20,30,50,0.04);
+  }
+  @media (max-width:640px){
+    .table-panel{ display:block; }
   }
   .table-scroll{
     overflow-x:auto;
@@ -255,9 +280,12 @@
   }
   table{
     border-collapse:collapse;
-    width:100%;
-    min-width:760px;
+    width:auto;
+    max-width:100%;
     font-size:13px;
+  }
+  @media (max-width:640px){
+    table{ width:100%; font-size:12px; }
   }
   thead th{
     position:sticky;
@@ -286,8 +314,12 @@
     white-space:nowrap;
   }
   tbody td.name-cell{
-    white-space:normal;
-    min-width:260px;
+    white-space:nowrap;
+  }
+  @media (max-width:640px){
+    tbody td.name-cell{ white-space:normal; }
+    tbody td{ padding:6px 6px; }
+    thead th{ padding:7px 5px; }
   }
   tbody tr:nth-child(even){background:var(--row-alt);}
   tbody tr:hover{background:var(--row-hover);}
@@ -347,14 +379,14 @@
         <h3>성별</h3>
         <div class="chip-set" id="f-gender"></div>
       </div>
-      <div class="filter-group">
+      <div class="filter-group cat-group">
         <h3>구분</h3>
         <div class="cat-set-row">
           <span class="select-all-btn" id="catSelectAll">✓ 전체선택</span>
           <div class="chip-set" id="f-cat"></div>
         </div>
       </div>
-      <div class="filter-group">
+      <div class="filter-group rate-group">
         <h3>환급률(%) 범위</h3>
         <div class="rate-box">
           <div class="rate-values">최소 <b id="rateMinLabel"></b>% ~ 최대 <b id="rateMaxLabel"></b>%</div>
@@ -603,7 +635,28 @@ function render(){
     `).join("");
   }
   document.getElementById("resultCount").textContent = rows.length;
+  syncDocWidth();
 }
+
+// 표(특약명 열)의 실제 콘텐츠 너비에 검색영역을 포함한 문서 전체 폭을 맞춘다.
+// 필터링 결과에 따라 표의 필요한 너비가 달라질 수 있으므로 매 렌더링마다 재계산.
+function syncDocWidth(){
+  const wrap = document.querySelector(".wrap");
+  const tablePanel = document.querySelector(".table-panel");
+  if(!wrap || !tablePanel) return;
+  wrap.style.maxWidth = "none";
+  void tablePanel.offsetWidth; // 강제 리플로우 후 실측
+  const tpWidth = tablePanel.getBoundingClientRect().width;
+  const cs = getComputedStyle(wrap);
+  const padH = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+  wrap.style.maxWidth = Math.ceil(tpWidth + padH) + "px";
+}
+
+let resizeTimer = null;
+window.addEventListener("resize", ()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(syncDocWidth, 100);
+});
 
 render();
 </script>
