@@ -284,8 +284,15 @@
     max-width:100%;
     font-size:13px;
   }
+  .col-rank{ width:44px; }
+  .col-cat{ width:98px; }
+  .col-rate{ width:88px; }
   @media (max-width:640px){
-    table{ width:100%; font-size:12px; }
+    table{ width:100%; font-size:12px; table-layout:fixed; }
+    .col-rank{ width:13%; }
+    .col-name{ width:47%; }
+    .col-cat{ width:20%; }
+    .col-rate{ width:20%; }
   }
   thead th{
     position:sticky;
@@ -317,9 +324,11 @@
     white-space:nowrap;
   }
   @media (max-width:640px){
-    tbody td.name-cell{ white-space:normal; }
-    tbody td{ padding:6px 6px; }
-    thead th{ padding:7px 5px; }
+    tbody td.name-cell{ white-space:normal; word-break:keep-all; overflow-wrap:break-word; }
+    tbody td{ padding:6px 5px; }
+    thead th{ padding:7px 4px; }
+    td.rate-cell{ padding-right:8px; }
+    .tag{ padding:2px 5px; font-size:10.5px; }
   }
   tbody tr:nth-child(even){background:var(--row-alt);}
   tbody tr:hover{background:var(--row-hover);}
@@ -412,10 +421,10 @@
       <table>
         <thead>
           <tr>
-            <th data-key="rank" style="width:60px;">순위<span class="arrow">▲▼</span></th>
-            <th data-key="name" style="text-align:left;">특약명<span class="arrow">▲▼</span></th>
-            <th data-key="cat" style="width:110px;">구분<span class="arrow">▲▼</span></th>
-            <th data-key="rate" style="width:110px;">환급률(%)<span class="arrow">▲▼</span></th>
+            <th data-key="rank" class="col-rank">순위<span class="arrow">▲▼</span></th>
+            <th data-key="name" class="col-name" style="text-align:left;">특약명<span class="arrow">▲▼</span></th>
+            <th data-key="cat" class="col-cat">구분<span class="arrow">▲▼</span></th>
+            <th data-key="rate" class="col-rate">환급률(%)<span class="arrow">▲▼</span></th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
