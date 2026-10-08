@@ -1,0 +1,534 @@
+<title>간편보험 비교표</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 레이아웃: 상단 검색영역(칩 다중선택) + 머리글·항목명 고정 표. 밝은 배경, 남색·황동색 포인트. */
+:root {
+  --bg: #F5F7FC;
+  --surface: #FFFFFF;
+  --ink: #16213E;
+  --ink-soft: #46527A;
+  --navy: #1F2F5C;
+  --navy-tint: #E6ECF9;
+  --gold: #9A6B0C;
+  --gold-soft: #FFEFC2;
+  --label-bg: #FFF8E3;
+  --line: #C9D3E8;
+  --red: #C0262D;
+  --blue: #1D4ED8;
+  --mark: #FFE27A;
+  --font: "Malgun Gothic", "맑은 고딕", "Noto Sans KR", system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  --w1: 50px;
+  --w2: 50px;
+  --w3: 132px;
+  --fw: calc(var(--w1) + var(--w2) + var(--w3));
+  --pw: 224px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-inline: 16px;
+  padding-block: 20px 12px;
+}
+.wrap { max-width: 1480px; margin-inline: auto; display: grid; gap: 14px; }
+button { font-family: inherit; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* 제목 */
+.top { display: grid; gap: 4px; }
+h1 { margin: 0; font-size: clamp(24px, 4.6vw, 34px); line-height: 1.2; color: var(--navy); letter-spacing: -0.02em; text-wrap: balance; }
+h1 span { color: var(--gold); }
+.sub { margin: 0; color: var(--ink-soft); font-size: 14px; }
+
+/* 검색영역 */
+.search { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; display: grid; gap: 8px; box-shadow: 0 1px 2px rgba(31,47,92,.06); }
+.srow { display: flex; gap: 8px; align-items: stretch; }
+.sbox { position: relative; flex: 1; min-width: 0; }
+.sbox svg { position: absolute; left: 12px; top: 50%; translate: 0 -50%; width: 20px; height: 20px; stroke: var(--ink-soft); fill: none; stroke-width: 2; pointer-events: none; }
+.sbox input { width: 100%; min-height: 0; padding: 5px 40px 5px 40px; font: inherit; font-size: 16px; color: var(--ink); background: #FBFCFF; border: 1.5px solid var(--line); border-radius: 10px; }
+.sbox input::placeholder { color: #7A86A8; }
+.sbox input:focus { border-color: var(--navy); outline: none; box-shadow: 0 0 0 3px rgba(31,47,92,.15); }
+.sclear { position: absolute; right: 6px; top: 50%; translate: 0 -50%; width: 34px; height: 34px; border: 0; background: transparent; color: var(--ink-soft); font-size: 22px; cursor: pointer; border-radius: 8px; }
+.tog { min-height: 0; padding: 4px 12px; line-height: 1.3; border: 1.5px solid var(--navy); background: var(--navy); color: #fff; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.tog .badge { background: var(--gold-soft); color: var(--ink); border-radius: 999px; min-width: 22px; height: 22px; padding-inline: 6px; font-size: 13px; display: none; align-items: center; justify-content: center; }
+.tog .badge.on { display: inline-flex; }
+.tog .chev { transition: rotate .2s; }
+.tog[aria-expanded="true"] .chev { rotate: 180deg; }
+
+.filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.fgroup { display: grid; gap: 5px; align-content: start; min-width: 0; }
+.fgroup h2 { margin: 0; font-size: 14px; color: var(--navy); display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.fgroup h2 small { font-weight: 400; color: var(--ink-soft); font-size: 13px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { min-height: 0; padding: 2px 10px; border: 1.5px solid var(--line); background: #fff; color: var(--navy); border-radius: 999px; font-size: 14px; line-height: 1.3; cursor: pointer; text-align: left; transition: background .15s, border-color .15s, color .15s; }
+.chip:hover { border-color: var(--navy); }
+.chip[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; font-weight: 700; }
+.chip .n { opacity: .7; font-size: 12px; margin-left: 4px; font-variant-numeric: tabular-nums; }
+.seg { display: inline-grid; grid-template-columns: 1fr 1fr; border: 1.5px solid var(--navy); border-radius: 10px; overflow: hidden; }
+.seg button { min-height: 0; padding: 3px 10px; line-height: 1.3; border: 0; background: #fff; color: var(--navy); font-size: 14px; cursor: pointer; }
+.seg button + button { border-left: 1.5px solid var(--navy); }
+.seg button[aria-pressed="true"] { background: var(--navy); color: #fff; font-weight: 700; }
+
+.status { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: flex-end; border-top: 1px dashed var(--line); padding-top: 10px; font-size: 14px; }
+.status b { color: var(--navy); font-variant-numeric: tabular-nums; }
+.reset { min-height: 0; padding: 3px 12px; line-height: 1.3; border: 1.5px solid var(--line); background: #fff; color: var(--navy); border-radius: 10px; font-size: 14px; cursor: pointer; }
+.reset:hover { border-color: var(--navy); }
+.dzres { margin: 0; padding: 10px 12px; background: var(--gold-soft); border-radius: 10px; font-size: 14px; color: var(--ink); }
+.dzres small { display: block; margin-top: 2px; color: var(--ink-soft); font-size: 13px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-soft); }
+.legend i { font-style: normal; padding: 0 5px; border-radius: 4px; }
+.legend .lr { color: var(--red); font-weight: 700; }
+.legend .lb { color: var(--blue); font-weight: 700; }
+.legend .lm { background: var(--mark); color: var(--ink); }
+
+/* 표 */
+.hint { display: none; margin: 0; font-size: 13px; color: var(--ink-soft); }
+.tablewrap { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: auto; max-height: min(82dvh, 1200px); overscroll-behavior: contain; box-shadow: 0 1px 2px rgba(31,47,92,.06); }
+table { border-collapse: separate; border-spacing: 0; table-layout: fixed; width: max(100%, calc(var(--fw) + var(--n, 13) * var(--pw))); }
+th, td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 3px 8px; vertical-align: top; text-align: left; font-size: 14.5px; }
+thead th { position: sticky; top: 0; z-index: 3; background: var(--navy-tint); color: var(--navy); vertical-align: middle; text-align: center; border-bottom: 2px solid var(--navy); }
+thead th.corner { left: 0; z-index: 5; background: var(--navy-tint); box-shadow: 1px 0 0 var(--line), 5px 0 8px -5px rgba(31,47,92,.3); }
+.lab { position: sticky; left: 0; z-index: 2; background: var(--label-bg); color: var(--navy); font-weight: 700; box-shadow: 1px 0 0 var(--line), 5px 0 8px -5px rgba(31,47,92,.3); }
+/* 엑셀 원본의 세로 병합: 대분류(c1 또는 c12=A·B 병합), 중분류(c2), 항목(c3) */
+.lab.grp { background: #DCE4F5; text-align: center; vertical-align: middle; font-size: 13.5px; line-height: 1.3; padding-inline: 4px; word-break: keep-all; box-shadow: 1px 0 0 var(--line); }
+.c1, .c12 { left: 0; }
+.c2 { left: var(--w1); }
+.c3 { left: calc(var(--w1) + var(--w2)); }
+.ptag { display: block; font-size: 12px; font-weight: 500; color: var(--gold); margin-bottom: 2px; }
+.pname { display: block; font-size: 15px; font-weight: 700; line-height: 1.35; word-break: keep-all; overflow-wrap: anywhere; }
+.psub { display: block; margin: 1px auto 0; font-size: 13px; font-weight: 700; color: var(--ink); background: #fff; border-radius: 6px; padding: 0 6px; width: fit-content; }
+.ltag { display: block; font-size: 12px; font-weight: 500; color: var(--gold); margin-bottom: 2px; }
+.lname { display: block; word-break: keep-all; overflow-wrap: anywhere; line-height: 1.4; }
+.lnote { display: block; font-weight: 400; font-size: 13px; color: var(--ink-soft); margin-top: 2px; }
+tbody tr:hover td:not(.lab) { background: #F1F5FD; }
+.ln { line-height: 1.4; word-break: keep-all; overflow-wrap: anywhere; padding-block: 0; }
+.ln.sp { height: .4em; }
+.ln.r { color: var(--red); font-weight: 700; }
+.ln.h { color: var(--navy); font-weight: 700; margin-bottom: 2px; }
+.ln .b { color: var(--blue); font-weight: 700; }
+.ln .r { color: var(--red); font-weight: 700; }
+.ln.hit, .ln.hit .r, .ln.hit .b { color: var(--blue); font-weight: 700; }
+mark { background: var(--mark); color: inherit; border-radius: 3px; padding-inline: 1px; }
+.empty { padding: 36px 16px; text-align: center; color: var(--ink-soft); }
+.empty b { display: block; color: var(--navy); font-size: 17px; margin-bottom: 4px; }
+.empty button { margin-top: 12px; }
+
+.notes { margin: 0; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; font-size: 13px; color: var(--ink-soft); display: grid; gap: 4px; }
+.notes p { margin: 0; }
+
+footer { display: flex; justify-content: flex-end; padding-block: 6px 4px; }
+footer p { margin: 0; font-size: 13px; color: var(--ink-soft); text-align: right; }
+
+@media (max-width: 1024px) {
+  .filters { grid-template-columns: 1fr; gap: 14px; }
+}
+@media (max-width: 720px) {
+  body { font-size: 15px; padding-inline: 14px; padding-block: 10px 6px; }
+  :root { --w1: 34px; --w2: 34px; --w3: 100px; --pw: 184px; }
+  .lab.grp { font-size: 13px; padding-inline: 2px; }
+  .search { padding: 8px 10px; }
+  .tog .lbl2 { display: none; }
+  th, td { padding: 3px 6px; font-size: 14px; }
+  .pname { font-size: 14.5px; }
+  .hint { display: block; }
+  .tablewrap { max-height: 78dvh; }
+  .status { flex-direction: column; align-items: stretch; }
+  .reset { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>간편보험 <span>비교표</span></h1>
+    <p class="sub">간편·초간편 상품의 고지문항과 가입 제한을 한 표에서 비교합니다.</p>
+    <p class="sub">* 정확한 내용은 반드시 유파트너/사랑온에서 확인하시기 바랍니다.</p>
+  </header>
+
+  <section class="search" aria-label="검색조건">
+    <div class="srow">
+      <label class="sbox" for="q">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" type="search" inputmode="search" autocomplete="off" placeholder="키워드 검색 (예: 뇌졸중, 7일이상, AEUS)" aria-label="키워드 검색">
+        <button id="qclear" class="sclear" type="button" aria-label="검색어 지우기" hidden>×</button>
+      </label>
+      <button id="tog" class="tog" type="button" aria-expanded="true" aria-controls="filters">
+        <span>검색조건<span class="lbl2"> 설정</span></span><span id="badge" class="badge">0</span>
+        <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <div id="filters" class="filters">
+      <div class="fgroup">
+        <h2>① 상품군 <small>여러 개 선택 가능</small></h2>
+        <div id="fg-group" class="chips"></div>
+      </div>
+      <div class="fgroup">
+        <h2>② 고객 병력 <small>5년 內 질병·치매·당뇨 고지 기준</small></h2>
+        <div id="fg-dz" class="chips"></div>
+        <div class="seg" id="fg-mode" role="group" aria-label="병력 판별 방식">
+          <button type="button" data-mode="ask" aria-pressed="true">선택한 상품만</button>
+          <button type="button" data-mode="not" aria-pressed="false">선택하지 않는 상품만</button>
+        </div>
+      </div>
+      <div class="fgroup">
+        <h2>③ 볼 항목 <small>선택 없으면 전체 항목</small></h2>
+        <div id="fg-row" class="chips"></div>
+      </div>
+    </div>
+
+    <p id="dzres" class="dzres" hidden></p>
+
+    <div class="status">
+      <button id="reset" class="reset" type="button">조건 초기화</button>
+    </div>
+    <div class="legend" aria-label="표 표시 안내">
+      <span><i class="lr">붉은 글씨</i> 원본 강조 항목</span>
+      <span><i class="lb">파란 글씨</i> 선택한 병력에 해당</span>
+      <span><i class="lm">형광</i> 검색어 일치</span>
+    </div>
+  </section>
+
+  <p class="hint">좌우·상하로 밀어서 확인하세요. 상품명과 항목명은 고정됩니다.</p>
+  <div id="tablewrap" class="tablewrap" tabindex="0" aria-label="간편보험 비교표"></div>
+
+  <div class="notes">
+    <p>※ 간편더블보장 주계약만[올백종신 2종 암강화형참조] (단, 생활비서비스 및 보험료환급특약만 가입한 경우 포함)</p>
+    <p>병력 조건은 '5년 內 질병·치매·당뇨' 항목만 판별합니다. 3개월·2년·5년 內 입원·수술 등 다른 고지문항은 표에서 함께 확인하세요.</p>
+  </div>
+
+  <footer><p>(C)2026. Yoon, hyunchul All Rights Reserved.</p></footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var R = function (t) { return { r: t }; };
+  var B = function (t) { return { b: t }; };
+  var H = function (t) { return { h: t }; };
+
+  var STD5 = ["①입원필요소견", "②수술필요소견", "③추가검사 및 재검사 필요소견", "④질병확정진단", "⑤질병의심소견"];
+  var DIS5 = ["①암", "②간경화증", "③투석중인 만성신장질환", "④파킨슨병", "⑤루게릭병"];
+  var TAIL = [R("④계속하여 7일이상 치료"), R("⑤계속하여 30일이상 투약")];
+  var NOSTD = R("설계한 전 급부가 표준체인 경우 가입불가");
+  var BOJ = "3개월내 보장성 보험 동시 가입 불가";
+  var CHO = "3개월내 초간편 보험 가입한 경우 가입불가";
+  var C325 = "3개월내 325 간편고지 상품 가입한 경우 가입불가";
+  var D315 = ["315/325/355/3105(31055)", "다른 보험종류로 동일 계약일자, 동시 가입 불가"];
+  var HEART = ["①암", "②간경화증", R("③협심증"), R("④심근경색"), R("⑤뇌졸중증(뇌경색, 뇌출혈)"), R("⑥심장판막증")];
+  var DEM = DIS5.concat([R("⑥경도 인지 장애"), R("⑦치매"), R("⑧알츠하이머병"), R("⑨뇌졸중(뇌경색, 뇌출혈)")]);
+  var CH4 = [R("①암"), R("②협심증"), R("③심근경색"), R("④뇌졸중(뇌경색,뇌출혈)")];
+  var DBL = {
+    3: STD5, 4: ["①입원 ②수술"], 9: ["간편완화질병 333종"],
+    10: ["간편 완화 外", "2년내 병력이 AEUS 조회시", "사망, 암 표준 기준이면 완화 가능."],
+    11: [NOSTD], 12: [CHO], 14: [BOJ]
+  };
+  function merge(a, b) { var o = {}, k; for (k in a) o[k] = a[k]; for (k in b) o[k] = b[k]; return o; }
+
+  var GROUPS = [
+    { k: "jong", label: "간편종신·정기" },
+    { k: "chi", label: "간편치매·요양" },
+    { k: "sil", label: "간편실손" },
+    { k: "plus", label: "플러스원·청춘·더퍼스트" },
+    { k: "cho", label: "초간편" }
+  ];
+
+  var PRODUCTS = [
+    { id: "D", g: "jong", tag: "간편종신/정기", name: "주계약만,올백종신1종", c: {
+      3: STD5, 4: ["①입원 ②수술"], 5: ["①진단 ②입원 ③수술"], 6: DIS5, 9: ["간편완화질병 333종"],
+      10: ["간편 완화 外", "2년내 병력이 AEUS 조회시", "사망 표준 기준이면 완화 가능."],
+      11: [NOSTD], 12: [CHO], 14: [BOJ] } },
+    { id: "E", g: "jong", tag: "간편종신/정기", name: "간편더블보장 주계약만", sub: "암강화형 ※", c: merge(DBL, {
+      5: [H("※암강화형"), "①진단 ②입원 ③수술"],
+      6: [H("※암강화형")].concat(DIS5) }) },
+    { id: "F", g: "jong", tag: "간편종신/정기", name: "간편더블보장 주계약만", sub: "암,간병강화형 ※", c: merge(DBL, {
+      5: [H("※암,간병강화형"), "①진단 ②입원 ③수술"].concat(TAIL),
+      6: [H("※암,간병강화형")].concat(DIS5, ["⑥경도 인지 장애", "⑦치매", "⑧알츠하이머병", "⑨뇌졸중(뇌경색, 뇌출혈)"]) }) },
+    { id: "G", g: "jong", tag: "간편종신/정기", name: "주계약+특약", c: {
+      3: STD5, 4: ["①입원 ②수술"], 5: ["①진단 ②입원 ③ 수술"], 6: DIS5, 9: ["간편완화질병 333종"], 10: ["-"],
+      11: [NOSTD], 12: [CHO], 14: [BOJ] } },
+    { id: "H", g: "chi", name: "간편치매", c: {
+      3: STD5, 4: ["①입원 ②수술"], 5: ["①진단 ②입원 ③수술"].concat(TAIL), 6: DEM, 9: ["간편완화질병 333종"],
+      10: ["※ 입원류 특약 미부가시에 한함", "간편 완화 外", "2년내 병력이 AEUS 조회시", "뇌출혈 표준 기준이면 완화 가능"],
+      11: [NOSTD], 13: ["초간편보험 동시 가입불가"], 14: [BOJ],
+      15: [R("5년내 거절 질병 7일이상 치료, 30일 이상 투약 의심 질병 주의")] } },
+    { id: "I", g: "chi", name: "간편요양/간편웰에이징", c: {
+      3: STD5, 4: ["①입원 ②수술"], 5: ["①진단 ②입원 ③수술"].concat(TAIL), 6: DEM, 9: ["간편완화질병 333종"],
+      10: ["※ 입원류 특약 미부가시에 한함", "간편 완화 外", "2년내 병력이 AEUS 조회시", "LTC 표준 기준이면 완화 가능"],
+      11: [NOSTD], 13: ["초간편보험 동시 가입불가"], 14: [BOJ],
+      15: [R("5년내 거절 질병 7일이상 치료, 30일 이상 투약 의심 질병 주의")] } },
+    { id: "J", g: "sil", name: "간편실손", c: {
+      3: ["①입원필요소견", "②수술필요소견", R("③치료"), "④추가검사 및 재검사 필요소견", "⑤질병확정진단", "⑥질병의심소견"],
+      4: ["①입원 ②수술", R("③ 계속하여 7일이상 치료")],
+      5: [["①진단 ②입원③수술 ", R("④치료")]],
+      6: [["①암", R("(백혈병제외)")]],
+      9: [B("미운영")], 10: ["-"],
+      11: [NOSTD], 13: ["초간편보험 동시 가입불가"], 14: [BOJ],
+      15: [R("3개월내 치료소견, 2년 內 7일 이상 치료, 5년내 암치료 존재여부 상세 확인")] } },
+    { id: "K", g: "plus", name: "간편플러스원", c: {
+      3: STD5, 4: [[R("(5년내)"), " ①입원 ②수술"]], 5: ["①진단 ②입원 ③수술"], 6: HEART,
+      9: [[R("(5,10년내)"), "완화질병 333종"]],
+      10: ["사망플랜가입시 간편 완화 外", "5년내 병력이 AEUS 조회시", "사망 표준 기준이면 완화 가능"],
+      11: [NOSTD], 12: [CHO], 13: D315, 14: [BOJ],
+      15: [R("보험종류 별 N년내 입원,수술 상이 주의")] } },
+    { id: "L", g: "plus", name: "청춘·인생대표", c: {
+      3: STD5, 4: [[R("(5,10년내)"), " ①입원 ②수술"]],
+      5: ["①진단 ②입원 ③수술", "", R("(치매특약 추가질문)"), "④계속하여 7일이상 치료", "⑤계속하여 30일이상 투약"],
+      6: HEART, 7: ["①파킨슨병", "②경도 인지 장애", "③치매", "④알츠하이머병"],
+      8: ["5년내 당뇨 현증,기왕증 불가"],
+      9: [[R("(5,10년내)"), "완화질병 333종"]], 10: ["-"],
+      11: [NOSTD], 12: [CHO], 13: D315, 14: [BOJ],
+      15: [R("보험종류 별 N년내 입원,수술 상이 주의"), R("※ 보험종류, 선택특약에 따라 추가질문 주의"),
+           R("- 간편고지형 3.10.5.5(당뇨)"), R("- 치매 또는 장기요양상태를 보장하는 특약")] } },
+    { id: "M", g: "plus", name: "더퍼스트,더라이트,더간편,간편더드림", c: {
+      3: STD5, 4: [[R("(1,2,5,10년내)"), " ①입원 ②수술"]], 5: ["①진단 ②입원 ③수술"], 6: HEART,
+      9: [[R("(1,2,5,10년내)"), "완화질병 333종"]], 10: ["-"],
+      11: [NOSTD], 12: [CHO], 13: D315, 14: [BOJ],
+      15: [R("보험종류 별 N년내 입원,수술 상이 주의")] } },
+    { id: "N", g: "cho", name: "초간편보장", c: {
+      3: STD5, 4: [R("無")], 5: ["①진단 ②입원③ 수술"], 6: CH4,
+      9: ["간편완화 질병 333종(입원, 수술완화)"], 10: ["-"],
+      11: [NOSTD], 12: [C325], 13: ["간편 실손, 간편 간병 동일계약 일자 동시가입불가"], 14: [BOJ] } },
+    { id: "O", g: "cho", name: "초간편 종신(주계약만)", c: {
+      3: STD5, 4: [R("無")], 5: ["①진단 ②입원③ 수술"], 6: CH4,
+      9: ["간편완화질병 333 종(입원, 수술완화)"],
+      10: ["간편 완화 外", "2년내 병력이 AEUS 조회시", "사망 표준 기준이면 완화 가능."],
+      11: [NOSTD], 12: [C325], 13: ["간편 실손, 간편 간병 동일계약 일자 동시가입불가"], 14: [BOJ] } },
+    { id: "P", g: "cho", name: "초간편 종신(특약포함)", c: {
+      3: STD5, 4: [R("無")], 5: ["①진단 ②입원③ 수술"], 6: CH4,
+      9: ["간편완화 질병 333종(입원, 수술완화)"], 10: ["-"],
+      11: [NOSTD], 12: [C325], 13: ["간편 실손, 간편 간병 동일계약 일자 동시가입불가"], 14: [BOJ] } }
+  ];
+
+  /* a: 대분류(엑셀 A열 병합), b: 중분류(엑셀 B열, 없으면 A·B 병합), label: 항목(엑셀 C열) */
+  var ROWS = [
+    { k: 3, rg: "notice", a: "고지문항", b: null, label: "3 개월 內" },
+    { k: 4, rg: "notice", a: "고지문항", b: null, label: "2년 內" },
+    { k: 5, rg: "notice", a: "고지문항", b: null, label: "5년 內" },
+    { k: 6, rg: "dz", a: "고지문항", b: null, label: "5년 內 질병" },
+    { k: 7, rg: "dz", a: "고지문항", b: null, label: "5년 內 치매", note: "*관련특약 부가시" },
+    { k: 8, rg: "dz", a: "고지문항", b: null, label: "5년 內 당뇨" },
+    { k: 9, rg: "ease", a: "간편완화 기준운영", b: "기간", label: "2년 內 완화", note: "(초간편 3개월 內 완화)" },
+    { k: 10, rg: "ease", a: "간편완화 기준운영", b: "추가완화", label: "기타 사항" },
+    { k: 11, rg: "limit", a: "주의사항", b: null, label: "표준체 가입불가 담보" },
+    { k: 12, rg: "limit", a: "주의사항", b: null, label: "3개월내 간편보험 가입불가" },
+    { k: 13, rg: "limit", a: "주의사항", b: null, label: "동시가입불가" },
+    { k: 14, rg: "limit", a: "주의사항", b: null, label: "3개월내 보장성 보험 동시 가입 불가" },
+    { k: 15, rg: "warn", a: "주의사항", b: null, label: "주의사항" }
+  ];
+  var ROWGROUPS = [
+    { k: "notice", label: "3개월·2년·5년 고지" },
+    { k: "dz", label: "질병·치매·당뇨" },
+    { k: "ease", label: "간편완화" },
+    { k: "limit", label: "가입 제한" },
+    { k: "warn", label: "주의사항" }
+  ];
+
+  var DZ = [
+    { k: "cancer", label: "암", re: /암/ },
+    { k: "liver", label: "간경화증", re: /간경화/ },
+    { k: "kidney", label: "투석중 만성신장질환", re: /만성신장/ },
+    { k: "park", label: "파킨슨병", re: /파킨슨/ },
+    { k: "als", label: "루게릭병", re: /루게릭/ },
+    { k: "stroke", label: "뇌졸중", re: /뇌졸중/ },
+    { k: "angina", label: "협심증", re: /협심증/ },
+    { k: "mi", label: "심근경색", re: /심근경색/ },
+    { k: "valve", label: "심장판막증", re: /심장판막/ },
+    { k: "cog", label: "치매·경도인지장애·알츠하이머", re: /경도 인지 장애|치매|알츠하이머/ },
+    { k: "dm", label: "당뇨", re: /당뇨/ }
+  ];
+  var DZ_ROWS = [6, 7, 8];
+
+  function plain(l) {
+    if (typeof l === "string") return l;
+    if (Array.isArray(l)) return l.map(plain).join("");
+    return l.r || l.b || l.h || "";
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  /* 병합 칸(대분류·중분류)은 한 줄에 두 글자씩 줄바꿈 */
+  function two(s) {
+    var t = String(s).replace(/\s+/g, ""), o = [];
+    for (var i = 0; i < t.length; i += 2) o.push(esc(t.substr(i, 2)));
+    return o.join("<br>");
+  }
+
+  PRODUCTS.forEach(function (p) {
+    var set = {};
+    DZ_ROWS.forEach(function (k) {
+      (p.c[k] || []).forEach(function (l) {
+        var t = plain(l);
+        if (t.charAt(0) === "※") return;
+        DZ.forEach(function (d) { if (d.re.test(t)) set[d.k] = true; });
+      });
+    });
+    p.asked = set;
+  });
+
+  var KEY = "gyb-state-v2";
+  var state = { q: "", groups: [], dz: [], mode: "ask", rows: [] };
+  try {
+    var saved = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (saved && typeof saved === "object") {
+      state.groups = Array.isArray(saved.groups) ? saved.groups : [];
+      state.dz = Array.isArray(saved.dz) ? saved.dz : [];
+      state.rows = Array.isArray(saved.rows) ? saved.rows : [];
+      state.mode = saved.mode === "not" ? "not" : "ask";
+    }
+  } catch (e) { /* 저장값 없이 시작 */ }
+  function persist() {
+    try { localStorage.setItem(KEY, JSON.stringify({ groups: state.groups, dz: state.dz, rows: state.rows, mode: state.mode })); } catch (e) { /* 무시 */ }
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var elQ = $("q"), elClear = $("qclear"), elTog = $("tog"), elBadge = $("badge"), elFilters = $("filters");
+  var elWrap = $("tablewrap"), elDzres = $("dzres");
+
+  function has(arr, k) { return arr.indexOf(k) > -1; }
+  function toggle(arr, k) { var i = arr.indexOf(k); if (i > -1) arr.splice(i, 1); else arr.push(k); }
+
+  function chipHtml(attr, k, label, on, n) {
+    return '<button type="button" class="chip" data-' + attr + '="' + k + '" aria-pressed="' + (on ? "true" : "false") + '">' +
+      esc(label) + (n != null ? '<span class="n">' + n + "</span>" : "") + "</button>";
+  }
+  function renderChips() {
+    $("fg-group").innerHTML = GROUPS.map(function (g) {
+      var n = PRODUCTS.filter(function (p) { return p.g === g.k; }).length;
+      return chipHtml("g", g.k, g.label, has(state.groups, g.k), n);
+    }).join("");
+    $("fg-dz").innerHTML = DZ.map(function (d) { return chipHtml("d", d.k, d.label, has(state.dz, d.k)); }).join("");
+    $("fg-row").innerHTML = ROWGROUPS.map(function (g) { return chipHtml("r", g.k, g.label, has(state.rows, g.k)); }).join("");
+    var btns = $("fg-mode").querySelectorAll("button");
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute("aria-pressed", btns[i].getAttribute("data-mode") === state.mode ? "true" : "false");
+  }
+
+  function lineHtml(l, re, dzSel, rowKey) {
+    var cls = "ln", inner;
+    if (l === "") return '<div class="ln sp"></div>';
+    var text = plain(l);
+    function hl(t) {
+      if (!re) return esc(t);
+      return esc(t).replace(re, "<mark>$&</mark>");
+    }
+    if (typeof l === "string") inner = hl(l);
+    else if (Array.isArray(l)) {
+      inner = l.map(function (s) {
+        if (typeof s === "string") return hl(s);
+        return '<span class="' + (s.r ? "r" : "b") + '">' + hl(s.r || s.b) + "</span>";
+      }).join("");
+    } else if (l.r) { cls += " r"; inner = hl(l.r); }
+    else if (l.b) { inner = '<span class="b">' + hl(l.b) + "</span>"; }
+    else { cls += " h"; inner = hl(l.h); }
+    if (DZ_ROWS.indexOf(rowKey) > -1 && text.charAt(0) !== "※") {
+      for (var i = 0; i < dzSel.length; i++) if (dzSel[i].re.test(text)) { cls += " hit"; break; }
+    }
+    return '<div class="' + cls + '">' + inner + "</div>";
+  }
+
+  function visibleProducts() {
+    var dzSel = DZ.filter(function (d) { return has(state.dz, d.k); });
+    return PRODUCTS.filter(function (p) {
+      if (state.groups.length && !has(state.groups, p.g)) return false;
+      if (dzSel.length) {
+        var askAny = dzSel.some(function (d) { return p.asked[d.k]; });
+        if (state.mode === "not" && askAny) return false;
+        if (state.mode === "ask" && !askAny) return false;
+      }
+      return true;
+    });
+  }
+  function visibleRows() {
+    return ROWS.filter(function (r) { return !state.rows.length || has(state.rows, r.rg); });
+  }
+
+  function renderTable() {
+    var prods = visibleProducts(), rows = visibleRows();
+    var dzSel = DZ.filter(function (d) { return has(state.dz, d.k); });
+    var q = state.q.trim();
+    var re = q ? new RegExp(esc(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi") : null;
+
+    if (!prods.length) {
+      elWrap.innerHTML = '<div class="empty"><b>조건에 맞는 상품이 없습니다</b>선택한 조건을 줄이거나 초기화해 보세요.<br><button type="button" class="reset" data-act="reset">조건 초기화</button></div>';
+    } else {
+      var colgroup = '<colgroup><col style="width:var(--w1)"><col style="width:var(--w2)"><col style="width:var(--w3)">' +
+        prods.map(function () { return '<col style="width:var(--pw)">'; }).join("") + "</colgroup>";
+      var head = '<thead><tr><th class="corner lab" scope="col" colspan="3">구분</th>' + prods.map(function (p) {
+        return '<th scope="col">' + (p.tag ? '<span class="ptag">' + esc(p.tag) + "</span>" : "") +
+          '<span class="pname">' + esc(p.name) + "</span>" + (p.sub ? '<span class="psub">' + esc(p.sub) + "</span>" : "") + "</th>";
+      }).join("") + "</tr></thead>";
+      var body = "<tbody>" + rows.map(function (r, i) {
+        var lab = "";
+        if (i === 0 || rows[i - 1].a !== r.a) {
+          var span = 1;
+          while (i + span < rows.length && rows[i + span].a === r.a) span++;
+          lab += r.b == null
+            ? '<th class="lab grp c12" scope="rowgroup" rowspan="' + span + '" colspan="2">' + two(r.a) + "</th>"
+            : '<th class="lab grp c1" scope="rowgroup" rowspan="' + span + '">' + two(r.a) + "</th>";
+        }
+        if (r.b != null) lab += '<th class="lab grp c2" scope="row">' + two(r.b) + "</th>";
+        lab += '<th class="lab c3" scope="row"><span class="lname">' + esc(r.label) + "</span>" +
+          (r.note ? '<span class="lnote">' + esc(r.note) + "</span>" : "") + "</th>";
+        var cells = prods.map(function (p) {
+          var lines = p.c[r.k] || [];
+          return "<td>" + lines.map(function (l) { return lineHtml(l, re, dzSel, r.k); }).join("") + "</td>";
+        }).join("");
+        return "<tr>" + lab + cells + "</tr>";
+      }).join("") + "</tbody>";
+      elWrap.innerHTML = '<table style="--n:' + prods.length + '">' + colgroup + head + body + "</table>";
+    }
+
+
+    if (dzSel.length) {
+      var names = dzSel.map(function (d) { return d.label; }).join(", ");
+      elDzres.hidden = false;
+      elDzres.innerHTML = state.mode === "ask"
+        ? "<b>" + esc(names) + "</b>이(가) 5년 內 질병·치매·당뇨 고지에 포함된 상품 <b>" + prods.length + "개</b>"
+        : "<b>" + esc(names) + "</b>이(가) 5년 內 질병·치매·당뇨 고지에 포함되지 않는 상품 <b>" + prods.length + "개</b>";
+      elDzres.innerHTML += "<small>파란 글씨는 선택한 병력이 고지 문항에 포함된 부분입니다.</small>";
+    } else {
+      elDzres.hidden = true;
+    }
+
+    var n = state.groups.length + state.dz.length + state.rows.length;
+    elBadge.textContent = n;
+    elBadge.classList.toggle("on", n > 0);
+    elClear.hidden = !elQ.value;
+  }
+
+  function renderAll() { renderChips(); renderTable(); }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("button");
+    if (!t) return;
+    if (t.hasAttribute("data-g")) { toggle(state.groups, t.getAttribute("data-g")); persist(); renderAll(); return; }
+    if (t.hasAttribute("data-d")) { toggle(state.dz, t.getAttribute("data-d")); persist(); renderAll(); return; }
+    if (t.hasAttribute("data-r")) { toggle(state.rows, t.getAttribute("data-r")); persist(); renderAll(); return; }
+    if (t.hasAttribute("data-mode")) { state.mode = t.getAttribute("data-mode"); persist(); renderAll(); return; }
+    if (t.id === "reset" || t.getAttribute("data-act") === "reset") {
+      state.q = ""; state.groups = []; state.dz = []; state.rows = []; state.mode = "ask";
+      elQ.value = ""; persist(); renderAll(); return;
+    }
+    if (t.id === "qclear") { elQ.value = ""; state.q = ""; renderTable(); elQ.focus(); return; }
+    if (t.id === "tog") {
+      var open = elTog.getAttribute("aria-expanded") !== "true";
+      elTog.setAttribute("aria-expanded", open ? "true" : "false");
+      elFilters.hidden = !open;
+    }
+  });
+  elQ.addEventListener("input", function () { state.q = elQ.value; renderTable(); });
+
+  if (window.matchMedia && window.matchMedia("(max-width: 720px)").matches) {
+    elTog.setAttribute("aria-expanded", "false");
+    elFilters.hidden = true;
+  }
+  renderAll();
+})();
+</script>
