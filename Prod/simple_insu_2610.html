@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>간편보험 인수기준 검색 (26.10월 기준)</title>
+<style>
+:root{
+  --navy:#14206b; --navy-d:#0d1650; --gold:#b8862b; --gold-l:#f6ecd2;
+  --red:#d71920; --pink:#f3dede; --line:#2b2b2b; --bg:#f4f5f9; --ink:#1b1b1b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg); color:var(--ink); font-size:16px; line-height:1.4;
+  padding:12px 14px 8px;
+}
+h1{margin:0 0 8px; color:var(--navy); font-size:30px; letter-spacing:-.5px;
+   border-bottom:4px solid var(--gold); padding-bottom:6px}
+h1 small{font-size:16px; color:var(--gold); font-weight:600; margin-left:8px}
+.bar{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:8px 0}
+.search{flex:1 1 320px; position:relative}
+.search input{
+  width:100%; font:inherit; font-size:18px; padding:9px 38px 9px 12px;
+  border:2px solid var(--navy); border-radius:8px; background:#fff; outline:none;
+}
+.search input:focus{border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-l)}
+.search button{position:absolute; right:6px; top:50%; transform:translateY(-50%);
+  border:0; background:none; font-size:20px; cursor:pointer; color:#777}
+.chk{font-size:15px; display:flex; align-items:center; gap:4px; cursor:pointer; user-select:none}
+.chk input{width:17px; height:17px; accent-color:var(--navy)}
+.chips{display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 8px; align-items:center}
+.chips b{font-size:14px; color:var(--navy); margin-right:2px}
+.chip{
+  font:inherit; font-size:14px; padding:3px 11px; border-radius:16px; cursor:pointer;
+  border:1.5px solid var(--navy); background:#fff; color:var(--navy);
+}
+.chip:hover,.chip.on{background:var(--navy); color:#fff}
+.chip.gold{border-color:var(--gold); color:var(--gold)}
+.chip.gold:hover{background:var(--gold); color:#fff}
+.panel{background:#fff; border:2px solid var(--navy); border-radius:8px; padding:6px 10px; margin:8px 0}
+.grp{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:center; padding:5px 0}
+.grp+.grp{border-top:1px dashed #c9cbe0}
+.lb{flex:0 0 74px; font-weight:800; color:var(--navy); font-size:16px}
+.grp .chips{flex:1 1 400px; margin:0}
+.grp .bar{margin:0; flex:1 1 400px}
+.status{font-size:15px; color:var(--navy); font-weight:600; margin:2px 0 6px}
+.wrap{overflow:auto; max-height:calc(100vh - 230px); min-height:300px; border:2px solid var(--line); background:#fff}
+table{border-collapse:separate; border-spacing:0; width:100%; table-layout:fixed; min-width:1000px}
+th,td{border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:6px 6px; text-align:center; vertical-align:middle}
+thead th{
+  background:var(--navy); color:#fff; font-size:16px; font-weight:700; position:sticky; top:0; z-index:3; padding:9px 4px;
+  border-right:1px solid #fff3;
+}
+thead th.sub{display:block}
+.pn{display:block; line-height:1.3}
+tbody th.row{
+  background:#fff; position:sticky; left:0; z-index:2; width:78px; min-width:78px; font-size:15px;
+}
+thead th.corner{left:0; z-index:4; width:78px; min-width:78px}
+.big{display:block; font-size:34px; font-weight:800; color:var(--red); line-height:1}
+.big small{font-size:17px; color:var(--ink); font-weight:700}
+td{font-size:16px}
+td .ln{display:block; font-weight:600}
+td.opinion .hd{font-weight:700}
+.dz{background:var(--pink)}
+.dz .t{font-size:19px; font-weight:800; color:var(--red); display:block}
+.dz .s{font-size:15px; font-weight:600; display:block}
+td.items{vertical-align:top}
+td.items .ln{font-weight:600}
+.note{display:block; color:var(--red); font-size:14px; font-weight:600; text-align:left; margin-top:8px; line-height:1.3}
+.cut{background:repeating-linear-gradient(45deg,#fff,#fff 6px,#fff7e0 6px,#fff7e0 12px)}
+.cutbadge{display:inline-block; font-size:12px; background:var(--gold); color:#fff; border-radius:8px; padding:1px 7px; margin-top:3px}
+mark{background:#ffe066; color:#000; border-radius:3px; padding:0 1px; outline:1px solid var(--gold)}
+th.dim,td.dim{opacity:.25}
+.hide{display:none}
+.edu{font-size:14px; color:#222; margin:8px 0 2px; padding:7px 10px; background:#fff; border-left:5px solid var(--gold)}
+.foot{display:flex; justify-content:flex-end; margin-top:4px}
+.copy{font-size:12px; color:#444}
+@media (max-width:700px){ h1{font-size:22px} }
+@media print{ .bar,.chips{display:none} .wrap{max-height:none; overflow:visible} body{background:#fff} }
+</style>
+</head>
+<body>
+
+<h1>간편보험 인수기준<small>(26.10월 기준)</small></h1>
+
+<div class="panel">
+  <div class="grp">
+    <span class="lb">① 키워드</span>
+    <div class="bar">
+      <div class="search">
+        <input id="q" type="search" placeholder="검색어 입력 (예: 뇌졸중, 치매, 당뇨, 5년, 가족대표) · 띄어쓰기=AND" autocomplete="off">
+        <button id="clr" title="지우기" aria-label="지우기">✕</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="onlyMatch" checked> 일치 상품만 표시</label>
+      <label class="chk"><input type="checkbox" id="r1" checked> 3개월</label>
+      <label class="chk"><input type="checkbox" id="r2" checked> N년</label>
+      <label class="chk"><input type="checkbox" id="r3" checked> 5년</label>
+    </div>
+  </div>
+  <div class="grp">
+    <span class="lb">② 상품</span>
+    <div class="chips" id="pchips"></div>
+  </div>
+  <div class="grp">
+    <span class="lb">③ 질병</span>
+    <div class="chips" id="dchips"></div>
+  </div>
+</div>
+<div class="status" id="status"></div>
+
+<div class="wrap">
+<table id="tbl">
+  <thead><tr id="thr"></tr></thead>
+  <tbody>
+    <tr id="row1"></tr>
+    <tr id="row2"></tr>
+    <tr id="row3"></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="edu">[교육용] 판매자 교육용 요약자료로서 고객에게 제시·교부할 수 없으며 대외 온라인 게시·전송 목적으로 사용할 수 없음. 정확한 내용은 약관과 상품 설명서를 확인해야 함</div>
+<div class="foot"><span class="copy">ⓒ2026. Yoon Hyunchul All Rights Reserved.</span></div>
+
+<script>
+(function(){
+  var OP = ["입원","수술","추가검사소견","질병확정진단","질병의심소견"];
+  var C6 = ["암","간경화증","뇌졸중(뇌경색/뇌출혈)","협심증","심근경색","심장판막증"];
+  var NOTE_PK = "*파킨슨/경도인지장애/치매/알츠하이머로인한진단,입원,수술";
+  var NOTE_7 = "7일↑ 치료,30일↑투약";
+
+  var P = [
+    {name:["간편종신류","간편CEO보장정기","간편더블보장보험 1형"],
+     n:["2년","4년(간편착한종신2종)","입원/수술"],
+     d:{t:"5대질병",s:["진단/입원/수술"],items:["암","간경화증","투석중인만성신장질환","파킨슨병","루게릭병"],notes:[]}},
+    {name:["간편시니어대표"],
+     n:["2년:3종2형(치매/요양)","10년:3종1형(치매/요양)","입원/수술"],
+     d:{t:"6대질병",s:["진단/입원/수술"],items:C6,notes:[NOTE_PK,NOTE_7]}},
+    {name:["간편더블보장보험 2형"],
+     n:["2년","입원/수술"],
+     d:{t:"9대질병",s:["진단/입원/수술","7일↑치료,30일↑투약"],items:["암","간경화증","투석중인만성신장질환","파킨슨병","루게릭병","뇌졸중(뇌경색/뇌출혈)","치매","경도인지장애","알츠하이머병"],notes:[]}},
+    {name:["간편실손"],
+     n:["2년","입원/수술","7日↑ 치료"],
+     d:{t:"1대질병",s:["진단/입원/수술/치료"],items:["암"],notes:[]}},
+    {name:["간편플러스원"],
+     n:["5년:3종2형","10년:3종1형","입원/수술"],
+     d:{t:"6대질병",s:["진단/입원/수술"],items:C6,notes:[]}},
+    {name:["간편가족대표"],
+     n:["1년:3종4형","2년:3종3형","5년:3종2형","10년:3종1형","입원/수술"],
+     d:{t:"6대질병",s:["진단/입원/수술"],items:C6,notes:["*치매관련특약가입시",NOTE_PK,NOTE_7]}},
+    {name:["간편 청춘/인생대표"],
+     n:["5년:3종2형","10년:3종1형/4종","입원/수술"],
+     d:{t:"6대질병",s:["진단/입원/수술"],items:C6,notes:["*4종(간편고지형:당뇨) 당뇨병진단/입원/수술/투약/치료","*치매관련특약가입시:좌동"]}},
+    {name:["경증간편","The(더)Dream"],
+     n:["5년","입원/수술"],
+     d:{t:"6대질병",s:["진단/입원/수술"],items:C6,notes:[]}}
+  ];
+
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+  var terms=[];
+  function hl(s){
+    var h=esc(s);
+    terms.forEach(function(t){
+      if(!t) return;
+      var re=new RegExp("("+t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi");
+      h=h.replace(re,function(m){return "\u0001"+m+"\u0002"});
+    });
+    return h.replace(/\u0001/g,"<mark>").replace(/\u0002/g,"</mark>");
+  }
+  function lines(arr){return arr.map(function(x){return '<span class="ln">'+hl(x)+'</span>'}).join("")}
+  function textOf(p,rows){
+    var a=[p.name.join(" ")];
+    if(rows[1]) a.push(OP.join(" ")+" 3개월 의사소견");
+    if(rows[2]) a.push(p.n.join(" ")+" N년");
+    if(rows[3]) a.push([p.d.t].concat(p.d.s,p.d.items,p.d.notes).join(" ")+" 5년");
+    return a.join(" ").toLowerCase();
+  }
+
+  var $=function(id){return document.getElementById(id)};
+  var q=$("q"),thr=$("thr"),r1=$("row1"),r2=$("row2"),r3=$("row3");
+  var selP={}, selD={};
+  var DIS=["암","간경화증","뇌졸중","협심증","심근경색","심장판막증","투석중인만성신장질환","파킨슨","루게릭","치매","경도인지장애","알츠하이머","당뇨"];
+
+  function render(){
+    var raw=q.value.trim();
+    var kw=raw?raw.split(/\s+/):[];
+    var dz=DIS.filter(function(d){return selD[d]});
+    terms=kw.concat(dz);
+    var rows={1:$("r1").checked,2:$("r2").checked,3:$("r3").checked};
+    var only=$("onlyMatch").checked;
+    var anyP=P.some(function(_,i){return selP[i]});
+    var list=[],hit=0,total=0;
+    P.forEach(function(p,i){
+      if(anyP&&!selP[i]) return;
+      total++;
+      var tx=textOf(p,rows);
+      var ok=terms.every(function(t){return tx.indexOf(t.toLowerCase())>=0});
+      if(ok) hit++;
+      if(!terms.length||ok||!only) list.push({p:p,ok:ok||!terms.length});
+    });
+
+    var hd='<th class="corner">구분</th>';
+    var b1='<th class="row"><span class="big" style="font-size:30px">3<small>개월</small></span></th>';
+    var b2='<th class="row"><span class="big">N<small>년</small></span></th>';
+    var b3='<th class="row"><span class="big">5<small>년</small></span></th>';
+    list.forEach(function(o){
+      var p=o.p, dim=o.ok?"":" dim";
+      hd+='<th class="'+dim.trim()+'">'+p.name.map(function(x){return '<span class="pn">'+hl(x)+'</span>'}).join("")+'</th>';
+      b1+='<td class="opinion'+dim+'"><span class="hd">&lt;의사소견&gt;</span>'+lines(OP)+'</td>';
+      b2+='<td class="'+dim.trim()+'">'+lines(p.n)+'</td>';
+      b3+='<td class="items'+dim+'" style="padding:0"><div class="dz" style="padding:6px"><span class="t">'+hl(p.d.t)+'</span>'+
+          p.d.s.map(function(x){return '<span class="s">'+hl(x)+'</span>'}).join("")+'</div><div style="padding:8px 6px">'+
+          lines(p.d.items)+p.d.notes.map(function(x){return '<span class="note">'+hl(x)+'</span>'}).join("")+'</div></td>';
+    });
+    thr.innerHTML=hd; r1.innerHTML=b1; r2.innerHTML=b2; r3.innerHTML=b3;
+    r1.className=rows[1]?"":"hide"; r2.className=rows[2]?"":"hide"; r3.className=rows[3]?"":"hide";
+    $("tbl").style.minWidth=Math.max(520,(list.length*190+78))+"px";
+
+    var st;
+    if(terms.length){
+      st='조건 "'+esc(terms.join(" + "))+'" — 일치 상품 '+hit+'개 / 대상 '+total+'개';
+      if(!hit) st+=' · 일치하는 상품이 없습니다';
+    } else {
+      st='전체 상품 '+total+'개 표시';
+    }
+    $("status").innerHTML=st;
+    document.querySelectorAll("#pchips .chip").forEach(function(c){
+      c.classList.toggle("on", c.dataset.i==="all"?!anyP:!!selP[c.dataset.i]);
+    });
+    document.querySelectorAll("#dchips .chip").forEach(function(c){
+      c.classList.toggle("on", c.dataset.k==="all"?!dz.length:!!selD[c.dataset.k]);
+    });
+  }
+
+  function mkChip(box,label,key,attr,fn){
+    var b=document.createElement("button");
+    b.className="chip"; b.textContent=label; b.dataset[attr]=key; b.onclick=fn;
+    box.appendChild(b);
+  }
+  var pb=$("pchips"), db=$("dchips");
+  mkChip(pb,"전체","all","i",function(){selP={};render()});
+  P.forEach(function(p,i){
+    mkChip(pb,p.name.join(" / "),String(i),"i",function(){selP[i]=!selP[i];render()});
+  });
+  mkChip(db,"전체","all","k",function(){selD={};render()});
+  DIS.forEach(function(d){
+    mkChip(db,d,d,"k",function(){selD[d]=!selD[d];render()});
+  });
+
+  q.addEventListener("input",render);
+  $("clr").onclick=function(){q.value="";render();q.focus()};
+  ["onlyMatch","r1","r2","r3"].forEach(function(id){$(id).addEventListener("change",render)});
+  render();
+})();
+</script>
+</body>
+</html>
