@@ -103,21 +103,37 @@
   }
   a.link{
     display:inline-block;
-    padding:2px 7px;
-    border:1px solid rgba(20,68,120,0.45);
+    padding:3px 8px;
+    border:1px solid #6f8db0;
+    border-bottom-color:#3f648d;
     border-radius:5px;
-    background:rgba(255,255,255,0.42);
+    background:linear-gradient(180deg,#ffffff 0%,#e9f1fa 52%,#c9d9ec 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),
+               inset 0 -1px 0 rgba(30,70,120,0.18),
+               0 1px 0 #3f648d,
+               0 3px 5px rgba(8,36,70,0.35);
     color:var(--chip-text);
     font-size:11.6px;
     font-weight:700;
     text-decoration:none;
+    text-shadow:0 1px 0 rgba(255,255,255,0.8);
     white-space:nowrap;
+    transition:transform .08s ease, box-shadow .08s ease, background .12s ease;
   }
   a.link:hover,a.link:focus{
-    background:#16497a;
-    border-color:#16497a;
+    background:linear-gradient(180deg,#2a6aa6 0%,#1a4f86 55%,#123c68 100%);
+    border-color:#0f3358;
     color:#ffffff;
+    text-shadow:0 -1px 0 rgba(0,0,0,0.35);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.28),
+               0 1px 0 #0b2a4b,
+               0 3px 6px rgba(8,36,70,0.45);
     outline:none;
+  }
+  a.link:active{
+    transform:translateY(1px);
+    box-shadow:inset 0 2px 3px rgba(0,0,0,0.35),
+               0 0 0 #0b2a4b;
   }
 
   /* ----- 하단 안내문: 배경색 상자 없이, 글자 뒤에만 번지는 그라데이션 ----- */
@@ -193,6 +209,16 @@ const MENU = [
     title: "상품정보",
     links: [
       { label: "New플러스원 고환급특약 검색", url: "Prod/newplus1_surrendervalue.html" }
+    ]
+  },
+  {
+    title: "교육/강의",
+    links: [
+      { label: "CRETOP",                  url: "https://www.cretop.com" },
+      { label: "런인베스트",              url: "https://www.learninvest.co.kr/u/samsunglife_gfc/login" },
+      { label: "CO파트너",                url: "https://copartner.kr/co-report" },
+      { label: "법인컨설팅AI",            url: "https://cc.learninvest.co.kr/" },
+      { label: "삼성생명 Business Live ON", url: "https://www.samsung2030blo.com/" }
     ]
   }
 ];
