@@ -354,6 +354,11 @@ function renderPills(containerId, options, stateKey, colorMap){
 renderPills("catGroup", CATS, "cat", CAT_COLOR);
 renderPills("simpleGroup", SIMPLES, "simple");
 
+(function(){
+  const maxAge = Math.max(...RAW.products.flatMap(p=>p.lines.map(l=>l.amax).filter(v=>v!==null)));
+  const inp = document.getElementById("ageInput");
+  inp.min = 0; inp.max = maxAge;
+})();
 document.getElementById("ageInput").addEventListener("input", (e)=>{ state.age = e.target.value; render(); });
 document.getElementById("nameInput").addEventListener("input", (e)=>{ state.name = e.target.value.trim(); render(); });
 document.getElementById("resetBtn").addEventListener("click", ()=>{
