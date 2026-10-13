@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr. Yoon's KMS</title>
+<style>
+  :root{
+    --bg:#f3f5f9;
+    --card:#ffffff;
+    --line:#d5dbe5;
+    --text:#1b2430;
+    --sub:#566170;
+    --navy:#14325f;
+    --accent:#1849a9;
+    --accent-soft:#e8f0fc;
+    --gold:#c8a24a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+    font-size:15px;
+    line-height:1.4;
+  }
+  .hero{
+    background:linear-gradient(135deg,#0f2a52 0%,#1d4584 100%);
+    border-bottom:3px solid var(--gold);
+  }
+  .hero-inner{
+    max-width:760px;
+    margin:0 auto;
+    padding:16px 16px 14px;
+  }
+  .hero h1{
+    margin:0;
+    font-size:24px;
+    font-weight:800;
+    letter-spacing:0.2px;
+    color:#ffffff;
+  }
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:12px 16px 10px;
+  }
+  .section{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:4px solid var(--navy);
+    border-radius:8px;
+    padding:9px 12px 11px;
+    margin-bottom:8px;
+    box-shadow:0 1px 2px rgba(20,35,60,0.05);
+  }
+  .section h2{
+    margin:0 0 7px;
+    font-size:19px;
+    font-weight:800;
+    letter-spacing:-0.2px;
+    color:var(--navy);
+  }
+  .links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  a.link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 12px;
+    border:1px solid var(--accent);
+    border-radius:999px;
+    background:var(--accent-soft);
+    color:var(--accent);
+    font-size:14.5px;
+    font-weight:700;
+    text-decoration:none;
+    white-space:nowrap;
+  }
+  a.link::after{
+    content:"›";
+    font-size:17px;
+    line-height:1;
+    font-weight:700;
+  }
+  a.link:hover,a.link:focus{
+    background:var(--accent);
+    color:#ffffff;
+    outline:none;
+  }
+  footer{
+    margin-top:8px;
+    padding:8px 4px 0;
+    border-top:1px solid var(--line);
+    text-align:center;
+  }
+  footer .notice{
+    margin:0 0 4px;
+    font-size:14px;
+    font-weight:800;
+    color:var(--text);
+  }
+  footer .copyright{
+    margin:0;
+    font-size:11.5px;
+    color:var(--sub);
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <h1>Mr. Yoon's KMS</h1>
+  </div>
+</div>
+
+<div class="wrap">
+  <main id="gate"></main>
+  <noscript>자바스크립트를 켜야 메뉴가 표시됩니다.</noscript>
+
+  <footer>
+    <p class="notice">※ 고객상담시에는 반드시 시스템을 확인하시기 바랍니다.</p>
+    <p class="copyright">ⓒ2026. Yoon Hyunchul All Rights Reserved.</p>
+  </footer>
+</div>
+
+<script>
+/* ===== 업데이트는 이 목록만 고치면 됩니다 =====
+   - 구역 추가 : { title: "구역명", links: [ ... ] } 한 덩어리를 추가
+   - 링크 추가 : links 안에 { label: "표시 이름", url: "주소" } 한 줄을 추가
+   - 순서는 아래 나열 순서 그대로 화면에 표시됩니다.
+   - 같은 저장소 안의 페이지는 "Prod/파일명.html" 처럼 짧게 적어도 됩니다. */
+const MENU = [
+  {
+    title: "개요",
+    links: [
+      { label: "상품가입나이",       url: "Prod/Prod_Age.html" },
+      { label: "간편보험 비교표",    url: "Prod/simple_goji.html" },
+      { label: "간편보험 인수기준",  url: "Prod/simple_insu_2610.html" }
+    ]
+  },
+  {
+    title: "상품정보",
+    links: [
+      { label: "New플러스원 고환급특약 검색", url: "Prod/newplus1_surrendervalue.html" }
+    ]
+  }
+];
+
+const root = document.getElementById("gate");
+MENU.forEach(function(sec){
+  const box = document.createElement("section");
+  box.className = "section";
+
+  const h = document.createElement("h2");
+  h.textContent = sec.title;
+  box.appendChild(h);
+
+  const row = document.createElement("div");
+  row.className = "links";
+  sec.links.forEach(function(item){
+    const a = document.createElement("a");
+    a.className = "link";
+    a.href = item.url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = item.label;
+    row.appendChild(a);
+  });
+  box.appendChild(row);
+
+  root.appendChild(box);
+});
+</script>
+</body>
+</html>
