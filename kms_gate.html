@@ -6,58 +6,92 @@
 <title>Mr. Yoon's KMS</title>
 <style>
   :root{
-    --bg:#f3f5f9;
-    --card:#ffffff;
-    --line:#d5dbe5;
-    --text:#1b2430;
-    --sub:#566170;
-    --navy:#14325f;
-    --accent:#1849a9;
-    --accent-soft:#e8f0fc;
-    --gold:#c8a24a;
+    --text:#10243a;
+    --navy:#0f3358;
+    --chip-text:#0d2b4a;
+    --bg-pos:center center;          /* 세로 화면(휴대폰·태블릿 세로): 사진 전체 높이가 보임 */
+  }
+  @media (orientation:landscape){
+    :root{ --bg-pos:center 62%; }    /* 가로 화면(컴퓨터 등): 하늘·산·나무가 함께 보이는 위치 */
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:var(--bg);
+    min-height:100vh;
+    min-height:100dvh;
+    background:#35597f;
     color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-    font-size:15px;
-    line-height:1.4;
+    font-size:12px;
+    line-height:1.35;
   }
-  .hero{
-    background:linear-gradient(135deg,#0f2a52 0%,#1d4584 100%);
-    border-bottom:3px solid var(--gold);
+
+  /* ===== 배경: 사진 원본 그대로 (흐림·색 변경 없음) =====
+     사진을 바꾸려면 같은 이름(kms_bg.jpg)으로 파일만 교체하면 됩니다. */
+  .bg{
+    position:fixed;
+    top:0;right:0;bottom:0;left:0;
+    z-index:0;
+    pointer-events:none;
+    background:#35597f url("kms_bg.jpg") var(--bg-pos) / cover no-repeat;
   }
-  .hero-inner{
+
+  /* ===== 화면 구성 ===== */
+  .page{
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+    min-height:100dvh;
     max-width:760px;
     margin:0 auto;
-    padding:16px 16px 14px;
+    padding:14px 14px 12px;
   }
-  .hero h1{
+
+  /* 구역 묶음: 이 영역 뒤에만 가장자리가 번지는 그라데이션을 깝니다 */
+  .top{
+    position:relative;
+    z-index:0;
+    align-self:flex-start;
+    max-width:100%;
+  }
+  .top::before{
+    content:"";
+    position:absolute;
+    top:-20px;right:-28px;bottom:-20px;left:-28px;
+    z-index:-1;
+    border-radius:34px;
+    background:
+      radial-gradient(90% 80% at 12% 8%, rgba(5,28,62,0.80) 0%, rgba(5,28,62,0) 72%),
+      linear-gradient(160deg, rgba(8,38,78,0.70) 0%, rgba(8,38,78,0.50) 55%, rgba(8,38,78,0.24) 100%);
+    filter:blur(20px);
+  }
+  @media (max-width:560px){
+    .top::before{ left:-14px; right:-14px; }
+  }
+
+  /* ----- 구역: 모두 가장 넓은 박스에 맞춰 항상 같은 가로폭 ----- */
+  main{
+    display:grid;
+    grid-template-columns:fit-content(100%);
+    justify-content:start;
+    row-gap:7px;
+  }
+  .panel{
+    display:block;
     margin:0;
-    font-size:24px;
-    font-weight:800;
-    letter-spacing:0.2px;
-    color:#ffffff;
-  }
-  .wrap{
-    max-width:760px;
-    margin:0 auto;
-    padding:12px 16px 10px;
-  }
-  .section{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-left:4px solid var(--navy);
-    border-radius:8px;
-    padding:9px 12px 11px;
-    margin-bottom:8px;
-    box-shadow:0 1px 2px rgba(20,35,60,0.05);
+    padding:4px 7px 6px;
+    background:rgba(234,244,255,0.70);
+    -webkit-backdrop-filter:blur(10px);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.55);
+    border-radius:6px;
+    box-shadow:0 2px 10px rgba(6,30,60,0.22);
   }
   .section h2{
-    margin:0 0 7px;
-    font-size:19px;
+    margin:0 0 4px;
+    font-size:15.2px;
     font-weight:800;
     letter-spacing:-0.2px;
     color:var(--navy);
@@ -65,67 +99,78 @@
   .links{
     display:flex;
     flex-wrap:wrap;
-    gap:6px;
+    gap:5px;
   }
   a.link{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    padding:6px 12px;
-    border:1px solid var(--accent);
-    border-radius:999px;
-    background:var(--accent-soft);
-    color:var(--accent);
-    font-size:14.5px;
+    display:inline-block;
+    padding:2px 7px;
+    border:1px solid rgba(20,68,120,0.45);
+    border-radius:5px;
+    background:rgba(255,255,255,0.42);
+    color:var(--chip-text);
+    font-size:11.6px;
     font-weight:700;
     text-decoration:none;
     white-space:nowrap;
   }
-  a.link::after{
-    content:"›";
-    font-size:17px;
-    line-height:1;
-    font-weight:700;
-  }
   a.link:hover,a.link:focus{
-    background:var(--accent);
+    background:#16497a;
+    border-color:#16497a;
     color:#ffffff;
     outline:none;
   }
-  footer{
-    margin-top:8px;
-    padding:8px 4px 0;
-    border-top:1px solid var(--line);
-    text-align:center;
+
+  /* ----- 하단 안내문: 배경색 상자 없이, 글자 뒤에만 번지는 그라데이션 ----- */
+  .foot{
+    position:relative;
+    z-index:0;
+    align-self:flex-start;
+    max-width:100%;
+    margin-top:auto;
+    padding-top:14px;
   }
-  footer .notice{
-    margin:0 0 4px;
-    font-size:14px;
+  .foot::before{
+    content:"";
+    position:absolute;
+    top:4px;right:-24px;bottom:-12px;left:-24px;
+    z-index:-1;
+    border-radius:28px;
+    background:rgba(4,20,14,0.64);
+    filter:blur(14px);
+  }
+  @media (max-width:560px){
+    .foot::before{ left:-14px; right:-14px; }
+  }
+  .foot .notice{
+    margin:0 0 2px;
+    font-size:11.2px;
     font-weight:800;
-    color:var(--text);
+    color:#ffffff;
+    text-shadow:0 1px 3px rgba(0,0,0,0.70);
+    word-break:keep-all;
+    text-wrap:balance;
   }
-  footer .copyright{
+  .foot .copyright{
     margin:0;
-    font-size:11.5px;
-    color:var(--sub);
+    font-size:9.2px;
+    color:#eef3ee;
+    text-shadow:0 1px 3px rgba(0,0,0,0.70);
   }
 </style>
 </head>
 <body>
 
-<div class="hero">
-  <div class="hero-inner">
-    <h1>Mr. Yoon's KMS</h1>
-  </div>
-</div>
+<div class="bg" aria-hidden="true"></div>
 
-<div class="wrap">
-  <main id="gate"></main>
+<div class="page">
+  <div class="top">
+    <main id="gate"></main>
+  </div>
   <noscript>자바스크립트를 켜야 메뉴가 표시됩니다.</noscript>
 
-  <footer>
+  <footer class="foot">
     <p class="notice">※ 고객상담시에는 반드시 시스템을 확인하시기 바랍니다.</p>
-    <p class="copyright">ⓒ2026. Yoon Hyunchul All Rights Reserved.</p>
+    <p class="copyright">ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.</p>
   </footer>
 </div>
 
@@ -137,7 +182,7 @@
    - 같은 저장소 안의 페이지는 "Prod/파일명.html" 처럼 짧게 적어도 됩니다. */
 const MENU = [
   {
-    title: "개요",
+    title: "계약기본정보",
     links: [
       { label: "상품가입나이",       url: "Prod/Prod_Age.html" },
       { label: "간편보험 비교표",    url: "Prod/simple_goji.html" },
@@ -155,7 +200,7 @@ const MENU = [
 const root = document.getElementById("gate");
 MENU.forEach(function(sec){
   const box = document.createElement("section");
-  box.className = "section";
+  box.className = "panel section";
 
   const h = document.createElement("h2");
   h.textContent = sec.title;
