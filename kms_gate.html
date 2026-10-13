@@ -104,36 +104,36 @@
   a.link{
     display:inline-block;
     padding:3px 8px;
-    border:1px solid #6f8db0;
-    border-bottom-color:#3f648d;
+    border:1px solid #3a0a18;
     border-radius:5px;
-    background:linear-gradient(180deg,#ffffff 0%,#e9f1fa 52%,#c9d9ec 100%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),
-               inset 0 -1px 0 rgba(30,70,120,0.18),
-               0 1px 0 #3f648d,
-               0 3px 5px rgba(8,36,70,0.35);
-    color:var(--chip-text);
+    background:linear-gradient(180deg,rgba(255,255,255,0.30) 0%,rgba(255,255,255,0.08) 48%,rgba(255,255,255,0) 52%),
+               linear-gradient(115deg,#c0566f 0%,#8c2c47 38%,#611a2f 70%,#3f0f1e 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.38),
+               inset 0 -1px 0 rgba(0,0,0,0.25),
+               0 1px 0 #3a0a18,
+               0 3px 5px rgba(50,8,22,0.45);
+    color:#ffffff;
     font-size:11.6px;
     font-weight:700;
     text-decoration:none;
-    text-shadow:0 1px 0 rgba(255,255,255,0.8);
+    text-shadow:0 1px 1px rgba(0,0,0,0.45);
     white-space:nowrap;
     transition:transform .08s ease, box-shadow .08s ease, background .12s ease;
   }
   a.link:hover,a.link:focus{
-    background:linear-gradient(180deg,#2a6aa6 0%,#1a4f86 55%,#123c68 100%);
-    border-color:#0f3358;
-    color:#ffffff;
-    text-shadow:0 -1px 0 rgba(0,0,0,0.35);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.28),
-               0 1px 0 #0b2a4b,
-               0 3px 6px rgba(8,36,70,0.45);
+    background:linear-gradient(180deg,#f4d58a 0%,#e0b457 50%,#c79535 100%);
+    border-color:#7a5712;
+    color:#2b1d02;
+    text-shadow:0 1px 0 rgba(255,255,255,0.45);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),
+               0 1px 0 #7a5712,
+               0 3px 6px rgba(60,40,5,0.45);
     outline:none;
   }
   a.link:active{
     transform:translateY(1px);
     box-shadow:inset 0 2px 3px rgba(0,0,0,0.35),
-               0 0 0 #0b2a4b;
+               0 0 0 #7a5712;
   }
 
   /* ----- 하단 안내문: 배경색 상자 없이, 글자 뒤에만 번지는 그라데이션 ----- */
