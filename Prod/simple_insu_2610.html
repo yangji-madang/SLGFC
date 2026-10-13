@@ -13,27 +13,27 @@
 html,body{margin:0;padding:0}
 body{
   font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  background:var(--bg); color:var(--ink); font-size:16px; line-height:1.4;
+  background:var(--bg); color:var(--ink); font-size:14px; line-height:1.4;
   padding:12px 14px 8px;
 }
-h1{margin:0 0 8px; color:var(--navy); font-size:30px; letter-spacing:-.5px;
+h1{margin:0 0 8px; color:var(--navy); font-size:19px; letter-spacing:-.5px;
    border-bottom:4px solid var(--gold); padding-bottom:6px}
-h1 small{font-size:16px; color:var(--gold); font-weight:600; margin-left:8px}
+h1 small{font-size:12px; color:var(--gold); font-weight:600; margin-left:8px}
 .bar{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:8px 0}
 .search{flex:1 1 320px; position:relative}
 .search input{
-  width:100%; font:inherit; font-size:18px; padding:9px 38px 9px 12px;
+  width:100%; font:inherit; font-size:13px; padding:7px 38px 7px 12px;
   border:2px solid var(--navy); border-radius:8px; background:#fff; outline:none;
 }
 .search input:focus{border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-l)}
 .search button{position:absolute; right:6px; top:50%; transform:translateY(-50%);
   border:0; background:none; font-size:20px; cursor:pointer; color:#777}
-.chk{font-size:15px; display:flex; align-items:center; gap:4px; cursor:pointer; user-select:none}
-.chk input{width:17px; height:17px; accent-color:var(--navy)}
+.chk{font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer; user-select:none}
+.chk input{width:14px; height:14px; accent-color:var(--navy)}
 .chips{display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 8px; align-items:center}
-.chips b{font-size:14px; color:var(--navy); margin-right:2px}
+.chips b{font-size:12px; color:var(--navy); margin-right:2px}
 .chip{
-  font:inherit; font-size:14px; padding:3px 11px; border-radius:16px; cursor:pointer;
+  font:inherit; font-size:12px; padding:3px 10px; border-radius:16px; cursor:pointer;
   border:1.5px solid var(--navy); background:#fff; color:var(--navy);
 }
 .chip:hover,.chip.on{background:var(--navy); color:#fff}
@@ -42,43 +42,43 @@ h1 small{font-size:16px; color:var(--gold); font-weight:600; margin-left:8px}
 .panel{background:#fff; border:2px solid var(--navy); border-radius:8px; padding:6px 10px; margin:8px 0}
 .grp{display:flex; flex-wrap:wrap; gap:6px 12px; align-items:center; padding:5px 0}
 .grp+.grp{border-top:1px dashed #c9cbe0}
-.lb{flex:0 0 74px; font-weight:800; color:var(--navy); font-size:16px}
+.lb{flex:0 0 74px; font-weight:800; color:var(--navy); font-size:12px}
 .grp .chips{flex:1 1 400px; margin:0}
 .grp .bar{margin:0; flex:1 1 400px}
-.status{font-size:15px; color:var(--navy); font-weight:600; margin:2px 0 6px}
+.status{font-size:12.5px; color:var(--navy); font-weight:600; margin:2px 0 6px}
 .wrap{overflow:auto; max-height:calc(100vh - 230px); min-height:300px; border:2px solid var(--line); background:#fff}
 table{border-collapse:separate; border-spacing:0; width:100%; table-layout:fixed; min-width:1000px}
 th,td{border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:6px 6px; text-align:center; vertical-align:middle}
 thead th{
-  background:var(--navy); color:#fff; font-size:16px; font-weight:700; position:sticky; top:0; z-index:3; padding:9px 4px;
+  background:var(--navy); color:#fff; font-size:13px; font-weight:700; position:sticky; top:0; z-index:3; padding:9px 4px;
   border-right:1px solid #fff3;
 }
 thead th.sub{display:block}
 .pn{display:block; line-height:1.3}
 tbody th.row{
-  background:#fff; position:sticky; left:0; z-index:2; width:78px; min-width:78px; font-size:15px;
+  background:#fff; position:sticky; left:0; z-index:2; width:78px; min-width:78px; font-size:13px;
 }
 thead th.corner{left:0; z-index:4; width:78px; min-width:78px}
-.big{display:block; font-size:34px; font-weight:800; color:var(--red); line-height:1}
-.big small{font-size:17px; color:var(--ink); font-weight:700}
-td{font-size:16px}
+.big{display:block; font-size:26px; font-weight:800; color:var(--red); line-height:1}
+.big small{font-size:13px; color:var(--ink); font-weight:700}
+td{font-size:13px}
 td .ln{display:block; font-weight:600}
 td.opinion .hd{font-weight:700}
 .dz{background:var(--pink)}
-.dz .t{font-size:19px; font-weight:800; color:var(--red); display:block}
-.dz .s{font-size:15px; font-weight:600; display:block}
+.dz .t{font-size:15px; font-weight:800; color:var(--red); display:block}
+.dz .s{font-size:13px; font-weight:600; display:block}
 td.items{vertical-align:top}
 td.items .ln{font-weight:600}
-.note{display:block; color:var(--red); font-size:14px; font-weight:600; text-align:left; margin-top:8px; line-height:1.3}
+.note{display:block; color:var(--red); font-size:12px; font-weight:600; text-align:left; margin-top:8px; line-height:1.3}
 .cut{background:repeating-linear-gradient(45deg,#fff,#fff 6px,#fff7e0 6px,#fff7e0 12px)}
-.cutbadge{display:inline-block; font-size:12px; background:var(--gold); color:#fff; border-radius:8px; padding:1px 7px; margin-top:3px}
+.cutbadge{display:inline-block; font-size:10.5px; background:var(--gold); color:#fff; border-radius:8px; padding:1px 7px; margin-top:3px}
 mark{background:#ffe066; color:#000; border-radius:3px; padding:0 1px; outline:1px solid var(--gold)}
 th.dim,td.dim{opacity:.25}
 .hide{display:none}
-.edu{font-size:14px; color:#222; margin:8px 0 2px; padding:7px 10px; background:#fff; border-left:5px solid var(--gold)}
+.edu{font-size:11.5px; color:#222; margin:8px 0 2px; padding:7px 10px; background:#fff; border-left:5px solid var(--gold)}
 .foot{display:flex; justify-content:flex-end; margin-top:4px}
-.copy{font-size:12px; color:#444}
-@media (max-width:700px){ h1{font-size:22px} }
+.copy{font-size:10.5px; color:#444}
+@media (max-width:700px){ td,th.row{font-size:12px} }
 @media print{ .bar,.chips{display:none} .wrap{max-height:none; overflow:visible} body{background:#fff} }
 </style>
 </head>
@@ -123,7 +123,7 @@ th.dim,td.dim{opacity:.25}
 </div>
 
 <div class="edu">[교육용] 판매자 교육용 요약자료로서 고객에게 제시·교부할 수 없으며 대외 온라인 게시·전송 목적으로 사용할 수 없음. 정확한 내용은 약관과 상품 설명서를 확인해야 함</div>
-<div class="foot"><span class="copy">ⓒ2026. Yoon Hyunchul All Rights Reserved.</span></div>
+<div class="foot"><span class="copy">ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.</span></div>
 
 <script>
 (function(){
@@ -203,7 +203,7 @@ th.dim,td.dim{opacity:.25}
     });
 
     var hd='<th class="corner">구분</th>';
-    var b1='<th class="row"><span class="big" style="font-size:30px">3<small>개월</small></span></th>';
+    var b1='<th class="row"><span class="big" style="font-size:26px">3<small>개월</small></span></th>';
     var b2='<th class="row"><span class="big">N<small>년</small></span></th>';
     var b3='<th class="row"><span class="big">5<small>년</small></span></th>';
     list.forEach(function(o){
