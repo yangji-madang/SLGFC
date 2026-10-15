@@ -52,11 +52,11 @@
   .mini:disabled{ opacity:.35; cursor:default; }
   .mini.del{ color:#7a1530; }
   .mini.pin[aria-pressed="true"]{
-    color:#2b1700; font-weight:800; border-color:#7a4d00;
-    background:linear-gradient(180deg,#ffe58a 0%,#ffc63a 55%,#f0a500 100%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.75),0 1px 0 #7a4d00;
+    color:#ffffff; font-weight:800; border-color:#06301d;
+    background:linear-gradient(180deg,#3aae77 0%,#1f7a4f 55%,#14573a 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 1px 0 #06301d;
   }
-  .lk.pinned{ background:rgba(255,214,90,0.40); border-left:3px solid #d98e00; padding-left:3px; border-radius:3px; }
+  .lk.pinned{ background:rgba(90,200,140,0.30); border-left:3px solid #1f7a4f; padding-left:3px; border-radius:3px; }
   .bar{ display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
   .status{ margin-left:auto; font-size:11.6px; font-weight:800; color:#0b2547; }
   .status.dirty{ color:#9a1030; }
@@ -85,13 +85,13 @@
   /* 편집기 */
   .sec{ margin:0 0 5px; padding:4px 6px 5px; background:rgba(255,255,255,0.45); border:1px solid #5f84ad; border-radius:6px; }
   .sec:last-child{ margin-bottom:0; }
-  .sec.pinned{ border-color:#a98524; box-shadow:inset 3px 0 0 #c9a23c; }
+  .sec.pinned{ border-color:#1f7a4f; box-shadow:inset 3px 0 0 #1f7a4f; }
   .row1{ display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
   .row1 .name{ flex:1 1 140px; min-width:0; }
   .row1 .name.big{ font-size:13px; font-weight:800; }
   .tag{ font-size:10.8px; font-weight:800; padding:0 5px; border-radius:3px; color:#fff; background:#74223a; }
   .grp{ margin:4px 0 0; padding:3px 5px; background:rgba(255,253,235,0.55); border:1px solid #c9a23c; border-left:4px solid #74223a; border-radius:5px; }
-  .grp.pinned{ background:rgba(255,240,184,0.75); }
+  .grp.pinned{ background:rgba(190,240,210,0.70); }
   .grp .name{ font-weight:800; }
   .lk{ display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1.7fr) minmax(0,1.4fr) auto; gap:3px; align-items:center;
        margin-top:3px; padding-top:3px; border-top:1px dashed rgba(95,125,160,0.55); }
@@ -188,7 +188,13 @@
 <script>
 (function(){
 "use strict";
-var ko = function(a, b){ return a.localeCompare(b, "ko"); };
+/* 이름 정렬: 영문(숫자 포함)이 한글보다 먼저, 같은 종류끼리는 가나다·ABC순(대소문자 무시) */
+var isEn = function(t){ return /^[A-Za-z0-9]/.test(String(t).trim()); };
+var ko = function(a, b){
+  var ea = isEn(a), eb = isEn(b);
+  if (ea !== eb) return ea ? -1 : 1;
+  return String(a).trim().localeCompare(String(b).trim(), "ko", { sensitivity: "base", numeric: true });
+};
 var $ = function(id){ return document.getElementById(id); };
 var DRAFT = "kms_admin_draft_v1", CFG = "kms_admin_cfg_v1";
 var data = null, sha = null, dirty = false;
@@ -265,12 +271,12 @@ function sortOnce(list, key){   /* 한 번만 가나다순으로 재배치 (고�
   rest.sort(function(x, y){ return ko(key(x), key(y)); });
   list.length = 0; pins.concat(rest).forEach(function(x){ list.push(x); });
 }
-function arrows(list, item, key, row){
+function arrows(list, item, key, row, auto){
   var i = list.indexOf(item);
-  var up = mini("▲", "위로", function(){ move(list, item, -1, false, key); rerender(); });
-  var dn = mini("▼", "아래로", function(){ move(list, item, 1, false, key); rerender(); });
-  up.disabled = i === 0 || !!list[i-1].pin !== !!item.pin;
-  dn.disabled = i === list.length - 1 || !!list[i+1].pin !== !!item.pin;
+  var up = mini("▲", "위로", function(){ move(list, item, -1, !!auto, key); rerender(); });
+  var dn = mini("▼", "아래로", function(){ move(list, item, 1, !!auto, key); rerender(); });
+  up.disabled = (auto && !item.pin) || i === 0 || !!list[i-1].pin !== !!item.pin;
+  dn.disabled = (auto && !item.pin) || i === list.length - 1 || !!list[i+1].pin !== !!item.pin;
   row.appendChild(up); row.appendChild(dn);
 }
 function toggler(item){
@@ -293,9 +299,9 @@ function render(){
     r.appendChild(el("span", "cnt", sec.groups.length + "개"));
     r.appendChild(pinBtn(sec, function(){ togglePin(data.sections, sec, false, tKey); rerender(); }));
     arrows(data.sections, sec, tKey, r);
-    r.appendChild(mini("가나다", "하위 중분류·링크를 가나다순으로 한 번 정렬(고정 항목 제외). 이후 ▲▼로 다시 조정 가능", function(){
-      if (!confirm("'" + sec.title + "' 아래 중분류와 링크를 가나다순으로 재정렬합니다(고정 항목은 맨 앞 유지). 계속할까요?")) return;
-      sortOnce(sec.groups, tKey); sec.groups.forEach(function(g){ sortOnce(g.links, lKey); }); rerender();
+    r.appendChild(mini("가나다", "중분류를 영문→가나다순으로 한 번 정렬(고정 항목 제외). 이후 ▲▼로 다시 조정 가능. 링크는 항상 자동 정렬", function(){
+      if (!confirm("'" + sec.title + "' 아래 중분류를 영문→가나다순으로 재정렬합니다(고정 항목은 맨 앞 유지). 계속할까요?")) return;
+      sortOnce(sec.groups, tKey); rerender();
     }));
     r.appendChild(mini("삭제", "대분류 삭제", function(){
       var n = sec.groups.reduce(function(a, g){ return a + g.links.length; }, 0);
@@ -328,7 +334,7 @@ function render(){
         gb.appendChild(gr);
 
         if (opened.has(g)) {
-          normalize(g.links, false, lKey);
+          normalize(g.links, true, lKey);
           g.links.forEach(function(l){
             var lr = el("div", "lk" + (l.pin ? " pinned" : ""));
             lr.appendChild(input(l.label, "링크 이름", "", function(v, i){ l.label = v.trim(); i.classList.toggle("bad", !l.label); changed(); }));
@@ -337,8 +343,8 @@ function render(){
             ti.addEventListener("blur", function(){ ti.value = tagsText(l.tags); });
             lr.appendChild(ti);
             var ac = el("div", "acts");
-            ac.appendChild(pinBtn(l, function(){ togglePin(g.links, l, false, lKey); rerender(); }));
-            arrows(g.links, l, lKey, ac);
+            ac.appendChild(pinBtn(l, function(){ togglePin(g.links, l, true, lKey); rerender(); }));
+            arrows(g.links, l, lKey, ac, true);
             ac.appendChild(mini("삭제", "링크 삭제", function(){
               if (confirm("'" + l.label + "' 링크를 삭제합니다. 계속할까요?")) { g.links.splice(g.links.indexOf(l), 1); rerender(); }
             }, "del"));
