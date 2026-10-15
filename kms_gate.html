@@ -12,7 +12,7 @@
     --bg-pos:center center;          /* 세로 화면(휴대폰·태블릿 세로): 사진 전체 높이가 보임 */
   }
   @media (orientation:landscape){
-    :root{ --bg-pos:center 62%; }    /* 가로 화면(컴퓨터 등): 하늘·산·나무가 함께 보이는 위치 */
+    :root{ --bg-pos:center var(--bg-y,62%); }    /* 가로 화면(컴퓨터 등): 하늘·산·나무가 함께 보이는 위치 */
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -33,7 +33,7 @@
     top:0;right:0;bottom:0;left:0;
     z-index:0;
     pointer-events:none;
-    background:#35597f url("kms_bg.jpg") var(--bg-pos) / cover no-repeat;
+    background:#35597f var(--bg-img,url("kms_bg.jpg")) var(--bg-pos) / cover no-repeat;
   }
 
   /* ===== 화면 구성 ===== */
@@ -199,7 +199,16 @@
   .empty{ margin:0; font-size:13px; font-weight:700; color:#0b2547; }
   .hide{ display:none !important; }
   .preview-tag{ position:fixed; left:0; right:0; bottom:0; z-index:5; margin:0; padding:3px 8px; text-align:center; font-size:11.6px; font-weight:800; color:#fff; background:#9a1030; }
-  a.link.pinned::before{ content:"★"; margin-right:3px; color:#ffd966; }
+  /* 고정 항목: 금색 버튼 + 진한 글자 (일반 와인색과 구별) */
+  a.link.pinned{
+    color:#2b1700; text-shadow:0 1px 0 rgba(255,255,255,0.45); border-color:#7a4d00;
+    background:linear-gradient(180deg,rgba(255,255,255,0.45) 0%,rgba(255,255,255,0.10) 48%,rgba(255,255,255,0) 52%),
+               linear-gradient(115deg,#ffe58a 0%,#ffc63a 45%,#f0a500 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.7),inset 0 -1px 0 rgba(0,0,0,0.2),0 1px 0 #7a4d00,0 3px 5px rgba(50,30,0,0.4);
+  }
+  a.link.pinned::before{ content:"★"; margin-right:3px; color:#8c2c47; }
+  a.link.pinned:hover,a.link.pinned:focus{ color:#fff; text-shadow:0 1px 1px rgba(0,0,0,0.45); }
+  a.link.pinned:hover::before,a.link.pinned:focus::before{ color:#ffd966; }
 
   /* ----- 하위 항목(sub): 소제목 + 버튼 묶음 ----- */
   .sub{
@@ -272,8 +281,8 @@
   <noscript>자바스크립트를 켜야 메뉴가 표시됩니다.</noscript>
 
   <footer class="foot">
-    <p class="notice">※ 고객상담시에는 반드시 시스템을 확인하시기 바랍니다.</p>
-    <p class="copyright">ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.</p>
+    <p class="notice" id="fNotice">※ 고객상담시에는 반드시 시스템을 확인하시기 바랍니다.</p>
+    <p class="copyright" id="fCopy">ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.</p>
   </footer>
 </div>
 
@@ -295,7 +304,16 @@ function ordered(list, auto, key){
 
 const root = document.getElementById("gate");
 
+function upA(t){ return String(t).replace(/[a-z]+/g, function(m){ return m.toUpperCase(); }); }
+
 function start(data){
+  /* 하단 문구·배경 사진 (관리화면에서 수정) */
+  if (data.footer) {
+    if (data.footer.notice) document.getElementById("fNotice").textContent = data.footer.notice;
+    if (data.footer.copyright) document.getElementById("fCopy").textContent = upA(data.footer.copyright);
+  }
+  if (data.bg) document.documentElement.style.setProperty("--bg-img", 'url("' + data.bg + '")');
+  if (typeof data.bgY === "number") document.documentElement.style.setProperty("--bg-y", data.bgY + "%");
   const model = [];   /* 검색에 쓰는 구조: 대분류 > 중분류 > 링크 */
 
   ordered(data.sections, false, function(s){ return s.title; }).forEach(function(sec){

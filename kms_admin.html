@@ -7,7 +7,7 @@
 <title>Mr. Yoon's KMS 관리</title>
 <style>
   :root{ --text:#10243a; --bg-pos:center center; }
-  @media (orientation:landscape){ :root{ --bg-pos:center 62%; } }
+  @media (orientation:landscape){ :root{ --bg-pos:center var(--bg-y,62%); } }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
@@ -16,7 +16,7 @@
     font-size:11.6px; line-height:1.3;
   }
   .bg{ position:fixed; top:0;right:0;bottom:0;left:0; z-index:0; pointer-events:none;
-       background:#35597f url("kms_bg.jpg") var(--bg-pos) / cover no-repeat; }
+       background:#35597f var(--bg-img,url("kms_bg.jpg")) var(--bg-pos) / cover no-repeat; }
   .page{ position:relative; z-index:1; display:flex; flex-direction:column; min-height:100vh; min-height:100dvh;
          max-width:980px; margin:0 auto; padding:10px 10px 8px; gap:5px; }
 
@@ -52,9 +52,11 @@
   .mini:disabled{ opacity:.35; cursor:default; }
   .mini.del{ color:#7a1530; }
   .mini.pin[aria-pressed="true"]{
-    color:#3a2600; border-color:#a98524; border-left:3px solid #74223a;
-    background:linear-gradient(180deg,#fffdf0 0%,#fff0b8 55%,#ffe38a 100%);
+    color:#2b1700; font-weight:800; border-color:#7a4d00;
+    background:linear-gradient(180deg,#ffe58a 0%,#ffc63a 55%,#f0a500 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.75),0 1px 0 #7a4d00;
   }
+  .lk.pinned{ background:rgba(255,214,90,0.40); border-left:3px solid #d98e00; padding-left:3px; border-radius:3px; }
   .bar{ display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
   .status{ margin-left:auto; font-size:11.6px; font-weight:800; color:#0b2547; }
   .status.dirty{ color:#9a1030; }
@@ -95,6 +97,11 @@
        margin-top:3px; padding-top:3px; border-top:1px dashed rgba(95,125,160,0.55); }
   .lk .acts{ display:flex; gap:3px; flex-wrap:nowrap; }
   .addrow{ margin-top:3px; }
+  .set{ display:grid; gap:4px; margin-top:5px; }
+  .set label{ display:grid; gap:2px; font-size:11.6px; font-weight:800; color:#0b2547; }
+  .set .bgbox{ display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
+  .set .thumb{ width:64px; height:40px; border:1px solid #3f648d; border-radius:4px; background:#35597f center/cover no-repeat; }
+  .set input[type=range]{ width:110px; padding:0; accent-color:#74223a; }
   .cnt{ font-size:10.8px; font-weight:800; color:#4a3a00; }
   .tg{ padding:0 5px; min-width:20px; }
   .note{ font-size:11px; color:#4a3a00; font-weight:700; }
@@ -141,6 +148,26 @@
     </details>
   </section>
 
+  <section class="panel cfg">
+    <details id="setd">
+      <summary>화면 설정 (하단 문구 · 배경 사진)</summary>
+      <div class="set">
+        <label>하단 안내문 (굵게 표시되는 문구)<input type="text" id="sNotice" autocomplete="off"></label>
+        <label>저작권 문구 (저장 시 영문은 자동으로 대문자)<input type="text" id="sCopy" autocomplete="off"></label>
+        <div>
+          <span style="font-weight:800;color:#0b2547">배경 사진</span>
+          <div class="bgbox">
+            <span class="thumb" id="bgThumb"></span>
+            <button class="btn" id="bBg" type="button">사진 바꾸기</button>
+            <button class="btn" id="bBgDef" type="button">처음 사진으로</button>
+            <input id="fBg" type="file" accept="image/*" hidden>
+            <label style="display:flex;align-items:center;gap:4px">가로화면 세로위치 <input type="range" id="sBgY" min="0" max="100" value="62"><span id="bgYv"></span></label>
+          </div>
+        </div>
+      </div>
+    </details>
+  </section>
+
   <section class="panel">
     <div class="bar" style="margin-bottom:5px">
       <button class="btn" id="bAddSec" type="button">+ 대분류</button>
@@ -152,8 +179,8 @@
 
   <footer class="foot">
     <div class="foot-bg">
-      <p class="notice">※ 고객상담시에는 반드시 시스템을 확인하시기 바랍니다.</p>
-      <p class="copyright">ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.</p>
+      <p class="notice" id="fNotice"></p>
+      <p class="copyright" id="fCopy"></p>
     </div>
   </footer>
 </div>
@@ -165,6 +192,9 @@ var ko = function(a, b){ return a.localeCompare(b, "ko"); };
 var $ = function(id){ return document.getElementById(id); };
 var DRAFT = "kms_admin_draft_v1", CFG = "kms_admin_cfg_v1";
 var data = null, sha = null, dirty = false;
+var DEF_NOTICE = "※ 고객상담시에는 반드시 시스템을 확인하시기 바랍니다.", DEF_COPY = "ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.", DEF_BG = "kms_bg.jpg";
+function upA(t){ return String(t).replace(/[a-z]+/g, function(m){ return m.toUpperCase(); }); }   /* 영문만 대문자 (ⓒ 기호는 그대로) */
+var pendingBg = null;   /* 새로 고른 사진: { dataUrl } — 저장할 때 함께 올림 */
 
 /* ---------- 보조 ---------- */
 function safe(fn, fb){ try { return fn(); } catch(e){ return fb; } }
@@ -300,7 +330,7 @@ function render(){
         if (opened.has(g)) {
           normalize(g.links, false, lKey);
           g.links.forEach(function(l){
-            var lr = el("div", "lk");
+            var lr = el("div", "lk" + (l.pin ? " pinned" : ""));
             lr.appendChild(input(l.label, "링크 이름", "", function(v, i){ l.label = v.trim(); i.classList.toggle("bad", !l.label); changed(); }));
             lr.appendChild(input(l.url, "주소 (https://… 또는 Prod/파일.html)", "", function(v, i){ l.url = v.trim(); i.classList.toggle("bad", !validUrl(l.url)); changed(); }));
             var ti = input(tagsText(l.tags), "#해시태그 (공백 구분)", "", function(v){ l.tags = parseTags(v); changed(); });
@@ -331,10 +361,46 @@ function render(){
   });
 }
 
+/* ---------- 화면 설정 (하단 문구·배경) ---------- */
+function bgUrl(){ return pendingBg ? pendingBg.dataUrl : data.bg; }
+function applyBg(){
+  var r = document.documentElement.style;
+  r.setProperty("--bg-img", 'url("' + bgUrl() + '")');
+  r.setProperty("--bg-y", data.bgY + "%");
+  $("bgThumb").style.backgroundImage = 'url("' + bgUrl() + '")';
+  $("bgYv").textContent = data.bgY + "%";
+}
+function syncSettings(){
+  $("sNotice").value = data.footer.notice; $("sCopy").value = data.footer.copyright; $("sBgY").value = data.bgY;
+  $("fNotice").textContent = data.footer.notice; $("fCopy").textContent = upA(data.footer.copyright);
+  applyBg();
+}
+$("sNotice").addEventListener("input", function(){ data.footer.notice = this.value; $("fNotice").textContent = this.value; changed(); });
+$("sCopy").addEventListener("input", function(){ data.footer.copyright = this.value; $("fCopy").textContent = upA(this.value); changed(); });
+$("sBgY").addEventListener("input", function(){ data.bgY = Number(this.value); applyBg(); changed(); });
+$("bBg").addEventListener("click", function(){ $("fBg").click(); });
+$("bBgDef").addEventListener("click", function(){ pendingBg = null; data.bg = DEF_BG; applyBg(); changed(); });
+/* 사진은 가로 1920px 이내 JPEG 로 줄여서 올립니다(용량·속도) */
+$("fBg").addEventListener("change", function(){
+  var f = this.files[0]; this.value = ""; if (!f) return;
+  var img = new Image(), url = URL.createObjectURL(f);
+  img.onload = function(){
+    var s = Math.min(1, 1920 / Math.max(img.width, img.height)), c = document.createElement("canvas");
+    c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    pendingBg = { dataUrl: c.toDataURL("image/jpeg", 0.85) }; URL.revokeObjectURL(url);
+    applyBg(); changed(); msg("info", "새 배경 사진을 골랐습니다(" + c.width + "×" + c.height + "). [미리보기]로 확인 후 저장하세요.");
+  };
+  img.onerror = function(){ msg("err", "이미지 파일을 읽을 수 없습니다."); };
+  img.src = url;
+});
+
 /* ---------- 검사 ---------- */
 function validate(){
   var errs = [];
   if (!data.sections.length) errs.push("대분류가 하나도 없습니다.");
+  if (!data.footer.notice.trim()) errs.push("하단 안내문이 비어 있습니다.");
+  if (!data.footer.copyright.trim()) errs.push("저작권 문구가 비어 있습니다.");
   data.sections.forEach(function(s){
     if (!s.title) errs.push("이름이 비어 있는 대분류가 있습니다.");
     s.groups.forEach(function(g){
@@ -350,6 +416,8 @@ function validate(){
 function clean(){
   var d = JSON.parse(JSON.stringify(data));
   d.updated = new Date().toISOString().slice(0, 10);
+  d.footer = { notice: data.footer.notice.trim(), copyright: upA(data.footer.copyright.trim()) };
+  d.bgY = Number(data.bgY);
   d.sections.forEach(function(s){ s.sort = false; s.pin = !!s.pin;
     s.groups.forEach(function(g){ g.pin = !!g.pin; g.links.forEach(function(l){ l.pin = !!l.pin; l.tags = l.tags || []; }); }); });
   return d;
@@ -364,9 +432,11 @@ function adopt(d){
       })};
     })};
   });
+  d.footer = { notice: (d.footer && d.footer.notice) || DEF_NOTICE, copyright: (d.footer && d.footer.copyright) || DEF_COPY };
+  d.bg = d.bg || DEF_BG; d.bgY = (typeof d.bgY === "number") ? d.bgY : 62;
   data = d;
   data.sections.forEach(function(s){ opened.add(s); });
-  render();
+  render(); syncSettings();
 }
 function cfg(){
   return { repo: $("cRepo").value.trim(), branch: $("cBranch").value.trim() || "main", path: $("cPath").value.trim() || "kms_data.json" };
@@ -398,7 +468,14 @@ function save(){
   if (!$("cTok").value.trim()) { $("cfg").open = true; msg("err", "저장하려면 '저장 설정'에 액세스 토큰을 입력하세요."); return; }
   var url = "https://api.github.com/repos/" + c.repo + "/contents/" + c.path.split("/").map(encodeURIComponent).join("/");
   $("bSave").disabled = true; msg("info", "GitHub에 저장하는 중입니다…");
-  api(url + "?ref=" + encodeURIComponent(c.branch)).then(function(cur){ return cur.sha; }, function(e){ if (e.status === 404) return null; throw e; })
+  var base = "https://api.github.com/repos/" + c.repo + "/contents/";
+  var upBg = Promise.resolve(null);
+  if (pendingBg) {
+    var nm = "kms_bg_" + new Date().toISOString().replace(/\D/g, "").slice(0, 14) + ".jpg";
+    upBg = api(base + nm, { method: "PUT", body: JSON.stringify({ message: "kms: 배경 사진 교체 (관리화면)", content: pendingBg.dataUrl.split(",")[1], branch: c.branch }) }).then(function(){ return nm; });
+  }
+  upBg.then(function(nm){ if (nm) { data.bg = nm; pendingBg = null; } })
+  .then(function(){ return api(url + "?ref=" + encodeURIComponent(c.branch)).then(function(cur){ return cur.sha; }, function(e){ if (e.status === 404) return null; throw e; }); })
   .then(function(curSha){
     var body = { message: "kms_data: 관리화면에서 수정 (" + new Date().toISOString().slice(0, 16).replace("T", " ") + ")", content: b64(JSON.stringify(clean(), null, 1) + "\n"), branch: c.branch };
     if (curSha) body.sha = curSha;
@@ -418,7 +495,8 @@ function save(){
 /* ---------- 미리보기 ---------- */
 function preview(){
   var errs = validate(); if (errs.length) { msg("err", "미리보기 전에 먼저 고쳐주세요: " + errs[0]); return; }
-  safe(function(){ sessionStorage.setItem("kms_preview", JSON.stringify(clean())); });
+  var pv = clean(); if (pendingBg) pv.bg = pendingBg.dataUrl;
+  safe(function(){ sessionStorage.setItem("kms_preview", JSON.stringify(pv)); });
   var w = window.open("kms_gate.html?preview=1", "_blank");
   if (!w) msg("err", "팝업이 차단되었습니다. 팝업을 허용해 주세요.");
 }
