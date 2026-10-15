@@ -198,6 +198,8 @@
   .search .count{ margin-left:auto; font-size:11.6px; font-weight:700; color:#0b2547; }
   .empty{ margin:0; font-size:13px; font-weight:700; color:#0b2547; }
   .hide{ display:none !important; }
+  .preview-tag{ position:fixed; left:0; right:0; bottom:0; z-index:5; margin:0; padding:3px 8px; text-align:center; font-size:11.6px; font-weight:800; color:#fff; background:#9a1030; }
+  a.link.pinned::before{ content:"★"; margin-right:3px; color:#ffd966; }
 
   /* ----- 하위 항목(sub): 소제목 + 버튼 묶음 ----- */
   .sub{
@@ -276,236 +278,171 @@
 </div>
 
 <script>
-/* ===== 업데이트는 이 목록만 고치면 됩니다 =====
-   - 구역 추가 : { title: "구역명", links: [ ... ] } 한 덩어리를 추가
-   - 하위 항목이 있는 구역 : { title: "구역명", sort: true, groups: [ { title: "소제목", links: [ ... ] } ] }
-   - 링크 추가 : links 안에 { label: "표시 이름", url: "주소" } 한 줄을 추가
-   - sort: true 인 구역은 소제목·링크가 화면에서 항상 가나다순으로 자동 정렬됩니다(입력 순서와 무관).
-   - sort 가 없는 구역은 아래 나열 순서 그대로 표시됩니다.
-   - 같은 저장소 안의 페이지는 "Prod/파일명.html" 처럼 짧게 적어도 됩니다. */
-const MENU = [
-  {
-    title: "SLI GFC",
-    groups: [
-      { title: "계약기본정보", links: [
-        { label: "상품가입나이",       url: "Prod/Prod_Age.html" },
-        { label: "간편보험 비교표",    url: "Prod/simple_goji.html" },
-        { label: "간편보험 인수기준",  url: "Prod/simple_insu_2610.html" }
-      ]},
-      { title: "상품정보", links: [
-        { label: "New플러스원 고환급특약 검색", url: "Prod/newplus1_surrendervalue.html" }
-      ]},
-      { title: "교육/강의", links: [
-        { label: "CRETOP",                  url: "https://www.cretop.com" },
-        { label: "런인베스트",              url: "https://www.learninvest.co.kr/u/samsunglife_gfc/login" },
-        { label: "CO파트너",                url: "https://copartner.kr/co-report" },
-        { label: "법인컨설팅AI",            url: "https://cc.learninvest.co.kr/" },
-        { label: "삼성생명 Business Live ON", url: "https://www.samsung2030blo.com/" }
-      ]}
-    ]
-  },
-  {
-    title: "기관/협회",
-    sort: true,
-    groups: [
-      { title: "고용.산업안전", links: [
-        { label: "고용노동부",     url: "https://moel.go.kr" },
-        { label: "중대재해알림e",  url: "https://labor.moel.go.kr/sasttc/main/main.do" },
-        { label: "산업안전포털",   url: "https://portal.kosha.or.kr/" }
-      ]},
-      { title: "세제.법령", links: [
-        { label: "국세청",             url: "https://www.nts.go.kr/" },
-        { label: "국세법령정보시스템", url: "https://taxlaw.nts.go.kr" },
-        { label: "국가법령정보센터",   url: "https://www.law.go.kr/" },
-        { label: "재정경제부",         url: "https://www.moef.go.kr/" },
-        { label: "조세심판원",         url: "https://www.tt.go.kr/" }
-      ]},
-      { title: "기업", links: [
-        { label: "중소벤처24",     url: "https://portal.smes.go.kr" },
-        { label: "기술보증기금",   url: "https://www.kibo.or.kr/" },
-        { label: "대한상공회의소", url: "https://www.korcham.net/" },
-        { label: "신용보증기금",   url: "https://www.kodit.or.kr/" },
-        { label: "중소벤처기업부", url: "https://www.mss.go.kr/" },
-        { label: "전자공시",       url: "https://dart.fss.or.kr/" },
-        { label: "인터넷등기소",   url: "https://www.iros.go.kr" },
-        { label: "중소기업중앙회", url: "https://www.kbiz.or.kr/ko/index/index.do" }
-      ]},
-      { title: "보험.금융", links: [
-        { label: "금융감독원",             url: "https://www.fss.or.kr/" },
-        { label: "금융소비자정보포털 파인", url: "https://fine.fss.or.kr/" },
-        { label: "보험개발원",             url: "https://www.kidi.or.kr/" },
-        { label: "보험다모아",             url: "https://www.e-insmarket.or.kr/" },
-        { label: "생명보험협회",           url: "https://www.klia.or.kr/" },
-        { label: "손해보험협회",           url: "https://www.knia.or.kr/" }
-      ]},
-      { title: "정보(통계/지표/건강 등)", links: [
-        { label: "국가통계포털",          url: "https://kosis.kr/index/index.do" },
-        { label: "국가데이터처",          url: "https://mods.go.kr" },
-        { label: "지역사회건강조사",      url: "https://chs.kdca.go.kr/chs/index.do" },
-        { label: "지표누리",              url: "https://index.go.kr/" },
-        { label: "경제교육정보센터(KDI)", url: "https://eiec.kdi.re.kr/" },
-        { label: "국가건강정보포털",      url: "https://health.kdca.go.kr/healthinfo/" },
-        { label: "국가암지식정보센터",    url: "https://www.cancer.go.kr/" },
-        { label: "질병분류정보센터",      url: "https://www.koicd.kr/main.do" }
-      ]}
-    ]
-  }
-];
-
+/* ===== 데이터는 kms_data.json 에 있습니다 =====
+   직접 고치지 말고 관리화면(kms_admin.html)에서 수정·저장하세요.
+   표시 규칙: 고정(pin) 항목이 항상 맨 앞 → 그 뒤는 sort:true 인 대분류 안에서만 가나다순, 아니면 입력 순서 */
 const ko = function(a, b){ return a.localeCompare(b, "ko"); };
 const norm = function(t){ return String(t).toLowerCase().replace(/\s+/g, ""); };
+const normQ = function(t){ return norm(t).replace(/^#+/, ""); };   /* '#세금' 처럼 # 를 붙여도 검색됨 */
 
-function buildLinks(list, store){
-  const row = document.createElement("div");
-  row.className = "links";
-  list.forEach(function(item){
-    const a = document.createElement("a");
-    a.className = "link";
-    a.href = item.url;
-    a.target = "_blank";
-    a.rel = "noopener";
-    a.textContent = item.label;
-    row.appendChild(a);
-    store.push({ el: a, label: item.label });
-  });
-  return row;
+/* 고정 항목을 앞에 두고, auto 이면 나머지를 가나다순으로 */
+function ordered(list, auto, key){
+  const pins = list.filter(function(x){ return x.pin; });
+  const rest = list.filter(function(x){ return !x.pin; });
+  if (auto) rest.sort(function(x, y){ return ko(key(x), key(y)); });
+  return pins.concat(rest);
 }
 
-/* ----- 화면 만들기 ----- */
 const root = document.getElementById("gate");
-const model = [];   /* 검색에 쓰는 구조: 구역 > 소제목 > 링크 */
 
-MENU.forEach(function(sec){
-  const box = document.createElement("section");
-  box.className = "panel section";
-  const h = document.createElement("h2");
-  h.textContent = sec.title;
-  box.appendChild(h);
+function start(data){
+  const model = [];   /* 검색에 쓰는 구조: 대분류 > 중분류 > 링크 */
 
-  const secModel = { title: sec.title, box: box, subs: [] };
+  ordered(data.sections, false, function(s){ return s.title; }).forEach(function(sec){
+    const box = document.createElement("section");
+    box.className = "panel section";
+    const h = document.createElement("h2");
+    h.textContent = sec.title;
+    box.appendChild(h);
+    const secModel = { title: sec.title, box: box, subs: [] };
 
-  if (sec.groups) {
-    const groups = sec.groups.slice();
-    if (sec.sort) groups.sort(function(x, y){ return ko(x.title, y.title); });
-    groups.forEach(function(g){
-      const links = g.links.slice();
-      if (sec.sort) links.sort(function(x, y){ return ko(x.label, y.label); });
+    ordered(sec.groups, sec.sort, function(g){ return g.title; }).forEach(function(g){
       const sub = document.createElement("div");
       sub.className = "sub";
       const h3 = document.createElement("h3");
       h3.textContent = g.title;
       sub.appendChild(h3);
+      const row = document.createElement("div");
+      row.className = "links";
       const store = [];
-      sub.appendChild(buildLinks(links, store));
+      ordered(g.links, sec.sort, function(l){ return l.label; }).forEach(function(item){
+        const a = document.createElement("a");
+        a.className = "link" + (item.pin ? " pinned" : "");
+        a.href = item.url;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = item.label;
+        if (item.tags && item.tags.length) a.title = item.tags.map(function(t){ return "#" + t; }).join(" ");
+        row.appendChild(a);
+        store.push({ el: a, label: item.label, tags: (item.tags || []).map(normQ) });
+      });
+      sub.appendChild(row);
       box.appendChild(sub);
       secModel.subs.push({ title: g.title, el: sub, links: store });
     });
-  } else {
-    const store = [];
-    box.appendChild(buildLinks(sec.links, store));
-    secModel.subs.push({ title: null, el: null, links: store });
-  }
-  model.push(secModel);
-});
-
-/* ----- 검색 영역 (맨 위) ----- */
-const sp = document.createElement("section");
-sp.className = "panel search";
-sp.innerHTML =
-  '<input id="kw" class="kw" type="search" placeholder="키워드 검색 (예: 국세, 안전, 공시)" autocomplete="off" aria-label="키워드 검색">' +
-  '<div class="pick">' +
-    '<label>대분류 <select id="s1" aria-label="대분류"></select></label>' +
-    '<label>중분류 <select id="s2" aria-label="중분류"></select></label>' +
-    '<button id="rs" class="reset" type="button">초기화</button>' +
-    '<span id="cnt" class="count"></span>' +
-  '</div>';
-root.appendChild(sp);
-model.forEach(function(m){ root.appendChild(m.box); });
-
-const empty = document.createElement("p");
-empty.className = "panel empty hide";
-empty.textContent = "검색 결과가 없습니다.";
-root.appendChild(empty);
-
-const kw = document.getElementById("kw");
-const s1 = document.getElementById("s1");
-const s2 = document.getElementById("s2");
-const cnt = document.getElementById("cnt");
-
-function opt(v, t){ const o = document.createElement("option"); o.value = v; o.textContent = t; return o; }
-
-/* 첫번째 항목: 구역 목록 */
-s1.appendChild(opt("", "전체"));
-model.forEach(function(m, i){ s1.appendChild(opt(String(i), m.title)); });
-
-/* 중분류: 대분류를 고르면 그 하위항목만, 고르지 않으면 모든 중분류(소제목)를 보여줌.
-   값은 "구역번호|하위번호" 형식. 소제목이 없는 구역은 링크 이름을 하위항목으로 사용. */
-function fillS2(){
-  const prev = s2.value;
-  s2.innerHTML = "";
-  s2.appendChild(opt("", "전체"));
-  model.forEach(function(m, mi){
-    if (s1.value !== "" && Number(s1.value) !== mi) return;
-    if (m.subs[0].title !== null) {
-      m.subs.forEach(function(sub, si){ s2.appendChild(opt(mi + "|" + si, sub.title)); });
-    } else if (s1.value !== "") {
-      m.subs[0].links.forEach(function(l, li){ s2.appendChild(opt(mi + "|" + li, l.label)); });
-    }
+    model.push(secModel);
   });
-  const ok = Array.prototype.some.call(s2.options, function(o){ return o.value === prev; });
-  s2.value = ok ? prev : "";
-}
 
-/* ----- 필터 적용 ----- */
-function apply(){
-  const q = norm(kw.value);
-  const a = s1.value;
-  const bp = s2.value === "" ? null : s2.value.split("|").map(Number);   /* [구역, 하위] */
-  let shown = 0;
+  /* ----- 검색 영역 (맨 위) ----- */
+  const sp = document.createElement("section");
+  sp.className = "panel search";
+  sp.innerHTML =
+    '<input id="kw" class="kw" type="search" placeholder="키워드·#해시태그 검색 (예: 국세, 안전, #공시)" autocomplete="off" aria-label="키워드 검색">' +
+    '<div class="pick">' +
+      '<label>대분류 <select id="s1" aria-label="대분류"></select></label>' +
+      '<label>중분류 <select id="s2" aria-label="중분류"></select></label>' +
+      '<button id="rs" class="reset" type="button">초기화</button>' +
+      '<span id="cnt" class="count"></span>' +
+    '</div>';
+  root.innerHTML = "";
+  root.appendChild(sp);
+  model.forEach(function(m){ root.appendChild(m.box); });
 
-  model.forEach(function(m, mi){
-    let secVisible = 0;
-    const secOk = (a === "" || Number(a) === mi) && (bp === null || bp[0] === mi);
+  const empty = document.createElement("p");
+  empty.className = "panel empty hide";
+  empty.textContent = "검색 결과가 없습니다.";
+  root.appendChild(empty);
 
-    m.subs.forEach(function(sub, si){
-      let subOk = secOk;
-      if (subOk && bp !== null && sub.title !== null) subOk = (bp[1] === si);
-      let subVisible = 0;
-      sub.links.forEach(function(l, li){
-        let ok = subOk;
-        if (ok && bp !== null && sub.title === null) ok = (bp[1] === li);
-        if (ok && q !== "") ok = norm(l.label).indexOf(q) >= 0;   /* 키워드는 링크 이름만 검색 (대분류·중분류 이름은 제외) */
-        l.el.classList.toggle("hide", !ok);
-        if (ok) subVisible++;
+  const kw = document.getElementById("kw");
+  const s1 = document.getElementById("s1");
+  const s2 = document.getElementById("s2");
+  const cnt = document.getElementById("cnt");
+
+  function opt(v, t){ const o = document.createElement("option"); o.value = v; o.textContent = t; return o; }
+
+  s1.appendChild(opt("", "전체"));
+  model.forEach(function(m, i){ s1.appendChild(opt(String(i), m.title)); });
+
+  /* 중분류: 대분류를 고르면 그 하위항목만, 고르지 않으면 모든 중분류를 보여줌. 값은 "대분류번호|중분류번호" */
+  function fillS2(){
+    const prev = s2.value;
+    s2.innerHTML = "";
+    s2.appendChild(opt("", "전체"));
+    model.forEach(function(m, mi){
+      if (s1.value !== "" && Number(s1.value) !== mi) return;
+      m.subs.forEach(function(sub, si){ s2.appendChild(opt(mi + "|" + si, sub.title)); });
+    });
+    const ok = Array.prototype.some.call(s2.options, function(o){ return o.value === prev; });
+    s2.value = ok ? prev : "";
+  }
+
+  /* ----- 필터 적용 ----- */
+  function apply(){
+    const q = normQ(kw.value);
+    const a = s1.value;
+    const bp = s2.value === "" ? null : s2.value.split("|").map(Number);
+    let shown = 0;
+
+    model.forEach(function(m, mi){
+      let secVisible = 0;
+      const secOk = (a === "" || Number(a) === mi) && (bp === null || bp[0] === mi);
+      m.subs.forEach(function(sub, si){
+        const subOk = secOk && (bp === null || bp[1] === si);
+        let subVisible = 0;
+        sub.links.forEach(function(l){
+          let ok = subOk;
+          /* 키워드는 링크 이름과 해시태그만 검색 (대분류·중분류 이름은 제외) */
+          if (ok && q !== "") ok = norm(l.label).indexOf(q) >= 0 || l.tags.some(function(t){ return t.indexOf(q) >= 0; });
+          l.el.classList.toggle("hide", !ok);
+          if (ok) subVisible++;
+        });
+        sub.el.classList.toggle("hide", subVisible === 0);
+        secVisible += subVisible;
       });
-      if (sub.el) sub.el.classList.toggle("hide", subVisible === 0);
-      secVisible += subVisible;
+      m.box.classList.toggle("hide", secVisible === 0);
+      shown += secVisible;
     });
 
-    m.box.classList.toggle("hide", secVisible === 0);
-    shown += secVisible;
+    empty.classList.toggle("hide", shown !== 0);
+    cnt.textContent = shown + "개";
+  }
+
+  kw.addEventListener("input", apply);
+  s1.addEventListener("change", function(){ fillS2(); apply(); });
+  s2.addEventListener("change", apply);
+  document.getElementById("rs").addEventListener("click", function(){
+    kw.value = ""; s1.value = ""; fillS2(); s2.value = ""; apply();
   });
 
-  empty.classList.toggle("hide", shown !== 0);
-  cnt.textContent = shown + "개";
+  /* 검색해도 화면 폭이 출렁이지 않도록, 처음 모든 항목이 보일 때의 폭을 고정 */
+  function lockWidth(){
+    root.style.width = "";
+    root.style.width = root.offsetWidth + "px";
+  }
+  fillS2();
+  apply();
+  lockWidth();
+  window.addEventListener("resize", lockWidth);
 }
 
-kw.addEventListener("input", apply);
-s1.addEventListener("change", function(){ fillS2(); apply(); });
-s2.addEventListener("change", apply);
-document.getElementById("rs").addEventListener("click", function(){
-  kw.value = ""; s1.value = ""; fillS2(); s2.value = ""; apply();
-});
-
-/* 검색해도 화면 폭이 출렁이지 않도록, 처음 모든 항목이 보일 때의 폭을 고정 */
-function lockWidth(){
-  root.style.width = "";
-  root.style.width = root.offsetWidth + "px";
+var pv = null;
+if (/[?&]preview=1/.test(location.search)) {
+  try { pv = JSON.parse(sessionStorage.getItem("kms_preview") || "null"); } catch(e){ pv = null; }
 }
-fillS2();
-apply();
-lockWidth();
-window.addEventListener("resize", function(){ lockWidth(); });
+if (pv) {
+  start(pv);
+  const tag = document.createElement("p");
+  tag.className = "preview-tag";
+  tag.textContent = "미리보기 — 아직 저장되지 않은 관리화면의 편집 내용입니다";
+  document.body.appendChild(tag);
+} else if (window.KMS_DATA) {
+  start(window.KMS_DATA);
+} else {
+  fetch("kms_data.json?t=" + Date.now(), { cache: "no-store" })
+    .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(start)
+    .catch(function(){ root.innerHTML = '<p class="panel empty">데이터를 불러오지 못했습니다. 잠시 후 새로고침 해주세요.</p>'; });
+}
 </script>
 </body>
 </html>

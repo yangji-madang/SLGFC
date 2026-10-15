@@ -1,0 +1,475 @@
+{
+ "updated": "2026-10-15",
+ "sections": [
+  {
+   "title": "SLI GFC",
+   "sort": false,
+   "pin": false,
+   "groups": [
+    {
+     "title": "계약기본정보",
+     "pin": false,
+     "links": [
+      {
+       "label": "상품가입나이",
+       "url": "Prod/Prod_Age.html",
+       "tags": [
+        "나이",
+        "가입연령",
+        "최대나이",
+        "보험나이"
+       ],
+       "pin": false
+      },
+      {
+       "label": "간편보험 비교표",
+       "url": "Prod/simple_goji.html",
+       "tags": [
+        "간편",
+        "유병자",
+        "고지",
+        "비교"
+       ],
+       "pin": false
+      },
+      {
+       "label": "간편보험 인수기준",
+       "url": "Prod/simple_insu_2610.html",
+       "tags": [
+        "간편",
+        "유병자",
+        "인수",
+        "심사"
+       ],
+       "pin": false
+      }
+     ]
+    },
+    {
+     "title": "상품정보",
+     "pin": false,
+     "links": [
+      {
+       "label": "New플러스원 고환급특약 검색",
+       "url": "Prod/newplus1_surrendervalue.html",
+       "tags": [
+        "플러스원",
+        "환급금",
+        "해약환급금",
+        "고환급"
+       ],
+       "pin": false
+      }
+     ]
+    },
+    {
+     "title": "교육/강의",
+     "pin": false,
+     "links": [
+      {
+       "label": "CRETOP",
+       "url": "https://www.cretop.com",
+       "tags": [
+        "기업정보",
+        "신용평가",
+        "재무",
+        "크레탑"
+       ],
+       "pin": false
+      },
+      {
+       "label": "런인베스트",
+       "url": "https://www.learninvest.co.kr/u/samsunglife_gfc/login",
+       "tags": [
+        "교육",
+        "강의",
+        "영상"
+       ],
+       "pin": false
+      },
+      {
+       "label": "CO파트너",
+       "url": "https://copartner.kr/co-report",
+       "tags": [
+        "법인",
+        "리포트",
+        "컨설팅"
+       ],
+       "pin": false
+      },
+      {
+       "label": "법인컨설팅AI",
+       "url": "https://cc.learninvest.co.kr/",
+       "tags": [
+        "법인",
+        "컨설팅",
+        "AI",
+        "상담"
+       ],
+       "pin": false
+      },
+      {
+       "label": "삼성생명 Business Live ON",
+       "url": "https://www.samsung2030blo.com/",
+       "tags": [
+        "교육",
+        "라이브",
+        "방송",
+        "BLO"
+       ],
+       "pin": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "title": "기관/협회",
+   "sort": false,
+   "pin": false,
+   "groups": [
+    {
+     "title": "고용.산업안전",
+     "pin": false,
+     "links": [
+      {
+       "label": "고용노동부",
+       "url": "https://moel.go.kr",
+       "tags": [
+        "노무",
+        "근로",
+        "임금",
+        "고용"
+       ],
+       "pin": false
+      },
+      {
+       "label": "산업안전포털",
+       "url": "https://portal.kosha.or.kr/",
+       "tags": [
+        "산업안전",
+        "안전보건",
+        "중대재해처벌법"
+       ],
+       "pin": false
+      },
+      {
+       "label": "중대재해알림e",
+       "url": "https://labor.moel.go.kr/sasttc/main/main.do",
+       "tags": [
+        "중대재해",
+        "산재",
+        "사고"
+       ],
+       "pin": false
+      }
+     ]
+    },
+    {
+     "title": "기업",
+     "pin": false,
+     "links": [
+      {
+       "label": "기술보증기금",
+       "url": "https://www.kibo.or.kr/",
+       "tags": [
+        "보증",
+        "기술평가",
+        "기보"
+       ],
+       "pin": false
+      },
+      {
+       "label": "대한상공회의소",
+       "url": "https://www.korcham.net/",
+       "tags": [
+        "상의",
+        "기업",
+        "경제단체"
+       ],
+       "pin": false
+      },
+      {
+       "label": "신용보증기금",
+       "url": "https://www.kodit.or.kr/",
+       "tags": [
+        "보증",
+        "신보",
+        "대출"
+       ],
+       "pin": false
+      },
+      {
+       "label": "인터넷등기소",
+       "url": "https://www.iros.go.kr",
+       "tags": [
+        "등기",
+        "법인등기",
+        "등기부등본",
+        "부동산"
+       ],
+       "pin": false
+      },
+      {
+       "label": "전자공시",
+       "url": "https://dart.fss.or.kr/",
+       "tags": [
+        "공시",
+        "DART",
+        "재무제표",
+        "상장"
+       ],
+       "pin": false
+      },
+      {
+       "label": "중소기업중앙회",
+       "url": "https://www.kbiz.or.kr/ko/index/index.do",
+       "tags": [
+        "중기중앙회",
+        "중소기업",
+        "경제단체"
+       ],
+       "pin": false
+      },
+      {
+       "label": "중소벤처24",
+       "url": "https://portal.smes.go.kr",
+       "tags": [
+        "중소기업",
+        "지원사업",
+        "정책자금"
+       ],
+       "pin": false
+      },
+      {
+       "label": "중소벤처기업부",
+       "url": "https://www.mss.go.kr/",
+       "tags": [
+        "중기부",
+        "창업",
+        "지원사업"
+       ],
+       "pin": false
+      }
+     ]
+    },
+    {
+     "title": "보험.금융",
+     "pin": false,
+     "links": [
+      {
+       "label": "금융감독원",
+       "url": "https://www.fss.or.kr/",
+       "tags": [
+        "금감원",
+        "감독",
+        "분쟁조정",
+        "민원"
+       ],
+       "pin": false
+      },
+      {
+       "label": "금융소비자정보포털 파인",
+       "url": "https://fine.fss.or.kr/",
+       "tags": [
+        "금융상품",
+        "비교",
+        "소비자",
+        "금융"
+       ],
+       "pin": false
+      },
+      {
+       "label": "보험개발원",
+       "url": "https://www.kidi.or.kr/",
+       "tags": [
+        "보험통계",
+        "참조순보험료",
+        "보험요율"
+       ],
+       "pin": false
+      },
+      {
+       "label": "보험다모아",
+       "url": "https://www.e-insmarket.or.kr/",
+       "tags": [
+        "보험비교",
+        "보험료",
+        "비교"
+       ],
+       "pin": false
+      },
+      {
+       "label": "생명보험협회",
+       "url": "https://www.klia.or.kr/",
+       "tags": [
+        "생보협회",
+        "공시",
+        "생명보험"
+       ],
+       "pin": false
+      },
+      {
+       "label": "손해보험협회",
+       "url": "https://www.knia.or.kr/",
+       "tags": [
+        "손보협회",
+        "공시",
+        "손해보험"
+       ],
+       "pin": false
+      }
+     ]
+    },
+    {
+     "title": "세제.법령",
+     "pin": false,
+     "links": [
+      {
+       "label": "국가법령정보센터",
+       "url": "https://www.law.go.kr/",
+       "tags": [
+        "법률",
+        "법령",
+        "조문",
+        "판례"
+       ],
+       "pin": false
+      },
+      {
+       "label": "국세법령정보시스템",
+       "url": "https://taxlaw.nts.go.kr",
+       "tags": [
+        "세법",
+        "예규",
+        "판례",
+        "유권해석"
+       ],
+       "pin": false
+      },
+      {
+       "label": "국세청",
+       "url": "https://www.nts.go.kr/",
+       "tags": [
+        "세금",
+        "세무",
+        "홈택스",
+        "세무조사"
+       ],
+       "pin": false
+      },
+      {
+       "label": "재정경제부",
+       "url": "https://www.moef.go.kr/",
+       "tags": [
+        "세제개편",
+        "경제정책",
+        "세법개정"
+       ],
+       "pin": false
+      },
+      {
+       "label": "조세심판원",
+       "url": "https://www.tt.go.kr/",
+       "tags": [
+        "조세불복",
+        "심판",
+        "판결"
+       ],
+       "pin": false
+      }
+     ]
+    },
+    {
+     "title": "정보(통계/지표/건강 등)",
+     "pin": false,
+     "links": [
+      {
+       "label": "경제교육정보센터(KDI)",
+       "url": "https://eiec.kdi.re.kr/",
+       "tags": [
+        "경제교육",
+        "KDI",
+        "경제"
+       ],
+       "pin": false
+      },
+      {
+       "label": "국가건강정보포털",
+       "url": "https://health.kdca.go.kr/healthinfo/",
+       "tags": [
+        "건강",
+        "질병",
+        "의학정보"
+       ],
+       "pin": false
+      },
+      {
+       "label": "국가데이터처",
+       "url": "https://mods.go.kr",
+       "tags": [
+        "통계청",
+        "통계",
+        "인구"
+       ],
+       "pin": false
+      },
+      {
+       "label": "국가암지식정보센터",
+       "url": "https://www.cancer.go.kr/",
+       "tags": [
+        "암",
+        "질병",
+        "통계",
+        "건강"
+       ],
+       "pin": false
+      },
+      {
+       "label": "국가통계포털",
+       "url": "https://kosis.kr/index/index.do",
+       "tags": [
+        "통계",
+        "KOSIS",
+        "인구",
+        "경제"
+       ],
+       "pin": false
+      },
+      {
+       "label": "지역사회건강조사",
+       "url": "https://chs.kdca.go.kr/chs/index.do",
+       "tags": [
+        "건강통계",
+        "질병관리청",
+        "건강"
+       ],
+       "pin": false
+      },
+      {
+       "label": "지표누리",
+       "url": "https://index.go.kr/",
+       "tags": [
+        "지표",
+        "통계",
+        "국가지표"
+       ],
+       "pin": false
+      },
+      {
+       "label": "질병분류정보센터",
+       "url": "https://www.koicd.kr/main.do",
+       "tags": [
+        "질병분류",
+        "KCD",
+        "진단코드",
+        "코드"
+       ],
+       "pin": false
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

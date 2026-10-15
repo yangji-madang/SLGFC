@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Mr. Yoon's KMS 관리</title>
+<style>
+  :root{ --text:#10243a; --bg-pos:center center; }
+  @media (orientation:landscape){ :root{ --bg-pos:center 62%; } }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh; min-height:100dvh; background:#35597f; color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+    font-size:11.6px; line-height:1.3;
+  }
+  .bg{ position:fixed; top:0;right:0;bottom:0;left:0; z-index:0; pointer-events:none;
+       background:#35597f url("kms_bg.jpg") var(--bg-pos) / cover no-repeat; }
+  .page{ position:relative; z-index:1; display:flex; flex-direction:column; min-height:100vh; min-height:100dvh;
+         max-width:980px; margin:0 auto; padding:10px 10px 8px; gap:5px; }
+
+  .panel{
+    padding:4px 7px 5px;
+    background:linear-gradient(180deg,rgba(226,241,255,0.94) 0%,rgba(200,226,252,0.92) 50%,rgba(174,208,246,0.90) 100%);
+    border:1px solid #1f4f86; border-top-color:#f2f9ff; border-radius:6px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),inset 0 -2px 0 rgba(60,90,130,0.22),0 2px 0 #1a4476,0 6px 11px rgba(3,18,45,0.55);
+  }
+  h1{ margin:0 0 3px; font-size:14px; font-weight:800; color:#071d3a; -webkit-text-stroke:0.4px #071d3a; }
+  .ver{ font-size:11px; font-weight:700; color:#1d3552; -webkit-text-stroke:0; margin-left:6px; }
+  .hint{ margin:0 0 4px; font-size:11.6px; color:#1d3552; }
+  .hint b{ color:#071d3a; }
+
+  /* 버튼 */
+  button{ font:inherit; font-size:11.6px; font-weight:700; cursor:pointer; border-radius:5px; line-height:1.2; }
+  .btn{
+    padding:2px 8px; color:#fff; border:1px solid #3a0a18; text-shadow:0 1px 1px rgba(0,0,0,0.45);
+    background:linear-gradient(180deg,rgba(255,255,255,0.30) 0%,rgba(255,255,255,0.08) 48%,rgba(255,255,255,0) 52%),
+               linear-gradient(115deg,#c0566f 0%,#8c2c47 38%,#611a2f 70%,#3f0f1e 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.38),inset 0 -1px 0 rgba(0,0,0,0.25),0 1px 0 #3a0a18,0 3px 5px rgba(50,8,22,0.45);
+  }
+  .btn:hover{ background:linear-gradient(180deg,#2f6aa3 0%,#1a4f86 55%,#123c68 100%); border-color:#0b2744; }
+  .btn:active,.mini:active{ transform:translateY(1px); }
+  .btn.save{ background:linear-gradient(180deg,rgba(255,255,255,0.30) 0%,rgba(255,255,255,0.08) 48%,rgba(255,255,255,0) 52%),linear-gradient(115deg,#2f7d4f,#1f5c38 60%,#143f26); border-color:#0d2a19; }
+  .btn:disabled{ opacity:.55; cursor:default; }
+  .mini{
+    padding:1px 6px; color:#0b2547; border:1px solid #6f87a3; border-bottom-color:#3f648d;
+    background:linear-gradient(180deg,#ffffff 0%,#dfe9f4 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),0 1px 0 #3f648d;
+  }
+  .mini:hover{ border-color:#74223a; }
+  .mini:disabled{ opacity:.35; cursor:default; }
+  .mini.del{ color:#7a1530; }
+  .mini.pin[aria-pressed="true"]{
+    color:#3a2600; border-color:#a98524; border-left:3px solid #74223a;
+    background:linear-gradient(180deg,#fffdf0 0%,#fff0b8 55%,#ffe38a 100%);
+  }
+  .bar{ display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
+  .status{ margin-left:auto; font-size:11.6px; font-weight:800; color:#0b2547; }
+  .status.dirty{ color:#9a1030; }
+  .msg{ margin:4px 0 0; font-size:12px; font-weight:700; padding:3px 7px; border-radius:5px; display:none; }
+  .msg.ok{ display:block; color:#0d3b1f; background:#d7f2e0; border:1px solid #2f7d4f; }
+  .msg.err{ display:block; color:#6b0f22; background:#fde3e8; border:1px solid #9a1030; }
+  .msg.info{ display:block; color:#0b2547; background:#e8f1fb; border:1px solid #3f648d; }
+
+  /* 입력 */
+  input[type=text],input[type=password],input[type=search],textarea{
+    font:inherit; font-size:11.6px; width:100%; min-width:0; padding:1px 5px; color:#071d3a;
+    background:rgba(255,255,255,0.95); border:1px solid #6f87a3; border-radius:5px;
+    box-shadow:inset 0 2px 3px rgba(10,30,60,0.18); outline:none;
+  }
+  input:focus,textarea:focus{ border-color:#74223a; box-shadow:inset 0 2px 3px rgba(10,30,60,0.18),0 0 0 2px rgba(116,34,58,0.3); }
+  input.bad{ border-color:#9a1030; background:#fff0f3; }
+  label.chk{ display:inline-flex; align-items:center; gap:4px; font-weight:800; color:#0b2547; font-size:12px; }
+  input[type=checkbox]{ margin:0; width:14px; height:14px; accent-color:#74223a; }
+
+  /* 설정 */
+  details.cfg summary{ cursor:pointer; font-weight:800; font-size:12.5px; color:#071d3a; }
+  .cfg .grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; margin-top:5px; }
+  .cfg .grid label{ display:grid; gap:2px; font-size:11.6px; font-weight:800; color:#0b2547; }
+  .cfg .grid .wide{ grid-column:span 2; }
+
+  /* 편집기 */
+  .sec{ margin:0 0 5px; padding:4px 6px 5px; background:rgba(255,255,255,0.45); border:1px solid #5f84ad; border-radius:6px; }
+  .sec:last-child{ margin-bottom:0; }
+  .sec.pinned{ border-color:#a98524; box-shadow:inset 3px 0 0 #c9a23c; }
+  .row1{ display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
+  .row1 .name{ flex:1 1 140px; min-width:0; }
+  .row1 .name.big{ font-size:13px; font-weight:800; }
+  .tag{ font-size:10.8px; font-weight:800; padding:0 5px; border-radius:3px; color:#fff; background:#74223a; }
+  .grp{ margin:4px 0 0; padding:3px 5px; background:rgba(255,253,235,0.55); border:1px solid #c9a23c; border-left:4px solid #74223a; border-radius:5px; }
+  .grp.pinned{ background:rgba(255,240,184,0.75); }
+  .grp .name{ font-weight:800; }
+  .lk{ display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1.7fr) minmax(0,1.4fr) auto; gap:3px; align-items:center;
+       margin-top:3px; padding-top:3px; border-top:1px dashed rgba(95,125,160,0.55); }
+  .lk .acts{ display:flex; gap:3px; flex-wrap:nowrap; }
+  .addrow{ margin-top:3px; }
+  .cnt{ font-size:10.8px; font-weight:800; color:#4a3a00; }
+  .tg{ padding:0 5px; min-width:20px; }
+  .note{ font-size:11px; color:#4a3a00; font-weight:700; }
+  .empty{ margin:0; font-size:12.5px; font-weight:700; color:#0b2547; }
+
+  .foot{ margin-top:auto; padding-top:8px; }
+  .foot .notice{ margin:0 0 2px; font-size:11.6px; font-weight:800; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.8); }
+  .foot .copyright{ margin:0; font-size:11.6px; color:#eef3ee; text-shadow:0 1px 3px rgba(0,0,0,0.8); }
+  .foot-bg{ background:rgba(4,20,14,0.55); border-radius:8px; padding:5px 9px; display:inline-block; }
+
+  @media (max-width:640px){
+    input[type=text],input[type=password],input[type=search],textarea{ font-size:16px; padding:1px 5px; }
+    .cfg .grid{ grid-template-columns:1fr 1fr; }
+    .lk{ grid-template-columns:1fr; }
+    .lk .acts{ flex-wrap:wrap; }
+  }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"></div>
+<div class="page">
+
+  <section class="panel">
+    <h1>KMS 관리화면 <span class="ver">저장 즉시 게이트 반영(약 1분)</span></h1>
+    <div class="bar">
+      <button class="btn save" id="bSave" type="button">GitHub에 저장</button>
+      <button class="btn" id="bPrev" type="button">미리보기</button>
+      <button class="btn" id="bReload" type="button">게시본 다시 불러오기</button>
+      <span class="status" id="stat">불러오는 중…</span>
+    </div>
+    <div class="msg" id="msg" role="status"></div>
+  </section>
+
+  <section class="panel cfg">
+    <details id="cfg">
+      <summary>저장 설정 (GitHub 연결)</summary>
+      <div class="grid">
+        <label>저장소(소유자/이름)<input type="text" id="cRepo" value="yangji-madang/SLGFC" autocomplete="off"></label>
+        <label>브랜치<input type="text" id="cBranch" value="main" autocomplete="off"></label>
+        <label>데이터 파일<input type="text" id="cPath" value="kms_data.json" autocomplete="off"></label>
+        <label class="wide">액세스 토큰 (Contents: Read and write)<input type="password" id="cTok" autocomplete="off" placeholder="github_pat_…"></label>
+      </div>
+      <p class="hint" style="margin-top:4px"><label class="chk"><input type="checkbox" id="cRem"> 이 브라우저에 토큰 기억</label> (공용 기기에서는 끄세요)</p>
+    </details>
+  </section>
+
+  <section class="panel">
+    <div class="bar" style="margin-bottom:5px">
+      <button class="btn" id="bAddSec" type="button">+ 대분류</button>
+      <button class="btn" id="bOpen" type="button">모두 펼치기</button>
+      <button class="btn" id="bShut" type="button">모두 접기</button>
+    </div>
+    <div id="tree"></div>
+  </section>
+
+  <footer class="foot">
+    <div class="foot-bg">
+      <p class="notice">※ 고객상담시에는 반드시 시스템을 확인하시기 바랍니다.</p>
+      <p class="copyright">ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.</p>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var ko = function(a, b){ return a.localeCompare(b, "ko"); };
+var $ = function(id){ return document.getElementById(id); };
+var DRAFT = "kms_admin_draft_v1", CFG = "kms_admin_cfg_v1";
+var data = null, sha = null, dirty = false;
+
+/* ---------- 보조 ---------- */
+function safe(fn, fb){ try { return fn(); } catch(e){ return fb; } }
+function msg(kind, text){ var m = $("msg"); m.className = "msg " + kind; m.textContent = text; }
+function clearMsg(){ var m = $("msg"); m.className = "msg"; m.textContent = ""; }
+function setDirty(v){
+  dirty = v;
+  var s = $("stat"); s.textContent = v ? "● 저장 안 된 변경 있음" : "✓ 게시본과 동일"; s.className = "status" + (v ? " dirty" : "");
+  if (v && data) safe(function(){ localStorage.setItem(DRAFT, JSON.stringify(data)); });
+  if (!v) safe(function(){ localStorage.removeItem(DRAFT); });
+}
+/* 해시태그 정리: '#' 제거, 공백·쉼표로 분리, 중복 제거 */
+function parseTags(t){
+  var out = [];
+  String(t).split(/[\s,]+/).forEach(function(x){
+    x = x.replace(/^#+/, "").trim();
+    if (x && out.map(function(y){ return y.toLowerCase(); }).indexOf(x.toLowerCase()) < 0) out.push(x);
+  });
+  return out;
+}
+function tagsText(a){ return (a || []).map(function(x){ return "#" + x; }).join(" "); }
+function validUrl(u){ return /^https?:\/\/[^\s]+\.[^\s]+$/i.test(u) || /^[A-Za-z0-9_\-\/\.]+\.html?([?#].*)?$/.test(u); }
+
+/* 표시 순서 = 고정 먼저, (자동정렬이면) 나머지 가나다순. 화면과 게이트 페이지가 같은 규칙 */
+function displayOrder(list, auto, key){
+  var pins = list.filter(function(x){ return x.pin; }), rest = list.filter(function(x){ return !x.pin; });
+  if (auto) rest.sort(function(x, y){ return ko(key(x), key(y)); });
+  return pins.concat(rest);
+}
+function normalize(list, auto, key){
+  var o = displayOrder(list, auto, key); list.length = 0; o.forEach(function(x){ list.push(x); });
+}
+function move(list, item, dir, auto, key){
+  normalize(list, auto, key);
+  var i = list.indexOf(item), j = i + dir;
+  if (j < 0 || j >= list.length || !!list[j].pin !== !!item.pin) return;
+  list[i] = list[j]; list[j] = item;
+}
+function togglePin(list, item, auto, key){
+  item.pin = !item.pin;
+  list.splice(list.indexOf(item), 1);
+  var pins = list.filter(function(x){ return x.pin; }).length;
+  list.splice(item.pin ? pins : list.length, 0, item);   /* 새로 고정: 고정 구역의 맨 끝 / 해제: 일반 구역의 맨 끝 */
+  normalize(list, auto, key);
+}
+
+/* ---------- 화면 ---------- */
+function el(tag, cls, text){ var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function mini(text, title, fn, cls){
+  var b = el("button", "mini" + (cls ? " " + cls : ""), text); b.type = "button"; b.title = title; b.addEventListener("click", fn); return b;
+}
+function pinBtn(item, fn){
+  var b = mini("★", "고정: 같은 단계에서 맨 앞에 표시", fn, "pin"); b.setAttribute("aria-pressed", item.pin ? "true" : "false");
+  return b;
+}
+function changed(){ setDirty(true); }
+function rerender(){ render(); changed(); }
+function input(val, ph, cls, onch){
+  var i = el("input", cls); i.type = "text"; i.value = val || ""; i.placeholder = ph || ""; i.setAttribute("aria-label", ph || "");
+  i.addEventListener("input", function(){ onch(i.value, i); }); return i;
+}
+
+var tKey = function(x){ return x.title; }, lKey = function(x){ return x.label; };
+var opened = new WeakSet();   /* 펼쳐 둔 대분류·중분류 */
+
+function sortOnce(list, key){   /* 한 번만 가나다순으로 재배치 (고정 항목은 맨 앞 유지) */
+  var pins = list.filter(function(x){ return x.pin; }), rest = list.filter(function(x){ return !x.pin; });
+  rest.sort(function(x, y){ return ko(key(x), key(y)); });
+  list.length = 0; pins.concat(rest).forEach(function(x){ list.push(x); });
+}
+function arrows(list, item, key, row){
+  var i = list.indexOf(item);
+  var up = mini("▲", "위로", function(){ move(list, item, -1, false, key); rerender(); });
+  var dn = mini("▼", "아래로", function(){ move(list, item, 1, false, key); rerender(); });
+  up.disabled = i === 0 || !!list[i-1].pin !== !!item.pin;
+  dn.disabled = i === list.length - 1 || !!list[i+1].pin !== !!item.pin;
+  row.appendChild(up); row.appendChild(dn);
+}
+function toggler(item){
+  var b = mini(opened.has(item) ? "▾" : "▸", "펼치기/접기", function(){ if (opened.has(item)) opened.delete(item); else opened.add(item); render(); }, "tg");
+  return b;
+}
+
+function render(){
+  var tree = $("tree"); tree.innerHTML = "";
+  if (!data) return;
+  normalize(data.sections, false, tKey);
+  if (!data.sections.length) tree.appendChild(el("p", "empty", "대분류가 없습니다. [+ 대분류]를 눌러 시작하세요."));
+
+  data.sections.forEach(function(sec){
+    var sb = el("div", "sec" + (sec.pin ? " pinned" : ""));
+    var r = el("div", "row1");
+    r.appendChild(toggler(sec));
+    r.appendChild(el("span", "tag", "대분류"));
+    r.appendChild(input(sec.title, "대분류 이름", "name big", function(v, i){ sec.title = v.trim(); i.classList.toggle("bad", !sec.title); changed(); }));
+    r.appendChild(el("span", "cnt", sec.groups.length + "개"));
+    r.appendChild(pinBtn(sec, function(){ togglePin(data.sections, sec, false, tKey); rerender(); }));
+    arrows(data.sections, sec, tKey, r);
+    r.appendChild(mini("가나다", "하위 중분류·링크를 가나다순으로 한 번 정렬(고정 항목 제외). 이후 ▲▼로 다시 조정 가능", function(){
+      if (!confirm("'" + sec.title + "' 아래 중분류와 링크를 가나다순으로 재정렬합니다(고정 항목은 맨 앞 유지). 계속할까요?")) return;
+      sortOnce(sec.groups, tKey); sec.groups.forEach(function(g){ sortOnce(g.links, lKey); }); rerender();
+    }));
+    r.appendChild(mini("삭제", "대분류 삭제", function(){
+      var n = sec.groups.reduce(function(a, g){ return a + g.links.length; }, 0);
+      if (confirm("'" + sec.title + "' 대분류와 하위 중분류·링크 " + n + "개를 삭제합니다. 계속할까요?")) { data.sections.splice(data.sections.indexOf(sec), 1); rerender(); }
+    }, "del"));
+    sb.appendChild(r);
+
+    if (opened.has(sec)) {
+      normalize(sec.groups, false, tKey);
+      sec.groups.forEach(function(g){
+        var gb = el("div", "grp" + (g.pin ? " pinned" : ""));
+        var gr = el("div", "row1");
+        gr.appendChild(toggler(g));
+        gr.appendChild(el("span", "tag", "중분류"));
+        gr.appendChild(input(g.title, "중분류 이름", "name", function(v, i){ g.title = v.trim(); i.classList.toggle("bad", !g.title); changed(); }));
+        gr.appendChild(el("span", "cnt", g.links.length + "개"));
+        gr.appendChild(pinBtn(g, function(){ togglePin(sec.groups, g, false, tKey); rerender(); }));
+        arrows(sec.groups, g, tKey, gr);
+        gr.appendChild(mini("이동", "다른 대분류로 이동", function(){
+          var names = data.sections.map(function(s, k){ return (k + 1) + ". " + s.title; }).join("\n");
+          var a = prompt("이동할 대분류 번호를 입력하세요.\n" + names, "");
+          var k = parseInt(a, 10) - 1;
+          if (!isNaN(k) && data.sections[k] && data.sections[k] !== sec) {
+            sec.groups.splice(sec.groups.indexOf(g), 1); data.sections[k].groups.push(g); g.pin = false; opened.add(data.sections[k]); rerender();
+          }
+        }));
+        gr.appendChild(mini("삭제", "중분류 삭제", function(){
+          if (confirm("'" + g.title + "' 중분류와 링크 " + g.links.length + "개를 삭제합니다. 계속할까요?")) { sec.groups.splice(sec.groups.indexOf(g), 1); rerender(); }
+        }, "del"));
+        gb.appendChild(gr);
+
+        if (opened.has(g)) {
+          normalize(g.links, false, lKey);
+          g.links.forEach(function(l){
+            var lr = el("div", "lk");
+            lr.appendChild(input(l.label, "링크 이름", "", function(v, i){ l.label = v.trim(); i.classList.toggle("bad", !l.label); changed(); }));
+            lr.appendChild(input(l.url, "주소 (https://… 또는 Prod/파일.html)", "", function(v, i){ l.url = v.trim(); i.classList.toggle("bad", !validUrl(l.url)); changed(); }));
+            var ti = input(tagsText(l.tags), "#해시태그 (공백 구분)", "", function(v){ l.tags = parseTags(v); changed(); });
+            ti.addEventListener("blur", function(){ ti.value = tagsText(l.tags); });
+            lr.appendChild(ti);
+            var ac = el("div", "acts");
+            ac.appendChild(pinBtn(l, function(){ togglePin(g.links, l, false, lKey); rerender(); }));
+            arrows(g.links, l, lKey, ac);
+            ac.appendChild(mini("삭제", "링크 삭제", function(){
+              if (confirm("'" + l.label + "' 링크를 삭제합니다. 계속할까요?")) { g.links.splice(g.links.indexOf(l), 1); rerender(); }
+            }, "del"));
+            lr.appendChild(ac);
+            if (!validUrl(l.url)) lr.children[1].classList.add("bad");
+            if (!l.label) lr.children[0].classList.add("bad");
+            gb.appendChild(lr);
+          });
+          var ar = el("div", "addrow");
+          ar.appendChild(mini("+ 링크", "이 중분류에 링크 추가", function(){ g.links.push({ label: "", url: "https://", tags: [], pin: false }); rerender(); }));
+          gb.appendChild(ar);
+        }
+        sb.appendChild(gb);
+      });
+      var ag = el("div", "addrow");
+      ag.appendChild(mini("+ 중분류", "이 대분류에 중분류 추가", function(){ var g = { title: "", pin: false, links: [] }; sec.groups.push(g); opened.add(g); rerender(); }));
+      sb.appendChild(ag);
+    }
+    tree.appendChild(sb);
+  });
+}
+
+/* ---------- 검사 ---------- */
+function validate(){
+  var errs = [];
+  if (!data.sections.length) errs.push("대분류가 하나도 없습니다.");
+  data.sections.forEach(function(s){
+    if (!s.title) errs.push("이름이 비어 있는 대분류가 있습니다.");
+    s.groups.forEach(function(g){
+      if (!g.title) errs.push("[" + (s.title || "?") + "] 이름이 비어 있는 중분류가 있습니다.");
+      g.links.forEach(function(l){
+        if (!l.label) errs.push("[" + (g.title || "?") + "] 이름이 비어 있는 링크가 있습니다.");
+        else if (!validUrl(l.url)) errs.push("'" + l.label + "' 의 주소 형식이 올바르지 않습니다: " + l.url);
+      });
+    });
+  });
+  return errs;
+}
+function clean(){
+  var d = JSON.parse(JSON.stringify(data));
+  d.updated = new Date().toISOString().slice(0, 10);
+  d.sections.forEach(function(s){ s.sort = false; s.pin = !!s.pin;
+    s.groups.forEach(function(g){ g.pin = !!g.pin; g.links.forEach(function(l){ l.pin = !!l.pin; l.tags = l.tags || []; }); }); });
+  return d;
+}
+
+/* ---------- 불러오기 ---------- */
+function adopt(d){
+  d = d || {}; d.sections = (d.sections || []).map(function(s){
+    return { title: s.title || "", sort: !!s.sort, pin: !!s.pin, groups: (s.groups || []).map(function(g){
+      return { title: g.title || "", pin: !!g.pin, links: (g.links || []).map(function(l){
+        return { label: l.label || "", url: l.url || "", tags: Array.isArray(l.tags) ? l.tags : parseTags(l.tags || ""), pin: !!l.pin };
+      })};
+    })};
+  });
+  data = d;
+  data.sections.forEach(function(s){ opened.add(s); });
+  render();
+}
+function cfg(){
+  return { repo: $("cRepo").value.trim(), branch: $("cBranch").value.trim() || "main", path: $("cPath").value.trim() || "kms_data.json" };
+}
+function loadPublished(thenDraft){
+  msg("info", "게시본을 불러오는 중입니다…");
+  return fetch("kms_data.json?t=" + Date.now(), { cache: "no-store" })
+    .then(function(r){ if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function(d){
+      adopt(d); setDirty(false); clearMsg();
+      var dr = thenDraft && safe(function(){ return localStorage.getItem(DRAFT); });
+      if (dr && confirm("저장하지 않고 닫은 임시저장본이 있습니다. 이어서 편집할까요?\n(취소하면 임시저장본은 버려집니다)")) { adopt(JSON.parse(dr)); setDirty(true); msg("info", "임시저장본을 불러왔습니다. 저장 전까지 게시본에는 반영되지 않습니다."); }
+      else safe(function(){ localStorage.removeItem(DRAFT); });
+    })
+    .catch(function(e){ data = data || { sections: [] }; render(); msg("err", "게시본을 불러오지 못했습니다(" + e.message + "). 잠시 후 다시 시도하세요."); $("stat").textContent = "불러오기 실패"; });
+}
+
+/* ---------- 저장 (GitHub Contents API) ---------- */
+function b64(s){ var b = new TextEncoder().encode(s), x = ""; for (var i = 0; i < b.length; i++) x += String.fromCharCode(b[i]); return btoa(x); }
+function api(url, opt){
+  opt = opt || {}; opt.headers = Object.assign({ "Accept": "application/vnd.github+json", "Authorization": "Bearer " + $("cTok").value.trim(), "X-GitHub-Api-Version": "2022-11-28" }, opt.headers || {});
+  return fetch(url, opt).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ if (!r.ok) { var e = new Error((j && j.message) || r.status); e.status = r.status; throw e; } return j; }); });
+}
+function save(){
+  var errs = validate();
+  if (errs.length) { msg("err", "저장할 수 없습니다: " + errs.slice(0, 4).join(" / ") + (errs.length > 4 ? " 외 " + (errs.length - 4) + "건" : "")); return; }
+  var c = cfg();
+  if (!/^[\w.-]+\/[\w.-]+$/.test(c.repo)) { $("cfg").open = true; msg("err", "저장소 이름 형식이 올바르지 않습니다. (예: yangji-madang/SLGFC)"); return; }
+  if (!$("cTok").value.trim()) { $("cfg").open = true; msg("err", "저장하려면 '저장 설정'에 액세스 토큰을 입력하세요."); return; }
+  var url = "https://api.github.com/repos/" + c.repo + "/contents/" + c.path.split("/").map(encodeURIComponent).join("/");
+  $("bSave").disabled = true; msg("info", "GitHub에 저장하는 중입니다…");
+  api(url + "?ref=" + encodeURIComponent(c.branch)).then(function(cur){ return cur.sha; }, function(e){ if (e.status === 404) return null; throw e; })
+  .then(function(curSha){
+    var body = { message: "kms_data: 관리화면에서 수정 (" + new Date().toISOString().slice(0, 16).replace("T", " ") + ")", content: b64(JSON.stringify(clean(), null, 1) + "\n"), branch: c.branch };
+    if (curSha) body.sha = curSha;
+    return api(url, { method: "PUT", body: JSON.stringify(body) });
+  })
+  .then(function(){
+    setDirty(false); msg("ok", "저장되었습니다. GitHub Pages 반영까지 약 1분 걸립니다(안 보이면 새로고침).");
+    if ($("cRem").checked) safe(function(){ localStorage.setItem(CFG, JSON.stringify({ repo: c.repo, branch: c.branch, path: c.path, tok: $("cTok").value.trim() })); });
+  })
+  .catch(function(e){
+    var hint = e.status === 401 ? " (토큰이 올바르지 않거나 만료되었습니다)" : e.status === 403 || e.status === 404 ? " (토큰에 이 저장소의 Contents 쓰기 권한이 있는지 확인하세요)" : e.status === 409 || e.status === 422 ? " (다른 곳에서 먼저 수정됨 — 다시 시도하세요)" : "";
+    msg("err", "저장 실패: " + e.message + hint);
+  })
+  .then(function(){ $("bSave").disabled = false; });
+}
+
+/* ---------- 미리보기 ---------- */
+function preview(){
+  var errs = validate(); if (errs.length) { msg("err", "미리보기 전에 먼저 고쳐주세요: " + errs[0]); return; }
+  safe(function(){ sessionStorage.setItem("kms_preview", JSON.stringify(clean())); });
+  var w = window.open("kms_gate.html?preview=1", "_blank");
+  if (!w) msg("err", "팝업이 차단되었습니다. 팝업을 허용해 주세요.");
+}
+$("bSave").addEventListener("click", save);
+$("bPrev").addEventListener("click", preview);
+$("bReload").addEventListener("click", function(){ if (!dirty || confirm("저장하지 않은 변경 내용이 사라집니다. 게시본을 다시 불러올까요?")) loadPublished(false); });
+$("bOpen").addEventListener("click", function(){ data.sections.forEach(function(s){ opened.add(s); s.groups.forEach(function(g){ opened.add(g); }); }); render(); });
+$("bShut").addEventListener("click", function(){ data.sections.forEach(function(s){ opened.delete(s); s.groups.forEach(function(g){ opened.delete(g); }); }); render(); });
+$("bAddSec").addEventListener("click", function(){ var s = { title: "", sort: false, pin: false, groups: [] }; data.sections.push(s); opened.add(s); rerender(); });
+window.addEventListener("beforeunload", function(e){ if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+/* 시작 */
+var saved = safe(function(){ return JSON.parse(localStorage.getItem(CFG) || "null"); }, null);
+if (saved) { $("cRepo").value = saved.repo; $("cBranch").value = saved.branch; $("cPath").value = saved.path; $("cTok").value = saved.tok || ""; $("cRem").checked = !!saved.tok; }
+$("cRem").addEventListener("change", function(){ if (!this.checked) safe(function(){ localStorage.removeItem(CFG); }); });
+if (window.KMS_DATA) { adopt(JSON.parse(JSON.stringify(window.KMS_DATA))); setDirty(false); } else loadPublished(true);
+})();
+</script>
+</body>
+</html>
