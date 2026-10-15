@@ -39,7 +39,7 @@
    "cat": "건강상해",
    "simple": "일반",
    "name": "1540청춘대표",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
@@ -54,7 +54,7 @@
    "cat": "건강상해",
    "simple": "일반",
    "name": "4180인생대표",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
@@ -69,7 +69,7 @@
    "cat": "건강상해",
    "simple": "일반",
    "name": "New플러스원",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
@@ -84,7 +84,7 @@
    "cat": "건강상해",
    "simple": "간편",
    "name": "New플러스원",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
@@ -471,7 +471,7 @@
    "cat": "종신정기",
    "simple": "일반",
    "name": "CEO보장정기",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
@@ -486,7 +486,7 @@
    "cat": "종신정기",
    "simple": "간편",
    "name": "CEO보장정기",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
@@ -501,7 +501,7 @@
    "cat": "종신정기",
    "simple": "일반",
    "name": "골든(1형기본형)",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
@@ -516,7 +516,7 @@
    "cat": "종신정기",
    "simple": "간편",
    "name": "골든(1형기본형)",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
@@ -531,7 +531,7 @@
    "cat": "종신정기",
    "simple": "일반",
    "name": "골든(2형암보장형)",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
@@ -546,7 +546,7 @@
    "cat": "종신정기",
    "simple": "간편",
    "name": "골든(2형암보장형)",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
@@ -687,7 +687,7 @@
    "cat": "종신정기",
    "simple": "일반",
    "name": "더행복",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
@@ -732,7 +732,7 @@
    "cat": "종신정기",
    "simple": "일반",
    "name": "밸런스",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
@@ -747,7 +747,7 @@
    "cat": "종신정기",
    "simple": "간편",
    "name": "밸런스",
-   "important": false,
+   "important": true,
    "discontinued": false,
    "lines": [
     {
