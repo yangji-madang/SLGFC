@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>상품별 가입가능나이 관리</title>
+<style>
+  :root{
+    --navy: #16223F;
+    --navy-2: #1D2740;
+    --navy-soft: #2B3557;
+    --gray-line: #3E4763;
+    --gold: #C6A15B;
+    --gold-soft: #D8C093;
+    --paper: #F3F2EF;
+    --paper-line: #E2E0DA;
+    --ink: #232323;
+    --ink-soft: #6B6B6B;
+
+    --search-bg: #EFEAE0;
+    --search-bg-2: #E7E0D2;
+    --search-line: #D9CFB8;
+
+    --w-cat: 28px;
+    --w-simple: 42px;
+    --w-name: 130px;
+    --w-age: 82px;
+    --w-agecol: 27px;
+    --w-fetalcol: 46px;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; height:100%; overflow:hidden; }
+  body{
+    font-family:"Malgun Gothic","맑은 고딕",-apple-system,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column;
+    height:100%;
+  }
+
+  /* ================= 상단 고정 검색 영역 (페이지 자체가 스크롤되지 않으므로 sticky 불필요) ================= */
+  .search-wrap{
+    flex:0 0 auto;
+    z-index:100;
+    background:linear-gradient(180deg, var(--search-bg) 0%, var(--search-bg-2) 100%);
+    border-bottom:2px solid var(--gold);
+    box-shadow:0 2px 6px rgba(22,34,63,0.08);
+    padding: 10px clamp(14px,3vw,28px) 12px;
+  }
+  .brand-row{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom: 9px;
+  }
+  .brand-title{
+    color:var(--navy); font-size:19px; font-weight:800; letter-spacing:0.01em;
+    padding-bottom:2px; border-bottom:3px solid var(--gold);
+    display:inline-block;
+  }
+  .brand-sub{
+    color:#8A6B34; font-size:12px; font-weight:600;
+  }
+
+  .filter-stack{ display:flex; flex-direction:column; gap:7px; }
+  .filter-row{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  }
+  .filter-label{
+    color:var(--navy); font-size:12px; font-weight:700;
+    min-width:62px; flex-shrink:0;
+  }
+
+  .pill-group{ display:flex; gap:4px; flex-wrap:wrap; }
+  .pill{
+    border:1px solid var(--search-line);
+    background:#fff;
+    color:var(--navy);
+    padding: 3px 8px;
+    border-radius:5px;
+    font-size:12px;
+    line-height:1.5;
+    font-weight:600;
+    cursor:pointer;
+    transition: all .15s ease;
+    white-space:nowrap;
+  }
+  .pill:hover{ border-color:var(--gold); background:#FBF6EA; }
+  .pill.active{
+    background:var(--navy);
+    border-color:var(--navy);
+    color:#fff;
+  }
+
+  .text-input, .num-input{
+    background:#fff;
+    border:1px solid var(--search-line);
+    border-radius:5px;
+    padding: 4px 10px;
+    font-size:13px;
+    line-height:1.5;
+    color:var(--ink);
+    font-family:inherit;
+    outline:none;
+    height:26px;
+  }
+  .text-input:focus, .num-input:focus{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(198,161,91,0.25); }
+  .num-input{ width:90px; }
+  .text-input{ width: 200px; max-width:60vw; }
+
+  .reset-btn{
+    background:#fff; border:1px solid var(--search-line); color:var(--navy);
+    padding: 4px 11px; border-radius:5px; font-size:12.5px; cursor:pointer; height:26px;
+  }
+  .reset-btn:hover{ border-color:var(--navy); background:var(--navy); color:#fff; }
+
+  .result-count{
+    color:#6B6350; font-size:12px;
+    margin-left:auto;
+  }
+  .result-count b{ color:#8A6B34; }
+
+  .update-notice{
+    font-size:12px; font-weight:700; color:#1F4E9C;
+    margin-top:2px;
+  }
+
+  /* ================= 본문 ================= */
+  .content{
+    flex:1 1 auto; min-height:0;
+    display:flex; flex-direction:column;
+    padding: 12px clamp(10px,2vw,20px) 10px;
+  }
+
+  .legend-note{
+    flex:0 0 auto;
+    display:flex; gap:12px; flex-wrap:wrap; align-items:center;
+    font-size:12px; color:var(--ink-soft);
+    margin-bottom:8px;
+  }
+  .legend-dot{ display:inline-flex; align-items:center; gap:4px; }
+  .legend-dot i{ width:9px; height:9px; border-radius:2px; display:inline-block; }
+
+  .table-scroll{
+    flex:1 1 auto; min-height:0;
+    overflow:auto;
+    background:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,0.06);
+    border:1px solid var(--paper-line);
+  }
+  table.data-table{
+    border-collapse:separate;
+    border-spacing:0;
+    width:max-content;
+    min-width:100%;
+  }
+  .data-table th, .data-table td{
+    border-bottom:1px solid var(--paper-line);
+    border-right:1px solid var(--paper-line);
+    padding:0;
+  }
+
+  /* ---- 헤더 (세로 틀고정: 표 영역 내부 상단 sticky) ---- */
+  .data-table thead th{
+    position:sticky; top:0;
+    background:var(--navy-soft); color:#fff;
+    font-size:13px; font-weight:700;
+    text-align:center;
+    padding:6px 4px;
+    z-index:30;
+    white-space:nowrap;
+  }
+  .th-label{ text-align:left; padding-left:8px; }
+  .col-resize-handle{
+    position:absolute; top:0; right:0; width:10px; height:100%;
+    cursor:col-resize; touch-action:none; z-index:50;
+  }
+  .col-resize-handle::after{
+    content:""; position:absolute; top:0; bottom:0; right:2px; width:3px;
+    background:rgba(255,255,255,0.35); border-radius:2px;
+  }
+  .col-resize-handle:hover::after, .col-resize-handle.active::after{
+    background:var(--gold);
+  }
+
+  /* ---- 라벨열 (세로 틀고정: 좌측 sticky) ---- */
+  .col-cat{ width:var(--w-cat); min-width:var(--w-cat); }
+  .col-simple{ width:var(--w-simple); min-width:var(--w-simple); }
+  .col-name{ width:var(--w-name); min-width:var(--w-name); }
+  .col-age{ width:var(--w-age); min-width:var(--w-age); }
+
+  .sticky-col{ position:sticky; z-index:15; background:#fff; }
+  .sticky-col.c1{ left:0; }
+  .sticky-col.c2{ left:var(--w-cat); }
+  .sticky-col.c3{ left:calc(var(--w-cat) + var(--w-name)); }
+  .sticky-col.c4{ left:calc(var(--w-cat) + var(--w-name) + var(--w-simple)); border-right:2px solid var(--navy-soft); }
+
+  thead th.sticky-col{ z-index:40; background:var(--navy-soft); }
+
+  .cat-cell{
+    text-align:center; font-size:12px; font-weight:800;
+    vertical-align:middle; letter-spacing:0; line-height:1.3;
+    padding:2px 1px;
+  }
+  .cat-cell span{ writing-mode:horizontal-tb; }
+
+  .simple-cell{
+    text-align:center; font-size:12.5px; font-weight:700; padding:8px 2px;
+  }
+
+  .name-cell{
+    font-size:13px; font-weight:700; padding:6px 8px; line-height:1.3;
+  }
+  .name-cell.important{ color:#E11D1D; }
+
+  .age-cell{
+    font-size:13px; font-weight:700; color:var(--navy); padding:6px 6px;
+    text-align:center; line-height:1.45; background:#FBFAF7;
+  }
+
+  .age-bar-td{ padding:0; height:100%; }
+  .age-bar-td.on{ }
+  .age-num-th{ color:#FCEFD1; }
+  .fetal-th{ font-size:10.5px; line-height:1.25; }
+
+  tbody tr:hover td.age-bar-td{ filter:brightness(1.05); }
+  tbody tr:nth-child(even) td:not(.age-bar-td){ background:#FAFAF8; }
+  tbody tr:nth-child(even) td.sticky-col{ background:#FAFAF8; }
+
+  .empty-state{ flex:0 0 auto; text-align:center; padding:50px 20px; color:var(--ink-soft); }
+  .empty-state b{ display:block; font-size:15px; color:var(--ink); margin-bottom:4px; }
+
+  .age-notice{
+    flex:0 0 auto;
+    font-size:12px; font-weight:700; color:#B23A2C;
+    margin-bottom:2px;
+  }
+  .resize-notice{
+    flex:0 0 auto;
+    font-size:12px; font-weight:600; color:#8A6B34;
+    margin-bottom:6px;
+  }
+  .foot-note{
+    flex:0 0 auto; margin-top:6px; font-size:11.5px; font-weight:600; color:var(--ink-soft);
+  }
+  .foot-copyright{
+    flex:0 0 auto;
+    margin-top:6px; font-size:10.5px; font-weight:800; color:var(--navy);
+    text-align:right;
+  }
+</style>
+<style>
+  /* ===== 관리 페이지 전용: 페이지 전체가 스크롤되고, 표는 각각 자체 스크롤 ===== */
+  html,body{ height:auto; overflow:auto; }
+  body{ display:block; height:auto; min-height:100%; }
+  .search-wrap{ position:static; }
+  .content{ display:block; padding-top:10px; padding-bottom:14px; }
+  .table-scroll{ max-height:70vh; }
+  .tblbox.disc .table-scroll{ max-height:52vh; }
+
+  .admin-top{ background:var(--navy); color:#fff; padding:8px clamp(14px,3vw,28px) 6px; }
+  .admin-top h1{ margin:0 0 5px; font-size:15px; font-weight:800; }
+  .admin-top h1 small{ font-size:11.5px; font-weight:600; color:var(--gold-soft); margin-left:6px; }
+  .abar{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .abtn{
+    font:inherit; font-size:12.5px; font-weight:700; cursor:pointer; padding:3px 11px; border-radius:5px; line-height:1.4;
+    background:#fff; color:var(--navy); border:1px solid var(--gold-soft); text-decoration:none; display:inline-block;
+  }
+  .abtn:hover{ background:#FBF6EA; border-color:var(--gold); }
+  .abtn.save{ background:#2f7d4f; border-color:#1f5c38; color:#fff; }
+  .abtn.save:hover{ background:#256a42; }
+  .abtn:disabled{ opacity:.55; cursor:default; }
+  .abtn.sm{ padding:1px 7px; font-size:12px; }
+  .abtn.del{ color:#9a1030; }
+  .astatus{ margin-left:auto; font-size:12px; font-weight:800; color:#BFE8CF; }
+  .astatus.dirty{ color:#FFC9D1; }
+  .amsg{ display:none; margin:6px 0 2px; padding:4px 8px; border-radius:5px; font-size:12.5px; font-weight:700; }
+  .amsg.ok{ display:block; background:#d7f2e0; color:#0d3b1f; border:1px solid #2f7d4f; }
+  .amsg.err{ display:block; background:#fde3e8; color:#6b0f22; border:1px solid #9a1030; }
+  .amsg.info{ display:block; background:#e8f1fb; color:#0b2547; border:1px solid #3f648d; }
+
+  .apanels{ background:#F7F4EC; border-bottom:1px solid var(--search-line); padding:6px clamp(14px,3vw,28px); display:grid; gap:4px; }
+  details.apanel{ background:#fff; border:1px solid var(--search-line); border-radius:6px; padding:3px 9px; }
+  details.apanel > summary{ cursor:pointer; font-size:13px; font-weight:800; color:var(--navy); padding:2px 0; }
+  .agrid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin:6px 0 4px; }
+  .agrid label, .fgrid label{ display:grid; gap:2px; font-size:12px; font-weight:700; color:var(--navy); }
+  .agrid .w2{ grid-column:span 2; } .agrid .w4{ grid-column:1 / -1; }
+  .apanel input[type=text], .apanel input[type=password], .apanel input[type=number], .apanel select,
+  .modal input[type=text], .modal input[type=number], .modal select{
+    font:inherit; font-size:13px; width:100%; min-width:0; height:27px; padding:2px 7px; color:var(--ink);
+    background:#fff; border:1px solid var(--search-line); border-radius:5px; outline:none;
+  }
+  .apanel input:focus, .modal input:focus, .modal select:focus{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(198,161,91,0.25); }
+  input.bad{ border-color:#9a1030 !important; background:#fff0f3 !important; }
+  .apanel input[type=text], .apanel input[type=password], .apanel input[type=number], .apanel select, .modal input, .modal select{ font-weight:500; }
+  .fgrid label.chk, .agrid label.chk{ display:inline-flex; }
+  .hint{ font-size:12px; color:#6B6350; margin:3px 0; }
+  .chk{ display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:700; color:var(--navy); }
+  .chk input{ width:15px; height:15px; margin:0; }
+
+  .mrow{ display:grid; grid-template-columns:minmax(0,1fr) 44px auto; gap:5px; align-items:center; margin:3px 0; max-width:640px; }
+  .mrow.simple{ grid-template-columns:minmax(0,1fr) 44px 44px auto auto; }
+  .mrow input[type=color]{ width:40px; height:26px; padding:1px; border:1px solid var(--search-line); border-radius:5px; background:#fff; }
+  .mrow .acts{ display:flex; gap:3px; align-items:center; }
+  .mrow .cnt{ font-size:11.5px; color:#6B6350; font-weight:700; white-space:nowrap; }
+  .mhead{ font-size:12.5px; font-weight:800; color:var(--navy); margin:6px 0 2px; }
+
+  .tblbox{ margin-top:12px; }
+  .tbl-title{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 5px; font-size:15px; font-weight:800; color:var(--navy); }
+  .tbl-title .cnt{ font-size:12px; font-weight:700; color:var(--ink-soft); }
+  .tblbox.disc .tbl-title{ color:#4A3A5C; }
+  .tblbox.disc .tbl-title::before{ content:""; width:10px; height:16px; background:#4A3A5C; border-radius:2px; }
+  .tblbox.sale .tbl-title::before{ content:""; width:10px; height:16px; background:var(--navy-soft); border-radius:2px; }
+
+  .name-cell{ cursor:pointer; }
+  .name-cell:hover{ text-decoration:underline; text-underline-offset:2px; }
+  .adm-hint{ flex:0 0 auto; font-size:12px; font-weight:700; color:#1F4E9C; margin-bottom:6px; }
+
+  /* 단종상품 표: 판매상품 표와 다른 배경(연보라 회색) */
+  .tblbox.disc .table-scroll{ background:#E9E4EE; border-color:#C9BFD3; }
+  .tblbox.disc .sticky-col{ background:#E9E4EE; }
+  .tblbox.disc .age-cell{ background:#E4DEEA; }
+  .tblbox.disc tbody tr:nth-child(even) td:not(.age-bar-td), .tblbox.disc tbody tr:nth-child(even) td.sticky-col{ background:#DED6E6; }
+  .tblbox.disc .data-table thead th, .tblbox.disc .data-table thead th.sticky-col{ background:#4A3A5C; }
+  .tblbox.disc .sticky-col.c4{ border-right-color:#4A3A5C; }
+  .tblbox.disc .data-table th, .tblbox.disc .data-table td{ border-color:#CFC5D9; }
+  .tblbox.disc .name-cell{ color:#5E5368; }
+  .tblbox.disc .name-cell.important{ color:#E11D1D; }
+  .tblbox.disc .cat-cell, .tblbox.disc .simple-cell{ filter:saturate(.55); }
+  .tblbox.disc .empty-state{ background:#E9E4EE; border:1px dashed #BDB1CA; padding:22px 12px; }
+  .tblbox.sale .empty-state{ padding:22px 12px; }
+  .empty-state{ border-radius:5px; }
+
+  /* 수정 창 */
+  .modal-back{ position:fixed; inset:0; background:rgba(22,34,63,.55); z-index:1000; display:flex; align-items:flex-start; justify-content:center; overflow:auto; padding:24px 10px; }
+  .modal-back[hidden]{ display:none; }
+  .modal{ background:#fff; width:min(760px,100%); border-radius:9px; border:1px solid var(--gold); box-shadow:0 10px 30px rgba(0,0,0,.35); padding:14px 16px 12px; }
+  .modal h2{ margin:0 0 8px; font-size:16px; color:var(--navy); }
+  .fgrid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+  .fgrid .w3{ grid-column:1 / -1; }
+  .lhead{ display:grid; grid-template-columns:minmax(0,2fr) 70px 70px 118px auto; gap:5px; font-size:11.5px; font-weight:800; color:#6B6350; margin:10px 0 2px; }
+  .lrow{ display:grid; grid-template-columns:minmax(0,2fr) 70px 70px 118px auto; gap:5px; align-items:center; margin:3px 0; }
+  .lrow .acts{ display:flex; gap:3px; }
+  .merr{ display:none; margin-top:8px; padding:5px 8px; border-radius:5px; background:#fde3e8; border:1px solid #9a1030; color:#6b0f22; font-size:12.5px; font-weight:700; }
+  .merr.on{ display:block; }
+  .mfoot{ display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; margin-top:12px; }
+  .mfoot .left{ margin-right:auto; }
+
+  @media (max-width:760px){
+    .agrid{ grid-template-columns:1fr 1fr; }
+    .agrid .w2{ grid-column:1 / -1; }
+    .fgrid{ grid-template-columns:1fr 1fr; }
+    .mrow, .mrow.simple{ display:flex; flex-wrap:wrap; }
+    .mrow > :first-child{ flex:1 1 100%; }
+    .lhead{ display:none; }
+    .lrow{ grid-template-columns:1fr 1fr; }
+    .lrow > :first-child{ grid-column:1 / -1; }
+    .modal input[type=text], .modal input[type=number], .modal select, .apanel input, .apanel select{ font-size:16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="admin-top">
+  <h1>상품별 가입가능나이 관리 <small>저장하면 보기 페이지에 약 1분 뒤 반영됩니다</small></h1>
+  <div class="abar">
+    <button class="abtn save" id="bSave" type="button">GitHub에 저장</button>
+    <button class="abtn" id="bReload" type="button">게시본 다시 불러오기</button>
+    <a class="abtn" href="Prod_Age.html" target="_blank" rel="noopener">보기 페이지 열기</a>
+    <span class="astatus" id="stat">불러오는 중…</span>
+  </div>
+  <div class="amsg" id="msg" role="status"></div>
+</div>
+
+<div class="apanels">
+  <details class="apanel" id="dCfg">
+    <summary>저장 설정 (GitHub 연결)</summary>
+    <div class="agrid">
+      <label>저장소(소유자/이름)<input type="text" id="cRepo" value="yangji-madang/SLGFC" autocomplete="off"></label>
+      <label>브랜치<input type="text" id="cBranch" value="main" autocomplete="off"></label>
+      <label class="w2">데이터 파일 경로<input type="text" id="cPath" value="Prod/prod_age_data.json" autocomplete="off"></label>
+      <label class="w4">액세스 토큰 (Contents: Read and write)<input type="password" id="cTok" autocomplete="new-password" placeholder="github_pat_…"></label>
+    </div>
+    <p class="hint"><label class="chk"><input type="checkbox" id="cRem"> 이 브라우저에 토큰 기억</label> (공용 기기에서는 끄세요)</p>
+  </details>
+
+  <details class="apanel" id="dTxt">
+    <summary>문구 설정 (기준일 · 안내문 · 하단 설명 · 저작권)</summary>
+    <div class="agrid">
+      <label>기준일 표시 (우측 상단)<input type="text" id="tAsof" autocomplete="off"></label>
+      <label class="w3" style="grid-column:span 3">변경내용 (검색 영역 하단, 비우면 숨김)<input type="text" id="tChange" autocomplete="off"></label>
+      <label class="w4">안내문 1 (표 위, 빨간색)<input type="text" id="tAge" autocomplete="off"></label>
+      <label class="w4">안내문 2 (표 위, 금색)<input type="text" id="tResize" autocomplete="off"></label>
+      <label class="w4">하단 설명 (표 아래, 비우면 숨김)<input type="text" id="tFoot" autocomplete="off"></label>
+      <label class="w4">저작권 문구 (저장 시 영문은 자동으로 대문자)<input type="text" id="tCopy" autocomplete="off"></label>
+    </div>
+    <p class="hint">저작권 표시 결과: <b id="copyPrev"></b></p>
+  </details>
+
+  <details class="apanel" id="dMeta">
+    <summary>구분 · 유형 관리 (추가 · 이름 · 색상 · 순서)</summary>
+    <div class="mhead">구분 <span class="hint">— 순서가 표·검색 버튼 순서가 됩니다</span></div>
+    <div id="catList"></div>
+    <button class="abtn sm" id="bAddCat" type="button">+ 구분 추가</button>
+    <div class="mhead" style="margin-top:10px">유형 <span class="hint">— 간편/일반 등. 순서는 같은 상품명 안에서의 표시 순서입니다</span></div>
+    <div id="simpleList"></div>
+    <button class="abtn sm" id="bAddSimple" type="button">+ 유형 추가</button>
+  </details>
+</div>
+
+<div class="search-wrap" id="searchWrap">
+  <div class="brand-row">
+    <div class="brand-title">상품별 가입가능나이 검색</div>
+    <div class="brand-sub" id="asof"></div>
+  </div>
+
+  <div class="filter-stack">
+    <div class="filter-row">
+      <span class="filter-label">나이로 찾기</span>
+      <input type="number" id="ageInput" class="num-input" placeholder="예: 55" min="0" max="99">
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">상품명 검색</span>
+      <input type="text" id="nameInput" class="text-input" placeholder="상품명 입력">
+      <button class="reset-btn" id="resetBtn">초기화</button>
+      <span class="result-count" id="resultCount"></span>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">상품구분</span>
+      <div class="pill-group" id="catGroup"></div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">간편 / 일반</span>
+      <div class="pill-group" id="simpleGroup"></div>
+    </div>
+    <div class="update-notice" id="changeNotice"></div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="legend-note" id="legend"></div>
+  <div class="age-notice" id="ageNotice"></div>
+  <div class="resize-notice" id="resizeNotice"></div>
+  <div class="adm-hint">※ [관리] 상품명을 누르면 수정 · 중요 지정 · 단종 처리를 할 수 있습니다.
+    <button class="abtn sm" id="bAddProd" type="button" style="margin-left:6px">+ 상품 추가</button></div>
+
+  <div class="tblbox sale" id="boxSale">
+    <div class="tbl-title">판매상품 <span class="cnt" id="cntSale"></span></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr class="headRow">
+          <th class="sticky-col c1 col-cat">구분</th>
+          <th class="sticky-col c2 col-name th-label">상품명<span class="col-resize-handle"></span></th>
+          <th class="sticky-col c3 col-simple">유형</th>
+          <th class="sticky-col c4 col-age">나이</th>
+        </tr></thead>
+        <tbody id="bodySale"></tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="emptySale" style="display:none;"><b>조건에 맞는 판매상품이 없습니다</b>검색어나 필터를 조정해 보세요.</div>
+  </div>
+
+  <div class="tblbox disc" id="boxDisc">
+    <div class="tbl-title">단종상품 <span class="cnt" id="cntDisc"></span></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr class="headRow">
+          <th class="sticky-col c1 col-cat">구분</th>
+          <th class="sticky-col c2 col-name th-label">상품명<span class="col-resize-handle"></span></th>
+          <th class="sticky-col c3 col-simple">유형</th>
+          <th class="sticky-col c4 col-age">나이</th>
+        </tr></thead>
+        <tbody id="bodyDisc"></tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="emptyDisc" style="display:none;"><b>단종상품이 없습니다</b>상품명을 눌러 '단종'으로 바꾸면 이곳으로 옮겨집니다. (보기 페이지에는 표시되지 않습니다)</div>
+  </div>
+
+  <div class="foot-note" id="footNote"></div>
+  <div class="foot-copyright" id="footCopy"></div>
+</div>
+
+<!-- 상품 수정 창 -->
+<div class="modal-back" id="modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <h2 id="mTitle">상품 수정</h2>
+    <div class="fgrid">
+      <label>구분<select id="mCat"></select></label>
+      <label>유형<select id="mSimple"></select></label>
+      <label>판매 상태<select id="mStatus"><option value="sale">판매</option><option value="disc">단종</option></select></label>
+      <label class="w3">상품명<input type="text" id="mName" autocomplete="off"></label>
+      <div class="w3"><label class="chk"><input type="checkbox" id="mImp"> 중요 상품 (상품명을 빨간색으로 표시)</label></div>
+    </div>
+    <div class="lhead"><span>나이 표시문구 (비우면 자동)</span><span>시작</span><span>끝</span><span>태아 칸</span><span></span></div>
+    <div id="mLines"></div>
+    <button class="abtn sm" id="mAddLine" type="button">+ 나이 조건 추가</button>
+    <p class="hint">예) 표시문구 '5년납 남15~85', 시작 15, 끝 85. 태아 상품은 '태아 칸'을 고르면 시작·끝은 비웁니다. 줄바꿈은 &lt;br&gt;로 넣습니다. 숫자 없이 문구만(예: 태아)도 가능합니다.</p>
+    <div class="merr" id="mErr"></div>
+    <div class="mfoot">
+      <button class="abtn del left" id="mDel" type="button">상품 삭제</button>
+      <button class="abtn" id="mCancel" type="button">취소</button>
+      <button class="abtn save" id="mOk" type="button">적용</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* 게시본을 읽지 못할 때만 쓰는 내장본 */
+var FALLBACK = {"updated":"2026-10-16","asof":"’26.10. 기준","notices":{"age":"※ 정확한 가입나이는 반드시 설계화면에서 확인하세요.","resize":"※ '상품명' 항목 우측테두리를 이용하여 폭을 조절할 수 있습니다.","change":"※ 변경내용 : 골든종신 개정반영(’26.10.14. 개정)"},"footerNote":"","copyright":"ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.","cats":[{"name":"건강상해","color":"#B23A2C"},{"name":"종신정기","color":"#1F4E9C"},{"name":"기타상품","color":"#3A3A3A"}],"simples":[{"name":"일반","color":"#888888","bg":""},{"name":"간편","color":"#7A4B00","bg":"#FCDD8F"}],"products":[{"cat":"건강상해","simple":"일반","name":"1540청춘대표","important":false,"discontinued":false,"lines":[{"label":"15~40","amin":15,"amax":40,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"4180인생대표","important":false,"discontinued":false,"lines":[{"label":"41~80","amin":41,"amax":80,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"New플러스원","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"New플러스원","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"The(더)Dream","important":false,"discontinued":false,"lines":[{"label":"0~39","amin":0,"amax":39,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"The간편한다모은","important":false,"discontinued":false,"lines":[{"label":"15~80","amin":15,"amax":80,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"The라이트","important":false,"discontinued":false,"lines":[{"label":"15~80","amin":15,"amax":80,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"가족대표Plus+","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"곰두리보장(장애인전용)","important":false,"discontinued":false,"lines":[{"label":"15~60","amin":15,"amax":60,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"급여실손의료비","important":false,"discontinued":false,"lines":[{"label":"0~60","amin":0,"amax":60,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"급여실손의료비","important":false,"discontinued":false,"lines":[{"label":"5~90","amin":5,"amax":90,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"급여실손의료비(계약전환용)","important":false,"discontinued":false,"lines":[{"label":"0~99","amin":0,"amax":99,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"급여실손의료비(재가입용)","important":false,"discontinued":false,"lines":[{"label":"5~99","amin":5,"amax":99,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"급여실손의료비(재가입용)","important":false,"discontinued":false,"lines":[{"label":"8~109","amin":8,"amax":109,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"급여실손의료비(태아용)","important":false,"discontinued":false,"lines":[{"label":"태아","amin":null,"amax":null,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"노후실손","important":false,"discontinued":false,"lines":[{"label":"61~90","amin":61,"amax":90,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"노후실손(재가입용)","important":false,"discontinued":false,"lines":[{"label":"64~109","amin":64,"amax":109,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"더블보장1형(암보장형)","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"더블보장1형(암보장형)","important":false,"discontinued":false,"lines":[{"label":"30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"더블보장2형(암간병보장형)","important":false,"discontinued":false,"lines":[{"label":"남15~73","amin":15,"amax":73,"fetal":null},{"label":"여15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"더블보장2형(암간병보장형)","important":false,"discontinued":false,"lines":[{"label":"남30~73","amin":30,"amax":73,"fetal":null},{"label":"여30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"시니어대표","important":false,"discontinued":false,"lines":[{"label":"30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"시니어대표","important":false,"discontinued":false,"lines":[{"label":"30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"우리아이올바른성장(출생아)","important":false,"discontinued":false,"lines":[{"label":"0~15","amin":0,"amax":15,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"우리아이올바른성장(태아/23주이내)","important":false,"discontinued":false,"lines":[{"label":"태아<br>(23주이내)","amin":null,"amax":null,"fetal":"23주이내"}]},{"cat":"건강상해","simple":"일반","name":"우리아이올바른성장(태아/23주초과)","important":false,"discontinued":false,"lines":[{"label":"태아<br>(23주초과)","amin":null,"amax":null,"fetal":"23주초과"}]},{"cat":"건강상해","simple":"일반","name":"치아","important":false,"discontinued":false,"lines":[{"label":"0~70","amin":0,"amax":70,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"플래티넘플러스원","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"CEO보장정기","important":false,"discontinued":false,"lines":[{"label":"20~75","amin":20,"amax":75,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"CEO보장정기","important":false,"discontinued":false,"lines":[{"label":"30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"골든(1형기본형)","important":false,"discontinued":false,"lines":[{"label":"15~65","amin":15,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"골든(1형기본형)","important":false,"discontinued":false,"lines":[{"label":"30~65","amin":30,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"골든(2형암보장형)","important":false,"discontinued":false,"lines":[{"label":"15~60","amin":15,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"골든(2형암보장형)","important":false,"discontinued":false,"lines":[{"label":"30~60","amin":30,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"내리사랑정기","important":false,"discontinued":false,"lines":[{"label":"20~65","amin":20,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"더사랑","important":false,"discontinued":false,"lines":[{"label":"5년납 남30~63","amin":30,"amax":63,"fetal":null},{"label":"5년납 여30~67","amin":30,"amax":67,"fetal":null},{"label":"7년납 남30~69","amin":30,"amax":69,"fetal":null},{"label":"7년납 여30~67","amin":30,"amax":67,"fetal":null},{"label":"10년납 남30~60","amin":30,"amax":60,"fetal":null},{"label":"10년납 여30~66","amin":30,"amax":66,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"더착한VVIP(라이트형)","important":false,"discontinued":false,"lines":[{"label":"24~80","amin":24,"amax":80,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"더착한VVIP(라이트형)","important":false,"discontinued":false,"lines":[{"label":"30~80","amin":30,"amax":80,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"더착한VVIP(암납입면제형)","important":false,"discontinued":false,"lines":[{"label":"15~80","amin":15,"amax":80,"fetal":null},{"label":"우량체20~80","amin":20,"amax":80,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"더착한VVIP(암납입면제형)","important":false,"discontinued":false,"lines":[{"label":"30~80","amin":30,"amax":80,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"더행복","important":false,"discontinued":false,"lines":[{"label":"5년납 남15~85","amin":15,"amax":85,"fetal":null},{"label":"5년납 여15~87","amin":15,"amax":87,"fetal":null},{"label":"7년납 남15~89","amin":15,"amax":89,"fetal":null},{"label":"7년납 여15~70","amin":15,"amax":70,"fetal":null},{"label":"10년납 남15~85","amin":15,"amax":85,"fetal":null},{"label":"10년납 여15~89","amin":15,"amax":89,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"밸런스","important":false,"discontinued":false,"lines":[{"label":"15~60","amin":15,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"밸런스","important":false,"discontinued":false,"lines":[{"label":"30~60","amin":30,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"삼성정기","important":false,"discontinued":false,"lines":[{"label":"20~65","amin":20,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"암치료플러스(남자)","important":false,"discontinued":false,"lines":[{"label":"남15~65","amin":15,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"암치료플러스(남자)","important":false,"discontinued":false,"lines":[{"label":"남30~62","amin":30,"amax":62,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"암치료플러스(여자)","important":false,"discontinued":false,"lines":[{"label":"여15~70","amin":15,"amax":70,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"암치료플러스(여자)","important":false,"discontinued":false,"lines":[{"label":"여30~70","amin":30,"amax":70,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"올백1종(일반)","important":false,"discontinued":false,"lines":[{"label":"15~70","amin":15,"amax":70,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"올백1종(일반)","important":false,"discontinued":false,"lines":[{"label":"30~70","amin":30,"amax":70,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"올백2종(암납면)","important":false,"discontinued":false,"lines":[{"label":"20~60","amin":20,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"올백2종(암납면)","important":false,"discontinued":false,"lines":[{"label":"30~60","amin":30,"amax":60,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"기업복지연금","important":false,"discontinued":false,"lines":[{"label":"15~64","amin":15,"amax":64,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"더한결같은행복연금","important":false,"discontinued":false,"lines":[{"label":"0~85","amin":0,"amax":85,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"삼성변액연금","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"삼성연금","important":false,"discontinued":false,"lines":[{"label":"월납 0~70","amin":0,"amax":70,"fetal":null},{"label":"거치형 0~80","amin":0,"amax":80,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"스마트저축","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"연금저축골드연금","important":false,"discontinued":false,"lines":[{"label":"0~75","amin":0,"amax":75,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"탄탄한변액연금","important":false,"discontinued":false,"lines":[{"label":"15~70","amin":15,"amax":70,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"파워즉시연금(거치형)","important":false,"discontinued":false,"lines":[{"label":"35~88","amin":35,"amax":88,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"파워즉시연금(즉시형)","important":false,"discontinued":false,"lines":[{"label":"40~90","amin":40,"amax":90,"fetal":null}]}]};
+
+var $ = function(id){ return document.getElementById(id); };
+var esc = function(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+var fmtLabel = function(s){ return esc(s).replace(/&lt;br&gt;/gi, "<br>"); };
+var upA = function(t){ return String(t).replace(/[a-z]+/g, function(m){ return m.toUpperCase(); }); };
+var okHex = function(h){ return /^#[0-9a-fA-F]{6}$/.test(h || ""); };
+var isNum = function(v){ return typeof v === "number" && isFinite(v); };
+function mix(hex, t){
+  if (!okHex(hex)) hex = "#3A3A3A";
+  var n = parseInt(hex.slice(1), 16), f = function(v){ return Math.round(v + (255 - v) * t); };
+  return "#" + [n >> 16, (n >> 8) & 255, n & 255].map(f).map(function(v){ return ("0" + v.toString(16)).slice(-2); }).join("");
+}
+var isEn = function(t){ return /^[A-Za-z0-9]/.test(String(t).trim()); };
+var ko = function(a, b){
+  var ea = isEn(a), eb = isEn(b);
+  if (ea !== eb) return ea ? -1 : 1;
+  return String(a).trim().localeCompare(String(b).trim(), "ko", { sensitivity:"base", numeric:true });
+};
+var normName = function(t){ return String(t).toLowerCase().replace(/\s+/g, ""); };
+function safe(fn, fb){ try { return fn(); } catch(e){ return fb; } }
+
+var DRAFT = "prod_age_admin_draft_v1", CFGK = "prod_age_admin_cfg_v1", KMSK = "kms_admin_cfg_v1";
+var DEF_COPY = "ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.";
+var FETAL_COLS = [ { key:"23주이내", label:"태아<br>(23주이내)" }, { key:"23주초과", label:"태아<br>(23주초과)" } ];
+var PALETTE = ["#6A3FA0", "#1B7F79", "#B4690E", "#2E6F40", "#8A2D5B", "#365E7D"];
+var data = null, dirty = false, nextId = 1, BREAKPOINTS = [], loadFailed = false, baseJson = null;
+var state = { cat:"전체", simple:"전체", age:"", name:"" };
+var editing = null;   /* 수정 창에서 편집 중인 상품 (새 상품이면 isNew) */
+
+/* ---------- 보조 ---------- */
+function msg(kind, text){ var m = $("msg"); m.className = "amsg " + kind; m.textContent = text; }
+function clearMsg(){ var m = $("msg"); m.className = "amsg"; m.textContent = ""; }
+function setDirty(v){
+  dirty = v;
+  var s = $("stat"); s.textContent = v ? "● 저장 안 된 변경 있음" : "✓ 게시본과 동일"; s.className = "astatus" + (v ? " dirty" : "");
+  if (v && data) safe(function(){ localStorage.setItem(DRAFT, JSON.stringify(data)); });
+  if (!v) safe(function(){ localStorage.removeItem(DRAFT); });
+}
+function changed(){ setDirty(true); }
+var catColor = function(n){ var c = data.cats.filter(function(x){ return x.name === n; })[0]; return c && okHex(c.color) ? c.color : "#3A3A3A"; };
+var simpleDef = function(n){ return data.simples.filter(function(x){ return x.name === n; })[0] || { name:n, color:"#888888", bg:"" }; };
+function sortAll(){
+  var ci = function(n){ var i = data.cats.map(function(c){ return c.name; }).indexOf(n); return i < 0 ? 999 : i; };
+  var si = function(n){ var i = data.simples.map(function(c){ return c.name; }).indexOf(n); return i < 0 ? 999 : i; };
+  data.products.sort(function(a, b){ return ci(a.cat) - ci(b.cat) || ko(a.name, b.name) || si(a.simple) - si(b.simple); });
+}
+
+/* ---------- 불러오기 ---------- */
+function adopt(d){
+  d = JSON.parse(JSON.stringify(d));
+  d.notices = Object.assign({ age:"", resize:"", change:"" }, d.notices || {});
+  d.footerNote = d.footerNote || ""; d.asof = d.asof || ""; d.copyright = d.copyright || DEF_COPY;
+  d.cats = (d.cats || []).map(function(c){ return { name:c.name || "", color:okHex(c.color) ? c.color : "#3A3A3A" }; });
+  d.simples = (d.simples || []).map(function(c){ return { name:c.name || "", color:okHex(c.color) ? c.color : "#888888", bg:okHex(c.bg) ? c.bg : "" }; });
+  d.products = (d.products || []).map(function(p){
+    return { _id:nextId++, cat:p.cat || "", simple:p.simple || "", name:p.name || "", important:!!p.important, discontinued:!!p.discontinued,
+      lines:(p.lines || []).map(function(l){ return { label:l.label || "", amin:isNum(l.amin) ? l.amin : null, amax:isNum(l.amax) ? l.amax : null, fetal:l.fetal || null }; }) };
+  });
+  data = d; sortAll();
+  state = { cat:"전체", simple:"전체", age:"", name:"" }; $("ageInput").value = ""; $("nameInput").value = "";
+  syncSettings(); renderMeta(); renderAll();
+}
+function loadPublished(thenDraft){
+  msg("info", "게시본을 불러오는 중입니다…");
+  return fetch("prod_age_data.json?t=" + Date.now(), { cache:"no-store" })
+    .then(function(r){ if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function(d){
+      var dr = thenDraft && safe(function(){ return localStorage.getItem(DRAFT); });   /* 초기화(setDirty)가 임시저장본을 지우기 전에 먼저 읽는다 */
+      adopt(d); baseJson = JSON.stringify(d); loadFailed = false; setDirty(false); clearMsg();
+      if (dr && confirm("저장하지 않고 닫은 임시저장본이 있습니다. 이어서 편집할까요?\n(취소하면 임시저장본은 버려집니다)")) { adopt(JSON.parse(dr)); setDirty(true); msg("info", "임시저장본을 불러왔습니다. 저장 전까지 게시본에는 반영되지 않습니다."); }
+      else safe(function(){ localStorage.removeItem(DRAFT); });
+    })
+    .catch(function(e){
+      adopt(FALLBACK); setDirty(false); loadFailed = true; baseJson = null;
+      var s = $("stat"); s.textContent = "⚠ 게시본 불러오기 실패"; s.className = "astatus dirty";
+      msg("err", "게시본을 불러오지 못해(" + e.message + ") 내장본을 표시했습니다. 이 상태에서는 저장할 수 없습니다. 잠시 후 [게시본 다시 불러오기]를 먼저 성공시키세요.");
+    });
+}
+
+/* ---------- 검색 ---------- */
+function renderPills(containerId, options, key){
+  var el = $(containerId);
+  el.innerHTML = options.map(function(o){
+    var active = state[key] === o.value, style = "";
+    if (o.color) style = active ? 'style="background:' + o.color + ';border-color:' + o.color + ';color:#fff;"' : 'style="border-color:' + o.color + '66;color:' + o.color + ';"';
+    return '<button class="pill ' + (active ? "active" : "") + '" data-val="' + esc(o.value) + '" ' + style + ">" + esc(o.value) + "</button>";
+  }).join("");
+  Array.prototype.forEach.call(el.querySelectorAll(".pill"), function(b){
+    b.addEventListener("click", function(){ state[key] = b.dataset.val; drawPills(); renderAll(); });
+  });
+}
+function drawPills(){
+  renderPills("catGroup", [{ value:"전체" }].concat(data.cats.map(function(c){ return { value:c.name, color:catColor(c.name) }; })), "cat");
+  renderPills("simpleGroup", [{ value:"전체" }].concat(data.simples.map(function(c){ return { value:c.name }; })), "simple");
+}
+function filterRows(disc){
+  var out = [];
+  data.products.forEach(function(p){
+    if (!!p.discontinued !== disc) return;
+    if (state.cat !== "전체" && p.cat !== state.cat) return;
+    if (state.simple !== "전체" && p.simple !== state.simple) return;
+    if (state.name && normName(p.name).indexOf(normName(state.name)) < 0) return;
+    var lines = p.lines;
+    if (state.age !== "") {
+      var a = parseInt(state.age, 10);
+      if (!isNaN(a)) { lines = p.lines.filter(function(ln){ return ln.amin !== null && a >= ln.amin && a <= ln.amax; }); if (!lines.length) return; }
+    }
+    out.push({ p:p, lines:lines });
+  });
+  return out;
+}
+
+/* ---------- 표 ---------- */
+function wrapCat(s){ return s.length === 4 ? esc(s.slice(0, 2)) + "<br>" + esc(s.slice(2)) : esc(s); }
+function buildHeads(){
+  Array.prototype.forEach.call(document.querySelectorAll("tr.headRow"), function(row){
+    while (row.children.length > 4) row.removeChild(row.lastChild);
+    FETAL_COLS.forEach(function(c){ var th = document.createElement("th"); th.className = "age-num-th fetal-th"; th.innerHTML = c.label; th.style.width = "var(--w-fetalcol)"; row.appendChild(th); });
+    BREAKPOINTS.forEach(function(a){ var th = document.createElement("th"); th.className = "age-num-th"; th.textContent = a; th.style.width = "var(--w-agecol)"; row.appendChild(th); });
+  });
+}
+function renderTable(bodyId, boxId, emptyId, rows, disc){
+  var tbody = $(bodyId), wrap = $(boxId).querySelector(".table-scroll"), empty = $(emptyId);
+  if (!rows.length) { tbody.innerHTML = ""; wrap.style.display = "none"; empty.style.display = "block"; return; }
+  wrap.style.display = "block"; empty.style.display = "none";
+  var off = disc ? "#D6CEDD" : "#F4F4F2", html = "";
+  var groups = [];
+  rows.forEach(function(r){ var g = groups[groups.length - 1]; if (g && g.cat === r.p.cat) g.items.push(r); else groups.push({ cat:r.p.cat, items:[r] }); });
+  groups.forEach(function(g){
+    var cc = catColor(g.cat), total = g.items.reduce(function(s, r){ return s + r.lines.length; }, 0);
+    g.items.forEach(function(r, idx){
+      var p = r.p, sd = simpleDef(p.simple);
+      var sStyle = "color:" + (okHex(sd.color) ? sd.color : "#888888") + ";" + (okHex(sd.bg) ? "background:" + sd.bg + ";" : "");
+      r.lines.forEach(function(ln, li){
+        html += "<tr>";
+        if (idx === 0 && li === 0) html += '<td class="sticky-col c1 cat-cell" style="background:' + mix(cc, .9) + ";color:" + cc + ';" rowspan="' + total + '"><span>' + wrapCat(g.cat) + "</span></td>";
+        if (li === 0) {
+          html += '<td class="sticky-col c2 name-cell' + (p.important ? " important" : "") + '" data-pid="' + p._id + '" title="눌러서 수정" rowspan="' + r.lines.length + '">' + esc(p.name) + "</td>";
+          html += '<td class="sticky-col c3 simple-cell" style="' + sStyle + '" rowspan="' + r.lines.length + '">' + esc(p.simple) + "</td>";
+        }
+        html += '<td class="sticky-col c4 age-cell">' + fmtLabel(ln.label) + "</td>";
+        FETAL_COLS.forEach(function(c){ html += '<td class="age-bar-td" style="background:' + (ln.fetal === c.key ? cc : off) + ';"></td>'; });
+        BREAKPOINTS.forEach(function(a){ var on = ln.amin !== null && a >= ln.amin && a <= ln.amax; html += '<td class="age-bar-td" style="background:' + (on ? cc : off) + ';"></td>'; });
+        html += "</tr>";
+      });
+    });
+  });
+  tbody.innerHTML = html;
+}
+function setText(id, t){ var e = $(id); e.textContent = t || ""; e.style.display = t ? "" : "none"; }
+function renderAll(){
+  var set = {};
+  data.products.forEach(function(p){ p.lines.forEach(function(l){ [l.amin, l.amax].forEach(function(v){ if (isNum(v)) set[v] = 1; }); }); });
+  BREAKPOINTS = Object.keys(set).map(Number).sort(function(a, b){ return a - b; });
+  $("ageInput").min = 0; $("ageInput").max = BREAKPOINTS.length ? BREAKPOINTS[BREAKPOINTS.length - 1] : 99;
+  setText("asof", data.asof); setText("changeNotice", data.notices.change); setText("ageNotice", data.notices.age);
+  setText("resizeNotice", data.notices.resize); setText("footNote", data.footerNote); setText("footCopy", upA(data.copyright));
+  $("legend").innerHTML = data.cats.map(function(c){ return '<span class="legend-dot"><i style="background:' + catColor(c.name) + '"></i>' + esc(c.name) + "</span>"; }).join("");
+  drawPills(); buildHeads();
+  var sale = filterRows(false), disc = filterRows(true);
+  renderTable("bodySale", "boxSale", "emptySale", sale, false);
+  renderTable("bodyDisc", "boxDisc", "emptyDisc", disc, true);
+  var tS = data.products.filter(function(p){ return !p.discontinued; }).length, tD = data.products.length - tS;
+  $("cntSale").textContent = "전체 " + tS + "개 · 검색 " + sale.length + "개";
+  $("cntDisc").textContent = "전체 " + tD + "개 · 검색 " + disc.length + "개";
+  $("resultCount").innerHTML = "판매 <b>" + sale.length + "</b>건 · 단종 <b>" + disc.length + "</b>건 검색됨";
+}
+$("ageInput").addEventListener("input", function(e){ state.age = e.target.value; renderAll(); });
+$("nameInput").addEventListener("input", function(e){ state.name = e.target.value.trim(); renderAll(); });
+$("resetBtn").addEventListener("click", function(){ state = { cat:"전체", simple:"전체", age:"", name:"" }; $("ageInput").value = ""; $("nameInput").value = ""; renderAll(); });
+
+/* 상품명 폭 조절 (두 표 공통) */
+Array.prototype.forEach.call(document.querySelectorAll(".col-resize-handle"), function(handle){
+  var dragging = false, sx = 0, sw = 0;
+  handle.addEventListener("pointerdown", function(e){ dragging = true; sx = e.clientX; sw = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--w-name")) || 118; handle.classList.add("active"); handle.setPointerCapture(e.pointerId); e.preventDefault(); });
+  handle.addEventListener("pointermove", function(e){ if (!dragging) return; document.documentElement.style.setProperty("--w-name", Math.min(260, Math.max(70, sw + e.clientX - sx)) + "px"); });
+  var end = function(){ dragging = false; handle.classList.remove("active"); };
+  handle.addEventListener("pointerup", end); handle.addEventListener("pointercancel", end);
+});
+
+/* ---------- 문구 설정 ---------- */
+function syncSettings(){
+  $("tAsof").value = data.asof; $("tChange").value = data.notices.change; $("tAge").value = data.notices.age;
+  $("tResize").value = data.notices.resize; $("tFoot").value = data.footerNote; $("tCopy").value = data.copyright;
+  $("copyPrev").textContent = upA(data.copyright);
+}
+function bindText(id, setter){ $(id).addEventListener("input", function(){ setter(this.value); if (id === "tCopy") $("copyPrev").textContent = upA(this.value); changed(); renderAll(); }); }
+bindText("tAsof", function(v){ data.asof = v; });
+bindText("tChange", function(v){ data.notices.change = v; });
+bindText("tAge", function(v){ data.notices.age = v; });
+bindText("tResize", function(v){ data.notices.resize = v; });
+bindText("tFoot", function(v){ data.footerNote = v; });
+bindText("tCopy", function(v){ data.copyright = v; });
+
+/* ---------- 구분 · 유형 관리 ---------- */
+function el(tag, cls, text){ var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function btn(text, title, fn, cls){ var b = el("button", "abtn sm" + (cls ? " " + cls : ""), text); b.type = "button"; b.title = title; b.addEventListener("click", fn); return b; }
+function uniqueName(list, base){ var n = base, i = 2; while (list.some(function(x){ return x.name === n; })) n = base + (i++); return n; }
+function countUse(field, name){ return data.products.filter(function(p){ return p[field] === name; }).length; }
+function moveItem(list, item, dir){ var i = list.indexOf(item), j = i + dir; if (j < 0 || j >= list.length) return; list[i] = list[j]; list[j] = item; sortAll(); renderMeta(); renderAll(); changed(); }
+
+function metaRow(list, item, field, isSimple){
+  var row = el("div", "mrow" + (isSimple ? " simple" : ""));
+  var nm = el("input"); nm.type = "text"; nm.value = item.name; nm.setAttribute("aria-label", "이름");
+  var old = item.name;
+  nm.addEventListener("change", function(){
+    var v = nm.value.trim();
+    if (!v) { alert("이름은 비울 수 없습니다."); nm.value = old; return; }
+    if (list.some(function(x){ return x !== item && x.name === v; })) { alert("이미 같은 이름이 있습니다: " + v); nm.value = old; return; }
+    data.products.forEach(function(p){ if (p[field] === old) p[field] = v; });
+    if (state[field === "cat" ? "cat" : "simple"] === old) state[field === "cat" ? "cat" : "simple"] = "전체";
+    item.name = v; old = v; nm.value = v; sortAll(); renderMeta(); renderAll(); changed();
+  });
+  row.appendChild(nm);
+  var col = el("input"); col.type = "color"; col.value = item.color; col.title = isSimple ? "글자색" : "색상(막대·구분 칸)";
+  col.addEventListener("input", function(){ item.color = col.value; renderAll(); changed(); });
+  row.appendChild(col);
+  if (isSimple) {
+    var bg = el("input"); bg.type = "color"; bg.value = item.bg || "#ffffff"; bg.title = "배경색"; bg.disabled = !item.bg;
+    bg.addEventListener("input", function(){ item.bg = bg.value; renderAll(); changed(); });
+    row.appendChild(bg);
+    var lab = el("label", "chk"); var cb = el("input"); cb.type = "checkbox"; cb.checked = !item.bg;
+    cb.addEventListener("change", function(){ item.bg = cb.checked ? "" : (bg.value || "#FCDD8F"); bg.disabled = cb.checked; renderAll(); changed(); });
+    lab.appendChild(cb); lab.appendChild(document.createTextNode("배경 없음")); row.appendChild(lab);
+  }
+  var acts = el("div", "acts");
+  acts.appendChild(el("span", "cnt", "상품 " + countUse(field, item.name) + "개"));
+  var up = btn("▲", "위로", function(){ moveItem(list, item, -1); }); up.disabled = list.indexOf(item) === 0;
+  var dn = btn("▼", "아래로", function(){ moveItem(list, item, 1); }); dn.disabled = list.indexOf(item) === list.length - 1;
+  acts.appendChild(up); acts.appendChild(dn);
+  acts.appendChild(btn("삭제", "삭제", function(){
+    var n = countUse(field, item.name);
+    if (n) { alert("'" + item.name + "'을(를) 쓰는 상품이 " + n + "개 있습니다.\n먼저 해당 상품의 " + (isSimple ? "유형" : "구분") + "을(를) 바꾸거나 삭제하세요."); return; }
+    if (list.length <= 1) { alert("최소 1개는 있어야 합니다."); return; }
+    if (confirm("'" + item.name + "'을(를) 삭제할까요?")) { if (state[field] === item.name) state[field] = "전체"; list.splice(list.indexOf(item), 1); renderMeta(); renderAll(); changed(); }
+  }, "del"));
+  row.appendChild(acts);
+  return row;
+}
+function renderMeta(){
+  var c = $("catList"), s = $("simpleList"); c.innerHTML = ""; s.innerHTML = "";
+  data.cats.forEach(function(x){ c.appendChild(metaRow(data.cats, x, "cat", false)); });
+  data.simples.forEach(function(x){ s.appendChild(metaRow(data.simples, x, "simple", true)); });
+}
+$("bAddCat").addEventListener("click", function(){ data.cats.push({ name:uniqueName(data.cats, "새구분"), color:PALETTE[data.cats.length % PALETTE.length] }); renderMeta(); renderAll(); changed(); });
+$("bAddSimple").addEventListener("click", function(){ data.simples.push({ name:uniqueName(data.simples, "새유형"), color:"#1B4F72", bg:"#D6EAF8" }); renderMeta(); renderAll(); changed(); });
+
+/* ---------- 상품 수정 창 ---------- */
+function fillSelect(id, list, val){
+  var s = $(id); s.innerHTML = list.map(function(x){ return '<option value="' + esc(x.name) + '">' + esc(x.name) + "</option>"; }).join(""); s.value = val;
+  if (s.value !== val && list.length) s.value = list[0].name;
+}
+function lineRow(ln){
+  var r = el("div", "lrow");
+  var lb = el("input"); lb.type = "text"; lb.value = ln.label || ""; lb.placeholder = "예: 5년납 남15~85"; lb.setAttribute("aria-label", "표시문구");
+  var mn = el("input"); mn.type = "number"; mn.min = 0; mn.max = 150; mn.value = ln.amin === null ? "" : ln.amin; mn.setAttribute("aria-label", "시작나이"); mn.placeholder = "시작";
+  var mx = el("input"); mx.type = "number"; mx.min = 0; mx.max = 150; mx.value = ln.amax === null ? "" : ln.amax; mx.setAttribute("aria-label", "끝나이"); mx.placeholder = "끝";
+  var fs = el("select"); fs.setAttribute("aria-label", "태아 칸");
+  fs.innerHTML = '<option value="">없음</option>' + FETAL_COLS.map(function(c){ return '<option value="' + c.key + '">' + c.key + "</option>"; }).join("");
+  fs.value = ln.fetal || "";
+  var sync = function(){ mn.disabled = mx.disabled = !!fs.value; if (fs.value) { mn.value = ""; mx.value = ""; } };
+  var lastF = ln.fetal || "", dflt = function(f){ return "태아<br>(" + f + ")"; };
+  fs.addEventListener("change", function(){
+    var cur = lb.value.trim();
+    if (fs.value) { if (!cur || cur === "태아" || (lastF && cur === dflt(lastF))) lb.value = dflt(fs.value); }
+    else if (lastF && cur === dflt(lastF)) lb.value = "";
+    lastF = fs.value; sync();
+  });
+  sync();
+  r.appendChild(lb); r.appendChild(mn); r.appendChild(mx); r.appendChild(fs);
+  var ac = el("div", "acts");
+  ac.appendChild(btn("▲", "위로", function(){ if (r.previousElementSibling) r.parentNode.insertBefore(r, r.previousElementSibling); }));
+  ac.appendChild(btn("▼", "아래로", function(){ if (r.nextElementSibling) r.parentNode.insertBefore(r.nextElementSibling, r); }));
+  ac.appendChild(btn("삭제", "이 조건 삭제", function(){ if ($("mLines").children.length > 1) r.parentNode.removeChild(r); else showErr("나이 조건은 최소 1개 필요합니다."); }, "del"));
+  r.appendChild(ac);
+  r._get = function(){ return { label:lb.value.trim(), min:mn.value.trim(), max:mx.value.trim(), fetal:fs.value || null, inLb:lb, inMn:mn, inMx:mx }; };
+  return r;
+}
+function showErr(t){ var e = $("mErr"); e.textContent = t; e.className = "merr" + (t ? " on" : ""); }
+function openEditor(p){
+  var isNew = !p;
+  editing = isNew ? { isNew:true } : { isNew:false, p:p };
+  var src = p || { cat:data.cats[0] ? data.cats[0].name : "", simple:data.simples[0] ? data.simples[0].name : "", name:"", important:false, discontinued:false, lines:[{ label:"", amin:null, amax:null, fetal:null }] };
+  $("mTitle").textContent = isNew ? "상품 추가" : "상품 수정";
+  fillSelect("mCat", data.cats, src.cat); fillSelect("mSimple", data.simples, src.simple);
+  $("mStatus").value = src.discontinued ? "disc" : "sale"; $("mName").value = src.name; $("mName").classList.remove("bad"); $("mImp").checked = !!src.important;
+  $("mLines").innerHTML = ""; src.lines.forEach(function(l){ $("mLines").appendChild(lineRow(l)); });
+  $("mDel").style.display = isNew ? "none" : ""; showErr("");
+  $("modal").hidden = false; $("mName").focus();
+}
+function closeEditor(){ $("modal").hidden = true; editing = null; }
+function applyEditor(){
+  showErr(""); Array.prototype.forEach.call($("modal").querySelectorAll(".bad"), function(x){ x.classList.remove("bad"); });
+  var name = $("mName").value.trim(), cat = $("mCat").value, simple = $("mSimple").value;
+  if (!name) { $("mName").classList.add("bad"); showErr("상품명을 입력하세요."); return; }
+  if (!cat || !simple) { showErr("구분과 유형을 선택하세요."); return; }
+  var self = editing.isNew ? null : editing.p;
+  if (data.products.some(function(q){ return q !== self && q.cat === cat && q.simple === simple && q.name === name; })) { showErr("같은 구분·유형·상품명의 상품이 이미 있습니다."); return; }
+  var lines = [], rows = Array.prototype.slice.call($("mLines").children);
+  for (var i = 0; i < rows.length; i++) {
+    var g = rows[i]._get(), n = i + 1;
+    if (g.fetal) { lines.push({ label:g.label || "태아<br>(" + g.fetal + ")", amin:null, amax:null, fetal:g.fetal }); continue; }
+    if (g.min === "" && g.max === "") {
+      if (!g.label) { g.inLb.classList.add("bad"); showErr(n + "번째 조건: 시작·끝나이를 넣거나 표시문구를 입력하세요."); return; }
+      lines.push({ label:g.label, amin:null, amax:null, fetal:null }); continue;
+    }
+    var a = Number(g.min), b = Number(g.max);
+    if (g.min === "" || g.max === "" || !Number.isInteger(a) || !Number.isInteger(b) || a < 0 || b > 150) { (g.min === "" || !Number.isInteger(a) ? g.inMn : g.inMx).classList.add("bad"); showErr(n + "번째 조건: 시작·끝나이는 0~150의 정수로 둘 다 입력하세요."); return; }
+    if (a > b) { g.inMn.classList.add("bad"); g.inMx.classList.add("bad"); showErr(n + "번째 조건: 시작나이가 끝나이보다 클 수 없습니다."); return; }
+    lines.push({ label:g.label || (a + "~" + b), amin:a, amax:b, fetal:null });
+  }
+  var obj = self || { _id:nextId++ };
+  obj.cat = cat; obj.simple = simple; obj.name = name; obj.important = $("mImp").checked; obj.discontinued = $("mStatus").value === "disc"; obj.lines = lines;
+  if (!self) data.products.push(obj);
+  sortAll(); renderMeta(); renderAll(); changed(); closeEditor();
+}
+$("mOk").addEventListener("click", applyEditor);
+$("mCancel").addEventListener("click", closeEditor);
+$("mAddLine").addEventListener("click", function(){ $("mLines").appendChild(lineRow({ label:"", amin:null, amax:null, fetal:null })); });
+$("mDel").addEventListener("click", function(){
+  if (!editing || editing.isNew) return;
+  if (confirm("'" + editing.p.name + "' 상품을 완전히 삭제합니다.\n(판매 중단은 삭제 대신 '판매 상태'를 '단종'으로 바꾸세요) 계속할까요?")) { data.products.splice(data.products.indexOf(editing.p), 1); renderMeta(); renderAll(); changed(); closeEditor(); }
+});
+document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !$("modal").hidden) closeEditor(); });
+$("bAddProd").addEventListener("click", function(){ openEditor(null); });
+document.addEventListener("click", function(e){
+  var td = e.target.closest ? e.target.closest("td.name-cell") : null; if (!td) return;
+  var id = Number(td.getAttribute("data-pid")), p = data.products.filter(function(x){ return x._id === id; })[0];
+  if (p) openEditor(p);
+});
+
+/* ---------- 검사 · 저장 ---------- */
+function validate(){
+  var errs = [], names = function(l){ return l.map(function(x){ return x.name; }); };
+  if (!data.cats.length) errs.push("구분이 하나도 없습니다.");
+  if (!data.simples.length) errs.push("유형이 하나도 없습니다.");
+  data.cats.forEach(function(c){ if (!c.name.trim()) errs.push("이름이 빈 구분이 있습니다."); });
+  data.simples.forEach(function(c){ if (!c.name.trim()) errs.push("이름이 빈 유형이 있습니다."); });
+  if (new Set(names(data.cats)).size !== data.cats.length) errs.push("구분 이름이 중복됩니다.");
+  if (new Set(names(data.simples)).size !== data.simples.length) errs.push("유형 이름이 중복됩니다.");
+  if (!data.copyright.trim()) errs.push("저작권 문구가 비어 있습니다.");
+  var seen = {};
+  data.products.forEach(function(p){
+    var k = p.cat + "|" + p.simple + "|" + p.name;
+    if (!p.name.trim()) errs.push("상품명이 빈 상품이 있습니다.");
+    if (seen[k]) errs.push("중복 상품: " + p.name + " (" + p.cat + "/" + p.simple + ")"); seen[k] = 1;
+    if (names(data.cats).indexOf(p.cat) < 0) errs.push("'" + p.name + "'의 구분이 목록에 없습니다.");
+    if (names(data.simples).indexOf(p.simple) < 0) errs.push("'" + p.name + "'의 유형이 목록에 없습니다.");
+    if (!p.lines.length) errs.push("'" + p.name + "'에 나이 조건이 없습니다.");
+    p.lines.forEach(function(l){ if (l.fetal === null && (l.amin === null || l.amax === null) && !l.label.trim()) errs.push("'" + p.name + "'에 비어 있는 나이 조건이 있습니다."); if (l.amin !== null && l.amax !== null && l.amin > l.amax) errs.push("'" + p.name + "'의 나이 범위가 거꾸로입니다."); });
+  });
+  return errs;
+}
+function clean(){
+  var d = JSON.parse(JSON.stringify(data));
+  d.updated = today();
+  d.asof = d.asof.trim(); d.footerNote = d.footerNote.trim(); d.copyright = upA(d.copyright.trim());
+  Object.keys(d.notices).forEach(function(k){ d.notices[k] = d.notices[k].trim(); });
+  d.cats = d.cats.map(function(c){ return { name:c.name.trim(), color:c.color }; });
+  d.simples = d.simples.map(function(c){ return { name:c.name.trim(), color:c.color, bg:c.bg || "" }; });
+  d.products = d.products.map(function(p){ return { cat:p.cat, simple:p.simple, name:p.name.trim(), important:!!p.important, discontinued:!!p.discontinued,
+    lines:p.lines.map(function(l){ return { label:l.label, amin:l.amin, amax:l.amax, fetal:l.fetal }; }) }; });
+  return d;
+}
+function cfg(){ return { repo:$("cRepo").value.trim(), branch:$("cBranch").value.trim() || "main", path:$("cPath").value.trim() || "Prod/prod_age_data.json" }; }
+function b64(s){ var b = new TextEncoder().encode(s), x = ""; for (var i = 0; i < b.length; i++) x += String.fromCharCode(b[i]); return btoa(x); }
+function api(url, opt){
+  opt = opt || {}; opt.headers = Object.assign({ "Accept":"application/vnd.github+json", "Authorization":"Bearer " + $("cTok").value.trim(), "X-GitHub-Api-Version":"2022-11-28" }, opt.headers || {});
+  return fetch(url, opt).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ if (!r.ok) { var e = new Error((j && j.message) || r.status); e.status = r.status; throw e; } return j; }); });
+}
+function today(){ var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+function decodeB64(b){ var bin = atob(String(b).replace(/\s/g, "")), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
+function save(){
+  if (loadFailed) { msg("err", "게시본을 불러오지 못한 상태에서는 저장할 수 없습니다. [게시본 다시 불러오기]를 먼저 성공시키세요."); return; }
+  var errs = validate();
+  if (errs.length) { msg("err", "저장할 수 없습니다: " + errs.slice(0, 4).join(" / ") + (errs.length > 4 ? " 외 " + (errs.length - 4) + "건" : "")); return; }
+  var c = cfg();
+  if (!/^[\w.-]+\/[\w.-]+$/.test(c.repo)) { $("dCfg").open = true; msg("err", "저장소 이름 형식이 올바르지 않습니다. (예: yangji-madang/SLGFC)"); return; }
+  if (!$("cTok").value.trim()) { $("dCfg").open = true; msg("err", "저장하려면 '저장 설정'에 액세스 토큰을 입력하세요."); return; }
+  var url = "https://api.github.com/repos/" + c.repo + "/contents/" + c.path.split("/").map(encodeURIComponent).join("/");
+  $("bSave").disabled = true; msg("info", "GitHub에 저장하는 중입니다…");
+  var out = clean();
+  api(url + "?ref=" + encodeURIComponent(c.branch)).then(function(cur){ return cur; }, function(e){ if (e.status === 404) return null; throw e; })
+  .then(function(cur){
+    /* 불러온 뒤 다른 곳에서 먼저 수정됐는지 확인 */
+    var remote = cur && cur.content ? safe(function(){ return JSON.stringify(JSON.parse(decodeB64(cur.content))); }, null) : null;
+    if (remote && baseJson && remote !== baseJson && !confirm("이 화면을 연 뒤 다른 곳에서 데이터가 먼저 수정된 것으로 보입니다.\n(방금 저장한 직후라면 반영 지연 때문일 수 있습니다)\n그래도 지금 내용으로 덮어쓸까요?")) { var ce = new Error("저장을 취소했습니다. [게시본 다시 불러오기]로 최신 내용을 확인하세요."); ce.cancel = true; throw ce; }
+    var body = { message:"prod_age_data: 관리화면에서 수정 (" + new Date().toISOString().slice(0, 16).replace("T", " ") + ")", content:b64(JSON.stringify(out, null, 1) + "\n"), branch:c.branch };
+    if (cur && cur.sha) body.sha = cur.sha;
+    return api(url, { method:"PUT", body:JSON.stringify(body) });
+  })
+  .then(function(){
+    baseJson = JSON.stringify(out);
+    setDirty(false); msg("ok", "저장되었습니다. GitHub Pages 반영까지 약 1분 걸립니다(안 보이면 새로고침).");
+    if ($("cRem").checked) safe(function(){ localStorage.setItem(CFGK, JSON.stringify({ repo:c.repo, branch:c.branch, path:c.path, tok:$("cTok").value.trim() })); });
+  })
+  .catch(function(e){
+    var hint = e.status === 401 ? " (토큰이 올바르지 않거나 만료되었습니다)" : e.status === 403 || e.status === 404 ? " (토큰에 이 저장소의 Contents 쓰기 권한이 있는지 확인하세요)" : e.status === 409 || e.status === 422 ? " (다른 곳에서 먼저 수정됨 — 다시 시도하세요)" : "";
+    if (e.cancel) { msg("info", e.message); return; }
+    msg("err", "저장 실패: " + e.message + hint);
+  })
+  .then(function(){ $("bSave").disabled = false; });
+}
+$("bSave").addEventListener("click", save);
+$("bReload").addEventListener("click", function(){ if (!dirty || confirm("저장하지 않은 변경 내용이 사라집니다. 게시본을 다시 불러올까요?")) loadPublished(false); });
+window.addEventListener("beforeunload", function(e){ if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+/* 시작: 저장 설정 복원 (KMS 관리화면에서 저장한 토큰이 있으면 함께 사용) */
+var saved = safe(function(){ return JSON.parse(localStorage.getItem(CFGK) || "null"); }, null);
+var kms = safe(function(){ return JSON.parse(localStorage.getItem(KMSK) || "null"); }, null);
+if (saved) { $("cRepo").value = saved.repo || $("cRepo").value; $("cBranch").value = saved.branch || "main"; $("cPath").value = saved.path || $("cPath").value; $("cTok").value = saved.tok || ""; $("cRem").checked = !!saved.tok; }
+else if (kms && kms.tok) { $("cRepo").value = kms.repo || $("cRepo").value; $("cBranch").value = kms.branch || "main"; $("cTok").value = kms.tok; }
+$("cRem").addEventListener("change", function(){ if (!this.checked) safe(function(){ localStorage.removeItem(CFGK); }); });
+loadPublished(true);
+})();
+</script>
+</body>
+</html>

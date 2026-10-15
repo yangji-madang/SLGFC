@@ -17,13 +17,6 @@
     --ink: #232323;
     --ink-soft: #6B6B6B;
 
-    --c-jongsin: #1F4E9C;
-    --c-jongsin-bg: #E7EDF8;
-    --c-health: #B23A2C;
-    --c-health-bg: #F7E6E2;
-    --c-etc: #3A3A3A;
-    --c-etc-bg: #EAEAEA;
-
     --search-bg: #EFEAE0;
     --search-bg-2: #E7E0D2;
     --search-line: #D9CFB8;
@@ -208,20 +201,16 @@
     vertical-align:middle; letter-spacing:0; line-height:1.3;
     padding:2px 1px;
   }
-  .cat-cell.종신정기{ background:var(--c-jongsin-bg); color:var(--c-jongsin); }
-  .cat-cell.건강상해{ background:var(--c-health-bg); color:var(--c-health); }
-  .cat-cell.기타상품{ background:var(--c-etc-bg); color:var(--c-etc); }
   .cat-cell span{ writing-mode:horizontal-tb; }
 
   .simple-cell{
     text-align:center; font-size:12.5px; font-weight:700; padding:8px 2px;
   }
-  .simple-cell.간편{ color:#7A4B00; background:#FCDD8F; }
-  .simple-cell.일반{ color:#888; background:#fff; }
 
   .name-cell{
     font-size:13px; font-weight:700; padding:6px 8px; line-height:1.3;
   }
+  .name-cell.important{ color:#E11D1D; }
 
   .age-cell{
     font-size:13px; font-weight:700; color:var(--navy); padding:6px 6px;
@@ -236,7 +225,6 @@
   tbody tr:hover td.age-bar-td{ filter:brightness(1.05); }
   tbody tr:nth-child(even) td:not(.age-bar-td){ background:#FAFAF8; }
   tbody tr:nth-child(even) td.sticky-col{ background:#FAFAF8; }
-  tbody tr td.simple-cell.간편, tbody tr:nth-child(even) td.simple-cell.간편{ background:#FCDD8F; color:#7A4B00; }
 
   .empty-state{ flex:0 0 auto; text-align:center; padding:50px 20px; color:var(--ink-soft); }
   .empty-state b{ display:block; font-size:15px; color:var(--ink); margin-bottom:4px; }
@@ -251,6 +239,9 @@
     font-size:12px; font-weight:600; color:#8A6B34;
     margin-bottom:6px;
   }
+  .foot-note{
+    flex:0 0 auto; margin-top:6px; font-size:11.5px; font-weight:600; color:var(--ink-soft);
+  }
   .foot-copyright{
     flex:0 0 auto;
     margin-top:6px; font-size:10.5px; font-weight:800; color:var(--navy);
@@ -263,7 +254,7 @@
 <div class="search-wrap" id="searchWrap">
   <div class="brand-row">
     <div class="brand-title">상품별 가입가능나이 검색</div>
-    <div class="brand-sub">’26.10. 기준</div>
+    <div class="brand-sub" id="asof"></div>
   </div>
 
   <div class="filter-stack">
@@ -285,18 +276,14 @@
       <button class="reset-btn" id="resetBtn">초기화</button>
       <span class="result-count" id="resultCount"></span>
     </div>
-    <div class="update-notice">※ 변경내용 : 골든종신 개정반영(’26.10.14. 개정)</div>
+    <div class="update-notice" id="changeNotice"></div>
   </div>
 </div>
 
 <div class="content">
-  <div class="legend-note">
-    <span class="legend-dot"><i style="background:var(--c-jongsin)"></i>종신정기</span>
-    <span class="legend-dot"><i style="background:var(--c-health)"></i>건강상해</span>
-    <span class="legend-dot"><i style="background:var(--c-etc)"></i>기타상품</span>
-  </div>
-  <div class="age-notice">※ 정확한 가입나이는 반드시 설계화면에서 확인하세요.</div>
-  <div class="resize-notice">※ '상품명' 항목 우측테두리를 이용하여 폭을 조절할 수 있습니다.</div>
+  <div class="legend-note" id="legend"></div>
+  <div class="age-notice" id="ageNotice"></div>
+  <div class="resize-notice" id="resizeNotice"></div>
 
   <div class="table-scroll">
     <table class="data-table" id="dataTable">
@@ -317,74 +304,81 @@
     검색어나 필터를 조정해 보세요.
   </div>
 
-  <div class="foot-copyright">ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.</div>
+  <div class="foot-note" id="footNote"></div>
+  <div class="foot-copyright" id="footCopy"></div>
 </div>
 
 <script>
-const RAW = {"products":[{"cat":"건강상해","simple":"일반","name":"1540청춘대표","lines":[{"label":"15~40","amin":15,"amax":40,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"4180인생대표","lines":[{"label":"41~80","amin":41,"amax":80,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"New플러스원","lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"New플러스원","lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"The(더)Dream","lines":[{"label":"0~39","amin":0,"amax":39,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"The간편한다모은","lines":[{"label":"15~80","amin":15,"amax":80,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"The라이트","lines":[{"label":"15~80","amin":15,"amax":80,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"가족대표Plus+","lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"곰두리보장(장애인전용)","lines":[{"label":"15~60","amin":15,"amax":60,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"급여실손의료비","lines":[{"label":"0~60","amin":0,"amax":60,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"급여실손의료비","lines":[{"label":"5~90","amin":5,"amax":90,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"급여실손의료비(계약전환용)","lines":[{"label":"0~99","amin":0,"amax":99,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"급여실손의료비(재가입용)","lines":[{"label":"5~99","amin":5,"amax":99,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"급여실손의료비(재가입용)","lines":[{"label":"8~109","amin":8,"amax":109,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"급여실손의료비(태아용)","lines":[{"label":"태아","amin":null,"amax":null,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"노후실손","lines":[{"label":"61~90","amin":61,"amax":90,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"노후실손(재가입용)","lines":[{"label":"64~109","amin":64,"amax":109,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"더블보장1형(암보장형)","lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"더블보장1형(암보장형)","lines":[{"label":"30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"더블보장2형(암간병보장형)","lines":[{"label":"남15~73","amin":15,"amax":73,"fetal":null},{"label":"여15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"더블보장2형(암간병보장형)","lines":[{"label":"남30~73","amin":30,"amax":73,"fetal":null},{"label":"여30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"시니어대표","lines":[{"label":"30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"시니어대표","lines":[{"label":"30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"우리아이올바른성장(출생아)","lines":[{"label":"0~15","amin":0,"amax":15,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"우리아이올바른성장(태아/23주이내)","lines":[{"label":"태아<br>(23주이내)","amin":null,"amax":null,"fetal":"23주이내"}]},{"cat":"건강상해","simple":"일반","name":"우리아이올바른성장(태아/23주초과)","lines":[{"label":"태아<br>(23주초과)","amin":null,"amax":null,"fetal":"23주초과"}]},{"cat":"건강상해","simple":"일반","name":"치아","lines":[{"label":"0~70","amin":0,"amax":70,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"플래티넘플러스원","lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"CEO보장정기","lines":[{"label":"20~75","amin":20,"amax":75,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"CEO보장정기","lines":[{"label":"30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"골든(1형기본형)","lines":[{"label":"15~65","amin":15,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"골든(1형기본형)","lines":[{"label":"30~65","amin":30,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"골든(2형암보장형)","lines":[{"label":"15~60","amin":15,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"골든(2형암보장형)","lines":[{"label":"30~60","amin":30,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"내리사랑정기","lines":[{"label":"20~65","amin":20,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"더사랑","lines":[{"label":"5년납 남30~63","amin":30,"amax":63,"fetal":null},{"label":"5년납 여30~67","amin":30,"amax":67,"fetal":null},{"label":"7년납 남30~69","amin":30,"amax":69,"fetal":null},{"label":"7년납 여30~67","amin":30,"amax":67,"fetal":null},{"label":"10년납 남30~60","amin":30,"amax":60,"fetal":null},{"label":"10년납 여30~66","amin":30,"amax":66,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"더착한VVIP(라이트형)","lines":[{"label":"24~80","amin":24,"amax":80,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"더착한VVIP(라이트형)","lines":[{"label":"30~80","amin":30,"amax":80,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"더착한VVIP(암납입면제형)","lines":[{"label":"15~80","amin":15,"amax":80,"fetal":null},{"label":"우량체20~80","amin":20,"amax":80,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"더착한VVIP(암납입면제형)","lines":[{"label":"30~80","amin":30,"amax":80,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"더행복","lines":[{"label":"5년납 남15~85","amin":15,"amax":85,"fetal":null},{"label":"5년납 여15~87","amin":15,"amax":87,"fetal":null},{"label":"7년납 남15~89","amin":15,"amax":89,"fetal":null},{"label":"7년납 여15~70","amin":15,"amax":70,"fetal":null},{"label":"10년납 남15~85","amin":15,"amax":85,"fetal":null},{"label":"10년납 여15~89","amin":15,"amax":89,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"밸런스","lines":[{"label":"15~60","amin":15,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"밸런스","lines":[{"label":"30~60","amin":30,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"삼성정기","lines":[{"label":"20~65","amin":20,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"암치료플러스(남자)","lines":[{"label":"남15~65","amin":15,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"암치료플러스(남자)","lines":[{"label":"남30~62","amin":30,"amax":62,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"암치료플러스(여자)","lines":[{"label":"여15~70","amin":15,"amax":70,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"암치료플러스(여자)","lines":[{"label":"여30~70","amin":30,"amax":70,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"올백1종(일반)","lines":[{"label":"15~70","amin":15,"amax":70,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"올백1종(일반)","lines":[{"label":"30~70","amin":30,"amax":70,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"올백2종(암납면)","lines":[{"label":"20~60","amin":20,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"올백2종(암납면)","lines":[{"label":"30~60","amin":30,"amax":60,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"기업복지연금","lines":[{"label":"15~64","amin":15,"amax":64,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"더한결같은행복연금","lines":[{"label":"0~85","amin":0,"amax":85,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"삼성변액연금","lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"삼성연금","lines":[{"label":"월납 0~70","amin":0,"amax":70,"fetal":null},{"label":"거치형 0~80","amin":0,"amax":80,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"스마트저축","lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"연금저축골드연금","lines":[{"label":"0~75","amin":0,"amax":75,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"탄탄한변액연금","lines":[{"label":"15~70","amin":15,"amax":70,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"파워즉시연금(거치형)","lines":[{"label":"35~88","amin":35,"amax":88,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"파워즉시연금(즉시형)","lines":[{"label":"40~90","amin":40,"amax":90,"fetal":null}]}],"breakpoints":[0,5,8,15,20,24,30,35,39,40,41,60,61,62,63,64,65,66,67,69,70,73,75,80,85,87,88,89,90,99,109]};
-const DATA = RAW.products;
-const BREAKPOINTS = RAW.breakpoints;
+"use strict";
+/* 데이터: 같은 폴더의 prod_age_data.json (관리 페이지에서 저장). 읽지 못하면 아래 내장본을 사용 */
+const FALLBACK = {"updated":"2026-10-16","asof":"’26.10. 기준","notices":{"age":"※ 정확한 가입나이는 반드시 설계화면에서 확인하세요.","resize":"※ '상품명' 항목 우측테두리를 이용하여 폭을 조절할 수 있습니다.","change":"※ 변경내용 : 골든종신 개정반영(’26.10.14. 개정)"},"footerNote":"","copyright":"ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.","cats":[{"name":"건강상해","color":"#B23A2C"},{"name":"종신정기","color":"#1F4E9C"},{"name":"기타상품","color":"#3A3A3A"}],"simples":[{"name":"일반","color":"#888888","bg":""},{"name":"간편","color":"#7A4B00","bg":"#FCDD8F"}],"products":[{"cat":"건강상해","simple":"일반","name":"1540청춘대표","important":false,"discontinued":false,"lines":[{"label":"15~40","amin":15,"amax":40,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"4180인생대표","important":false,"discontinued":false,"lines":[{"label":"41~80","amin":41,"amax":80,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"New플러스원","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"New플러스원","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"The(더)Dream","important":false,"discontinued":false,"lines":[{"label":"0~39","amin":0,"amax":39,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"The간편한다모은","important":false,"discontinued":false,"lines":[{"label":"15~80","amin":15,"amax":80,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"The라이트","important":false,"discontinued":false,"lines":[{"label":"15~80","amin":15,"amax":80,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"가족대표Plus+","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"곰두리보장(장애인전용)","important":false,"discontinued":false,"lines":[{"label":"15~60","amin":15,"amax":60,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"급여실손의료비","important":false,"discontinued":false,"lines":[{"label":"0~60","amin":0,"amax":60,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"급여실손의료비","important":false,"discontinued":false,"lines":[{"label":"5~90","amin":5,"amax":90,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"급여실손의료비(계약전환용)","important":false,"discontinued":false,"lines":[{"label":"0~99","amin":0,"amax":99,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"급여실손의료비(재가입용)","important":false,"discontinued":false,"lines":[{"label":"5~99","amin":5,"amax":99,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"급여실손의료비(재가입용)","important":false,"discontinued":false,"lines":[{"label":"8~109","amin":8,"amax":109,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"급여실손의료비(태아용)","important":false,"discontinued":false,"lines":[{"label":"태아","amin":null,"amax":null,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"노후실손","important":false,"discontinued":false,"lines":[{"label":"61~90","amin":61,"amax":90,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"노후실손(재가입용)","important":false,"discontinued":false,"lines":[{"label":"64~109","amin":64,"amax":109,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"더블보장1형(암보장형)","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"더블보장1형(암보장형)","important":false,"discontinued":false,"lines":[{"label":"30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"더블보장2형(암간병보장형)","important":false,"discontinued":false,"lines":[{"label":"남15~73","amin":15,"amax":73,"fetal":null},{"label":"여15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"더블보장2형(암간병보장형)","important":false,"discontinued":false,"lines":[{"label":"남30~73","amin":30,"amax":73,"fetal":null},{"label":"여30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"시니어대표","important":false,"discontinued":false,"lines":[{"label":"30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"간편","name":"시니어대표","important":false,"discontinued":false,"lines":[{"label":"30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"우리아이올바른성장(출생아)","important":false,"discontinued":false,"lines":[{"label":"0~15","amin":0,"amax":15,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"우리아이올바른성장(태아/23주이내)","important":false,"discontinued":false,"lines":[{"label":"태아<br>(23주이내)","amin":null,"amax":null,"fetal":"23주이내"}]},{"cat":"건강상해","simple":"일반","name":"우리아이올바른성장(태아/23주초과)","important":false,"discontinued":false,"lines":[{"label":"태아<br>(23주초과)","amin":null,"amax":null,"fetal":"23주초과"}]},{"cat":"건강상해","simple":"일반","name":"치아","important":false,"discontinued":false,"lines":[{"label":"0~70","amin":0,"amax":70,"fetal":null}]},{"cat":"건강상해","simple":"일반","name":"플래티넘플러스원","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"CEO보장정기","important":false,"discontinued":false,"lines":[{"label":"20~75","amin":20,"amax":75,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"CEO보장정기","important":false,"discontinued":false,"lines":[{"label":"30~75","amin":30,"amax":75,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"골든(1형기본형)","important":false,"discontinued":false,"lines":[{"label":"15~65","amin":15,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"골든(1형기본형)","important":false,"discontinued":false,"lines":[{"label":"30~65","amin":30,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"골든(2형암보장형)","important":false,"discontinued":false,"lines":[{"label":"15~60","amin":15,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"골든(2형암보장형)","important":false,"discontinued":false,"lines":[{"label":"30~60","amin":30,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"내리사랑정기","important":false,"discontinued":false,"lines":[{"label":"20~65","amin":20,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"더사랑","important":false,"discontinued":false,"lines":[{"label":"5년납 남30~63","amin":30,"amax":63,"fetal":null},{"label":"5년납 여30~67","amin":30,"amax":67,"fetal":null},{"label":"7년납 남30~69","amin":30,"amax":69,"fetal":null},{"label":"7년납 여30~67","amin":30,"amax":67,"fetal":null},{"label":"10년납 남30~60","amin":30,"amax":60,"fetal":null},{"label":"10년납 여30~66","amin":30,"amax":66,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"더착한VVIP(라이트형)","important":false,"discontinued":false,"lines":[{"label":"24~80","amin":24,"amax":80,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"더착한VVIP(라이트형)","important":false,"discontinued":false,"lines":[{"label":"30~80","amin":30,"amax":80,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"더착한VVIP(암납입면제형)","important":false,"discontinued":false,"lines":[{"label":"15~80","amin":15,"amax":80,"fetal":null},{"label":"우량체20~80","amin":20,"amax":80,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"더착한VVIP(암납입면제형)","important":false,"discontinued":false,"lines":[{"label":"30~80","amin":30,"amax":80,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"더행복","important":false,"discontinued":false,"lines":[{"label":"5년납 남15~85","amin":15,"amax":85,"fetal":null},{"label":"5년납 여15~87","amin":15,"amax":87,"fetal":null},{"label":"7년납 남15~89","amin":15,"amax":89,"fetal":null},{"label":"7년납 여15~70","amin":15,"amax":70,"fetal":null},{"label":"10년납 남15~85","amin":15,"amax":85,"fetal":null},{"label":"10년납 여15~89","amin":15,"amax":89,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"밸런스","important":false,"discontinued":false,"lines":[{"label":"15~60","amin":15,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"밸런스","important":false,"discontinued":false,"lines":[{"label":"30~60","amin":30,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"삼성정기","important":false,"discontinued":false,"lines":[{"label":"20~65","amin":20,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"암치료플러스(남자)","important":false,"discontinued":false,"lines":[{"label":"남15~65","amin":15,"amax":65,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"암치료플러스(남자)","important":false,"discontinued":false,"lines":[{"label":"남30~62","amin":30,"amax":62,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"암치료플러스(여자)","important":false,"discontinued":false,"lines":[{"label":"여15~70","amin":15,"amax":70,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"암치료플러스(여자)","important":false,"discontinued":false,"lines":[{"label":"여30~70","amin":30,"amax":70,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"올백1종(일반)","important":false,"discontinued":false,"lines":[{"label":"15~70","amin":15,"amax":70,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"올백1종(일반)","important":false,"discontinued":false,"lines":[{"label":"30~70","amin":30,"amax":70,"fetal":null}]},{"cat":"종신정기","simple":"일반","name":"올백2종(암납면)","important":false,"discontinued":false,"lines":[{"label":"20~60","amin":20,"amax":60,"fetal":null}]},{"cat":"종신정기","simple":"간편","name":"올백2종(암납면)","important":false,"discontinued":false,"lines":[{"label":"30~60","amin":30,"amax":60,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"기업복지연금","important":false,"discontinued":false,"lines":[{"label":"15~64","amin":15,"amax":64,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"더한결같은행복연금","important":false,"discontinued":false,"lines":[{"label":"0~85","amin":0,"amax":85,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"삼성변액연금","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"삼성연금","important":false,"discontinued":false,"lines":[{"label":"월납 0~70","amin":0,"amax":70,"fetal":null},{"label":"거치형 0~80","amin":0,"amax":80,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"스마트저축","important":false,"discontinued":false,"lines":[{"label":"15~75","amin":15,"amax":75,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"연금저축골드연금","important":false,"discontinued":false,"lines":[{"label":"0~75","amin":0,"amax":75,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"탄탄한변액연금","important":false,"discontinued":false,"lines":[{"label":"15~70","amin":15,"amax":70,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"파워즉시연금(거치형)","important":false,"discontinued":false,"lines":[{"label":"35~88","amin":35,"amax":88,"fetal":null}]},{"cat":"기타상품","simple":"일반","name":"파워즉시연금(즉시형)","important":false,"discontinued":false,"lines":[{"label":"40~90","amin":40,"amax":90,"fetal":null}]}]};
 
-const CAT_COLOR = { "종신정기":"#1F4E9C", "건강상해":"#B23A2C", "기타상품":"#3A3A3A" };
-const CATS = ["전체","종신정기","건강상해","기타상품"];
-const SIMPLES = ["전체","일반","간편"];
-
-let state = { cat:"전체", simple:"전체", age:"", name:"" };
-
-function renderPills(containerId, options, stateKey, colorMap){
-  const el = document.getElementById(containerId);
-  el.innerHTML = options.map(o =>{
-    const active = state[stateKey]===o;
-    let style = "";
-    if(colorMap && colorMap[o]){
-      style = active
-        ? `style="background:${colorMap[o]};border-color:${colorMap[o]};color:#fff;"`
-        : `style="border-color:${colorMap[o]}66;color:${colorMap[o]};"`;
-    }
-    return `<button class="pill ${active?'active':''}" data-val="${o}" ${style}>${o}</button>`;
-  }).join("");
-  el.querySelectorAll(".pill").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      state[stateKey] = btn.dataset.val;
-      renderPills(containerId, options, stateKey, colorMap);
-      render();
-    });
-  });
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmtLabel = s => esc(s).replace(/&lt;br&gt;/gi, "<br>");
+const upA = t => String(t).replace(/[a-z]+/g, m => m.toUpperCase());
+const okHex = h => /^#[0-9a-fA-F]{6}$/.test(h || "");
+function mix(hex, t){   /* 흰색과 섞기: 구분 칸의 연한 배경 */
+  if(!okHex(hex)) hex = "#3A3A3A";
+  const n = parseInt(hex.slice(1), 16), f = v => Math.round(v + (255 - v) * t);
+  return "#" + [n >> 16, (n >> 8) & 255, n & 255].map(f).map(v => v.toString(16).padStart(2, "0")).join("");
 }
-renderPills("catGroup", CATS, "cat", CAT_COLOR);
-renderPills("simpleGroup", SIMPLES, "simple");
+/* 이름 정렬: 영문(숫자 포함)이 한글보다 먼저, 같은 종류끼리는 가나다·ABC순 */
+const isEn = t => /^[A-Za-z0-9]/.test(String(t).trim());
+const ko = (a, b) => {
+  const ea = isEn(a), eb = isEn(b);
+  if(ea !== eb) return ea ? -1 : 1;
+  return String(a).trim().localeCompare(String(b).trim(), "ko", { sensitivity:"base", numeric:true });
+};
+function sortProducts(list, cats, simples){
+  const ci = n => { const i = cats.findIndex(c => c.name === n); return i < 0 ? 999 : i; };
+  const si = n => { const i = simples.findIndex(c => c.name === n); return i < 0 ? 999 : i; };
+  return list.slice().sort((a, b) => ci(a.cat) - ci(b.cat) || ko(a.name, b.name) || si(a.simple) - si(b.simple));
+}
 
-(function(){
-  const maxAge = Math.max(...RAW.products.flatMap(p=>p.lines.map(l=>l.amax).filter(v=>v!==null)));
-  const inp = document.getElementById("ageInput");
-  inp.min = 0; inp.max = maxAge;
-})();
-document.getElementById("ageInput").addEventListener("input", (e)=>{ state.age = e.target.value; render(); });
-document.getElementById("nameInput").addEventListener("input", (e)=>{ state.name = e.target.value.trim(); render(); });
-document.getElementById("resetBtn").addEventListener("click", ()=>{
-  state = { cat:"전체", simple:"전체", age:"", name:"" };
-  document.getElementById("ageInput").value = "";
-  document.getElementById("nameInput").value = "";
-  renderPills("catGroup", CATS, "cat", CAT_COLOR);
-  renderPills("simpleGroup", SIMPLES, "simple");
-  render();
-});
-
-// 헤더: 태아 전용칼럼 + 나이 브레이크포인트 컬럼 추가(최초 1회)
+let CFGD = null, DATA = [], BREAKPOINTS = [], CATS = [], SIMPLES = [];
+let state = { cat:"전체", simple:"전체", age:"", name:"" };
 const FETAL_COLS = [
   { key: "23주이내", label: "태아<br>(23주이내)" },
   { key: "23주초과", label: "태아<br>(23주초과)" },
 ];
+const catColor = n => { const c = CATS.find(x => x.name === n); return c && okHex(c.color) ? c.color : "#3A3A3A"; };
+const simpleDef = n => SIMPLES.find(x => x.name === n) || { name:n, color:"#888888", bg:"" };
+
+function renderPills(containerId, options, stateKey){
+  const el = $(containerId);
+  el.innerHTML = options.map(o => {
+    const active = state[stateKey] === o.value;
+    let style = "";
+    if(o.color){
+      style = active
+        ? `style="background:${o.color};border-color:${o.color};color:#fff;"`
+        : `style="border-color:${o.color}66;color:${o.color};"`;
+    }
+    return `<button class="pill ${active ? "active" : ""}" data-val="${esc(o.value)}" ${style}>${esc(o.value)}</button>`;
+  }).join("");
+  el.querySelectorAll(".pill").forEach(btn => {
+    btn.addEventListener("click", () => { state[stateKey] = btn.dataset.val; drawPills(); render(); });
+  });
+}
+const usedCats = () => CATS.filter(c => DATA.some(p => p.cat === c.name));   /* 판매 중인 상품이 있는 구분만 표시 */
+const normName = t => String(t).toLowerCase().replace(/\s+/g, "");
+function drawPills(){
+  renderPills("catGroup", [{ value:"전체" }].concat(usedCats().map(c => ({ value:c.name, color:catColor(c.name) }))), "cat");
+  renderPills("simpleGroup", [{ value:"전체" }].concat(SIMPLES.map(c => ({ value:c.name }))), "simple");
+}
+
 function buildHeader(){
-  const headRow = document.getElementById("headRow");
-  FETAL_COLS.forEach(col=>{
+  const headRow = $("headRow");
+  while(headRow.children.length > 4) headRow.removeChild(headRow.lastChild);
+  FETAL_COLS.forEach(col => {
     const th = document.createElement("th");
     th.className = "age-num-th fetal-th";
     th.innerHTML = col.label;
     th.style.width = "var(--w-fetalcol)";
     headRow.appendChild(th);
   });
-  BREAKPOINTS.forEach(age=>{
+  BREAKPOINTS.forEach(age => {
     const th = document.createElement("th");
     th.className = "age-num-th";
     th.textContent = age;
@@ -392,15 +386,45 @@ function buildHeader(){
     headRow.appendChild(th);
   });
 }
-buildHeader();
+
+function setText(id, t){ const e = $(id); e.textContent = t || ""; e.style.display = t ? "" : "none"; }
+
+function init(d){
+  CFGD = d;
+  CATS = d.cats || []; SIMPLES = d.simples || [];
+  const active = (d.products || []).filter(p => !p.discontinued && Array.isArray(p.lines) && p.lines.length);   /* 단종 상품은 보기 화면에 표시하지 않음 */
+  DATA = sortProducts(active, CATS, SIMPLES);
+  BREAKPOINTS = Array.from(new Set(DATA.flatMap(p => p.lines.flatMap(l => [l.amin, l.amax]).filter(v => v !== null && v !== undefined)))).sort((a, b) => a - b);
+
+  setText("asof", d.asof);
+  setText("changeNotice", d.notices && d.notices.change);
+  setText("ageNotice", d.notices && d.notices.age);
+  setText("resizeNotice", d.notices && d.notices.resize);
+  setText("footNote", d.footerNote);
+  setText("footCopy", upA(d.copyright || ""));
+  $("legend").innerHTML = usedCats().map(c => `<span class="legend-dot"><i style="background:${catColor(c.name)}"></i>${esc(c.name)}</span>`).join("");
+
+  /* 나이 입력 상한: 상품들의 최대 가입나이와 연동 */
+  const maxAge = BREAKPOINTS.length ? BREAKPOINTS[BREAKPOINTS.length - 1] : 99;
+  $("ageInput").min = 0; $("ageInput").max = maxAge;
+
+  drawPills(); buildHeader(); render();
+}
+
+$("ageInput").addEventListener("input", e => { state.age = e.target.value; render(); });
+$("nameInput").addEventListener("input", e => { state.name = e.target.value.trim(); render(); });
+$("resetBtn").addEventListener("click", () => {
+  state = { cat:"전체", simple:"전체", age:"", name:"" };
+  $("ageInput").value = ""; $("nameInput").value = "";
+  drawPills(); render();
+});
 
 function filterData(){
   const out = [];
-  DATA.forEach(p=>{
+  DATA.forEach(p => {
     if(state.cat !== "전체" && p.cat !== state.cat) return;
     if(state.simple !== "전체" && p.simple !== state.simple) return;
-    if(state.name && !p.name.includes(state.name)) return;
-
+    if(state.name && !normName(p.name).includes(normName(state.name))) return;
     let lines = p.lines;
     if(state.age !== ""){
       const a = parseInt(state.age, 10);
@@ -415,62 +439,51 @@ function filterData(){
 }
 
 function wrapCatLabel(s){
-  if(s.length === 4) return s.slice(0,2) + "<br>" + s.slice(2);
-  return s;
+  if(s.length === 4) return esc(s.slice(0,2)) + "<br>" + esc(s.slice(2));
+  return esc(s);
 }
-
 function groupByCat(rows){
   const groups = [];
-  rows.forEach(p=>{
-    const last = groups[groups.length-1];
-    if(last && last.cat === p.cat){ last.items.push(p); }
-    else { groups.push({ cat:p.cat, items:[p] }); }
+  rows.forEach(p => {
+    const last = groups[groups.length - 1];
+    if(last && last.cat === p.cat) last.items.push(p);
+    else groups.push({ cat:p.cat, items:[p] });
   });
   return groups;
 }
 
 function render(){
   const rows = filterData();
-  const tbody = document.getElementById("tableBody");
-  const empty = document.getElementById("emptyState");
-  const scrollWrap = document.querySelector(".table-scroll");
-  const countEl = document.getElementById("resultCount");
-
-  countEl.innerHTML = `총 <b>${rows.length}</b>건 검색됨`;
-
+  const tbody = $("tableBody"), empty = $("emptyState"), scrollWrap = document.querySelector(".table-scroll");
+  $("resultCount").innerHTML = `총 <b>${rows.length}</b>건 검색됨`;
   if(rows.length === 0){
-    tbody.innerHTML = "";
-    empty.style.display = "block";
-    scrollWrap.style.display = "none";
-    return;
+    tbody.innerHTML = ""; empty.style.display = "block"; scrollWrap.style.display = "none"; return;
   }
-  empty.style.display = "none";
-  scrollWrap.style.display = "block";
+  empty.style.display = "none"; scrollWrap.style.display = "block";
 
-  const groups = groupByCat(rows);
   let html = "";
-  groups.forEach(g=>{
-    const groupRowTotal = g.items.reduce((sum,p)=>sum + p.lines.length, 0);
-    g.items.forEach((p, idx)=>{
-      p.lines.forEach((ln, lineIdx)=>{
+  groupByCat(rows).forEach(g => {
+    const cc = catColor(g.cat);
+    const groupRowTotal = g.items.reduce((sum, p) => sum + p.lines.length, 0);
+    g.items.forEach((p, idx) => {
+      const sd = simpleDef(p.simple);
+      const sStyle = `color:${okHex(sd.color) ? sd.color : "#888888"};` + (okHex(sd.bg) ? `background:${sd.bg};` : "");
+      p.lines.forEach((ln, lineIdx) => {
         html += "<tr>";
         if(idx === 0 && lineIdx === 0){
-          html += `<td class="sticky-col c1 cat-cell ${g.cat}" rowspan="${groupRowTotal}"><span>${wrapCatLabel(g.cat)}</span></td>`;
+          html += `<td class="sticky-col c1 cat-cell" style="background:${mix(cc, .9)};color:${cc};" rowspan="${groupRowTotal}"><span>${wrapCatLabel(g.cat)}</span></td>`;
         }
         if(lineIdx === 0){
-          html += `<td class="sticky-col c2 name-cell" rowspan="${p.lines.length}">${p.name}</td>`;
-          html += `<td class="sticky-col c3 simple-cell ${p.simple}" rowspan="${p.lines.length}">${p.simple}</td>`;
+          html += `<td class="sticky-col c2 name-cell${p.important ? " important" : ""}" rowspan="${p.lines.length}">${esc(p.name)}</td>`;
+          html += `<td class="sticky-col c3 simple-cell" style="${sStyle}" rowspan="${p.lines.length}">${esc(p.simple)}</td>`;
         }
-        html += `<td class="sticky-col c4 age-cell">${ln.label}</td>`;
-        FETAL_COLS.forEach(col=>{
-          const on = ln.fetal === col.key;
-          const bg = on ? CAT_COLOR[p.cat] : "#F4F4F2";
-          html += `<td class="age-bar-td" style="background:${bg};"></td>`;
+        html += `<td class="sticky-col c4 age-cell">${fmtLabel(ln.label)}</td>`;
+        FETAL_COLS.forEach(col => {
+          html += `<td class="age-bar-td" style="background:${ln.fetal === col.key ? cc : "#F4F4F2"};"></td>`;
         });
-        BREAKPOINTS.forEach(age=>{
+        BREAKPOINTS.forEach(age => {
           const on = ln.amin !== null && age >= ln.amin && age <= ln.amax;
-          const bg = on ? CAT_COLOR[p.cat] : "#F4F4F2";
-          html += `<td class="age-bar-td" style="background:${bg};"></td>`;
+          html += `<td class="age-bar-td" style="background:${on ? cc : "#F4F4F2"};"></td>`;
         });
         html += "</tr>";
       });
@@ -481,39 +494,32 @@ function render(){
 
 // 상품명 컬럼 폭 드래그 조절
 (function(){
-  const handle = document.getElementById("nameResizeHandle");
+  const handle = $("nameResizeHandle");
   if(!handle) return;
   let dragging = false, startX = 0, startWidth = 0;
   const MIN_W = 70, MAX_W = 260;
-
   function getCurrentWidth(){
     const v = getComputedStyle(document.documentElement).getPropertyValue('--w-name').trim();
     return parseFloat(v) || 118;
   }
-  handle.addEventListener('pointerdown', (e)=>{
-    dragging = true;
-    startX = e.clientX;
-    startWidth = getCurrentWidth();
-    handle.classList.add('active');
-    handle.setPointerCapture(e.pointerId);
-    e.preventDefault();
+  handle.addEventListener('pointerdown', e => {
+    dragging = true; startX = e.clientX; startWidth = getCurrentWidth();
+    handle.classList.add('active'); handle.setPointerCapture(e.pointerId); e.preventDefault();
   });
-  handle.addEventListener('pointermove', (e)=>{
+  handle.addEventListener('pointermove', e => {
     if(!dragging) return;
-    const delta = e.clientX - startX;
-    const newWidth = Math.min(MAX_W, Math.max(MIN_W, startWidth + delta));
-    document.documentElement.style.setProperty('--w-name', newWidth + 'px');
+    const w = Math.min(MAX_W, Math.max(MIN_W, startWidth + (e.clientX - startX)));
+    document.documentElement.style.setProperty('--w-name', w + 'px');
   });
-  function endDrag(e){
-    if(!dragging) return;
-    dragging = false;
-    handle.classList.remove('active');
-  }
+  function endDrag(){ if(!dragging) return; dragging = false; handle.classList.remove('active'); }
   handle.addEventListener('pointerup', endDrag);
   handle.addEventListener('pointercancel', endDrag);
 })();
 
-render();
+fetch("prod_age_data.json?t=" + Date.now(), { cache:"no-store" })
+  .then(r => { if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(d => { if(!d || !Array.isArray(d.products) || !Array.isArray(d.cats)) throw new Error("bad data"); init(d); })
+  .catch(() => init(FALLBACK));
 </script>
 </body>
 </html>
