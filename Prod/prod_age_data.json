@@ -1034,5 +1034,43 @@
     }
    ]
   }
- ]
+ ],
+ "styles": {
+  "asof": {
+   "align": "right",
+   "color": "#8A6B34",
+   "size": 12,
+   "weight": 600
+  },
+  "change": {
+   "align": "left",
+   "color": "#1F4E9C",
+   "size": 12,
+   "weight": 700
+  },
+  "age": {
+   "align": "left",
+   "color": "#B23A2C",
+   "size": 12,
+   "weight": 700
+  },
+  "resize": {
+   "align": "left",
+   "color": "#8A6B34",
+   "size": 12,
+   "weight": 600
+  },
+  "foot": {
+   "align": "left",
+   "color": "#6B6B6B",
+   "size": 11.5,
+   "weight": 600
+  },
+  "copy": {
+   "align": "left",
+   "color": "#16223F",
+   "size": 10.5,
+   "weight": 800
+  }
+ }
 }
