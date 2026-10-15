@@ -263,18 +263,18 @@
       <input type="number" id="ageInput" class="num-input" placeholder="예: 55" min="0" max="99">
     </div>
     <div class="filter-row">
+      <span class="filter-label">상품명 검색</span>
+      <input type="text" id="nameInput" class="text-input" placeholder="상품명 입력">
+      <button class="reset-btn" id="resetBtn">초기화</button>
+      <span class="result-count" id="resultCount"></span>
+    </div>
+    <div class="filter-row">
       <span class="filter-label">상품구분</span>
       <div class="pill-group" id="catGroup"></div>
     </div>
     <div class="filter-row">
       <span class="filter-label">간편 / 일반</span>
       <div class="pill-group" id="simpleGroup"></div>
-    </div>
-    <div class="filter-row">
-      <span class="filter-label">상품명 검색</span>
-      <input type="text" id="nameInput" class="text-input" placeholder="상품명 입력">
-      <button class="reset-btn" id="resetBtn">초기화</button>
-      <span class="result-count" id="resultCount"></span>
     </div>
     <div class="update-notice" id="changeNotice"></div>
   </div>
@@ -334,6 +334,35 @@ function sortProducts(list, cats, simples){
   const ci = n => { const i = cats.findIndex(c => c.name === n); return i < 0 ? 999 : i; };
   const si = n => { const i = simples.findIndex(c => c.name === n); return i < 0 ? 999 : i; };
   return list.slice().sort((a, b) => ci(a.cat) - ci(b.cat) || ko(a.name, b.name) || si(a.simple) - si(b.simple));
+}
+
+const TXT_DEF = {
+  asof:   { align:"right", color:"#8A6B34", size:12,   weight:600 },
+  change: { align:"left",  color:"#1F4E9C", size:12,   weight:700 },
+  age:    { align:"left",  color:"#B23A2C", size:12,   weight:700 },
+  resize: { align:"left",  color:"#8A6B34", size:12,   weight:600 },
+  foot:   { align:"left",  color:"#6B6B6B", size:11.5, weight:600 },
+  copy:   { align:"right", color:"#16223F", size:10.5, weight:800 }
+};
+function txtStyle(styles, key){
+  const d = TXT_DEF[key], o = (styles && styles[key]) || {};
+  const size = Number(o.size);
+  return {
+    align: ["left","center","right"].includes(o.align) ? o.align : d.align,
+    color: okHex(o.color) ? o.color : d.color,
+    size: isFinite(size) && size >= 8 && size <= 40 ? size : d.size,
+    weight: [400,500,600,700,800].includes(Number(o.weight)) ? Number(o.weight) : d.weight
+  };
+}
+function applyTxt(id, key, styles){
+  const e = $(id), s = txtStyle(styles, key);
+  e.style.textAlign = s.align; e.style.color = s.color; e.style.fontSize = s.size + "px"; e.style.fontWeight = s.weight;
+  if(id === "asof"){   /* 기준일은 제목과 같은 줄에 있어 위치(좌/중/우)로 정렬 */
+    e.style.marginLeft = s.align === "left" ? "0" : "auto"; e.style.marginRight = s.align === "right" ? "0" : "auto";
+  }
+}
+function applyAllTxt(styles){
+  [["asof","asof"],["changeNotice","change"],["ageNotice","age"],["resizeNotice","resize"],["footNote","foot"],["footCopy","copy"]].forEach(p => applyTxt(p[0], p[1], styles));
 }
 
 let CFGD = null, DATA = [], BREAKPOINTS = [], CATS = [], SIMPLES = [];
@@ -402,6 +431,7 @@ function init(d){
   setText("resizeNotice", d.notices && d.notices.resize);
   setText("footNote", d.footerNote);
   setText("footCopy", upA(d.copyright || ""));
+  applyAllTxt(d.styles);
   $("legend").innerHTML = usedCats().map(c => `<span class="legend-dot"><i style="background:${catColor(c.name)}"></i>${esc(c.name)}</span>`).join("");
 
   /* 나이 입력 상한: 상품들의 최대 가입나이와 연동 */

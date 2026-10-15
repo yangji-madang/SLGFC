@@ -294,6 +294,14 @@
   input.bad{ border-color:#9a1030 !important; background:#fff0f3 !important; }
   .apanel input[type=text], .apanel input[type=password], .apanel input[type=number], .apanel select, .modal input, .modal select{ font-weight:500; }
   .fgrid label.chk, .agrid label.chk{ display:inline-flex; }
+  .trow{ margin:7px 0 9px; }
+  .trow > label{ display:grid; gap:2px; font-size:12px; font-weight:700; color:var(--navy); }
+  .tctl{ display:flex; flex-wrap:wrap; gap:5px; align-items:center; margin-top:4px; }
+  .tctl .abtn.on{ background:var(--navy); color:#fff; border-color:var(--navy); }
+  .tctl .lbl{ font-size:11.5px; font-weight:700; color:#6B6350; margin-left:4px; }
+  .apanel .tctl input[type=color]{ width:38px; height:26px; padding:1px; border:1px solid var(--search-line); border-radius:5px; background:#fff; }
+  .apanel .tctl input[type=number]{ width:62px; }
+  .apanel .tctl select{ width:auto; }
   .hint{ font-size:12px; color:#6B6350; margin:3px 0; }
   .chk{ display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:700; color:var(--navy); }
   .chk input{ width:15px; height:15px; margin:0; }
@@ -385,15 +393,8 @@
   </details>
 
   <details class="apanel" id="dTxt">
-    <summary>문구 설정 (기준일 · 안내문 · 하단 설명 · 저작권)</summary>
-    <div class="agrid">
-      <label>기준일 표시 (우측 상단)<input type="text" id="tAsof" autocomplete="off"></label>
-      <label class="w3" style="grid-column:span 3">변경내용 (검색 영역 하단, 비우면 숨김)<input type="text" id="tChange" autocomplete="off"></label>
-      <label class="w4">안내문 1 (표 위, 빨간색)<input type="text" id="tAge" autocomplete="off"></label>
-      <label class="w4">안내문 2 (표 위, 금색)<input type="text" id="tResize" autocomplete="off"></label>
-      <label class="w4">하단 설명 (표 아래, 비우면 숨김)<input type="text" id="tFoot" autocomplete="off"></label>
-      <label class="w4">저작권 문구 (저장 시 영문은 자동으로 대문자)<input type="text" id="tCopy" autocomplete="off"></label>
-    </div>
+    <summary>문구 설정 (기준일 · 안내문 · 하단 설명 · 저작권 — 내용 · 정렬 · 색 · 크기 · 굵기)</summary>
+    <div id="txtList"></div>
     <p class="hint">저작권 표시 결과: <b id="copyPrev"></b></p>
   </details>
 
@@ -448,7 +449,7 @@
     <div class="tbl-title">판매상품 <span class="cnt" id="cntSale"></span></div>
     <div class="table-scroll">
       <table class="data-table">
-        <thead><tr class="headRow">
+        <thead><tr class="headRow" id="headSale">
           <th class="sticky-col c1 col-cat">구분</th>
           <th class="sticky-col c2 col-name th-label">상품명<span class="col-resize-handle"></span></th>
           <th class="sticky-col c3 col-simple">유형</th>
@@ -464,7 +465,7 @@
     <div class="tbl-title">단종상품 <span class="cnt" id="cntDisc"></span></div>
     <div class="table-scroll">
       <table class="data-table">
-        <thead><tr class="headRow">
+        <thead><tr class="headRow" id="headDisc">
           <th class="sticky-col c1 col-cat">구분</th>
           <th class="sticky-col c2 col-name th-label">상품명<span class="col-resize-handle"></span></th>
           <th class="sticky-col c3 col-simple">유형</th>
@@ -497,7 +498,8 @@
     <p class="hint">예) 표시문구 '5년납 남15~85', 시작 15, 끝 85. 태아 상품은 '태아 칸'을 고르면 시작·끝은 비웁니다. 줄바꿈은 &lt;br&gt;로 넣습니다. 숫자 없이 문구만(예: 태아)도 가능합니다.</p>
     <div class="merr" id="mErr"></div>
     <div class="mfoot">
-      <button class="abtn del left" id="mDel" type="button">상품 삭제</button>
+      <button class="abtn del left" id="mDisc" type="button">단종 처리</button>
+      <button class="abtn del" id="mDel" type="button">완전 삭제</button>
       <button class="abtn" id="mCancel" type="button">취소</button>
       <button class="abtn save" id="mOk" type="button">적용</button>
     </div>
@@ -534,7 +536,7 @@ var DRAFT = "prod_age_admin_draft_v1", CFGK = "prod_age_admin_cfg_v1", KMSK = "k
 var DEF_COPY = "ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.";
 var FETAL_COLS = [ { key:"23주이내", label:"태아<br>(23주이내)" }, { key:"23주초과", label:"태아<br>(23주초과)" } ];
 var PALETTE = ["#6A3FA0", "#1B7F79", "#B4690E", "#2E6F40", "#8A2D5B", "#365E7D"];
-var data = null, dirty = false, nextId = 1, BREAKPOINTS = [], loadFailed = false, baseJson = null;
+var data = null, dirty = false, nextId = 1, BP = { sale:[], disc:[] }, ALLBP = [], loadFailed = false, baseJson = null;
 var state = { cat:"전체", simple:"전체", age:"", name:"" };
 var editing = null;   /* 수정 창에서 편집 중인 상품 (새 상품이면 isNew) */
 
@@ -560,6 +562,7 @@ function sortAll(){
 function adopt(d){
   d = JSON.parse(JSON.stringify(d));
   d.notices = Object.assign({ age:"", resize:"", change:"" }, d.notices || {});
+  d.styles = d.styles || {};
   d.footerNote = d.footerNote || ""; d.asof = d.asof || ""; d.copyright = d.copyright || DEF_COPY;
   d.cats = (d.cats || []).map(function(c){ return { name:c.name || "", color:okHex(c.color) ? c.color : "#3A3A3A" }; });
   d.simples = (d.simples || []).map(function(c){ return { name:c.name || "", color:okHex(c.color) ? c.color : "#888888", bg:okHex(c.bg) ? c.bg : "" }; });
@@ -623,14 +626,21 @@ function filterRows(disc){
 
 /* ---------- 표 ---------- */
 function wrapCat(s){ return s.length === 4 ? esc(s.slice(0, 2)) + "<br>" + esc(s.slice(2)) : esc(s); }
+/* 나이 칸: 각 표에 있는 상품의 시작·끝 나이만 칸으로 만든다 (새 나이가 생기면 칸 추가, 해당 상품이 없어지면 칸 삭제) */
+function bpFor(disc){
+  var set = {};
+  data.products.forEach(function(p){ if (!!p.discontinued === disc) p.lines.forEach(function(l){ [l.amin, l.amax].forEach(function(v){ if (isNum(v)) set[v] = 1; }); }); });
+  return Object.keys(set).map(Number).sort(function(a, b){ return a - b; });
+}
 function buildHeads(){
-  Array.prototype.forEach.call(document.querySelectorAll("tr.headRow"), function(row){
+  [["headSale", BP.sale], ["headDisc", BP.disc]].forEach(function(pair){
+    var row = $(pair[0]), bp = pair[1];
     while (row.children.length > 4) row.removeChild(row.lastChild);
     FETAL_COLS.forEach(function(c){ var th = document.createElement("th"); th.className = "age-num-th fetal-th"; th.innerHTML = c.label; th.style.width = "var(--w-fetalcol)"; row.appendChild(th); });
-    BREAKPOINTS.forEach(function(a){ var th = document.createElement("th"); th.className = "age-num-th"; th.textContent = a; th.style.width = "var(--w-agecol)"; row.appendChild(th); });
+    bp.forEach(function(a){ var th = document.createElement("th"); th.className = "age-num-th"; th.textContent = a; th.style.width = "var(--w-agecol)"; row.appendChild(th); });
   });
 }
-function renderTable(bodyId, boxId, emptyId, rows, disc){
+function renderTable(bodyId, boxId, emptyId, rows, disc, bp){
   var tbody = $(bodyId), wrap = $(boxId).querySelector(".table-scroll"), empty = $(emptyId);
   if (!rows.length) { tbody.innerHTML = ""; wrap.style.display = "none"; empty.style.display = "block"; return; }
   wrap.style.display = "block"; empty.style.display = "none";
@@ -651,7 +661,7 @@ function renderTable(bodyId, boxId, emptyId, rows, disc){
         }
         html += '<td class="sticky-col c4 age-cell">' + fmtLabel(ln.label) + "</td>";
         FETAL_COLS.forEach(function(c){ html += '<td class="age-bar-td" style="background:' + (ln.fetal === c.key ? cc : off) + ';"></td>'; });
-        BREAKPOINTS.forEach(function(a){ var on = ln.amin !== null && a >= ln.amin && a <= ln.amax; html += '<td class="age-bar-td" style="background:' + (on ? cc : off) + ';"></td>'; });
+        bp.forEach(function(a){ var on = ln.amin !== null && a >= ln.amin && a <= ln.amax; html += '<td class="age-bar-td" style="background:' + (on ? cc : off) + ';"></td>'; });
         html += "</tr>";
       });
     });
@@ -660,17 +670,17 @@ function renderTable(bodyId, boxId, emptyId, rows, disc){
 }
 function setText(id, t){ var e = $(id); e.textContent = t || ""; e.style.display = t ? "" : "none"; }
 function renderAll(){
-  var set = {};
-  data.products.forEach(function(p){ p.lines.forEach(function(l){ [l.amin, l.amax].forEach(function(v){ if (isNum(v)) set[v] = 1; }); }); });
-  BREAKPOINTS = Object.keys(set).map(Number).sort(function(a, b){ return a - b; });
-  $("ageInput").min = 0; $("ageInput").max = BREAKPOINTS.length ? BREAKPOINTS[BREAKPOINTS.length - 1] : 99;
+  BP = { sale:bpFor(false), disc:bpFor(true) };
+  ALLBP = BP.sale.concat(BP.disc);
+  $("ageInput").min = 0; $("ageInput").max = ALLBP.length ? Math.max.apply(null, ALLBP) : 99;
   setText("asof", data.asof); setText("changeNotice", data.notices.change); setText("ageNotice", data.notices.age);
   setText("resizeNotice", data.notices.resize); setText("footNote", data.footerNote); setText("footCopy", upA(data.copyright));
+  applyAllTxt(data.styles);
   $("legend").innerHTML = data.cats.map(function(c){ return '<span class="legend-dot"><i style="background:' + catColor(c.name) + '"></i>' + esc(c.name) + "</span>"; }).join("");
   drawPills(); buildHeads();
   var sale = filterRows(false), disc = filterRows(true);
-  renderTable("bodySale", "boxSale", "emptySale", sale, false);
-  renderTable("bodyDisc", "boxDisc", "emptyDisc", disc, true);
+  renderTable("bodySale", "boxSale", "emptySale", sale, false, BP.sale);
+  renderTable("bodyDisc", "boxDisc", "emptyDisc", disc, true, BP.disc);
   var tS = data.products.filter(function(p){ return !p.discontinued; }).length, tD = data.products.length - tS;
   $("cntSale").textContent = "전체 " + tS + "개 · 검색 " + sale.length + "개";
   $("cntDisc").textContent = "전체 " + tD + "개 · 검색 " + disc.length + "개";
@@ -689,19 +699,80 @@ Array.prototype.forEach.call(document.querySelectorAll(".col-resize-handle"), fu
   handle.addEventListener("pointerup", end); handle.addEventListener("pointercancel", end);
 });
 
-/* ---------- 문구 설정 ---------- */
+/* ---------- 문구 서식 (보기 페이지와 같은 규칙) ---------- */
+var TXT_DEF = {
+  asof:   { align:"right", color:"#8A6B34", size:12,   weight:600 },
+  change: { align:"left",  color:"#1F4E9C", size:12,   weight:700 },
+  age:    { align:"left",  color:"#B23A2C", size:12,   weight:700 },
+  resize: { align:"left",  color:"#8A6B34", size:12,   weight:600 },
+  foot:   { align:"left",  color:"#6B6B6B", size:11.5, weight:600 },
+  copy:   { align:"right", color:"#16223F", size:10.5, weight:800 }
+};
+function txtStyle(styles, key){
+  var d = TXT_DEF[key], o = (styles && styles[key]) || {}, size = Number(o.size);
+  return {
+    align: ["left", "center", "right"].indexOf(o.align) >= 0 ? o.align : d.align,
+    color: okHex(o.color) ? o.color : d.color,
+    size: isFinite(size) && size >= 8 && size <= 40 ? size : d.size,
+    weight: [400, 500, 600, 700, 800].indexOf(Number(o.weight)) >= 0 ? Number(o.weight) : d.weight
+  };
+}
+function applyTxt(id, key, styles){
+  var e = $(id), s = txtStyle(styles, key);
+  e.style.textAlign = s.align; e.style.color = s.color; e.style.fontSize = s.size + "px"; e.style.fontWeight = s.weight;
+  if (id === "asof") { e.style.marginLeft = s.align === "left" ? "0" : "auto"; e.style.marginRight = s.align === "right" ? "0" : "auto"; }
+}
+function applyAllTxt(styles){
+  [["asof", "asof"], ["changeNotice", "change"], ["ageNotice", "age"], ["resizeNotice", "resize"], ["footNote", "foot"], ["footCopy", "copy"]].forEach(function(p){ applyTxt(p[0], p[1], styles); });
+}
+var TXT_ITEMS = [
+  { key:"asof",   id:"tAsof",   label:"기준일 표시 (우측 상단)", get:function(){ return data.asof; },           set:function(v){ data.asof = v; } },
+  { key:"change", id:"tChange", label:"변경내용 (검색 영역 하단, 비우면 숨김)", get:function(){ return data.notices.change; }, set:function(v){ data.notices.change = v; } },
+  { key:"age",    id:"tAge",    label:"안내문 1 (표 위)",        get:function(){ return data.notices.age; },    set:function(v){ data.notices.age = v; } },
+  { key:"resize", id:"tResize", label:"안내문 2 (표 위)",        get:function(){ return data.notices.resize; }, set:function(v){ data.notices.resize = v; } },
+  { key:"foot",   id:"tFoot",   label:"하단 설명 (표 아래, 비우면 숨김)", get:function(){ return data.footerNote; }, set:function(v){ data.footerNote = v; } },
+  { key:"copy",   id:"tCopy",   label:"저작권 문구 (저장 시 영문은 자동으로 대문자)", get:function(){ return data.copyright; }, set:function(v){ data.copyright = v; } }
+];
+function styleOf(key){ data.styles = data.styles || {}; if (!data.styles[key]) data.styles[key] = txtStyle(null, key); return data.styles[key]; }
+function buildTxtPanel(){
+  var box = $("txtList"); box.innerHTML = "";
+  TXT_ITEMS.forEach(function(it){
+    var row = document.createElement("div"); row.className = "trow";
+    var lab = document.createElement("label"); lab.appendChild(document.createTextNode(it.label));
+    var inp = document.createElement("input"); inp.type = "text"; inp.id = it.id; inp.autocomplete = "off"; lab.appendChild(inp); row.appendChild(lab);
+    inp.addEventListener("input", function(){ it.set(inp.value); if (it.key === "copy") $("copyPrev").textContent = upA(inp.value); changed(); renderAll(); });
+    var ctl = document.createElement("div"); ctl.className = "tctl";
+    var aBtns = {};
+    [["left", "왼쪽"], ["center", "가운데"], ["right", "오른쪽"]].forEach(function(al){
+      var b = document.createElement("button"); b.type = "button"; b.className = "abtn sm"; b.textContent = al[1]; b.setAttribute("data-al", al[0]);
+      b.addEventListener("click", function(){ styleOf(it.key).align = al[0]; refresh(); changed(); renderAll(); });
+      aBtns[al[0]] = b; ctl.appendChild(b);
+    });
+    var l1 = document.createElement("span"); l1.className = "lbl"; l1.textContent = "글자색"; ctl.appendChild(l1);
+    var col = document.createElement("input"); col.type = "color"; col.addEventListener("input", function(){ styleOf(it.key).color = col.value; changed(); renderAll(); }); ctl.appendChild(col);
+    var l2 = document.createElement("span"); l2.className = "lbl"; l2.textContent = "크기(px)"; ctl.appendChild(l2);
+    var sz = document.createElement("input"); sz.type = "number"; sz.min = 8; sz.max = 40; sz.step = 0.5;
+    sz.addEventListener("input", function(){ var n = Number(sz.value); if (isFinite(n) && n >= 8 && n <= 40) { styleOf(it.key).size = n; sz.classList.remove("bad"); changed(); renderAll(); } else sz.classList.add("bad"); });
+    ctl.appendChild(sz);
+    var l3 = document.createElement("span"); l3.className = "lbl"; l3.textContent = "굵기"; ctl.appendChild(l3);
+    var wt = document.createElement("select"); wt.innerHTML = '<option value="400">보통</option><option value="500">약간 굵게</option><option value="600">굵게</option><option value="700">진하게</option><option value="800">매우 진하게</option>';
+    wt.addEventListener("change", function(){ styleOf(it.key).weight = Number(wt.value); changed(); renderAll(); }); ctl.appendChild(wt);
+    var rs = document.createElement("button"); rs.type = "button"; rs.className = "abtn sm"; rs.textContent = "기본 서식";
+    rs.addEventListener("click", function(){ data.styles[it.key] = txtStyle(null, it.key); refresh(); changed(); renderAll(); }); ctl.appendChild(rs);
+    row.appendChild(ctl); box.appendChild(row);
+    function refresh(){
+      var s = txtStyle(data && data.styles, it.key);
+      Object.keys(aBtns).forEach(function(k){ aBtns[k].className = "abtn sm" + (k === s.align ? " on" : ""); });
+      col.value = s.color; sz.value = s.size; sz.classList.remove("bad"); wt.value = String(s.weight);
+    }
+    it.refresh = refresh;
+  });
+}
 function syncSettings(){
-  $("tAsof").value = data.asof; $("tChange").value = data.notices.change; $("tAge").value = data.notices.age;
-  $("tResize").value = data.notices.resize; $("tFoot").value = data.footerNote; $("tCopy").value = data.copyright;
+  TXT_ITEMS.forEach(function(it){ $(it.id).value = it.get(); it.refresh(); });
   $("copyPrev").textContent = upA(data.copyright);
 }
-function bindText(id, setter){ $(id).addEventListener("input", function(){ setter(this.value); if (id === "tCopy") $("copyPrev").textContent = upA(this.value); changed(); renderAll(); }); }
-bindText("tAsof", function(v){ data.asof = v; });
-bindText("tChange", function(v){ data.notices.change = v; });
-bindText("tAge", function(v){ data.notices.age = v; });
-bindText("tResize", function(v){ data.notices.resize = v; });
-bindText("tFoot", function(v){ data.footerNote = v; });
-bindText("tCopy", function(v){ data.copyright = v; });
+buildTxtPanel();
 
 /* ---------- 구분 · 유형 관리 ---------- */
 function el(tag, cls, text){ var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
@@ -796,7 +867,9 @@ function openEditor(p){
   fillSelect("mCat", data.cats, src.cat); fillSelect("mSimple", data.simples, src.simple);
   $("mStatus").value = src.discontinued ? "disc" : "sale"; $("mName").value = src.name; $("mName").classList.remove("bad"); $("mImp").checked = !!src.important;
   $("mLines").innerHTML = ""; src.lines.forEach(function(l){ $("mLines").appendChild(lineRow(l)); });
-  $("mDel").style.display = isNew ? "none" : ""; showErr("");
+  var isDisc = !isNew && !!src.discontinued;
+  $("mDisc").style.display = isNew ? "none" : ""; $("mDisc").textContent = isDisc ? "판매 재개" : "단종 처리";
+  $("mDel").style.display = isDisc ? "" : "none"; showErr("");
   $("modal").hidden = false; $("mName").focus();
 }
 function closeEditor(){ $("modal").hidden = true; editing = null; }
@@ -828,9 +901,15 @@ function applyEditor(){
 $("mOk").addEventListener("click", applyEditor);
 $("mCancel").addEventListener("click", closeEditor);
 $("mAddLine").addEventListener("click", function(){ $("mLines").appendChild(lineRow({ label:"", amin:null, amax:null, fetal:null })); });
+$("mDisc").addEventListener("click", function(){
+  if (!editing || editing.isNew) return;
+  var toDisc = !editing.p.discontinued;
+  if (!confirm(toDisc ? "'" + editing.p.name + "' 상품을 단종 처리합니다.\n보기 페이지에서 사라지고 '단종상품' 표로 이동합니다. 계속할까요?" : "'" + editing.p.name + "' 상품을 다시 판매 상품으로 되돌립니다. 계속할까요?")) return;
+  $("mStatus").value = toDisc ? "disc" : "sale"; applyEditor();
+});
 $("mDel").addEventListener("click", function(){
   if (!editing || editing.isNew) return;
-  if (confirm("'" + editing.p.name + "' 상품을 완전히 삭제합니다.\n(판매 중단은 삭제 대신 '판매 상태'를 '단종'으로 바꾸세요) 계속할까요?")) { data.products.splice(data.products.indexOf(editing.p), 1); renderMeta(); renderAll(); changed(); closeEditor(); }
+  if (confirm("단종상품 '" + editing.p.name + "'을(를) 목록에서 완전히 삭제합니다.\n되돌릴 수 없습니다. 계속할까요?")) { data.products.splice(data.products.indexOf(editing.p), 1); renderMeta(); renderAll(); changed(); closeEditor(); }
 });
 document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !$("modal").hidden) closeEditor(); });
 $("bAddProd").addEventListener("click", function(){ openEditor(null); });
@@ -867,6 +946,7 @@ function clean(){
   d.updated = today();
   d.asof = d.asof.trim(); d.footerNote = d.footerNote.trim(); d.copyright = upA(d.copyright.trim());
   Object.keys(d.notices).forEach(function(k){ d.notices[k] = d.notices[k].trim(); });
+  d.styles = {}; Object.keys(TXT_DEF).forEach(function(k){ d.styles[k] = txtStyle(data.styles, k); });
   d.cats = d.cats.map(function(c){ return { name:c.name.trim(), color:c.color }; });
   d.simples = d.simples.map(function(c){ return { name:c.name.trim(), color:c.color, bg:c.bg || "" }; });
   d.products = d.products.map(function(p){ return { cat:p.cat, simple:p.simple, name:p.name.trim(), important:!!p.important, discontinued:!!p.discontinued,
