@@ -1,7 +1,9 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>간편보험 비교표</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: 상단 검색영역(칩 다중선택) + 머리글·항목명 고정 표. 밝은 배경, 남색·황동색 포인트. */
 :root {
@@ -18,7 +20,7 @@
   --red: #C0262D;
   --blue: #1D4ED8;
   --mark: #FFE27A;
-  --font: "Malgun Gothic", "맑은 고딕", "Noto Sans KR", system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  --font: system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --w1: 50px;
   --w2: 50px;
   --w3: 132px;
@@ -33,11 +35,11 @@ body {
   color: var(--ink);
   font-family: var(--font);
   font-size: 14px;
-  line-height: 1.5;
-  padding-inline: 16px;
-  padding-block: 20px 12px;
+  line-height: 1.4;
+  margin: 0;
+  padding: 12px 14px 8px;
 }
-.wrap { max-width: 1480px; margin-inline: auto; display: grid; gap: 14px; }
+.wrap { display: grid; gap: 14px; }
 button { font-family: inherit; }
 :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
@@ -130,7 +132,6 @@ footer p { margin: 0; font-size: 10.5px; color: var(--ink-soft); text-align: rig
   .filters { grid-template-columns: 1fr; gap: 14px; }
 }
 @media (max-width: 720px) {
-  body { font-size: 14px; padding-inline: 14px; padding-block: 10px 6px; }
   :root { --w1: 34px; --w2: 34px; --w3: 100px; --pw: 170px; }
   .lab.grp { font-size: 11.5px; padding-inline: 2px; }
   .search { padding: 8px 10px; }
@@ -146,7 +147,8 @@ footer p { margin: 0; font-size: 10.5px; color: var(--ink-soft); text-align: rig
   * { transition: none !important; }
 }
 </style>
-
+</head>
+<body>
 <div class="wrap">
   <header class="top">
     <h1>간편보험 <span>비교표</span></h1>
@@ -532,3 +534,5 @@ footer p { margin: 0; font-size: 10.5px; color: var(--ink-soft); text-align: rig
   renderAll();
 })();
 </script>
+</body>
+</html>
