@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-16",
+ "updated": "2026-10-23",
  "asof": "’26.10. 기준",
  "notices": {
   "age": "※ 정확한 가입나이는 반드시 설계화면에서 확인하세요.",
@@ -655,16 +655,20 @@
    "discontinued": false,
    "lines": [
     {
-     "label": "15~80",
+     "label": "15~70",
      "amin": 15,
-     "amax": 80,
-     "fetal": null
+     "amax": 70,
+     "fetal": null,
+     "gender": "공통",
+     "pre": ""
     },
     {
-     "label": "우량체20~80",
+     "label": "우량체20~70",
      "amin": 20,
-     "amax": 80,
-     "fetal": null
+     "amax": 70,
+     "fetal": null,
+     "gender": "공통",
+     "pre": "우량체"
     }
    ]
   },
@@ -676,10 +680,12 @@
    "discontinued": false,
    "lines": [
     {
-     "label": "30~80",
+     "label": "30~70",
      "amin": 30,
-     "amax": 80,
-     "fetal": null
+     "amax": 70,
+     "fetal": null,
+     "gender": "공통",
+     "pre": ""
     }
    ]
   },
@@ -691,40 +697,36 @@
    "discontinued": false,
    "lines": [
     {
-     "label": "5년납 남15~85",
+     "label": "5년납 남15~64",
      "amin": 15,
-     "amax": 85,
-     "fetal": null
+     "amax": 64,
+     "fetal": null,
+     "gender": "남",
+     "pre": "5년납"
     },
     {
-     "label": "5년납 여15~87",
+     "label": "5년납 여15~67",
      "amin": 15,
-     "amax": 87,
-     "fetal": null
+     "amax": 67,
+     "fetal": null,
+     "gender": "여",
+     "pre": "5년납"
     },
     {
-     "label": "7년납 남15~89",
+     "label": "7년납이상 남15~69",
      "amin": 15,
-     "amax": 89,
-     "fetal": null
+     "amax": 69,
+     "fetal": null,
+     "gender": "남",
+     "pre": "7년납이상"
     },
     {
-     "label": "7년납 여15~70",
+     "label": "7년납이상 여15~70",
      "amin": 15,
      "amax": 70,
-     "fetal": null
-    },
-    {
-     "label": "10년납 남15~85",
-     "amin": 15,
-     "amax": 85,
-     "fetal": null
-    },
-    {
-     "label": "10년납 여15~89",
-     "amin": 15,
-     "amax": 89,
-     "fetal": null
+     "fetal": null,
+     "gender": "여",
+     "pre": "7년납이상"
     }
    ]
   },
