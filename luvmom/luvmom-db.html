@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LUVMAM 고객관리</title>
+<style>
+:root{
+  --bg:#f3f5f9; --panel:#ffffff; --ink:#18212f; --sub:#475569; --line:#cfd8e3;
+  --head:#1b3558; --thbg:#dce6f4; --zebra:#f6f8fc; --hover:#e6f0fc;
+  --pri:#1d62c4; --pri-d:#164c9a; --amber:#ffc83d; --warn:#b42318; --warnbg:#fde8e6; --ok:#146c43;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);
+  font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;font-size:14px;line-height:1.4}
+button,input,select,textarea{font:inherit;color:inherit}
+
+/* 상단 */
+.top{background:var(--head);color:#fff;display:flex;align-items:center;gap:8px;padding:8px 14px;flex-wrap:wrap}
+.top h1{font-size:17px;margin:0 auto 0 0;font-weight:700}
+.top h1 small{font-weight:400;font-size:12px;opacity:.85;margin-left:8px}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:600;white-space:nowrap}
+.btn:hover{background:#eef3fa}
+.btn.amber{background:var(--amber);border-color:var(--amber);color:#18212f}
+.btn.amber:hover{background:#ffd462}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.pri:hover{background:var(--pri-d)}
+.btn.danger{background:var(--warn);border-color:var(--warn);color:#fff}
+.btn.sm{padding:3px 8px;font-size:12px}
+.bar{background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:6px 14px;flex-wrap:wrap}
+.bar label{font-size:12.5px;color:var(--sub);font-weight:600;display:flex;align-items:center;gap:6px}
+.bar input[type=search],.bar input[type=date]{border:1px solid var(--line);border-radius:6px;padding:5px 8px;background:#fff}
+.bar input[type=search]{width:230px}
+.stat{margin-left:auto;font-size:12.5px;color:var(--sub)}
+.stat b{color:var(--ink)}
+
+/* 표 */
+.grid-wrap{flex:1;min-height:0;overflow:auto;background:var(--panel);position:relative}
+table{border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:13.5px}
+th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:0 8px;height:34px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;vertical-align:middle}
+th{background:var(--thbg);color:#10203a;font-weight:700;user-select:none;cursor:pointer;border-bottom:2px solid #8fa6c6;position:relative}
+tbody tr{background:#fff}
+tbody tr:nth-child(even){background:var(--zebra)}
+tbody tr:hover{background:var(--hover)}
+td{background:inherit}
+.wrap td{white-space:normal;word-break:break-all;padding-top:5px;padding-bottom:5px;line-height:1.35}
+th .auto{font-style:normal;font-weight:600;font-size:10.5px;background:#fff;color:var(--pri);border:1px solid var(--pri);border-radius:8px;padding:0 5px;margin-left:5px}
+th .srt{margin-left:4px;color:var(--pri)}
+th.dl{box-shadow:inset 4px 0 0 var(--pri)}
+th.dr{box-shadow:inset -4px 0 0 var(--pri)}
+th.fh{position:sticky;top:0;z-index:5}
+.fc{position:sticky;z-index:3}
+th.fh.fc{z-index:7}
+td.fr{position:sticky;z-index:4}
+td.fr.fc{z-index:6}
+.fc-last{border-right:2px solid #5b83bd !important}
+td.act,th.act{text-align:center;padding:0 4px;cursor:default}
+td.act .no{display:inline-block;min-width:22px;color:var(--sub);font-size:12px}
+.ib{border:1px solid var(--line);background:#fff;border-radius:4px;cursor:pointer;padding:1px 6px;font-size:12px;line-height:1.4}
+.ib:hover{background:#e3edf9}
+.ib.del:hover{background:var(--warnbg);color:var(--warn);border-color:var(--warn)}
+td.bad{background:var(--warnbg) !important;color:#8a1c12}
+td.num{text-align:center}
+.empty{padding:60px 20px;text-align:center;color:var(--sub);font-size:15px}
+.empty .btn{margin:10px 4px 0}
+
+/* 모달 */
+.ov{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:14px}
+.dlg{background:#fff;border-radius:10px;width:100%;max-width:780px;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.dlg.narrow{max-width:520px}
+.dlg h2{margin:0;padding:12px 16px;font-size:16px;border-bottom:1px solid var(--line);background:#f1f5fb;border-radius:10px 10px 0 0}
+.dlg .bd{padding:12px 16px;overflow:auto}
+.dlg .ft{padding:10px 16px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
+.form .f{display:flex;flex-direction:column;gap:3px}
+.form .f.wide{grid-column:1/-1}
+.form label{font-size:12px;font-weight:700;color:var(--sub)}
+.form input,.form textarea{border:1px solid #aab7c8;border-radius:6px;padding:6px 8px;background:#fff;width:100%}
+.form textarea{resize:vertical;min-height:52px}
+.form input:focus,.form textarea:focus,.bar input:focus,select:focus{outline:2px solid #7fb0ee;outline-offset:0}
+.calcbox{grid-column:1/-1;background:#eef5ff;border:1px solid #b9d2f2;border-radius:6px;padding:7px 10px;font-size:13px}
+.calcbox b{color:var(--pri-d)}
+.err{color:var(--warn);font-weight:600;font-size:12.5px;grid-column:1/-1;min-height:16px}
+.opt{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border:1px solid var(--line);border-radius:6px;margin:6px 0;cursor:pointer}
+.opt input{margin-top:3px}
+.opt small{display:block;color:var(--sub)}
+.kv{background:#f4f7fb;border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:13px}
+.kv div{margin:2px 0}
+
+/* 설정 패널 */
+#drawer{position:fixed;top:0;right:0;bottom:0;width:410px;max-width:100%;background:#fff;z-index:90;box-shadow:-8px 0 24px rgba(0,0,0,.25);
+  display:none;flex-direction:column}
+#drawer.on{display:flex}
+#drawer .dh{display:flex;align-items:center;padding:10px 14px;background:var(--head);color:#fff;font-weight:700;font-size:15px}
+#drawer .dh .btn{margin-left:auto}
+#drawer .db{overflow:auto;padding:10px 14px 16px}
+#drawer h3{font-size:13.5px;margin:12px 0 6px;padding-bottom:3px;border-bottom:2px solid var(--thbg)}
+#drawer h3:first-child{margin-top:2px}
+.clist{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:6px}
+.clist li{display:flex;align-items:center;gap:6px;padding:4px 8px;border-bottom:1px solid #e5eaf1;background:#fff}
+.clist li:last-child{border-bottom:0}
+.clist li.dl{box-shadow:inset 0 3px 0 var(--pri)}
+.clist li.dr{box-shadow:inset 0 -3px 0 var(--pri)}
+.clist .hd{cursor:grab;color:#64748b;font-size:16px;line-height:1}
+.clist .nm{flex:1;font-weight:600}
+.clist .nm i{font-style:normal;font-size:10.5px;color:var(--pri);border:1px solid var(--pri);border-radius:8px;padding:0 5px;margin-left:5px}
+.clist .nm.off{color:#8a95a5;text-decoration:line-through}
+.clist .idx{width:22px;color:var(--sub);font-size:12px;text-align:right}
+.row2{display:flex;align-items:center;gap:8px;margin:5px 0}
+.row2 label{width:92px;font-size:12.5px;font-weight:600;color:var(--sub)}
+.row2 select{flex:1;border:1px solid #aab7c8;border-radius:6px;padding:5px 6px;background:#fff}
+.note{font-size:12px;color:var(--sub);margin:4px 0}
+.note b{color:var(--ink)}
+.radios{display:flex;gap:14px;flex-wrap:wrap;margin:4px 0}
+.radios label{display:flex;gap:5px;align-items:center;font-size:13px;cursor:pointer}
+
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#18212f;color:#fff;padding:9px 16px;border-radius:8px;
+  z-index:300;font-size:13.5px;display:none;max-width:90vw;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+#toast.on{display:block}
+@media (max-width:640px){.form{grid-template-columns:1fr}.bar input[type=search]{width:150px}.stat{margin-left:0}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>LUVMAM 고객관리<small>고객 DB 관리 화면</small></h1>
+  <button class="btn amber" id="bAdd">+ 고객 추가</button>
+  <button class="btn" id="bUp">엑셀 업로드</button>
+  <button class="btn" id="bDown">엑셀 다운로드</button>
+  <button class="btn" id="bSet">항목·틀고정 설정</button>
+</header>
+
+<div class="bar">
+  <label>검색 <input type="search" id="q" placeholder="이름·전화·주소·메모 검색"></label>
+  <label>조회일 <input type="date" id="asof"> <button class="btn sm" id="bToday">오늘</button></label>
+  <div class="stat" id="stat"></div>
+</div>
+
+<main class="grid-wrap" id="wrap"><table id="grid"></table></main>
+
+<aside id="drawer"></aside>
+<div id="modal-root"></div>
+<div id="toast"></div>
+<input type="file" id="fileX" accept=".xlsx" hidden>
+<input type="file" id="fileJ" accept=".json" hidden>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ───────── 유틸 ───────── */
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const ymd = (y, m, d) => y + '-' + pad(m) + '-' + pad(d);
+const clone = o => JSON.parse(JSON.stringify(o));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const dim = (y, m) => new Date(y, m, 0).getDate();
+function todayStr(){ const d = new Date(); return ymd(d.getFullYear(), d.getMonth() + 1, d.getDate()); }
+let toastT;
+function toast(msg, ms){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), ms || 2600);
+}
+
+/* ───────── 날짜·나이·지역 ───────── */
+function parseYMD(v){
+  if (v == null || v === '') return null;
+  let y, m, d;
+  if (v instanceof Date){ y = v.getUTCFullYear(); m = v.getUTCMonth() + 1; d = v.getUTCDate(); }
+  else {
+    if (typeof v === 'number' && v > 20000 && v < 80000){
+      const t = new Date(Math.round((v - 25569) * 864e5));
+      y = t.getUTCFullYear(); m = t.getUTCMonth() + 1; d = t.getUTCDate();
+    } else {
+      const s = String(v).trim();
+      let k = s.match(/^(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일?$/) || s.match(/^(\d{4})[-./\s]*(\d{1,2})[-./\s]*(\d{1,2})\.?$/);
+      if (!k) return null;
+      y = +k[1]; m = +k[2]; d = +k[3];
+    }
+  }
+  if (y < 1900 || y > 2100 || m < 1 || m > 12 || d < 1 || d > dim(y, m)) return null;
+  return [y, m, d];
+}
+function normDate(v){ const p = parseYMD(v); return p ? ymd(p[0], p[1], p[2]) : String(v == null ? '' : v).trim(); }
+function normBirth(v){ const p = parseYMD(v); return p ? p[0] + pad(p[1]) + pad(p[2]) : String(v == null ? '' : v).trim(); }
+function normPhone(v){
+  const s = String(v == null ? '' : v).trim(); if (!s) return '';
+  let x = s.replace(/\D/g, '');
+  if (/^10\d{8,9}$/.test(x)) x = '0' + x;
+  if (/^01\d{9}$/.test(x)) return x.slice(0, 3) + '-' + x.slice(3, 7) + '-' + x.slice(7);
+  if (/^01\d{8}$/.test(x)) return x.slice(0, 3) + '-' + x.slice(3, 6) + '-' + x.slice(6);
+  return s;
+}
+
+/* 나이: 'man'=만 나이 / 'ins'=보험나이(6개월 이상 올림) */
+function calcAge(birth, ref, mode){
+  const b = parseYMD(birth), r = parseYMD(ref);
+  if (!b || !r) return '';
+  const rn = r[0] * 10000 + r[1] * 100 + r[2];
+  if (rn < b[0] * 10000 + b[1] * 100 + b[2]) return '';
+  let age = r[0] - b[0] - ((r[1] < b[1] || (r[1] === b[1] && r[2] < b[2])) ? 1 : 0);
+  if (mode === 'ins'){
+    let yy = b[0] + age, mm = b[1] + 6;
+    if (mm > 12){ mm -= 12; yy++; }
+    const six = yy * 10000 + mm * 100 + Math.min(b[2], dim(yy, mm));
+    if (rn >= six) age++;
+  }
+  return age;
+}
+
+const SIDO = {};
+[['서울',['서울특별시','서울시','서울']],['부산',['부산광역시','부산']],['대구',['대구광역시','대구']],
+ ['인천',['인천광역시','인천']],['광주',['광주광역시','광주']],['대전',['대전광역시','대전']],['울산',['울산광역시','울산']],
+ ['세종',['세종특별자치시','세종시','세종']],['경기',['경기도','경기']],['강원',['강원특별자치도','강원도','강원']],
+ ['충북',['충청북도','충북']],['충남',['충청남도','충남']],['전북',['전북특별자치도','전라북도','전북']],
+ ['전남',['전라남도','전남']],['경북',['경상북도','경북']],['경남',['경상남도','경남']],
+ ['제주',['제주특별자치도','제주도','제주']]
+].forEach(([s, arr]) => arr.forEach(a => SIDO[a] = s));
+const METRO = new Set(['서울','부산','대구','인천','광주','대전','울산']);
+
+function stripSfx(tok, keep){
+  if (keep) return tok;
+  const s = tok.slice(0, -1);
+  return s.length >= 2 ? s : tok;      // 중구·서구 등 한 글자 지명은 접미사 유지
+}
+/* 주소 → 지역. 서울·광역시는 구(군), 그 외는 시(군) */
+function regionOf(addr, keepSfx){
+  const t = String(addr == null ? '' : addr).trim().replace(/^\(?\d{5}\)?\s*/, '').split(/\s+/).filter(Boolean);
+  if (!t.length) return { text: '', bad: false };
+  const sido = SIDO[t[0]];
+  if (!sido){
+    if (/^.{1,}(구|시|군)$/.test(t[0])) return { text: stripSfx(t[0], keepSfx), bad: false };
+    return { text: '확인필요', bad: true };
+  }
+  if (sido === '세종') return { text: '세종', bad: false };
+  const rest = t.slice(1);
+  const pick = METRO.has(sido) ? /^.+(구|군)$/ : /^.+(시|군)$/;
+  const hit = rest.find(x => pick.test(x));
+  if (!hit) return { text: sido + ' (확인필요)', bad: true };
+  return { text: sido + ' ' + stripSfx(hit, keepSfx), bad: false };
+}
+
+/* ───────── 상태 ───────── */
+const DEFAULT_COLS = [
+  {key:'입수일',type:'date',w:100},
+  {key:'고객 메모',type:'text',w:210,area:true},
+  {key:'지정일',type:'date',w:100},
+  {key:'고객명',type:'text',w:90},
+  {key:'생년월일',type:'birth',w:92},
+  {key:'나이',type:'age',w:62,calc:true},
+  {key:'휴대폰',type:'phone',w:122},
+  {key:'가입일',type:'date',w:100},
+  {key:'주소',type:'text',w:270,wide:true},
+  {key:'지역',type:'region',w:96,calc:true},
+  {key:'출산예정일',type:'date',w:104},
+  {key:'임신주수',type:'text',w:76},
+  {key:'진료병원',type:'text',w:140},
+  {key:'가입경로',type:'text',w:96},
+  {key:'관심항목',type:'text',w:280,area:true},
+  {key:'상담 희망 시간',type:'text',w:128}
+].map(c => Object.assign({label:c.key, visible:true}, c));
+const DEFAULT_KEYS = new Set(DEFAULT_COLS.map(c => c.key));
+const DEFAULT_SET = { freezeCols:6, freezeRows:1, suffix:false, ageMode:'man', wrap:false };
+const LS_KEY = 'luvmam.db.v1';
+
+const state = {
+  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET),
+  q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: ''
+};
+function load(){
+  try {
+    const raw = localStorage.getItem(LS_KEY); if (!raw) return;
+    const o = JSON.parse(raw);
+    if (Array.isArray(o.cols) && o.cols.length) state.cols = o.cols;
+    if (Array.isArray(o.rows)) state.rows = o.rows;
+    if (o.set) state.set = Object.assign({}, DEFAULT_SET, o.set);
+  } catch (e) {}
+}
+function save(){
+  try { localStorage.setItem(LS_KEY, JSON.stringify({ v:1, cols:state.cols, rows:state.rows, set:state.set, t:Date.now() })); }
+  catch (e) { toast('브라우저 저장에 실패했습니다. 엑셀 다운로드로 백업해 주세요.', 4000); }
+}
+const visCols = () => state.cols.filter(c => c.visible);
+
+/* ───────── 값 표시·정규화 ───────── */
+function cellVal(r, c){
+  if (c.type === 'age') return calcAge(r['생년월일'], state.asOf, state.set.ageMode);
+  if (c.type === 'region') return regionOf(r['주소'], state.set.suffix).text;
+  const v = r[c.key]; return v == null ? '' : v;
+}
+function isBad(r, c){
+  const v = r[c.key];
+  if (c.type === 'date') return !!v && !/^\d{4}-\d{2}-\d{2}$/.test(v);
+  if (c.type === 'birth') return !!v && !(/^\d{8}$/.test(v) && parseYMD(v));
+  if (c.type === 'age') return !!r['생년월일'] && cellVal(r, c) === '';
+  if (c.type === 'region') return regionOf(r['주소'], false).bad;
+  return false;
+}
+function normByType(c, v){
+  if (c.type === 'date') return normDate(v);
+  if (c.type === 'birth') return normBirth(v);
+  if (c.type === 'phone') return normPhone(v);
+  return String(v == null ? '' : v).trim();
+}
+function dupKey(r){
+  const n = String(r['고객명'] || '').replace(/\s/g, '');
+  const p = String(r['휴대폰'] || '').replace(/\D/g, '');
+  return n + '|' + (p || String(r['생년월일'] || ''));
+}
+
+/* ───────── 표 렌더링 ───────── */
+function viewRows(){
+  let list = state.rows.slice();
+  const toks = state.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  if (toks.length){
+    list = list.filter(r => {
+      const hay = state.cols.map(c => String(cellVal(r, c))).join('\u0001').toLowerCase();
+      return toks.every(t => hay.includes(t));
+    });
+  }
+  if (state.sortKey){
+    const c = state.cols.find(x => x.key === state.sortKey);
+    if (c){
+      list.sort((a, b) => {
+        const x = cellVal(a, c), y = cellVal(b, c);
+        if (x === '' && y === '') return 0;
+        if (x === '') return 1;
+        if (y === '') return -1;
+        const r = (typeof x === 'number' && typeof y === 'number') ? x - y : String(x).localeCompare(String(y), 'ko');
+        return r * state.sortDir;
+      });
+    }
+  }
+  return list;
+}
+const ACT_W = 84;
+function render(){
+  const grid = $('#grid'), S = state.set, vis = visCols();
+  const fc = Math.min(S.freezeCols, vis.length), fr = S.freezeRows;
+  const actSticky = fc > 0;
+  const left = []; let x = actSticky ? ACT_W : 0;
+  vis.forEach((c, i) => { left[i] = x; x += c.w; });
+  const total = vis.reduce((a, c) => a + c.w, ACT_W);
+  const rows = viewRows();
+  grid.className = S.wrap ? 'wrap' : '';
+  grid.style.width = total + 'px';
+
+  let h = '<colgroup><col style="width:' + ACT_W + 'px">' + vis.map(c => '<col style="width:' + c.w + 'px">').join('') + '</colgroup>';
+  h += '<thead><tr>';
+  h += '<th class="act' + (fr >= 1 ? ' fh' : '') + (actSticky ? ' fc' : '') + '"' + (actSticky ? ' style="left:0"' : '') + '>No.</th>';
+  vis.forEach((c, i) => {
+    const cls = [(fr >= 1 ? 'fh' : ''), (i < fc ? 'fc' : ''), (i === fc - 1 ? 'fc-last' : '')].filter(Boolean).join(' ');
+    const arrow = state.sortKey === c.key ? '<span class="srt">' + (state.sortDir > 0 ? '▲' : '▼') + '</span>' : '';
+    h += '<th draggable="true" data-key="' + esc(c.key) + '" class="' + cls + '"' + (i < fc ? ' style="left:' + left[i] + 'px"' : '') +
+         ' title="클릭: 정렬 / 끌어서 놓기: 항목 순서 변경">' + esc(c.label) + (c.calc ? '<i class="auto">자동</i>' : '') + arrow + '</th>';
+  });
+  h += '</tr></thead><tbody>';
+  rows.forEach((r, i) => {
+    const frozen = i < fr - 1;
+    h += '<tr data-id="' + r.id + '">';
+    h += '<td class="act' + (frozen ? ' fr' : '') + (actSticky ? ' fc' : '') + '"' + (actSticky ? ' style="left:0"' : '') + '>' +
+         '<span class="no">' + (i + 1) + '</span><button class="ib" data-act="edit" title="수정">✎</button> <button class="ib del" data-act="del" title="삭제">✕</button></td>';
+    vis.forEach((c, k) => {
+      const v = cellVal(r, c);
+      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), (c.type === 'age' ? 'num' : '')].filter(Boolean).join(' ');
+      h += '<td class="' + cls + '"' + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(v) + '">' + esc(v) + '</td>';
+    });
+    h += '</tr>';
+  });
+  h += '</tbody>';
+  grid.innerHTML = h;
+
+  /* 고정 행 높이 측정 */
+  if (fr >= 1){
+    let top = grid.tHead.offsetHeight;
+    const trs = grid.tBodies[0].rows;
+    for (let i = 0; i < fr - 1 && i < trs.length; i++){
+      Array.prototype.forEach.call(trs[i].cells, td => { td.style.top = top + 'px'; });
+      top += trs[i].offsetHeight;
+    }
+  }
+  const empty = $('#wrap').querySelector('.empty'); if (empty) empty.remove();
+  if (!state.rows.length){
+    const d = document.createElement('div'); d.className = 'empty';
+    d.innerHTML = '등록된 고객이 없습니다.<br>엑셀 파일을 올리거나 고객을 직접 추가해 주세요.<br>' +
+      '<button class="btn pri" data-go="up">엑셀 업로드</button><button class="btn amber" data-go="add">+ 고객 추가</button>';
+    $('#wrap').appendChild(d);
+  }
+  const fcl = fc > 0 ? colLetter(fc + 1) : 'A', fro = fr > 0 ? fr + 1 : 1;
+  const fz = (fc === 0 && fr === 0) ? '없음' : fcl + fro;
+  $('#stat').innerHTML = '전체 <b>' + state.rows.length + '</b>명 · 표시 <b>' + rows.length + '</b>명 · 나이 기준 <b>' +
+    (S.ageMode === 'ins' ? '보험나이' : '만 나이') + '</b> · 틀고정 <b>' + fz + '</b>';
+}
+function colLetter(n){ let s = ''; while (n > 0){ const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
+
+/* ───────── 열 이동 ───────── */
+function moveCol(src, tgt, after){
+  if (src === tgt) return;
+  const arr = state.cols, i = arr.findIndex(c => c.key === src);
+  if (i < 0) return;
+  const [it] = arr.splice(i, 1);
+  let j = arr.findIndex(c => c.key === tgt); if (j < 0) j = arr.length;
+  arr.splice(after ? j + 1 : j, 0, it);
+  save(); render(); if ($('#drawer').classList.contains('on')) renderDrawer();
+}
+const gridEl = $('#grid');
+function clearDrop(){ gridEl.querySelectorAll('th.dl,th.dr').forEach(t => t.classList.remove('dl', 'dr')); }
+gridEl.addEventListener('dragstart', e => {
+  const th = e.target.closest('th[data-key]'); if (!th) return;
+  state.dragKey = th.dataset.key; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', th.dataset.key);
+});
+gridEl.addEventListener('dragover', e => {
+  const th = e.target.closest('th[data-key]'); if (!th || !state.dragKey) return;
+  e.preventDefault(); clearDrop();
+  const r = th.getBoundingClientRect(); th.classList.add(e.clientX < r.left + r.width / 2 ? 'dl' : 'dr');
+});
+gridEl.addEventListener('drop', e => {
+  const th = e.target.closest('th[data-key]'); if (!th || !state.dragKey) return;
+  e.preventDefault();
+  const r = th.getBoundingClientRect(); const after = e.clientX >= r.left + r.width / 2;
+  const s = state.dragKey; state.dragKey = ''; clearDrop(); moveCol(s, th.dataset.key, after);
+});
+gridEl.addEventListener('dragend', () => { state.dragKey = ''; clearDrop(); });
+gridEl.addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]');
+  if (b){
+    const id = b.closest('tr').dataset.id;
+    if (b.dataset.act === 'edit') openForm(id); else delRow(id);
+    return;
+  }
+  const th = e.target.closest('th[data-key]');
+  if (th){
+    const k = th.dataset.key;
+    if (state.sortKey === k){ if (state.sortDir === 1) state.sortDir = -1; else { state.sortKey = ''; state.sortDir = 1; } }
+    else { state.sortKey = k; state.sortDir = 1; }
+    render();
+  }
+});
+gridEl.addEventListener('dblclick', e => {
+  const tr = e.target.closest('tbody tr'); if (tr && !e.target.closest('button')) openForm(tr.dataset.id);
+});
+$('#wrap').addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (!g) return;
+  if (g.dataset.go === 'up') $('#fileX').click(); else openForm();
+});
+
+/* ───────── 모달 공통 ───────── */
+function openModal(html, narrow){
+  closeModal();
+  const ov = document.createElement('div'); ov.className = 'ov'; ov.id = 'ov';
+  ov.innerHTML = '<div class="dlg' + (narrow ? ' narrow' : '') + '" role="dialog" aria-modal="true">' + html + '</div>';
+  $('#modal-root').appendChild(ov); return ov;
+}
+function closeModal(){ $('#modal-root').innerHTML = ''; }
+function askConfirm(msg, okLabel, danger){
+  return new Promise(res => {
+    const ov = document.createElement('div'); ov.className = 'ov'; ov.style.zIndex = 200;
+    ov.innerHTML = '<div class="dlg narrow"><div class="bd" style="padding:18px 16px;font-size:14.5px;line-height:1.55">' + msg +
+      '</div><div class="ft"><button class="btn" data-r="0">취소</button><button class="btn ' + (danger ? 'danger' : 'pri') + '" data-r="1">' + esc(okLabel || '확인') + '</button></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', e => { const b = e.target.closest('[data-r]'); if (b){ ov.remove(); res(b.dataset.r === '1'); } });
+  });
+}
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const extra = document.querySelectorAll('body > .ov'); if (extra.length){ extra[extra.length - 1].querySelector('[data-r="0"]').click(); return; }
+  if ($('#ov')) closeModal(); else $('#drawer').classList.remove('on');
+});
+
+/* ───────── 고객 추가·수정 ───────── */
+function openForm(id){
+  const editing = id ? state.rows.find(r => r.id === id) : null;
+  const rec = editing ? Object.assign({}, editing) : { '입수일': todayStr() };
+  const fields = state.cols.filter(c => !c.calc);
+  let f = '';
+  fields.forEach(c => {
+    const wide = c.wide || c.area;
+    const val = esc(rec[c.key] || '');
+    let inp;
+    if (c.area) inp = '<textarea data-k="' + esc(c.key) + '" rows="2">' + val + '</textarea>';
+    else if (c.type === 'date') inp = '<input type="date" data-k="' + esc(c.key) + '" value="' + val + '">';
+    else if (c.type === 'birth') inp = '<input type="text" inputmode="numeric" maxlength="10" data-k="' + esc(c.key) + '" value="' + val + '" placeholder="YYYYMMDD">';
+    else if (c.type === 'phone') inp = '<input type="tel" data-k="' + esc(c.key) + '" value="' + val + '" placeholder="010-0000-0000">';
+    else inp = '<input type="text" data-k="' + esc(c.key) + '" value="' + val + '">';
+    f += '<div class="f' + (wide ? ' wide' : '') + '"><label>' + esc(c.label) + (c.key === '고객명' ? ' *' : '') + '</label>' + inp + '</div>';
+  });
+  const ov = openModal('<h2>' + (editing ? '고객 정보 수정' : '고객 추가') + '</h2><div class="bd"><div class="form">' + f +
+    '<div class="calcbox" id="calc"></div><div class="err" id="err"></div></div></div>' +
+    '<div class="ft"><button class="btn" data-a="cancel">취소</button>' +
+    (editing ? '' : '<button class="btn" data-a="more">저장 후 계속 추가</button>') +
+    '<button class="btn pri" data-a="save">저장</button></div>');
+  const q = k => ov.querySelector('[data-k="' + k + '"]');
+  const upd = () => {
+    const b = normBirth(q('생년월일') ? q('생년월일').value : ''), a = q('주소') ? q('주소').value : '';
+    const age = calcAge(b, state.asOf, state.set.ageMode), rg = regionOf(a, state.set.suffix);
+    $('#calc').innerHTML = '자동 계산 · 나이: <b>' + (age === '' ? '-' : age + '세') + '</b> (' + esc(state.asOf) + ' 기준, ' +
+      (state.set.ageMode === 'ins' ? '보험나이' : '만 나이') + ') · 지역: <b>' + esc(rg.text || '-') + '</b>';
+  };
+  ov.addEventListener('input', upd); upd();
+  const collect = () => {
+    const o = {}; fields.forEach(c => { o[c.key] = normByType(c, ov.querySelector('[data-k="' + c.key + '"]').value); }); return o;
+  };
+  const validate = o => {
+    if (state.cols.some(c => c.key === '고객명') && !o['고객명']) return '고객명을 입력해 주세요.';
+    if (o['생년월일'] && !(/^\d{8}$/.test(o['생년월일']) && parseYMD(o['생년월일']))) return '생년월일 형식을 확인해 주세요. (예: 19920414)';
+    return '';
+  };
+  ov.addEventListener('click', async e => {
+    const b = e.target.closest('[data-a]'); if (!b) return;
+    if (b.dataset.a === 'cancel'){ closeModal(); return; }
+    const o = collect(), msg = validate(o);
+    if (msg){ $('#err').textContent = msg; return; }
+    if (editing){
+      Object.assign(editing, o);
+    } else {
+      const dk = dupKey(o);
+      if (state.rows.some(r => dupKey(r) === dk) && !(await askConfirm('같은 이름·연락처의 고객이 이미 등록되어 있습니다.<br>그래도 추가하시겠습니까?', '추가'))) return;
+      state.rows.unshift(Object.assign({ id: uid() }, o));
+    }
+    save(); render();
+    if (b.dataset.a === 'more'){ toast('저장되었습니다. 이어서 입력해 주세요.'); openForm(); }
+    else { closeModal(); toast(editing ? '수정되었습니다.' : '고객이 추가되었습니다.'); }
+  });
+  const first = ov.querySelector('[data-k="고객명"]') || ov.querySelector('input'); if (first) first.focus();
+}
+async function delRow(id){
+  const r = state.rows.find(x => x.id === id); if (!r) return;
+  if (!(await askConfirm('<b>' + esc(r['고객명'] || '(이름 없음)') + '</b> 고객을 삭제하시겠습니까?<br>삭제 후에는 되돌릴 수 없습니다.', '삭제', true))) return;
+  state.rows = state.rows.filter(x => x.id !== id); save(); render(); toast('삭제되었습니다.');
+}
+
+/* ───────── 엑셀 업로드 ───────── */
+function xv(v){
+  if (v == null) return '';
+  if (v instanceof Date) return v;
+  if (typeof v === 'object'){
+    if (v.richText) return v.richText.map(t => t.text).join('');
+    if (v.result !== undefined) return xv(v.result);
+    if (v.text !== undefined) return xv(v.text);
+    if (v.error) return '';
+    return String(v);
+  }
+  return v;
+}
+const sqz = s => String(s).replace(/\s/g, '');
+async function readXlsx(file){
+  if (typeof ExcelJS === 'undefined'){ toast('엑셀 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.', 4000); return; }
+  try {
+    const wb = new ExcelJS.Workbook(); await wb.xlsx.load(await file.arrayBuffer());
+    const ws = wb.getWorksheet('DB명단') || wb.worksheets[0];
+    if (!ws){ toast('시트를 찾을 수 없습니다.'); return; }
+    const hdr = []; ws.getRow(1).eachCell({ includeEmpty: false }, (cell, n) => { const t = String(xv(cell.value)).trim(); if (t) hdr.push({ n, t }); });
+    if (!hdr.length){ toast('1행에서 항목명을 찾을 수 없습니다.'); return; }
+    const colMap = {}, newCols = [], ignored = [];
+    hdr.forEach(h => {
+      let c = state.cols.find(x => sqz(x.label) === sqz(h.t));
+      if (c){ if (c.calc) ignored.push(c.label); else colMap[h.n] = c; return; }
+      let nc = newCols.find(x => sqz(x.label) === sqz(h.t));
+      if (!nc){ nc = { key: h.t, label: h.t, type: 'text', w: 140, visible: true }; newCols.push(nc); }
+      colMap[h.n] = nc;
+    });
+    const recs = [];
+    ws.eachRow({ includeEmpty: false }, (row, rn) => {
+      if (rn === 1) return;
+      const o = {}; let any = false;
+      Object.keys(colMap).forEach(n => {
+        const c = colMap[n], raw = xv(row.getCell(+n).value);
+        const v = normByType(c, raw); o[c.key] = v; if (v !== '') any = true;
+      });
+      if (any) recs.push(o);
+    });
+    showImport(file.name, recs, newCols, ignored);
+  } catch (err) { console.error(err); toast('엑셀 파일을 읽지 못했습니다. .xlsx 형식인지 확인해 주세요.', 4000); }
+}
+function showImport(name, recs, newCols, ignored){
+  const seen = new Set(state.rows.map(dupKey));
+  let nNew = 0, nDup = 0;
+  recs.forEach(r => { const k = dupKey(r); if (seen.has(k)) nDup++; else { nNew++; seen.add(k); } });
+  const ov = openModal('<h2>엑셀 업로드</h2><div class="bd"><div class="kv"><div>파일: <b>' + esc(name) + '</b></div>' +
+    '<div>읽은 고객: <b>' + recs.length + '</b>명 → 신규 <b>' + nNew + '</b>명 · 중복(이름+연락처 동일) <b>' + nDup + '</b>명</div>' +
+    (newCols.length ? '<div>새 항목 자동 추가: <b>' + newCols.map(c => esc(c.label)).join(', ') + '</b></div>' : '') +
+    (ignored.length ? '<div>자동계산 항목(' + ignored.map(esc).join(', ') + ')은 파일 값을 무시하고 다시 계산합니다.</div>' : '') +
+    '</div><div style="margin-top:8px;font-weight:700">반영 방식</div>' +
+    '<label class="opt"><input type="radio" name="md" value="add" checked><span><b>신규만 추가</b><small>중복 고객은 건너뜁니다. (기본)</small></span></label>' +
+    '<label class="opt"><input type="radio" name="md" value="merge"><span><b>신규 추가 + 중복 고객 갱신</b><small>엑셀에 값이 있는 칸만 덮어쓰고, 빈 칸은 기존 값을 유지합니다.</small></span></label>' +
+    '<label class="opt"><input type="radio" name="md" value="replace"><span><b>전체 교체</b><small>현재 등록된 ' + state.rows.length + '명을 모두 지우고 파일 내용으로 대체합니다.</small></span></label>' +
+    '</div><div class="ft"><button class="btn" data-a="cancel">취소</button><button class="btn pri" data-a="ok"' + (recs.length ? '' : ' disabled') + '>반영</button></div>', true);
+  ov.addEventListener('click', async e => {
+    const b = e.target.closest('[data-a]'); if (!b) return;
+    if (b.dataset.a === 'cancel'){ closeModal(); return; }
+    const mode = ov.querySelector('input[name=md]:checked').value;
+    if (mode === 'replace' && !(await askConfirm('현재 ' + state.rows.length + '명의 고객 정보가 모두 삭제되고 파일 내용으로 교체됩니다.<br>계속하시겠습니까?', '전체 교체', true))) return;
+    newCols.forEach(c => { if (!state.cols.some(x => x.key === c.key)) state.cols.push(c); });
+    let add = 0, upd = 0, skip = 0;
+    if (mode === 'replace'){
+      state.rows = recs.map(r => Object.assign({ id: uid() }, r)); add = recs.length;
+    } else {
+      const map = new Map(state.rows.map(r => [dupKey(r), r])), fresh = [];
+      recs.forEach(r => {
+        const k = dupKey(r), ex = map.get(k);
+        if (ex){
+          if (mode === 'merge'){ Object.keys(r).forEach(kk => { if (r[kk] !== '') ex[kk] = r[kk]; }); upd++; } else skip++;
+        } else { const nr = Object.assign({ id: uid() }, r); map.set(k, nr); fresh.push(nr); add++; }
+      });
+      state.rows = fresh.concat(state.rows);
+    }
+    save(); render(); closeModal();
+    toast('신규 ' + add + '명 추가' + (upd ? ', ' + upd + '명 갱신' : '') + (skip ? ', 중복 ' + skip + '명 건너뜀' : '') + ' 완료', 3800);
+  });
+}
+
+/* ───────── 엑셀 다운로드 ───────── */
+async function exportXlsx(){
+  if (typeof ExcelJS === 'undefined'){ toast('엑셀 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.', 4000); return; }
+  const vis = visCols(), S = state.set, rows = viewRows();
+  if (!vis.length){ toast('표시할 항목이 없습니다.'); return; }
+  const fc = Math.min(S.freezeCols, vis.length), fr = S.freezeRows;
+  const wb = new ExcelJS.Workbook();
+  const opt = {}; if (fc > 0 || fr > 0) opt.views = [{ state: 'frozen', xSplit: fc, ySplit: fr }];
+  const ws = wb.addWorksheet('DB명단', opt);
+  ws.columns = vis.map(c => ({ header: c.label, key: c.key, width: Math.max(8, Math.round(c.w / 7)) }));
+  const border = { style: 'thin', color: { argb: 'FFBFC9D6' } };
+  const bd = { top: border, left: border, bottom: border, right: border };
+  const hr = ws.getRow(1); hr.height = 24;
+  hr.eachCell(cell => {
+    cell.font = { name: '맑은 고딕', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1B3558' } };
+    cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true }; cell.border = bd;
+  });
+  rows.forEach(r => {
+    const row = ws.addRow(vis.map(c => {
+      const v = cellVal(r, c);
+      if (c.type === 'date'){ const p = parseYMD(v); if (p) return new Date(Date.UTC(p[0], p[1] - 1, p[2])); }
+      return v;
+    }));
+    row.eachCell({ includeEmpty: true }, (cell, n) => {
+      const c = vis[n - 1];
+      cell.font = { name: '맑은 고딕', size: 10 }; cell.border = bd;
+      cell.alignment = { vertical: 'middle', horizontal: (c.type === 'age' ? 'center' : 'left'), wrapText: !!c.area };
+      if (c.type === 'date') cell.numFmt = 'yyyy-mm-dd';
+      if (c.type === 'birth' || c.type === 'phone') cell.numFmt = '@';
+    });
+  });
+  ws.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: vis.length } };
+  const buf = await wb.xlsx.writeBuffer();
+  const t = todayStr().replace(/-/g, '').slice(2);
+  download(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'DB-' + t + '.xlsx');
+  toast('엑셀 다운로드: 화면에 표시된 ' + rows.length + '명, ' + vis.length + '개 항목 (DB-' + t + '.xlsx)', 3800);
+}
+function download(blob, name){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+/* ───────── 설정 패널 ───────── */
+function renderDrawer(){
+  const S = state.set, vis = visCols(), fc = Math.min(S.freezeCols, vis.length);
+  const fcOpt = '<option value="0"' + (fc === 0 ? ' selected' : '') + '>고정 안 함</option>' +
+    vis.map((c, i) => '<option value="' + (i + 1) + '"' + (fc === i + 1 ? ' selected' : '') + '>' + (i + 1) + '열 · ' + esc(c.label) + ' 까지</option>').join('');
+  const frLab = ['고정 안 함', '헤더행(1행)만', '헤더 + 데이터 1행 (2행까지)', '헤더 + 데이터 2행 (3행까지)', '헤더 + 데이터 3행 (4행까지)', '헤더 + 데이터 4행 (5행까지)', '헤더 + 데이터 5행 (6행까지)'];
+  const frOpt = frLab.map((t, i) => '<option value="' + i + '"' + (S.freezeRows === i ? ' selected' : '') + '>' + t + '</option>').join('');
+  const cell = (fc === 0 && S.freezeRows === 0) ? '없음' : (fc > 0 ? colLetter(fc + 1) : 'A') + (S.freezeRows > 0 ? S.freezeRows + 1 : 1);
+  const list = state.cols.map((c, i) =>
+    '<li draggable="true" data-key="' + esc(c.key) + '"><span class="hd" title="끌어서 순서 변경">≡</span><span class="idx">' + (i + 1) + '</span>' +
+    '<input type="checkbox" data-vis="' + esc(c.key) + '"' + (c.visible ? ' checked' : '') + ' title="표시 여부">' +
+    '<span class="nm' + (c.visible ? '' : ' off') + '">' + esc(c.label) + (c.calc ? '<i>자동</i>' : '') + '</span>' +
+    '<button class="ib" data-mv="up" data-k="' + esc(c.key) + '"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
+    '<button class="ib" data-mv="dn" data-k="' + esc(c.key) + '"' + (i === state.cols.length - 1 ? ' disabled' : '') + '>▼</button></li>').join('');
+  $('#drawer').innerHTML =
+    '<div class="dh">항목·틀고정 설정<button class="btn sm" data-d="close">닫기</button></div><div class="db">' +
+    '<h3>1. 항목 순서 · 표시</h3><div class="note">≡ 끌어서 놓기 또는 ▲▼ 버튼으로 순서를 바꿉니다. 표의 제목 칸을 직접 끌어도 됩니다. 체크 해제 시 화면·엑셀에서 숨김(데이터는 유지)됩니다.</div>' +
+    '<ul class="clist" id="clist">' + list + '</ul>' +
+    '<h3>2. 틀고정 위치</h3>' +
+    '<div class="row2"><label>열 고정</label><select id="selFc">' + fcOpt + '</select></div>' +
+    '<div class="row2"><label>행 고정</label><select id="selFr">' + frOpt + '</select></div>' +
+    '<div class="note">엑셀 기준 틀고정 셀: <b>' + cell + '</b> (엑셀 다운로드 파일에도 동일하게 적용됩니다)</div>' +
+    '<h3>3. 표시 옵션</h3>' +
+    '<div class="note"><b>나이 기준</b> (조회일 기준 자동계산)</div>' +
+    '<div class="radios"><label><input type="radio" name="am" value="man"' + (S.ageMode === 'man' ? ' checked' : '') + '>만 나이</label>' +
+    '<label><input type="radio" name="am" value="ins"' + (S.ageMode === 'ins' ? ' checked' : '') + '>보험나이 (생일 후 6개월 이상 시 +1)</label></div>' +
+    '<div class="note"><b>지역 표기</b></div>' +
+    '<div class="radios"><label><input type="radio" name="sf" value="0"' + (!S.suffix ? ' checked' : '') + '>구·시 생략 (서울 종로)</label>' +
+    '<label><input type="radio" name="sf" value="1"' + (S.suffix ? ' checked' : '') + '>구·시 포함 (서울 종로구)</label></div>' +
+    '<div class="radios"><label><input type="checkbox" id="ckWrap"' + (S.wrap ? ' checked' : '') + '>긴 내용 줄바꿈하여 모두 표시</label></div>' +
+    '<h3>4. 백업 · 초기화</h3>' +
+    '<div class="note">데이터는 이 브라우저에 저장됩니다. 정기적으로 엑셀 다운로드 또는 JSON 백업을 권장합니다.</div>' +
+    '<div class="radios"><button class="btn sm" data-d="bk">JSON 백업 저장</button><button class="btn sm" data-d="rs">JSON 복원</button>' +
+    '<button class="btn sm" data-d="reset">항목·틀고정 기본값으로</button></div></div>';
+}
+const drawer = $('#drawer');
+drawer.addEventListener('click', e => {
+  const d = e.target.closest('[data-d]');
+  if (d){
+    const a = d.dataset.d;
+    if (a === 'close') drawer.classList.remove('on');
+    if (a === 'bk') download(new Blob([JSON.stringify({ app: 'luvmam', v: 1, cols: state.cols, rows: state.rows, set: state.set })], { type: 'application/json' }), 'luvmam-backup-' + todayStr().replace(/-/g, '') + '.json');
+    if (a === 'rs') $('#fileJ').click();
+    if (a === 'reset'){
+      const customs = state.cols.filter(c => !DEFAULT_KEYS.has(c.key)).map(c => Object.assign({}, c, { visible: true }));
+      state.cols = clone(DEFAULT_COLS).concat(customs); state.set.freezeCols = DEFAULT_SET.freezeCols; state.set.freezeRows = DEFAULT_SET.freezeRows;
+      save(); render(); renderDrawer(); toast('항목 순서·틀고정을 기본값으로 되돌렸습니다.');
+    }
+    return;
+  }
+  const mv = e.target.closest('[data-mv]');
+  if (mv){
+    const i = state.cols.findIndex(c => c.key === mv.dataset.k), j = mv.dataset.mv === 'up' ? i - 1 : i + 1;
+    if (j < 0 || j >= state.cols.length) return;
+    const t = state.cols[i]; state.cols[i] = state.cols[j]; state.cols[j] = t; save(); render(); renderDrawer();
+  }
+});
+drawer.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.vis !== undefined){ const c = state.cols.find(x => x.key === t.dataset.vis); c.visible = t.checked; save(); render(); renderDrawer(); return; }
+  if (t.id === 'selFc'){ state.set.freezeCols = +t.value; }
+  else if (t.id === 'selFr'){ state.set.freezeRows = +t.value; }
+  else if (t.name === 'am'){ state.set.ageMode = t.value; }
+  else if (t.name === 'sf'){ state.set.suffix = t.value === '1'; }
+  else if (t.id === 'ckWrap'){ state.set.wrap = t.checked; }
+  else return;
+  save(); render(); renderDrawer();
+});
+/* 설정 목록 드래그 */
+let dKey = '';
+function clrList(){ drawer.querySelectorAll('li.dl,li.dr').forEach(l => l.classList.remove('dl', 'dr')); }
+drawer.addEventListener('dragstart', e => { const li = e.target.closest('li[data-key]'); if (li){ dKey = li.dataset.key; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', dKey); } });
+drawer.addEventListener('dragover', e => {
+  const li = e.target.closest('li[data-key]'); if (!li || !dKey) return;
+  e.preventDefault(); clrList(); const r = li.getBoundingClientRect(); li.classList.add(e.clientY < r.top + r.height / 2 ? 'dl' : 'dr');
+});
+drawer.addEventListener('drop', e => {
+  const li = e.target.closest('li[data-key]'); if (!li || !dKey) return;
+  e.preventDefault(); const r = li.getBoundingClientRect(); const after = e.clientY >= r.top + r.height / 2;
+  const s = dKey; dKey = ''; clrList(); moveCol(s, li.dataset.key, after);
+});
+drawer.addEventListener('dragend', () => { dKey = ''; clrList(); });
+
+/* ───────── 이벤트 연결 ───────── */
+$('#bAdd').onclick = () => openForm();
+$('#bUp').onclick = () => $('#fileX').click();
+$('#bDown').onclick = exportXlsx;
+$('#bSet').onclick = () => { renderDrawer(); drawer.classList.toggle('on'); };
+$('#fileX').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) readXlsx(f); };
+$('#fileJ').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    const o = JSON.parse(await f.text());
+    if (!o || o.app !== 'luvmam' || !Array.isArray(o.rows) || !Array.isArray(o.cols)) throw new Error('bad');
+    if (!(await askConfirm('백업 파일(고객 ' + o.rows.length + '명)로 현재 데이터를 모두 교체합니다.<br>계속하시겠습니까?', '복원', true))) return;
+    state.cols = o.cols; state.rows = o.rows; state.set = Object.assign({}, DEFAULT_SET, o.set || {});
+    save(); render(); renderDrawer(); toast('복원되었습니다.');
+  } catch (err) { toast('올바른 luvmam 백업 파일이 아닙니다.', 3500); }
+};
+let qT;
+$('#q').addEventListener('input', e => { clearTimeout(qT); qT = setTimeout(() => { state.q = e.target.value; render(); }, 120); });
+$('#asof').addEventListener('change', e => { const p = parseYMD(e.target.value); state.asOf = p ? ymd(p[0], p[1], p[2]) : todayStr(); if (!p) e.target.value = state.asOf; render(); });
+$('#bToday').onclick = () => { state.asOf = todayStr(); $('#asof').value = state.asOf; render(); };
+
+/* 테스트·점검용 노출 */
+window.__luvmam = { regionOf, calcAge, parseYMD, state, render };
+
+load();
+$('#asof').value = state.asOf;
+render();
+})();
+</script>
+</body>
+</html>
