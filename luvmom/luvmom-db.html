@@ -63,6 +63,13 @@ td.act .no{display:inline-block;min-width:22px;color:var(--sub);font-size:12px}
 .ib.del:hover{background:var(--warnbg);color:var(--warn);border-color:var(--warn)}
 td.bad{background:var(--warnbg) !important;color:#8a1c12}
 td.num{text-align:center}
+.ib+.ib,td.act .no+.ib{margin-left:2px}
+td.act .no{cursor:grab}
+tr.rdt td{box-shadow:inset 0 3px 0 var(--pri)}
+tr.rdb td{box-shadow:inset 0 -3px 0 var(--pri)}
+.addcol{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.addcol input,.addcol select{border:1px solid #aab7c8;border-radius:6px;padding:5px 6px;background:#fff}
+.addcol input{flex:1;min-width:110px}
 .empty{padding:60px 20px;text-align:center;color:var(--sub);font-size:15px}
 .empty .btn{margin:10px 4px 0}
 
@@ -263,13 +270,14 @@ const DEFAULT_COLS = [
   {key:'관심항목',type:'text',w:280,area:true},
   {key:'상담 희망 시간',type:'text',w:128}
 ].map(c => Object.assign({label:c.key, visible:true}, c));
+const PROTECT = new Set(['고객명', '생년월일', '주소', '휴대폰']);
 const DEFAULT_KEYS = new Set(DEFAULT_COLS.map(c => c.key));
 const DEFAULT_SET = { freezeCols:6, freezeRows:1, suffix:false, ageMode:'man', wrap:false };
 const LS_KEY = 'luvmam.db.v1';
 
 const state = {
   cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET),
-  q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: ''
+  q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: '', dragRow: ''
 };
 function load(){
   try {
@@ -337,7 +345,7 @@ function viewRows(){
   }
   return list;
 }
-const ACT_W = 84;
+const ACT_W = 176;
 function render(){
   const grid = $('#grid'), S = state.set, vis = visCols();
   const fc = Math.min(S.freezeCols, vis.length), fr = S.freezeRows;
@@ -363,7 +371,9 @@ function render(){
     const frozen = i < fr - 1;
     h += '<tr data-id="' + r.id + '">';
     h += '<td class="act' + (frozen ? ' fr' : '') + (actSticky ? ' fc' : '') + '"' + (actSticky ? ' style="left:0"' : '') + '>' +
-         '<span class="no">' + (i + 1) + '</span><button class="ib" data-act="edit" title="수정">✎</button> <button class="ib del" data-act="del" title="삭제">✕</button></td>';
+         '<span class="no" draggable="true" title="끌어서 행 위치 이동">' + (i + 1) + '</span>' +
+         '<button class="ib" data-act="edit" title="수정">✎</button><button class="ib" data-act="up" title="한 칸 위로">▲</button><button class="ib" data-act="dn" title="한 칸 아래로">▼</button>' +
+         '<button class="ib" data-act="ins" title="이 행 아래에 새 고객 삽입">＋</button><button class="ib del" data-act="del" title="삭제">✕</button></td>';
     vis.forEach((c, k) => {
       const v = cellVal(r, c);
       const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), (c.type === 'age' ? 'num' : '')].filter(Boolean).join(' ');
@@ -408,28 +418,57 @@ function moveCol(src, tgt, after){
   save(); render(); if ($('#drawer').classList.contains('on')) renderDrawer();
 }
 const gridEl = $('#grid');
-function clearDrop(){ gridEl.querySelectorAll('th.dl,th.dr').forEach(t => t.classList.remove('dl', 'dr')); }
+function clearDrop(){ gridEl.querySelectorAll('th.dl,th.dr,tr.rdt,tr.rdb').forEach(t => t.classList.remove('dl', 'dr', 'rdt', 'rdb')); }
+function moveRowTo(src, tgt, after){
+  if (src === tgt) return;
+  const a = state.rows, i = a.findIndex(r => r.id === src); if (i < 0) return;
+  const it = a.splice(i, 1)[0];
+  let j = a.findIndex(r => r.id === tgt); if (j < 0) j = a.length;
+  a.splice(after ? j + 1 : j, 0, it); save(); render();
+}
+function moveRowBy(id, dir){
+  if (state.sortKey){ toast('정렬 중에는 행을 옮길 수 없습니다. 제목 칸을 눌러 정렬을 해제해 주세요.', 3500); return; }
+  const list = viewRows(), i = list.findIndex(r => r.id === id), n = list[i + dir];
+  if (!n){ toast(dir < 0 ? '이미 맨 위입니다.' : '이미 맨 아래입니다.'); return; }
+  moveRowTo(id, n.id, dir > 0);
+}
 gridEl.addEventListener('dragstart', e => {
+  const rs = e.target.closest('span.no');
+  if (rs){
+    if (state.sortKey){ e.preventDefault(); toast('정렬 중에는 행을 옮길 수 없습니다. 제목 칸을 눌러 정렬을 해제해 주세요.', 3500); return; }
+    state.dragRow = rs.closest('tr').dataset.id; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', state.dragRow); return;
+  }
   const th = e.target.closest('th[data-key]'); if (!th) return;
   state.dragKey = th.dataset.key; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', th.dataset.key);
 });
 gridEl.addEventListener('dragover', e => {
+  if (state.dragRow){
+    const tr = e.target.closest('tbody tr'); if (!tr) return;
+    e.preventDefault(); clearDrop(); const q = tr.getBoundingClientRect(); tr.classList.add(e.clientY < q.top + q.height / 2 ? 'rdt' : 'rdb'); return;
+  }
   const th = e.target.closest('th[data-key]'); if (!th || !state.dragKey) return;
   e.preventDefault(); clearDrop();
   const r = th.getBoundingClientRect(); th.classList.add(e.clientX < r.left + r.width / 2 ? 'dl' : 'dr');
 });
 gridEl.addEventListener('drop', e => {
+  if (state.dragRow){
+    const tr = e.target.closest('tbody tr'); if (!tr) return;
+    e.preventDefault(); const q = tr.getBoundingClientRect(); const after = e.clientY >= q.top + q.height / 2;
+    const s0 = state.dragRow; state.dragRow = ''; clearDrop(); moveRowTo(s0, tr.dataset.id, after); return;
+  }
   const th = e.target.closest('th[data-key]'); if (!th || !state.dragKey) return;
   e.preventDefault();
   const r = th.getBoundingClientRect(); const after = e.clientX >= r.left + r.width / 2;
   const s = state.dragKey; state.dragKey = ''; clearDrop(); moveCol(s, th.dataset.key, after);
 });
-gridEl.addEventListener('dragend', () => { state.dragKey = ''; clearDrop(); });
+gridEl.addEventListener('dragend', () => { state.dragKey = ''; state.dragRow = ''; clearDrop(); });
 gridEl.addEventListener('click', e => {
   const b = e.target.closest('button[data-act]');
   if (b){
     const id = b.closest('tr').dataset.id;
-    if (b.dataset.act === 'edit') openForm(id); else delRow(id);
+    const a = b.dataset.act;
+    if (a === 'edit') openForm(id); else if (a === 'del') delRow(id);
+    else if (a === 'up') moveRowBy(id, -1); else if (a === 'dn') moveRowBy(id, 1); else if (a === 'ins') openForm(null, id);
     return;
   }
   const th = e.target.closest('th[data-key]');
@@ -472,7 +511,7 @@ document.addEventListener('keydown', e => {
 });
 
 /* ───────── 고객 추가·수정 ───────── */
-function openForm(id){
+function openForm(id, afterId){
   const editing = id ? state.rows.find(r => r.id === id) : null;
   const rec = editing ? Object.assign({}, editing) : { '입수일': todayStr() };
   const fields = state.cols.filter(c => !c.calc);
@@ -488,7 +527,7 @@ function openForm(id){
     else inp = '<input type="text" data-k="' + esc(c.key) + '" value="' + val + '">';
     f += '<div class="f' + (wide ? ' wide' : '') + '"><label>' + esc(c.label) + (c.key === '고객명' ? ' *' : '') + '</label>' + inp + '</div>';
   });
-  const ov = openModal('<h2>' + (editing ? '고객 정보 수정' : '고객 추가') + '</h2><div class="bd"><div class="form">' + f +
+  const ov = openModal('<h2>' + (editing ? '고객 정보 수정' : afterId ? '고객 추가 (선택한 행 아래에 삽입)' : '고객 추가') + '</h2><div class="bd"><div class="form">' + f +
     '<div class="calcbox" id="calc"></div><div class="err" id="err"></div></div></div>' +
     '<div class="ft"><button class="btn" data-a="cancel">취소</button>' +
     (editing ? '' : '<button class="btn" data-a="more">저장 후 계속 추가</button>') +
@@ -512,17 +551,19 @@ function openForm(id){
   ov.addEventListener('click', async e => {
     const b = e.target.closest('[data-a]'); if (!b) return;
     if (b.dataset.a === 'cancel'){ closeModal(); return; }
-    const o = collect(), msg = validate(o);
+    const o = collect(), msg = validate(o); let added = null;
     if (msg){ $('#err').textContent = msg; return; }
     if (editing){
       Object.assign(editing, o);
     } else {
       const dk = dupKey(o);
       if (state.rows.some(r => dupKey(r) === dk) && !(await askConfirm('같은 이름·연락처의 고객이 이미 등록되어 있습니다.<br>그래도 추가하시겠습니까?', '추가'))) return;
-      state.rows.unshift(Object.assign({ id: uid() }, o));
+      added = Object.assign({ id: uid() }, o);
+      const k = afterId ? state.rows.findIndex(r => r.id === afterId) : -1;
+      if (k >= 0) state.rows.splice(k + 1, 0, added); else state.rows.unshift(added);
     }
     save(); render();
-    if (b.dataset.a === 'more'){ toast('저장되었습니다. 이어서 입력해 주세요.'); openForm(); }
+    if (b.dataset.a === 'more'){ toast('저장되었습니다. 이어서 입력해 주세요.'); openForm(null, afterId ? added.id : undefined); }
     else { closeModal(); toast(editing ? '수정되었습니다.' : '고객이 추가되었습니다.'); }
   });
   const first = ov.querySelector('[data-k="고객명"]') || ov.querySelector('input'); if (first) first.focus();
@@ -560,7 +601,7 @@ async function readXlsx(file){
       let c = state.cols.find(x => sqz(x.label) === sqz(h.t));
       if (c){ if (c.calc) ignored.push(c.label); else colMap[h.n] = c; return; }
       let nc = newCols.find(x => sqz(x.label) === sqz(h.t));
-      if (!nc){ nc = { key: h.t, label: h.t, type: 'text', w: 140, visible: true }; newCols.push(nc); }
+      if (!nc){ nc = { key: (h.t === 'id' ? 'id_' : h.t), label: h.t, type: 'text', w: 140, visible: true }; newCols.push(nc); }
       colMap[h.n] = nc;
     });
     const recs = [];
@@ -669,11 +710,17 @@ function renderDrawer(){
     '<input type="checkbox" data-vis="' + esc(c.key) + '"' + (c.visible ? ' checked' : '') + ' title="표시 여부">' +
     '<span class="nm' + (c.visible ? '' : ' off') + '">' + esc(c.label) + (c.calc ? '<i>자동</i>' : '') + '</span>' +
     '<button class="ib" data-mv="up" data-k="' + esc(c.key) + '"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
-    '<button class="ib" data-mv="dn" data-k="' + esc(c.key) + '"' + (i === state.cols.length - 1 ? ' disabled' : '') + '>▼</button></li>').join('');
+    '<button class="ib" data-mv="dn" data-k="' + esc(c.key) + '"' + (i === state.cols.length - 1 ? ' disabled' : '') + '>▼</button>' +
+    ((c.calc || PROTECT.has(c.key)) ? '<span style="width:26px"></span>' : '<button class="ib del" data-dc="' + esc(c.key) + '" title="항목 삭제">✕</button>') + '</li>').join('');
+  const posOpt = '<option value="">맨 앞에</option>' + state.cols.map((c, i) => '<option value="' + esc(c.key) + '"' + (i === state.cols.length - 1 ? ' selected' : '') + '>' + esc(c.label) + ' 뒤에</option>').join('');
   $('#drawer').innerHTML =
     '<div class="dh">항목·틀고정 설정<button class="btn sm" data-d="close">닫기</button></div><div class="db">' +
-    '<h3>1. 항목 순서 · 표시</h3><div class="note">≡ 끌어서 놓기 또는 ▲▼ 버튼으로 순서를 바꿉니다. 표의 제목 칸을 직접 끌어도 됩니다. 체크 해제 시 화면·엑셀에서 숨김(데이터는 유지)됩니다.</div>' +
+    '<h3>1. 항목 순서 · 표시 · 추가 · 삭제</h3><div class="note">≡ 끌어서 놓기 또는 ▲▼ 버튼으로 순서를 바꿉니다. 표의 제목 칸을 직접 끌어도 됩니다. 체크 해제 시 화면·엑셀에서 숨김(데이터는 유지)됩니다.</div>' +
     '<ul class="clist" id="clist">' + list + '</ul>' +
+    '<div class="note" style="margin-top:8px"><b>항목 추가</b> — 추가한 항목은 고객 입력 칸과 엑셀에도 함께 반영됩니다.</div>' +
+    '<div class="addcol"><input id="ncName" maxlength="20" placeholder="새 항목명"><select id="ncType"><option value="text">텍스트</option><option value="date">날짜</option></select>' +
+    '<select id="ncPos">' + posOpt + '</select><button class="btn sm pri" data-d="addcol">추가</button></div>' +
+    '<div class="note">고객명·생년월일·주소·휴대폰과 자동 항목(나이·지역)은 다른 기능의 기준이라 삭제할 수 없고, 체크 해제로 숨기기만 가능합니다.</div>' +
     '<h3>2. 틀고정 위치</h3>' +
     '<div class="row2"><label>열 고정</label><select id="selFc">' + fcOpt + '</select></div>' +
     '<div class="row2"><label>행 고정</label><select id="selFr">' + frOpt + '</select></div>' +
@@ -691,12 +738,29 @@ function renderDrawer(){
     '<div class="radios"><button class="btn sm" data-d="bk">JSON 백업 저장</button><button class="btn sm" data-d="rs">JSON 복원</button>' +
     '<button class="btn sm" data-d="reset">항목·틀고정 기본값으로</button></div></div>';
 }
+function addCol(){
+  const name = $('#ncName').value.trim(), type = $('#ncType').value, pos = $('#ncPos').value;
+  if (!name){ toast('새 항목명을 입력해 주세요.'); return; }
+  if (state.cols.some(c => sqz(c.label) === sqz(name))){ toast('이미 있는 항목명입니다.'); return; }
+  const nc = { key: (name === 'id' ? 'id_' : name), label: name, type: type, w: type === 'date' ? 100 : 140, visible: true };
+  const at = pos ? state.cols.findIndex(c => c.key === pos) + 1 : 0;
+  state.cols.splice(at, 0, nc); save(); render(); renderDrawer(); toast("'" + name + "' 항목을 추가했습니다.");
+}
+async function delCol(key){
+  const c = state.cols.find(x => x.key === key); if (!c) return;
+  const n = state.rows.filter(r => r[key] != null && r[key] !== '').length;
+  if (!(await askConfirm("'<b>" + esc(c.label) + "</b>' 항목을 삭제하시겠습니까?<br>입력된 데이터(" + n + "건)도 함께 삭제되며 되돌릴 수 없습니다.<br>삭제 대신 체크 해제하면 숨기기만 됩니다.", '삭제', true))) return;
+  state.cols = state.cols.filter(x => x.key !== key); state.rows.forEach(r => { delete r[key]; });
+  if (state.sortKey === key){ state.sortKey = ''; state.sortDir = 1; }
+  save(); render(); renderDrawer(); toast("'" + c.label + "' 항목을 삭제했습니다.");
+}
 const drawer = $('#drawer');
 drawer.addEventListener('click', e => {
   const d = e.target.closest('[data-d]');
   if (d){
     const a = d.dataset.d;
     if (a === 'close') drawer.classList.remove('on');
+    if (a === 'addcol') addCol();
     if (a === 'bk') download(new Blob([JSON.stringify({ app: 'luvmam', v: 1, cols: state.cols, rows: state.rows, set: state.set })], { type: 'application/json' }), 'luvmam-backup-' + todayStr().replace(/-/g, '') + '.json');
     if (a === 'rs') $('#fileJ').click();
     if (a === 'reset'){
@@ -706,6 +770,8 @@ drawer.addEventListener('click', e => {
     }
     return;
   }
+  const dc = e.target.closest('[data-dc]');
+  if (dc){ delCol(dc.dataset.dc); return; }
   const mv = e.target.closest('[data-mv]');
   if (mv){
     const i = state.cols.findIndex(c => c.key === mv.dataset.k), j = mv.dataset.mv === 'up' ? i - 1 : i + 1;
@@ -761,7 +827,7 @@ $('#asof').addEventListener('change', e => { const p = parseYMD(e.target.value);
 $('#bToday').onclick = () => { state.asOf = todayStr(); $('#asof').value = state.asOf; render(); };
 
 /* 테스트·점검용 노출 */
-window.__luvmam = { regionOf, calcAge, parseYMD, state, render };
+window.__luvmam = { regionOf, calcAge, parseYMD, state, render, moveRowBy };
 
 load();
 $('#asof').value = state.asOf;
