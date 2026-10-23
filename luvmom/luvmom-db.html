@@ -70,6 +70,13 @@ tr.rdb td{box-shadow:inset 0 -3px 0 var(--pri)}
 .addcol{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .addcol input,.addcol select{border:1px solid #aab7c8;border-radius:6px;padding:5px 6px;background:#fff}
 .addcol input{flex:1;min-width:110px}
+.chip{border:1px solid var(--line);background:#f1f5fb;color:var(--sub);border-radius:14px;padding:3px 11px;font-size:12.5px;font-weight:700;cursor:pointer}
+.chip.ok{background:#e4f5ea;border-color:#8bcfa4;color:var(--ok)}
+.chip.busy{background:#fff4d6;border-color:#f0c85a;color:#7a5600}
+.chip.err{background:var(--warnbg);border-color:#e9a39b;color:var(--warn)}
+.chip.ro{background:#e8eef7;border-color:#a9bbd6;color:#2d4a75}
+.sync-help{font-size:12px;color:var(--sub);background:#f4f7fb;border:1px solid var(--line);border-radius:6px;padding:7px 9px;margin-top:8px;line-height:1.5}
+.sync-help b{color:var(--ink)}
 .empty{padding:60px 20px;text-align:center;color:var(--sub);font-size:15px}
 .empty .btn{margin:10px 4px 0}
 
@@ -142,6 +149,7 @@ tr.rdb td{box-shadow:inset 0 -3px 0 var(--pri)}
 <div class="bar">
   <label>검색 <input type="search" id="q" placeholder="이름·전화·주소·메모 검색"></label>
   <label>조회일 <input type="date" id="asof"> <button class="btn sm" id="bToday">오늘</button></label>
+  <button class="chip" id="syncChip" title="GitHub 동기화 설정">GitHub 미연결</button>
   <div class="stat" id="stat"></div>
 </div>
 
@@ -279,6 +287,7 @@ const state = {
   cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET),
   q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: '', dragRow: ''
 };
+const sync = { cfg: null, sha: '', key: null, salt: null, timer: 0, pushing: false, again: false, applying: false, rev: 0 };
 function load(){
   try {
     const raw = localStorage.getItem(LS_KEY); if (!raw) return;
@@ -291,6 +300,7 @@ function load(){
 function save(){
   try { localStorage.setItem(LS_KEY, JSON.stringify({ v:1, cols:state.cols, rows:state.rows, set:state.set, t:Date.now() })); }
   catch (e) { toast('브라우저 저장에 실패했습니다. 엑셀 다운로드로 백업해 주세요.', 4000); }
+  if (!sync.applying) markChanged();
 }
 const visCols = () => state.cols.filter(c => c.visible);
 
@@ -734,7 +744,8 @@ function renderDrawer(){
     '<label><input type="radio" name="sf" value="1"' + (S.suffix ? ' checked' : '') + '>구·시 포함 (서울 종로구)</label></div>' +
     '<div class="radios"><label><input type="checkbox" id="ckWrap"' + (S.wrap ? ' checked' : '') + '>긴 내용 줄바꿈하여 모두 표시</label></div>' +
     '<h3>4. 백업 · 초기화</h3>' +
-    '<div class="note">데이터는 이 브라우저에 저장됩니다. 정기적으로 엑셀 다운로드 또는 JSON 백업을 권장합니다.</div>' +
+    '<div class="note">GitHub 동기화를 켜면 입력 내용이 암호화되어 GitHub에 저장되고 어느 기기에서든 볼 수 있습니다. 정기적인 엑셀 다운로드 백업도 권장합니다.</div>' +
+    '<div class="radios"><button class="btn sm pri" data-d="sync">GitHub 동기화 설정</button></div>' +
     '<div class="radios"><button class="btn sm" data-d="bk">JSON 백업 저장</button><button class="btn sm" data-d="rs">JSON 복원</button>' +
     '<button class="btn sm" data-d="reset">항목·틀고정 기본값으로</button></div></div>';
 }
@@ -761,6 +772,7 @@ drawer.addEventListener('click', e => {
     const a = d.dataset.d;
     if (a === 'close') drawer.classList.remove('on');
     if (a === 'addcol') addCol();
+    if (a === 'sync') openSyncModal();
     if (a === 'bk') download(new Blob([JSON.stringify({ app: 'luvmam', v: 1, cols: state.cols, rows: state.rows, set: state.set })], { type: 'application/json' }), 'luvmam-backup-' + todayStr().replace(/-/g, '') + '.json');
     if (a === 'rs') $('#fileJ').click();
     if (a === 'reset'){
@@ -826,12 +838,206 @@ $('#q').addEventListener('input', e => { clearTimeout(qT); qT = setTimeout(() =>
 $('#asof').addEventListener('change', e => { const p = parseYMD(e.target.value); state.asOf = p ? ymd(p[0], p[1], p[2]) : todayStr(); if (!p) e.target.value = state.asOf; render(); });
 $('#bToday').onclick = () => { state.asOf = todayStr(); $('#asof').value = state.asOf; render(); };
 
+
+/* ───────── GitHub 동기화 (암호화 저장) ───────── */
+const SYNC_KEY = 'luvmom.sync.v1';
+const SYNC_DEFAULT = { on: false, repo: 'yangji-madang/SLGFC', branch: 'main', path: 'luvmom/luvmom-data.enc.json', remember: false, tok: '', pass: '', sha: '', dirty: false };
+sync.cfg = Object.assign({}, SYNC_DEFAULT);
+const TE = new TextEncoder(), TD = new TextDecoder();
+function b64e(buf){ const u = new Uint8Array(buf); let t = ''; for (let i = 0; i < u.length; i += 0x8000) t += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(t); }
+function b64d(str){ const t = atob(String(str).replace(/\s/g, '')), u = new Uint8Array(t.length); for (let i = 0; i < t.length; i++) u[i] = t.charCodeAt(i); return u; }
+function loadSyncCfg(){ try { const o = JSON.parse(localStorage.getItem(SYNC_KEY) || 'null'); if (o) Object.assign(sync.cfg, o); } catch (e) {} }
+function saveSyncCfg(){
+  const o = Object.assign({}, sync.cfg); if (!o.remember){ o.tok = ''; o.pass = ''; }
+  try { localStorage.setItem(SYNC_KEY, JSON.stringify(o)); } catch (e) {}
+}
+async function deriveKey(pass, salt, iter){
+  if (!window.crypto || !crypto.subtle) throw new Error('이 환경에서는 암호화를 사용할 수 없습니다. https 주소(GitHub Pages)로 접속해 주세요.');
+  const km = await crypto.subtle.importKey('raw', TE.encode(pass), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: salt, iterations: iter, hash: 'SHA-256' }, km, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+}
+async function encryptData(text){
+  if (!sync.key){ sync.salt = crypto.getRandomValues(new Uint8Array(16)); sync.key = await deriveKey(sync.cfg.pass, sync.salt, 250000); }
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, sync.key, TE.encode(text));
+  return { app: 'luvmom', v: 1, kdf: 'PBKDF2-SHA256', iter: 250000, salt: b64e(sync.salt), iv: b64e(iv), ct: b64e(ct) };
+}
+async function decryptData(o){
+  if (!o || o.app !== 'luvmom' || !o.ct) throw new Error('올바른 데이터 파일이 아닙니다.');
+  const salt = b64d(o.salt), key = await deriveKey(sync.cfg.pass, salt, o.iter || 250000);
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64d(o.iv) }, key, b64d(o.ct));
+  sync.salt = salt; sync.key = key; return TD.decode(pt);
+}
+const cEnc = () => '/contents/' + sync.cfg.path.split('/').map(encodeURIComponent).join('/');
+async function gh(path, opt){
+  const c = sync.cfg, h = { 'Accept': 'application/vnd.github+json' };
+  if (c.tok) h['Authorization'] = 'Bearer ' + c.tok;
+  if (opt && opt.body) h['Content-Type'] = 'application/json';
+  const r = await fetch('https://api.github.com/repos/' + c.repo + path, Object.assign({ headers: h, cache: 'no-store' }, opt || {}));
+  if (!r.ok){
+    let m = ''; try { m = (await r.json()).message || ''; } catch (e) {}
+    const er = new Error(m || ('HTTP ' + r.status)); er.status = r.status; throw er;
+  }
+  return r.json();
+}
+function errText(e){
+  if (e && e.name === 'OperationError') return '암호가 올바르지 않습니다.';
+  const st = e && e.status;
+  if (st === 401) return '토큰이 올바르지 않거나 만료되었습니다.';
+  if (st === 403 || st === 404) return '토큰에 이 저장소의 Contents 읽기·쓰기 권한이 있는지 확인해 주세요. (' + e.message + ')';
+  return (e && e.message) || '알 수 없는 오류';
+}
+const canWrite = () => !!(sync.cfg.on && sync.cfg.tok && sync.cfg.pass);
+function setStatus(kind, text){
+  const el = $('#syncChip'); el.className = 'chip' + (kind ? ' ' + kind : ''); el.textContent = text;
+  el.title = kind === 'ro' ? '읽기 전용: 토큰이 없어 변경 내용은 GitHub에 저장되지 않습니다. 클릭하여 설정' : 'GitHub 동기화 설정';
+}
+const hhmm = () => { const d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+function markChanged(){
+  const c = sync.cfg; if (!c.on) return;
+  sync.rev++;
+  if (!canWrite()){ if (c.pass) setStatus('ro', '읽기 전용 (저장 안 됨)'); return; }
+  c.dirty = true; saveSyncCfg(); setStatus('busy', 'GitHub 저장 대기…');
+  clearTimeout(sync.timer); sync.timer = setTimeout(() => { sync.timer = 0; push(false); }, 2000);
+}
+async function pullRemote(){
+  let j;
+  try { j = await gh(cEnc() + '?ref=' + encodeURIComponent(sync.cfg.branch)); }
+  catch (e) { if (e.status === 404 && /not found/i.test(e.message)) return null; throw e; }
+  let b = j.content; if (!b){ const bl = await gh('/git/blobs/' + j.sha); b = bl.content; }
+  const plain = await decryptData(JSON.parse(TD.decode(b64d(b))));
+  const d = JSON.parse(plain);
+  if (!d || !Array.isArray(d.cols) || !Array.isArray(d.rows)) throw new Error('데이터 형식이 올바르지 않습니다.');
+  return { sha: j.sha, data: d };
+}
+function applyRemote(r){
+  sync.applying = true;
+  state.cols = r.data.cols; state.rows = r.data.rows; state.set = Object.assign({}, DEFAULT_SET, r.data.set || {});
+  save(); sync.applying = false;
+  sync.sha = r.sha; sync.cfg.sha = r.sha; sync.cfg.dirty = false; saveSyncCfg();
+  render(); if (drawer.classList.contains('on')) renderDrawer();
+}
+function askChoice(msg, btns){
+  return new Promise(res => {
+    const ov = document.createElement('div'); ov.className = 'ov'; ov.style.zIndex = 250;
+    ov.innerHTML = '<div class="dlg narrow"><div class="bd" style="padding:18px 16px;font-size:14.5px;line-height:1.55">' + msg + '</div><div class="ft">' +
+      btns.map((b, i) => '<button class="btn ' + (b.cls || '') + '" data-i="' + i + '">' + esc(b.label) + '</button>').join('') + '</div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b){ ov.remove(); res(btns[+b.dataset.i].val); } });
+  });
+}
+async function syncPull(mode){
+  const c = sync.cfg; setStatus('busy', 'GitHub 불러오는 중…');
+  try {
+    const r = await pullRemote();
+    if (!r){
+      if (!c.tok){ setStatus('err', 'GitHub에 데이터 없음'); toast('GitHub에 데이터 파일이 아직 없습니다. 처음 한 번은 토큰을 입력해 저장해야 합니다.', 5000); return; }
+      sync.sha = ''; await push(false); toast('GitHub에 새 데이터 파일을 만들었습니다.', 3500); return;
+    }
+    const same = JSON.stringify(r.data.rows) === JSON.stringify(state.rows) && JSON.stringify(r.data.cols) === JSON.stringify(state.cols);
+    const never = !c.sha;
+    if (same){ sync.sha = r.sha; c.sha = r.sha; c.dirty = false; saveSyncCfg(); }
+    else if (!c.dirty && (!never || !state.rows.length)){ applyRemote(r); }
+    else if (c.dirty && !never && c.sha === r.sha && c.tok){ sync.sha = r.sha; await push(false); return; }
+    else {
+      const btns = [{ label: 'GitHub 내용 사용', cls: 'pri', val: 'remote' }];
+      if (c.tok) btns.push({ label: '이 기기 내용을 GitHub에 올리기', val: 'local' });
+      btns.push({ label: '취소', val: '' });
+      const v = await askChoice('이 기기의 고객 <b>' + state.rows.length + '명</b>과 GitHub의 <b>' + r.data.rows.length + '명</b>이 서로 다릅니다.<br>어느 쪽을 사용할까요?<br><small>선택하지 않은 쪽 내용은 덮어써집니다.</small>', btns);
+      if (v === 'remote') applyRemote(r);
+      else if (v === 'local'){ sync.sha = r.sha; await push(false); return; }
+      else { setStatus('err', '동기화 보류 — 클릭하여 설정'); return; }
+    }
+    setStatus(canWrite() ? 'ok' : 'ro', canWrite() ? 'GitHub 동기화됨 ' + hhmm() : '읽기 전용 (저장 안 됨)');
+    if (mode === 'manual') toast('GitHub 데이터를 불러왔습니다. (고객 ' + state.rows.length + '명)');
+  } catch (e) {
+    if (e && e.name === 'OperationError'){ c.pass = ''; saveSyncCfg(); sync.key = null; setStatus('err', '암호 확인 필요 — 클릭'); openSyncModal('암호가 올바르지 않습니다. 처음 정한 암호를 다시 입력해 주세요.'); }
+    else { setStatus('err', 'GitHub 연결 실패 — 클릭'); toast('GitHub 불러오기 실패: ' + errText(e), 5000); }
+  }
+}
+async function push(force){
+  const c = sync.cfg; if (!canWrite()) return;
+  if (sync.pushing){ sync.again = true; return; }
+  sync.pushing = true; setStatus('busy', 'GitHub 저장 중…');
+  const rev = sync.rev;
+  try {
+    if (force){ try { sync.sha = (await gh(cEnc() + '?ref=' + encodeURIComponent(c.branch))).sha; } catch (e) { if (e.status !== 404) throw e; sync.sha = ''; } }
+    const text = JSON.stringify({ v: 1, cols: state.cols, rows: state.rows, set: state.set });
+    const o = await encryptData(text);
+    const d = new Date();
+    const body = { message: 'luvmom-data: 관리화면에서 수정 (' + ymd(d.getFullYear(), d.getMonth() + 1, d.getDate()) + ' ' + hhmm() + ')',
+      content: b64e(TE.encode(JSON.stringify(o) + '\n')), branch: c.branch };
+    if (sync.sha) body.sha = sync.sha;
+    const r = await gh(cEnc(), { method: 'PUT', body: JSON.stringify(body) });
+    sync.sha = r.content.sha; c.sha = sync.sha;
+    if (sync.rev === rev){ c.dirty = false; setStatus('ok', 'GitHub 동기화됨 ' + hhmm()); } else { sync.again = true; }
+    saveSyncCfg();
+  } catch (e) {
+    if (e.status === 409 || e.status === 422){
+      setStatus('err', '충돌 — 다른 기기에서 먼저 수정됨');
+      sync.pushing = false;
+      const v = await askChoice('다른 기기에서 먼저 수정한 내용이 GitHub에 있습니다.<br>어떻게 할까요?', [
+        { label: 'GitHub 최신본 불러오기 (이 기기 변경 취소)', cls: 'pri', val: 'remote' }, { label: '이 기기 내용으로 덮어쓰기', cls: 'danger', val: 'local' }, { label: '나중에', val: '' }]);
+      if (v === 'remote'){ c.dirty = false; saveSyncCfg(); await syncPull('manual'); }
+      else if (v === 'local'){ await push(true); }
+      return;
+    }
+    setStatus('err', 'GitHub 저장 실패 — 클릭'); toast('GitHub 저장 실패: ' + errText(e), 5000);
+  }
+  sync.pushing = false;
+  if (sync.again){ sync.again = false; clearTimeout(sync.timer); sync.timer = setTimeout(() => { sync.timer = 0; push(false); }, 500); }
+}
+function openSyncModal(note){
+  const c = sync.cfg;
+  const ov = openModal('<h2>GitHub 동기화 설정</h2><div class="bd">' +
+    (note ? '<div class="err" style="margin-bottom:8px">' + esc(note) + '</div>' : '') +
+    '<div class="form">' +
+    '<div class="f wide"><label>저장소</label><input id="syRepo" value="' + esc(c.repo) + '"></div>' +
+    '<div class="f"><label>브랜치</label><input id="syBr" value="' + esc(c.branch) + '"></div>' +
+    '<div class="f"><label>파일 경로</label><input id="syPath" value="' + esc(c.path) + '"></div>' +
+    '<div class="f wide"><label>데이터 암호 * (모든 기기에서 같은 암호를 입력)</label><input id="syPass" type="password" autocomplete="off" value="' + esc(c.pass) + '"></div>' +
+    '<div class="f wide"><label>GitHub 액세스 토큰 (저장·수정용. 비우면 읽기 전용)</label><input id="syTok" type="password" autocomplete="off" value="' + esc(c.tok) + '"></div>' +
+    '<div class="f wide"><label style="display:flex;gap:6px;align-items:center;font-weight:600"><input type="checkbox" id="syRem" style="width:auto"' + (c.remember ? ' checked' : '') + '>이 기기에 암호·토큰 기억 (개인 기기에서만 사용하세요)</label></div>' +
+    '<div class="err" id="syErr"></div></div>' +
+    '<div class="sync-help"><b>안전장치</b> — 고객 정보는 입력하신 암호로 <b>암호화된 상태</b>로만 GitHub에 저장됩니다. 저장소가 공개여도 암호 없이는 내용을 볼 수 없습니다. ' +
+    '<b>암호를 잊으면 복구할 수 없으니</b> 따로 안전하게 보관하세요.<br>' +
+    '<b>토큰 만들기</b> — GitHub → Settings → Developer settings → Fine-grained tokens → 저장소를 SLGFC 하나만 선택 → Repository permissions의 <b>Contents: Read and write</b>.</div>' +
+    '</div><div class="ft"><button class="btn" data-a="cancel">닫기</button>' +
+    (c.on ? '<button class="btn danger" data-a="off">연결 해제</button>' : '') +
+    '<button class="btn pri" data-a="ok">연결하고 불러오기</button></div>');
+  ov.addEventListener('click', async e => {
+    const b = e.target.closest('[data-a]'); if (!b) return;
+    if (b.dataset.a === 'cancel'){ closeModal(); return; }
+    if (b.dataset.a === 'off'){
+      clearTimeout(sync.timer); Object.assign(sync.cfg, { on: false, tok: '', pass: '', dirty: false, sha: '' }); sync.key = null; sync.sha = '';
+      saveSyncCfg(); setStatus('', 'GitHub 미연결'); closeModal(); toast('GitHub 연결을 해제했습니다. 이 기기의 데이터는 그대로 남아 있습니다.', 3500); return;
+    }
+    const repo = $('#syRepo').value.trim(), br = $('#syBr').value.trim(), path = $('#syPath').value.trim().replace(/^\/+/, ''), pass = $('#syPass').value, tok = $('#syTok').value.trim();
+    const er = m => { $('#syErr').textContent = m; };
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return er('저장소 형식을 확인해 주세요. (예: yangji-madang/SLGFC)');
+    if (!br || !path) return er('브랜치와 파일 경로를 입력해 주세요.');
+    if (pass.length < 6) return er('데이터 암호는 6자 이상으로 입력해 주세요. (8자 이상 권장)');
+    if (repo !== c.repo || path !== c.path || pass !== c.pass){ sync.key = null; sync.sha = ''; c.sha = ''; }
+    Object.assign(c, { on: true, repo: repo, branch: br, path: path, pass: pass, tok: tok, remember: $('#syRem').checked });
+    saveSyncCfg(); closeModal(); await syncPull('manual');
+  });
+}
+$('#syncChip').onclick = () => openSyncModal();
+window.addEventListener('beforeunload', e => { if (canWrite() && (sync.timer || sync.pushing || sync.cfg.dirty)){ e.preventDefault(); e.returnValue = ''; } });
+function syncInit(){
+  loadSyncCfg(); const c = sync.cfg;
+  if (!c.on){ setStatus('', 'GitHub 미연결'); return; }
+  if (!c.pass){ setStatus('err', '암호 입력 필요 — 클릭'); openSyncModal('GitHub 데이터를 불러오려면 암호를 입력해 주세요.'); return; }
+  syncPull('auto');
+}
+
 /* 테스트·점검용 노출 */
-window.__luvmam = { regionOf, calcAge, parseYMD, state, render, moveRowBy };
+window.__luvmam = { regionOf, calcAge, parseYMD, state, render, moveRowBy, sync };
 
 load();
 $('#asof').value = state.asOf;
 render();
+syncInit();
 })();
 </script>
 </body>
