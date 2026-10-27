@@ -77,6 +77,9 @@ tr.rdb td{box-shadow:inset 0 -3px 0 var(--pri)}
 .chip.ro{background:#e8eef7;border-color:#a9bbd6;color:#2d4a75}
 .sync-help{font-size:12px;color:var(--sub);background:#f4f7fb;border:1px solid var(--line);border-radius:6px;padding:7px 9px;margin-top:8px;line-height:1.5}
 .sync-help b{color:var(--ink)}
+.rz{position:absolute;top:0;right:0;width:8px;height:100%;cursor:col-resize;z-index:9;touch-action:none}
+.rz:hover,.rz.on{background:rgba(29,98,196,.4)}
+body.resizing,body.resizing *{cursor:col-resize !important;user-select:none}
 .empty{padding:60px 20px;text-align:center;color:var(--sub);font-size:15px}
 .empty .btn{margin:10px 4px 0}
 
@@ -367,14 +370,15 @@ function render(){
   grid.className = S.wrap ? 'wrap' : '';
   grid.style.width = total + 'px';
 
-  let h = '<colgroup><col style="width:' + ACT_W + 'px">' + vis.map(c => '<col style="width:' + c.w + 'px">').join('') + '</colgroup>';
+  let h = '<colgroup><col style="width:' + ACT_W + 'px">' + vis.map(c => '<col data-key="' + esc(c.key) + '" style="width:' + c.w + 'px">').join('') + '</colgroup>';
   h += '<thead><tr>';
   h += '<th class="act' + (fr >= 1 ? ' fh' : '') + (actSticky ? ' fc' : '') + '"' + (actSticky ? ' style="left:0"' : '') + '>No.</th>';
   vis.forEach((c, i) => {
     const cls = [(fr >= 1 ? 'fh' : ''), (i < fc ? 'fc' : ''), (i === fc - 1 ? 'fc-last' : '')].filter(Boolean).join(' ');
     const arrow = state.sortKey === c.key ? '<span class="srt">' + (state.sortDir > 0 ? '▲' : '▼') + '</span>' : '';
     h += '<th draggable="true" data-key="' + esc(c.key) + '" class="' + cls + '"' + (i < fc ? ' style="left:' + left[i] + 'px"' : '') +
-         ' title="클릭: 정렬 / 끌어서 놓기: 항목 순서 변경">' + esc(c.label) + (c.calc ? '<i class="auto">자동</i>' : '') + arrow + '</th>';
+         ' title="클릭: 정렬 / 끌어서 놓기: 항목 순서 변경 / 오른쪽 가장자리 끌기: 너비 조정 (더블클릭: 내용에 맞춤)">' + esc(c.label) + (c.calc ? '<i class="auto">자동</i>' : '') + arrow +
+         '<span class="rz" data-rz="' + esc(c.key) + '"></span></th>';
   });
   h += '</tr></thead><tbody>';
   rows.forEach((r, i) => {
@@ -473,6 +477,7 @@ gridEl.addEventListener('drop', e => {
 });
 gridEl.addEventListener('dragend', () => { state.dragKey = ''; state.dragRow = ''; clearDrop(); });
 gridEl.addEventListener('click', e => {
+  if (e.target.closest('.rz') || state.justResized) return;
   const b = e.target.closest('button[data-act]');
   if (b){
     const id = b.closest('tr').dataset.id;
@@ -496,6 +501,60 @@ $('#wrap').addEventListener('click', e => {
   const g = e.target.closest('[data-go]'); if (!g) return;
   if (g.dataset.go === 'up') $('#fileX').click(); else openForm();
 });
+
+/* ───────── 열 너비 조정 ───────── */
+const W_MIN = 40, W_MAX = 900;
+let rzs = null, rzRaf = 0;
+function applyWidth(key, w){
+  const c = state.cols.find(x => x.key === key); if (!c) return;
+  c.w = w;
+  const col = Array.prototype.find.call(gridEl.querySelectorAll('col'), x => x.dataset.key === key); if (col) col.style.width = w + 'px';
+  const vis = visCols(); gridEl.style.width = vis.reduce((a, x) => a + x.w, ACT_W) + 'px';
+  const fc = Math.min(state.set.freezeCols, vis.length), idx = vis.findIndex(x => x.key === key);
+  if (idx >= 0 && idx < fc - 1){
+    let x = ACT_W; for (let k = 0; k <= idx; k++) x += vis[k].w;
+    const rows = gridEl.rows;
+    for (let k = idx + 1; k < fc; k++){
+      for (let r = 0; r < rows.length; r++){ const cell = rows[r].cells[k + 1]; if (cell) cell.style.left = x + 'px'; }
+      x += vis[k].w;
+    }
+  }
+}
+gridEl.addEventListener('pointerdown', e => {
+  const h = e.target.closest('.rz'); if (!h) return;
+  const c = state.cols.find(x => x.key === h.dataset.rz); if (!c) return;
+  e.preventDefault(); e.stopPropagation();
+  const th = h.closest('th'); th.setAttribute('draggable', 'false');
+  rzs = { key: c.key, th: th, h: h, x0: e.clientX, w0: c.w, moved: false, w: c.w };
+  h.classList.add('on'); document.body.classList.add('resizing');
+});
+document.addEventListener('pointermove', e => {
+  if (!rzs) return;
+  const dx = e.clientX - rzs.x0; if (Math.abs(dx) > 2) rzs.moved = true;
+  rzs.w = Math.max(W_MIN, Math.min(W_MAX, Math.round(rzs.w0 + dx)));
+  if (!rzRaf) rzRaf = requestAnimationFrame(() => { rzRaf = 0; if (rzs) applyWidth(rzs.key, rzs.w); });
+});
+function endResize(){
+  if (!rzs) return;
+  const r = rzs; rzs = null; cancelAnimationFrame(rzRaf); rzRaf = 0;
+  r.th.setAttribute('draggable', 'true'); r.h.classList.remove('on'); document.body.classList.remove('resizing');
+  if (r.moved){
+    applyWidth(r.key, r.w); save(); render();
+    state.justResized = true; setTimeout(() => { state.justResized = false; }, 80);
+  }
+}
+document.addEventListener('pointerup', endResize);
+document.addEventListener('pointercancel', endResize);
+function autoFit(key){
+  const c = state.cols.find(x => x.key === key); if (!c) return;
+  const ctx = document.createElement('canvas').getContext('2d'), cs = getComputedStyle(gridEl);
+  ctx.font = '700 ' + cs.fontSize + ' ' + cs.fontFamily;
+  let m = ctx.measureText(c.label).width + (c.calc ? 44 : 14);
+  ctx.font = cs.fontSize + ' ' + cs.fontFamily;
+  viewRows().slice(0, 1000).forEach(r => { const w = ctx.measureText(String(cellVal(r, c))).width; if (w > m) m = w; });
+  c.w = Math.max(50, Math.min(600, Math.ceil(m) + 22)); save(); render();
+}
+gridEl.addEventListener('dblclick', e => { const h = e.target.closest('.rz'); if (h){ e.preventDefault(); autoFit(h.dataset.rz); } });
 
 /* ───────── 모달 공통 ───────── */
 function openModal(html, narrow){
@@ -725,7 +784,7 @@ function renderDrawer(){
   const posOpt = '<option value="">맨 앞에</option>' + state.cols.map((c, i) => '<option value="' + esc(c.key) + '"' + (i === state.cols.length - 1 ? ' selected' : '') + '>' + esc(c.label) + ' 뒤에</option>').join('');
   $('#drawer').innerHTML =
     '<div class="dh">항목·틀고정 설정<button class="btn sm" data-d="close">닫기</button></div><div class="db">' +
-    '<h3>1. 항목 순서 · 표시 · 추가 · 삭제</h3><div class="note">≡ 끌어서 놓기 또는 ▲▼ 버튼으로 순서를 바꿉니다. 표의 제목 칸을 직접 끌어도 됩니다. 체크 해제 시 화면·엑셀에서 숨김(데이터는 유지)됩니다.</div>' +
+    '<h3>1. 항목 순서 · 표시 · 추가 · 삭제</h3><div class="note">≡ 끌어서 놓기 또는 ▲▼ 버튼으로 순서를 바꿉니다. 표의 제목 칸을 직접 끌어도 됩니다. 제목 칸 오른쪽 가장자리를 끌면 열 너비를 조정할 수 있습니다. 체크 해제 시 화면·엑셀에서 숨김(데이터는 유지)됩니다.</div>' +
     '<ul class="clist" id="clist">' + list + '</ul>' +
     '<div class="note" style="margin-top:8px"><b>항목 추가</b> — 추가한 항목은 고객 입력 칸과 엑셀에도 함께 반영됩니다.</div>' +
     '<div class="addcol"><input id="ncName" maxlength="20" placeholder="새 항목명"><select id="ncType"><option value="text">텍스트</option><option value="date">날짜</option></select>' +
@@ -747,7 +806,7 @@ function renderDrawer(){
     '<div class="note">GitHub 동기화를 켜면 입력 내용이 암호화되어 GitHub에 저장되고 어느 기기에서든 볼 수 있습니다. 정기적인 엑셀 다운로드 백업도 권장합니다.</div>' +
     '<div class="radios"><button class="btn sm pri" data-d="sync">GitHub 동기화 설정</button></div>' +
     '<div class="radios"><button class="btn sm" data-d="bk">JSON 백업 저장</button><button class="btn sm" data-d="rs">JSON 복원</button>' +
-    '<button class="btn sm" data-d="reset">항목·틀고정 기본값으로</button></div></div>';
+    '<button class="btn sm" data-d="rw">열 너비 기본값으로</button><button class="btn sm" data-d="reset">항목·틀고정 기본값으로</button></div></div>';
 }
 function addCol(){
   const name = $('#ncName').value.trim(), type = $('#ncType').value, pos = $('#ncPos').value;
@@ -772,6 +831,10 @@ drawer.addEventListener('click', e => {
     const a = d.dataset.d;
     if (a === 'close') drawer.classList.remove('on');
     if (a === 'addcol') addCol();
+    if (a === 'rw'){
+      state.cols.forEach(c => { const d = DEFAULT_COLS.find(x => x.key === c.key); c.w = d ? d.w : (c.type === 'date' ? 100 : 140); });
+      save(); render(); toast('열 너비를 기본값으로 되돌렸습니다.');
+    }
     if (a === 'sync') openSyncModal();
     if (a === 'bk') download(new Blob([JSON.stringify({ app: 'luvmam', v: 1, cols: state.cols, rows: state.rows, set: state.set })], { type: 'application/json' }), 'luvmam-backup-' + todayStr().replace(/-/g, '') + '.json');
     if (a === 'rs') $('#fileJ').click();
