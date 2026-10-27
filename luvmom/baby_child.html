@@ -57,6 +57,11 @@ td b.k{color:var(--navy)}
 td a{color:#1d4ed8;word-break:break-all}
 .sm{font-size:11px;color:#475569;font-weight:400}
 #empty{padding:20px;text-align:center;color:#475569}
+#hSub,#ft,#disc,#sSub,#sTitle,#pTitle,#ext .ec,#res td{white-space:pre-line}
+#ext{border-top:1px solid var(--bd)}
+#ext .ei{padding:3px 8px;border-bottom:1px solid #e2e8f0}
+#ext .et{font-weight:800;color:var(--navy);font-size:13px}
+#ext .ec{font-size:12.5px;color:#1a1a1a}
 #ft{padding:3px 8px;font-size:11.5px;border-top:1px solid var(--bd);background:var(--bg2);color:#334155}
 .pg{display:block}
 .pt{display:none}
@@ -210,6 +215,8 @@ td a{color:#1d4ed8;word-break:break-all}
   </table>
   <div id="empty" hidden>조건에 맞는 지원제도가 없습니다. 조건을 줄이거나 초기화해 주세요.</div>
 </div>
+
+<div id="ext" hidden></div>
 
 <div id="ft">※ 지자체 제도는 대표 사례만 수록(전 시·군·구 전수 아님)하며, 지급액·요건·기한은 각 지자체 공고가 우선합니다. 「확인필요」는 단일 출처·출처 간 상이·시행 전(심의 중) 항목입니다. 출처 구분: 공식(정부·지자체 게시) / 보도(언론) / 참고(2차 정리글). 아이사랑포털 childcare.go.kr, 복지로 bokjiro.go.kr에서 최종 확인하세요.</div>
 
@@ -734,7 +741,7 @@ render();
 
 /* ===== 설정(관리페이지 연동) ===== */
 var CFG={title:"출산·육아 지원금 검색",sub:"중앙정부·지자체",asOf:"",showChg:true,chgDays:30,simTitle:"우리 지역 출산·육아 지원금 안내",
- simSub:"국가 · 시·도 · 시·군·구 지원을 한 장에 모았습니다.",org:"",gaName:"",phone:"",saveMonthly:10,saveAge:18,saveRate:0,foot:"",
+ simSub:"국가 · 시·도 · 시·군·구 지원을 한 장에 모았습니다.",org:"",gaName:"",phone:"",saveMonthly:10,saveAge:18,saveRate:0,foot:"",extras:[],
  disc:"※ 금액 단위는 만원입니다. 지원 조건·금액은 수시로 바뀌므로 신청 전 주민센터·구청에서 꼭 확인하세요. 이 자료는 지원금 안내용이며 특정 보험·금융상품 가입을 권유하지 않습니다. 목돈 만들기의 수익률은 가정치이며 실제 상품의 수익을 보장하지 않습니다. 금액은 아이 1명 기준 총액이며, 분할 지급은 지급 기간 동안 거주 요건을 지켜야 받을 수 있습니다.",
  consult:"육아지원금으로 목돈 만들기\n태아/어린이 보험 비교 점검\n자녀 교육 자금 / 저축 연금보험 점검"};
 (function(){
@@ -752,6 +759,14 @@ function applyCfg(){
   $("#pTitle").textContent=CFG.title+(ao?" (기준일 "+ao+")":"")+(CFG.sub?" · "+CFG.sub:"");
   render();
   if(CFG.foot){$("#ft").textContent=CFG.foot;}
+  var ex=$("#ext");ex.innerHTML="";
+  (Array.isArray(CFG.extras)?CFG.extras:[]).forEach(function(x){
+    if(!x||(!x.t&&!x.c)){return;}
+    var d=document.createElement("div"),t=document.createElement("div"),c=document.createElement("div");
+    d.className="ei";t.className="et";c.className="ec";t.textContent=x.t||"";c.textContent=x.c||"";
+    d.appendChild(t);d.appendChild(c);ex.appendChild(d);
+  });
+  ex.hidden=!ex.firstChild;
   $("#sTitle").textContent=CFG.simTitle;
   $("#sOrg").textContent=[CFG.org,CFG.phone].filter(function(x){return x;}).join("\n");
   $("#disc").textContent=CFG.disc;
