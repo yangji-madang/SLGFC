@@ -57,7 +57,8 @@ td b.k{color:var(--navy)}
 td a{color:#1d4ed8;word-break:break-all}
 .sm{font-size:11px;color:#475569;font-weight:400}
 #empty{padding:20px;text-align:center;color:#475569}
-#hSub,#ft,#disc,#sSub,#sTitle,#pTitle,#ext .ec,#res td{white-space:pre-line}
+#hSub,#ft,#disc,#sSub,#sTitle,#pTitle,#ext .ec{white-space:pre-wrap}
+#res td{white-space:pre-line}
 #ext{border-top:1px solid var(--bd)}
 #ext .ei{padding:3px 8px;border-bottom:1px solid #e2e8f0}
 #ext .et{font-weight:800;color:var(--navy);font-size:13px}
@@ -69,12 +70,12 @@ td a{color:#1d4ed8;word-break:break-all}
 #pgM{scroll-margin-top:34px;padding:8px;background:#fff;border-top:4px solid var(--navy);margin-top:6px}
 #sim{max-width:880px;margin:0 auto;font-size:13px}
 body{word-break:keep-all;overflow-wrap:break-word}
-#n1,#n2,#sim .src{white-space:pre-line}
+#n1,#n2,#sim .src{white-space:pre-wrap}
 #sim .src{overflow-wrap:anywhere}
 #sim .sh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;border-bottom:3px solid var(--navy);padding-bottom:4px;margin-bottom:6px}
 #sim .st{font-size:18px;font-weight:800;color:var(--navy);line-height:1.25}
 #sim .ss{display:none}
-#sim .sorg{font-size:11.5px;text-align:right;color:#334155;white-space:pre-line}
+#sim .sorg{font-size:11.5px;text-align:right;color:#334155;white-space:pre-wrap}
 #sim .sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:4px 6px;margin-bottom:5px}
 #sim .sg label{display:flex;flex-direction:column;font-size:11.5px;font-weight:700;color:var(--navy);gap:1px}
 #sim .sg input,#sim .sg select{font:inherit;font-size:14px;height:30px;border:1px solid #94a3b8;border-radius:4px;padding:0 5px;width:100%;background:#fff;color:var(--tx)}
@@ -182,7 +183,6 @@ body{word-break:keep-all;overflow-wrap:break-word}
  #sim .sg{gap:2px 6px;margin-bottom:3px}
  #sim .sg label{font-size:10.5px}
  #sim .sg input,#sim .sg select{height:20px;font-size:11px}
- #sim #sDue,#sim #sSido,#sim #sSgg,#sim #sRank,#sim #sAd{background:#e6f0fb;border-radius:3px;padding:0 4px}
  #sim .cards,#sim .sv{margin:3px 0;gap:3px}
  #sim .cd{padding:2px 4px;font-size:10.5px}
  #sim .cd b{font-size:14px;line-height:1.2}
