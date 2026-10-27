@@ -33,10 +33,10 @@ button.gh{background:#166534;border-color:#166534}
 <body>
 <header>
   <h1>출산·육아 지원금 관리페이지</h1>
-  <a href="baby-child.html" target="_blank" rel="noopener">결과 페이지 열기 (baby-child.html)</a>
+  <a href="baby_child.html" target="_blank" rel="noopener">결과 페이지 열기 (baby_child.html)</a>
 </header>
 <main>
-  <div class="note">① 내용을 수정하고 「저장」을 누르면 이 브라우저의 baby-child.html에 바로 반영됩니다. ② 다른 기기·고객에게도 반영하려면 아래 「GitHub 반영」을 쓰세요(제목·문구 설정 파일 <b>baby_child_config.js</b>가 GitHub의 같은 폴더에 저장됩니다). 직접 올릴 때는 「설정 파일 내려받기」를 쓰세요. ③ 입력값은 화면에 글자로만 표시되며 코드로 실행되지 않습니다.</div>
+  <div class="note">① 내용을 수정하고 「저장」을 누르면 이 브라우저의 baby_child.html에 바로 반영됩니다. ② 다른 기기·고객에게도 반영하려면 아래 「GitHub 반영」을 쓰세요(제목·문구 설정 파일 <b>baby_child_config.js</b>가 GitHub의 같은 폴더에 저장됩니다). 직접 올릴 때는 「설정 파일 내려받기」를 쓰세요. ③ 입력값은 화면에 글자로만 표시되며 코드로 실행되지 않습니다.</div>
 
   <fieldset><legend>검색 페이지 상단</legend>
     <div class="g">
@@ -121,7 +121,7 @@ function load(){
   fillForm(o);
 }
 $("save").addEventListener("click",function(){
-  try{localStorage.setItem("babyChildCfg",JSON.stringify(readForm()));msg("저장했습니다. baby-child.html을 새로고침하면 반영됩니다.");}
+  try{localStorage.setItem("babyChildCfg",JSON.stringify(readForm()));msg("저장했습니다. baby_child.html을 새로고침하면 반영됩니다.");}
   catch(e){msg("저장하지 못했습니다. 브라우저 저장소 사용이 차단되어 있습니다. 설정 파일 내려받기를 이용해 주세요.");}
 });
 $("dl").addEventListener("click",function(){
@@ -129,7 +129,7 @@ $("dl").addEventListener("click",function(){
   var b=new Blob([txt],{type:"text/javascript"}),a=document.createElement("a");
   a.href=URL.createObjectURL(b);a.download="baby_child_config.js";
   document.body.appendChild(a);a.click();document.body.removeChild(a);
-  msg("baby_child_config.js를 baby-child.html과 같은 폴더에 올려 주세요.");
+  msg("baby_child_config.js를 baby_child.html과 같은 폴더에 올려 주세요.");
 });
 $("rst").addEventListener("click",function(){
   if(!confirm("모든 항목을 기본값으로 되돌립니다. 계속할까요?")){return;}

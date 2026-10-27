@@ -1,4 +1,4 @@
-/* 관리페이지(bay_child_admin.html)에서 「설정 파일 내려받기」로 받은 파일로 덮어쓰세요. */
+/* 관리페이지(baby_child_admin.html)에서 「설정 파일 내려받기」로 받은 파일로 덮어쓰세요. */
 window.BABY_CHILD_CONFIG = {
   "title": "출산·육아 지원금 검색",
   "sub": "중앙정부·지자체 | 기준일 2026.10.27",
