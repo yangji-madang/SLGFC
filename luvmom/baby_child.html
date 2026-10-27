@@ -65,6 +65,7 @@ td a{color:#1d4ed8;word-break:break-all}
 #ft{padding:3px 8px;font-size:11.5px;border-top:1px solid var(--bd);background:var(--bg2);color:#334155}
 .pg{display:block}
 .pt{display:none}
+@media screen and (min-width:1000px){#sim{max-width:1180px}#simBody{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-items:start}}
 #pgM{scroll-margin-top:34px;padding:8px;background:#fff;border-top:4px solid var(--navy);margin-top:6px}
 #sim{max-width:880px;margin:0 auto;font-size:13px}
 #sim .sh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;border-bottom:3px solid var(--navy);padding-bottom:4px;margin-bottom:6px}
@@ -115,7 +116,7 @@ td a{color:#1d4ed8;word-break:break-all}
 #sim .btns{margin:8px 0;text-align:center}
 #sim .btns button{font:inherit;font-size:14px;font-weight:700;padding:6px 18px;border:0;border-radius:6px;background:var(--navy);color:#fff;cursor:pointer}
 #sim .sm2{display:inline-block;font:inherit;font-size:12px;height:24px;margin:2px 3px 0 0;padding:0 8px;border:1px solid var(--navy);background:#fff;color:var(--navy);border-radius:4px;cursor:pointer}
-@page sim{size:A4 portrait;margin:10mm}
+@page sim{size:A4 landscape;margin:8mm}
 @page tbl{size:A4 landscape;margin:8mm}
 @media screen and (max-width:760px){
  #top small{display:none}
@@ -151,7 +152,14 @@ td a{color:#1d4ed8;word-break:break-all}
  .pg{display:block;overflow:visible}
  #pgS{page:tbl}
  #pgM{page:sim;overflow:visible;padding:0}
- .pt{display:block;font-size:14px;font-weight:800;color:var(--navy);margin-bottom:3px}
+ .pt{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:15px;font-weight:800;color:var(--navy);border-bottom:2px solid var(--navy);padding-bottom:2px;margin-bottom:4px}
+ .pt #ptR,.pt #ptR2{font-size:12px;font-weight:700;color:#334155;white-space:nowrap}
+ #sim #sTitle{display:none}
+ #sim{max-width:none}
+ #sim #sDue[data-e="1"]{color:transparent}
+ #brk td:last-child,#t4 td{white-space:nowrap}
+ #simBody{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}
+ #simL,#simR{min-width:0}
  #ov{max-height:none;overflow:visible}
  #res{overflow:visible;height:auto}
  #res table{min-width:0;table-layout:auto}
@@ -194,7 +202,7 @@ td a{color:#1d4ed8;word-break:break-all}
 </div>
 
 <div class="pg" id="pgS">
-<div class="pt" id="pTitle"></div>
+<div class="pt"><span id="ptL"></span><span id="ptR"></span></div>
 <div id="ov"></div>
 
 <div id="flt">
@@ -229,8 +237,10 @@ td a{color:#1d4ed8;word-break:break-all}
 </div>
 
 <div class="pg" id="pgM">
+<div class="pt"><span id="ptL2"></span><span id="ptR2"></span></div>
 <div id="sim">
   <div class="sh"><div><div class="st" id="sTitle"></div><div class="ss" id="sSub"></div></div><div class="sorg" id="sOrg"></div></div>
+  <div id="simBody"><div id="simL">
   <div class="rs noprint"><input id="rq" type="search" placeholder="🔍 지역 검색 (예: 화성, 종로, 광주 북구, 영월)" autocomplete="off" aria-label="지역 검색"><div id="rqL" hidden></div></div>
   <div class="sg">
     <label>출산(예정)일<input id="sDue" type="date"></label>
@@ -268,6 +278,7 @@ td a{color:#1d4ed8;word-break:break-all}
   <div class="sec">산출 내역 (선택한 출생순위 기준, 단위: 만원)</div>
   <div class="tw"><table id="brk"></table></div>
   <div class="note" id="n1"></div>
+  </div><div id="simR">
   <div class="sec">💰 목돈 만들기 시뮬레이션</div>
   <div class="sg">
     <label>월 적립액(만원)<input id="sMon" type="number" inputmode="decimal" min="0" step="1"></label>
@@ -280,6 +291,7 @@ td a{color:#1d4ed8;word-break:break-all}
   <div class="note" id="n2"></div>
   <div class="note" id="disc"></div>
   <div class="src">출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015 · 복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html · 보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&amp;bid=0027&amp;act=view&amp;list_no=1490257 · 임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100 · 서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980 · 경기 시군별 출산장려 지원현황 data.gg.go.kr · 임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279 · 경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02 · 아동수당 지역구분 정책브리핑 korea.kr/news/policyNewsView.do?newsId=148961693 · 인구감소지역 재지정 경향신문 2026.10.7 · 인천 자치구 개편 경기일보 2026.6.30 · 전남광주통합특별시 구성 위키독스</div>
+  </div></div>
   <div class="noprint btns"><button type="button" id="prt">시뮬레이션만 인쇄</button></div>
 </div>
 </div>
@@ -724,6 +736,7 @@ function render(){
   $("#cnt").textContent=rows.length+"건 / 전체 "+DATA.length+"건";
   $("#empty").hidden=rows.length>0;
   $("#res").scrollTop=0;
+  setPT();
 }
 function reset(){
   $("#reg").value="";subFill();$("#inc").checked=true;$("#cat").value="";$("#stg").value="";$("#pay").value="";
@@ -746,7 +759,7 @@ if(window.innerWidth<760||window.innerHeight<650){$("#ov").classList.add("off");
 render();
 
 /* ===== 설정(관리페이지 연동) ===== */
-var CFG={title:"출산·육아 지원금 검색",sub:"중앙정부·지자체",asOf:"",showChg:true,chgDays:30,simTitle:"우리 지역 출산·육아 지원금 안내",
+var CFG={title:"출산·육아 지원금 검색",prtTitle:"출산·육아 지원금 현황",sub:"중앙정부·지자체",asOf:"",showChg:true,chgDays:30,simTitle:"우리 지역 출산·육아 지원금 안내",
  simSub:"국가 · 시·도 · 시·군·구 지원을 한 장에 모았습니다.",org:"",gaName:"",phone:"",saveMonthly:10,saveAge:18,saveRate:0,foot:"",extras:[],
  disc:"※ 금액 단위는 만원입니다. 지원 조건·금액은 수시로 바뀌므로 신청 전 주민센터·구청에서 꼭 확인하세요. 이 자료는 지원금 안내용이며 특정 보험·금융상품 가입을 권유하지 않습니다. 목돈 만들기의 수익률은 가정치이며 실제 상품의 수익을 보장하지 않습니다. 금액은 아이 1명 기준 총액이며, 분할 지급은 지급 기간 동안 거주 요건을 지켜야 받을 수 있습니다.",
  consult:"육아지원금으로 목돈 만들기\n태아/어린이 보험 비교 점검\n자녀 교육 자금 / 저축 연금보험 점검"};
@@ -756,14 +769,26 @@ var CFG={title:"출산·육아 지원금 검색",sub:"중앙정부·지자체",a
   try{var l=JSON.parse(localStorage.getItem("babyChildCfg")||"null");if(l){for(k in l){CFG[k]=l[k];}}}catch(e){}
 })();
 function fmtD(x){var m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(x||"");return m?m[1]+"."+("0"+m[2]).slice(-2)+"."+("0"+m[3]).slice(-2):(x||"");}
+function aoStr(){var u=window.BABY_CHILD_UPDATES;return fmtD((typeof CFG!=="undefined"&&CFG&&CFG.asOf)||(u&&u.asOf)||"");}
+function setPT(){
+  if(typeof CFG==="undefined"||!CFG){return;}
+  var t=CFG.prtTitle||"출산·육아 지원금 현황",ao=aoStr(),r=ao?"(기준일 : "+ao+")":"";
+  var reg=$("#reg")?$("#reg").value:"",sub=$("#sub")?$("#sub").value:"";
+  var n1=reg===""?"전체 지역":(reg==="전국"?"전국":reg+(sub?" "+sub:""));
+  var si=$("#sSido")&&$("#sSido").value,sg=$("#sSgg")&&$("#sSgg").value,n2="";
+  if(si&&REGM[si]){n2=REGM[si].n+(sg?" "+sg:"");}
+  $("#ptL").textContent=t+" | "+n1;$("#ptR").textContent=r;
+  $("#sDue").setAttribute("data-e",$("#sDue").value?"":"1");
+  $("#ptL2").textContent=t+" | "+n2;$("#ptR2").textContent=r;
+}
+window.addEventListener("beforeprint",setPT);
 function applyCfg(){
   var u=window.BABY_CHILD_UPDATES,ao=fmtD(CFG.asOf||(u&&u.asOf)||"");
   $("#hTitle").textContent=CFG.title;
   $("#hSub").textContent=CFG.sub;
   $("#asof").textContent=ao?"기준일 "+ao:"";
   document.title=CFG.title;
-  $("#pTitle").textContent=CFG.title+(ao?" (기준일 "+ao+")":"")+(CFG.sub?" · "+CFG.sub:"");
-  render();
+  render();setPT();
   if(CFG.foot){$("#ft").textContent=CFG.foot;}
   var ex=$("#ext");ex.innerHTML="";
   (Array.isArray(CFG.extras)?CFG.extras:[]).forEach(function(x){
@@ -781,7 +806,7 @@ function applyCfg(){
 /* ===== 이동·인쇄 ===== */
 $("#goSim").addEventListener("click",function(){$("#pgM").scrollIntoView({behavior:"smooth",block:"start"});});
 window.addEventListener("afterprint",function(){document.body.classList.remove("ps");});
-$("#prtT").addEventListener("click",function(){document.body.classList.remove("ps");window.print();});
+$("#prtT").addEventListener("click",function(){document.body.classList.remove("ps");setPT();window.print();});
 
 /* ===== 목돈 만들기 시뮬레이션 ===== */
 var RK=["첫째","둘째","셋째","넷째 이상"];
@@ -904,6 +929,7 @@ function simInit(){
 function simRender(){
   var si=$("#sSido").value,sg=$("#sSgg").value,rk=parseInt($("#sRank").value,10)||0,ad=parseFloat($("#sAd").value)||10,i;
   var man=$("#sMan").checked,pre=presetOf(si,sg),R=REGM[si];
+  setPT();
   $("#manB").hidden=!man;
   var sdv=[0,0,0,0],items=[],sgv=[0,0,0,0];
   if(man){
@@ -998,7 +1024,7 @@ $("#rq").addEventListener("keydown",function(e){
 document.addEventListener("click",function(e){if(!e.target.closest(".rs")){$("#rqL").hidden=true;}});
 $("#pAd").addEventListener("click",function(){$("#sMon").value=$("#sAd").value;simRender();});
 $("#pP").addEventListener("click",function(){$("#sRate").value=0;simRender();});
-$("#prt").addEventListener("click",function(){document.body.classList.add("ps");window.print();});
+$("#prt").addEventListener("click",function(){document.body.classList.add("ps");setPT();window.print();});
 applyCfg();
 simInit();
 simRender();
