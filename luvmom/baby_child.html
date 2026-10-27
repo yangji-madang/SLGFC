@@ -730,7 +730,7 @@ function cv(d,f){
 }
 function row(d){
   var area=d.r==="전국"?'<span class="tg n">전국</span>':'<b>'+d.r+'</b><br><span class="sm">'+d.q+'</span>';
-  var ap='<div class="ap"><div><b>접수처</b> '+cv(d,'w')+'</div><div><b>기한</b> '+cv(d,'d')+'</div><div><b>서류</b> '+cv(d,'x')+'</div></div>';
+  var ap='<div class="ap"><div><b>접수처</b> : '+cv(d,'w')+'</div><div><b>기한</b> : '+cv(d,'d')+'</div><div><b>서류</b> : '+cv(d,'x')+'</div></div>';
   var ch=d.ch?'<span class="tg c">변경</span>'+cv(d,'ch'):'—';
   var fu=d.fu?'<span class="tg f">예정</span>'+(d.fd?'<b class="fd">['+cv(d,'fd')+']</b> ':'')+cv(d,'fu'):(d.fd&&d.end?'<b class="fd">'+d.fd+'</b>':'—');
   var rc=d.rel==="공식"?"o":(d.rel==="보도"?"n":"r");
