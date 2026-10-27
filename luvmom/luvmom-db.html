@@ -80,6 +80,11 @@ tr.rdb td{box-shadow:inset 0 -3px 0 var(--pri)}
 .rz{position:absolute;top:0;right:0;width:8px;height:100%;cursor:col-resize;z-index:9;touch-action:none}
 .rz:hover,.rz.on{background:rgba(29,98,196,.4)}
 body.resizing,body.resizing *{cursor:col-resize !important;user-select:none}
+.ib.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+td.wc{white-space:normal;word-break:break-all;line-height:1.35;padding-top:5px;padding-bottom:5px}
+.dt{display:flex;gap:6px}
+.dt input{flex:1;min-width:0}
+.form select{border:1px solid #aab7c8;border-radius:6px;padding:6px 8px;background:#fff;width:100%}
 .empty{padding:60px 20px;text-align:center;color:var(--sub);font-size:15px}
 .empty .btn{margin:10px 4px 0}
 
@@ -205,6 +210,23 @@ function parseYMD(v){
 }
 function normDate(v){ const p = parseYMD(v); return p ? ymd(p[0], p[1], p[2]) : String(v == null ? '' : v).trim(); }
 function normBirth(v){ const p = parseYMD(v); return p ? p[0] + pad(p[1]) + pad(p[2]) : String(v == null ? '' : v).trim(); }
+function normDT(v){
+  if (v == null || v === '') return '';
+  if (v instanceof Date){
+    const y = v.getUTCFullYear(), mo = v.getUTCMonth() + 1, d = v.getUTCDate(), h = v.getUTCHours(), mi = v.getUTCMinutes();
+    return ymd(y, mo, d) + ((h || mi) ? ' ' + pad(h) + ':' + pad(mi) : '');
+  }
+  const s = String(v).trim();
+  const k = s.match(/^(\d{4})[-./]\s*(\d{1,2})[-./]\s*(\d{1,2})\.?(?:[\sT]+(\d{1,2}):(\d{2})(?::\d{2})?)?$/);
+  if (k){
+    const y = +k[1], mo = +k[2], d = +k[3];
+    if (mo >= 1 && mo <= 12 && d >= 1 && d <= dim(y, mo)){
+      if (k[4] === undefined) return ymd(y, mo, d);
+      if (+k[4] <= 23 && +k[5] <= 59) return ymd(y, mo, d) + ' ' + pad(+k[4]) + ':' + k[5];
+    }
+  }
+  return normDate(v);
+}
 function normPhone(v){
   const s = String(v == null ? '' : v).trim(); if (!s) return '';
   let x = s.replace(/\D/g, '');
@@ -263,6 +285,7 @@ function regionOf(addr, keepSfx){
 }
 
 /* ───────── 상태 ───────── */
+const RESULT_OPTS = ['면담완료', '면담약속', '면담거부', '연락대기', '부재중'];
 const DEFAULT_COLS = [
   {key:'입수일',type:'date',w:100},
   {key:'고객 메모',type:'text',w:210,area:true},
@@ -279,7 +302,9 @@ const DEFAULT_COLS = [
   {key:'진료병원',type:'text',w:140},
   {key:'가입경로',type:'text',w:96},
   {key:'관심항목',type:'text',w:280,area:true},
-  {key:'상담 희망 시간',type:'text',w:128}
+  {key:'상담 희망 시간',type:'text',w:128},
+  {key:'상담결과',type:'select',w:110,wrap:true,opts:RESULT_OPTS},
+  {key:'상담일시',type:'datetime',w:150}
 ].map(c => Object.assign({label:c.key, visible:true}, c));
 const PROTECT = new Set(['고객명', '생년월일', '주소', '휴대폰']);
 const DEFAULT_KEYS = new Set(DEFAULT_COLS.map(c => c.key));
@@ -287,7 +312,7 @@ const DEFAULT_SET = { freezeCols:6, freezeRows:1, suffix:false, ageMode:'man', w
 const LS_KEY = 'luvmam.db.v1';
 
 const state = {
-  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET),
+  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 2,
   q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: '', dragRow: ''
 };
 const sync = { cfg: null, sha: '', key: null, salt: null, timer: 0, pushing: false, again: false, applying: false, rev: 0 };
@@ -295,15 +320,31 @@ function load(){
   try {
     const raw = localStorage.getItem(LS_KEY); if (!raw) return;
     const o = JSON.parse(raw);
-    if (Array.isArray(o.cols) && o.cols.length) state.cols = o.cols;
+    if (Array.isArray(o.cols) && o.cols.length){ state.cols = o.cols; state.sv = o.sv || 0; }
     if (Array.isArray(o.rows)) state.rows = o.rows;
     if (o.set) state.set = Object.assign({}, DEFAULT_SET, o.set);
   } catch (e) {}
 }
 function save(){
-  try { localStorage.setItem(LS_KEY, JSON.stringify({ v:1, cols:state.cols, rows:state.rows, set:state.set, t:Date.now() })); }
+  try { localStorage.setItem(LS_KEY, JSON.stringify({ v:1, sv:state.sv, cols:state.cols, rows:state.rows, set:state.set, t:Date.now() })); }
   catch (e) { toast('브라우저 저장에 실패했습니다. 엑셀 다운로드로 백업해 주세요.', 4000); }
   if (!sync.applying) markChanged();
+}
+/* 구조 변경(sv 2): 상담결과(선택·줄바꿈) 추가, 상담일시(날짜+시:분), 상담일 삭제 */
+function migrate(){
+  if (state.sv >= 2) return false;
+  const cols = state.cols, f = l => cols.findIndex(c => c.label.replace(/\s/g, '') === l);
+  let i = f('상담일');
+  if (i >= 0){ const k = cols[i].key; cols.splice(i, 1); state.rows.forEach(r => { delete r[k]; }); }
+  let ri = f('상담결과');
+  if (ri >= 0){ Object.assign(cols[ri], { type: 'select', opts: RESULT_OPTS.slice(), wrap: true, visible: true }); }
+  else { const h = f('상담희망시간'); cols.splice(h >= 0 ? h + 1 : cols.length, 0, { key: '상담결과', label: '상담결과', type: 'select', opts: RESULT_OPTS.slice(), w: 110, wrap: true, visible: true }); ri = f('상담결과'); }
+  let di = f('상담일시');
+  if (di >= 0){
+    const c = cols[di]; c.type = 'datetime'; c.w = Math.max(c.w || 0, 150);
+    state.rows.forEach(r => { if (r[c.key]) r[c.key] = normDT(r[c.key]); });
+  } else { cols.splice(f('상담결과') + 1, 0, { key: '상담일시', label: '상담일시', type: 'datetime', w: 150, visible: true }); }
+  state.sv = 2; return true;
 }
 const visCols = () => state.cols.filter(c => c.visible);
 
@@ -317,11 +358,14 @@ function isBad(r, c){
   const v = r[c.key];
   if (c.type === 'date') return !!v && !/^\d{4}-\d{2}-\d{2}$/.test(v);
   if (c.type === 'birth') return !!v && !(/^\d{8}$/.test(v) && parseYMD(v));
+  if (c.type === 'datetime') return !!v && !/^\d{4}-\d{2}-\d{2}( \d{2}:\d{2})?$/.test(v);
+  if (c.type === 'select') return !!v && !(c.opts || []).includes(v);
   if (c.type === 'age') return !!r['생년월일'] && cellVal(r, c) === '';
   if (c.type === 'region') return regionOf(r['주소'], false).bad;
   return false;
 }
 function normByType(c, v){
+  if (c.type === 'datetime') return normDT(v);
   if (c.type === 'date') return normDate(v);
   if (c.type === 'birth') return normBirth(v);
   if (c.type === 'phone') return normPhone(v);
@@ -390,7 +434,7 @@ function render(){
          '<button class="ib" data-act="ins" title="이 행 아래에 새 고객 삽입">＋</button><button class="ib del" data-act="del" title="삭제">✕</button></td>';
     vis.forEach((c, k) => {
       const v = cellVal(r, c);
-      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), (c.type === 'age' ? 'num' : '')].filter(Boolean).join(' ');
+      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), (c.type === 'age' ? 'num' : ''), (c.wrap ? 'wc' : '')].filter(Boolean).join(' ');
       h += '<td class="' + cls + '"' + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(v) + '">' + esc(v) + '</td>';
     });
     h += '</tr>';
@@ -590,6 +634,15 @@ function openForm(id, afterId){
     const val = esc(rec[c.key] || '');
     let inp;
     if (c.area) inp = '<textarea data-k="' + esc(c.key) + '" rows="2">' + val + '</textarea>';
+    else if (c.type === 'select'){
+      const ops = (c.opts || []).slice(); if (rec[c.key] && !ops.includes(rec[c.key])) ops.push(rec[c.key]);
+      inp = '<select data-k="' + esc(c.key) + '"><option value="">선택</option>' + ops.map(o => '<option value="' + esc(o) + '"' + (o === rec[c.key] ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select>';
+    }
+    else if (c.type === 'datetime'){
+      const m = String(rec[c.key] || '').match(/^(\d{4}-\d{2}-\d{2})(?: (\d{2}:\d{2}))?$/);
+      inp = '<div class="dt"><input type="date" data-dtd="' + fields.indexOf(c) + '" value="' + (m ? m[1] : '') + '"><input type="time" data-dtt="' + fields.indexOf(c) + '" value="' + (m && m[2] ? m[2] : '') + '">' +
+        '<button type="button" class="btn sm" data-now="' + fields.indexOf(c) + '">현재</button></div>';
+    }
     else if (c.type === 'date') inp = '<input type="date" data-k="' + esc(c.key) + '" value="' + val + '">';
     else if (c.type === 'birth') inp = '<input type="text" inputmode="numeric" maxlength="10" data-k="' + esc(c.key) + '" value="' + val + '" placeholder="YYYYMMDD">';
     else if (c.type === 'phone') inp = '<input type="tel" data-k="' + esc(c.key) + '" value="' + val + '" placeholder="010-0000-0000">';
@@ -610,7 +663,13 @@ function openForm(id, afterId){
   };
   ov.addEventListener('input', upd); upd();
   const collect = () => {
-    const o = {}; fields.forEach(c => { o[c.key] = normByType(c, ov.querySelector('[data-k="' + c.key + '"]').value); }); return o;
+    const o = {}; fields.forEach((c, i) => {
+      if (c.type === 'datetime'){
+        const d = ov.querySelector('[data-dtd="' + i + '"]').value, t = ov.querySelector('[data-dtt="' + i + '"]').value;
+        o[c.key] = d ? (t ? d + ' ' + t : d) : '';
+      } else o[c.key] = normByType(c, ov.querySelector('[data-k="' + c.key + '"]').value);
+    });
+    return o;
   };
   const validate = o => {
     if (state.cols.some(c => c.key === '고객명') && !o['고객명']) return '고객명을 입력해 주세요.';
@@ -618,6 +677,8 @@ function openForm(id, afterId){
     return '';
   };
   ov.addEventListener('click', async e => {
+    const nw = e.target.closest('[data-now]');
+    if (nw){ const i = nw.dataset.now, d = new Date(); ov.querySelector('[data-dtd="' + i + '"]').value = ymd(d.getFullYear(), d.getMonth() + 1, d.getDate()); ov.querySelector('[data-dtt="' + i + '"]').value = pad(d.getHours()) + ':' + pad(d.getMinutes()); return; }
     const b = e.target.closest('[data-a]'); if (!b) return;
     if (b.dataset.a === 'cancel'){ closeModal(); return; }
     const o = collect(), msg = validate(o); let added = null;
@@ -745,13 +806,15 @@ async function exportXlsx(){
     const row = ws.addRow(vis.map(c => {
       const v = cellVal(r, c);
       if (c.type === 'date'){ const p = parseYMD(v); if (p) return new Date(Date.UTC(p[0], p[1] - 1, p[2])); }
+      if (c.type === 'datetime'){ const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})(?: (\d{2}):(\d{2}))?$/); if (m) return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0))); }
       return v;
     }));
     row.eachCell({ includeEmpty: true }, (cell, n) => {
       const c = vis[n - 1];
       cell.font = { name: '맑은 고딕', size: 10 }; cell.border = bd;
-      cell.alignment = { vertical: 'middle', horizontal: (c.type === 'age' ? 'center' : 'left'), wrapText: !!c.area };
+      cell.alignment = { vertical: 'middle', horizontal: (c.type === 'age' ? 'center' : 'left'), wrapText: !!(c.area || c.wrap) };
       if (c.type === 'date') cell.numFmt = 'yyyy-mm-dd';
+      if (c.type === 'datetime') cell.numFmt = / \d{2}:\d{2}$/.test(String(cellVal(r, c))) ? 'yyyy-mm-dd hh:mm' : 'yyyy-mm-dd';
       if (c.type === 'birth' || c.type === 'phone') cell.numFmt = '@';
     });
   });
@@ -778,6 +841,7 @@ function renderDrawer(){
     '<li draggable="true" data-key="' + esc(c.key) + '"><span class="hd" title="끌어서 순서 변경">≡</span><span class="idx">' + (i + 1) + '</span>' +
     '<input type="checkbox" data-vis="' + esc(c.key) + '"' + (c.visible ? ' checked' : '') + ' title="표시 여부">' +
     '<span class="nm' + (c.visible ? '' : ' off') + '">' + esc(c.label) + (c.calc ? '<i>자동</i>' : '') + '</span>' +
+    '<button class="ib' + (c.wrap ? ' on' : '') + '" data-wr="' + esc(c.key) + '" title="셀 내용 줄바꿈 표시">↵</button>' +
     '<button class="ib" data-mv="up" data-k="' + esc(c.key) + '"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
     '<button class="ib" data-mv="dn" data-k="' + esc(c.key) + '"' + (i === state.cols.length - 1 ? ' disabled' : '') + '>▼</button>' +
     ((c.calc || PROTECT.has(c.key)) ? '<span style="width:26px"></span>' : '<button class="ib del" data-dc="' + esc(c.key) + '" title="항목 삭제">✕</button>') + '</li>').join('');
@@ -787,7 +851,7 @@ function renderDrawer(){
     '<h3>1. 항목 순서 · 표시 · 추가 · 삭제</h3><div class="note">≡ 끌어서 놓기 또는 ▲▼ 버튼으로 순서를 바꿉니다. 표의 제목 칸을 직접 끌어도 됩니다. 제목 칸 오른쪽 가장자리를 끌면 열 너비를 조정할 수 있습니다. 체크 해제 시 화면·엑셀에서 숨김(데이터는 유지)됩니다.</div>' +
     '<ul class="clist" id="clist">' + list + '</ul>' +
     '<div class="note" style="margin-top:8px"><b>항목 추가</b> — 추가한 항목은 고객 입력 칸과 엑셀에도 함께 반영됩니다.</div>' +
-    '<div class="addcol"><input id="ncName" maxlength="20" placeholder="새 항목명"><select id="ncType"><option value="text">텍스트</option><option value="date">날짜</option></select>' +
+    '<div class="addcol"><input id="ncName" maxlength="20" placeholder="새 항목명"><select id="ncType"><option value="text">텍스트</option><option value="date">날짜</option><option value="datetime">날짜·시간</option></select>' +
     '<select id="ncPos">' + posOpt + '</select><button class="btn sm pri" data-d="addcol">추가</button></div>' +
     '<div class="note">고객명·생년월일·주소·휴대폰과 자동 항목(나이·지역)은 다른 기능의 기준이라 삭제할 수 없고, 체크 해제로 숨기기만 가능합니다.</div>' +
     '<h3>2. 틀고정 위치</h3>' +
@@ -812,7 +876,7 @@ function addCol(){
   const name = $('#ncName').value.trim(), type = $('#ncType').value, pos = $('#ncPos').value;
   if (!name){ toast('새 항목명을 입력해 주세요.'); return; }
   if (state.cols.some(c => sqz(c.label) === sqz(name))){ toast('이미 있는 항목명입니다.'); return; }
-  const nc = { key: (name === 'id' ? 'id_' : name), label: name, type: type, w: type === 'date' ? 100 : 140, visible: true };
+  const nc = { key: (name === 'id' ? 'id_' : name), label: name, type: type, w: type === 'date' ? 100 : (type === 'datetime' ? 150 : 140), visible: true };
   const at = pos ? state.cols.findIndex(c => c.key === pos) + 1 : 0;
   state.cols.splice(at, 0, nc); save(); render(); renderDrawer(); toast("'" + name + "' 항목을 추가했습니다.");
 }
@@ -832,11 +896,11 @@ drawer.addEventListener('click', e => {
     if (a === 'close') drawer.classList.remove('on');
     if (a === 'addcol') addCol();
     if (a === 'rw'){
-      state.cols.forEach(c => { const d = DEFAULT_COLS.find(x => x.key === c.key); c.w = d ? d.w : (c.type === 'date' ? 100 : 140); });
+      state.cols.forEach(c => { const d = DEFAULT_COLS.find(x => x.key === c.key); c.w = d ? d.w : (c.type === 'date' ? 100 : (c.type === 'datetime' ? 150 : 140)); });
       save(); render(); toast('열 너비를 기본값으로 되돌렸습니다.');
     }
     if (a === 'sync') openSyncModal();
-    if (a === 'bk') download(new Blob([JSON.stringify({ app: 'luvmam', v: 1, cols: state.cols, rows: state.rows, set: state.set })], { type: 'application/json' }), 'luvmam-backup-' + todayStr().replace(/-/g, '') + '.json');
+    if (a === 'bk') download(new Blob([JSON.stringify({ app: 'luvmam', v: 1, sv: state.sv, cols: state.cols, rows: state.rows, set: state.set })], { type: 'application/json' }), 'luvmam-backup-' + todayStr().replace(/-/g, '') + '.json');
     if (a === 'rs') $('#fileJ').click();
     if (a === 'reset'){
       const customs = state.cols.filter(c => !DEFAULT_KEYS.has(c.key)).map(c => Object.assign({}, c, { visible: true }));
@@ -845,6 +909,8 @@ drawer.addEventListener('click', e => {
     }
     return;
   }
+  const wr = e.target.closest('[data-wr]');
+  if (wr){ const c = state.cols.find(x => x.key === wr.dataset.wr); if (c){ c.wrap = !c.wrap; save(); render(); renderDrawer(); } return; }
   const dc = e.target.closest('[data-dc]');
   if (dc){ delCol(dc.dataset.dc); return; }
   const mv = e.target.closest('[data-mv]');
@@ -892,7 +958,7 @@ $('#fileJ').onchange = async e => {
     const o = JSON.parse(await f.text());
     if (!o || o.app !== 'luvmam' || !Array.isArray(o.rows) || !Array.isArray(o.cols)) throw new Error('bad');
     if (!(await askConfirm('백업 파일(고객 ' + o.rows.length + '명)로 현재 데이터를 모두 교체합니다.<br>계속하시겠습니까?', '복원', true))) return;
-    state.cols = o.cols; state.rows = o.rows; state.set = Object.assign({}, DEFAULT_SET, o.set || {});
+    state.cols = o.cols; state.rows = o.rows; state.set = Object.assign({}, DEFAULT_SET, o.set || {}); state.sv = o.sv || 0; migrate();
     save(); render(); renderDrawer(); toast('복원되었습니다.');
   } catch (err) { toast('올바른 luvmam 백업 파일이 아닙니다.', 3500); }
 };
@@ -975,10 +1041,12 @@ async function pullRemote(){
 }
 function applyRemote(r){
   sync.applying = true;
-  state.cols = r.data.cols; state.rows = r.data.rows; state.set = Object.assign({}, DEFAULT_SET, r.data.set || {});
+  state.cols = r.data.cols; state.rows = r.data.rows; state.set = Object.assign({}, DEFAULT_SET, r.data.set || {}); state.sv = r.data.sv || 0;
+  const mig = migrate();
   save(); sync.applying = false;
   sync.sha = r.sha; sync.cfg.sha = r.sha; sync.cfg.dirty = false; saveSyncCfg();
   render(); if (drawer.classList.contains('on')) renderDrawer();
+  if (mig) save();
 }
 function askChoice(msg, btns){
   return new Promise(res => {
@@ -1025,7 +1093,7 @@ async function push(force){
   const rev = sync.rev;
   try {
     if (force){ try { sync.sha = (await gh(cEnc() + '?ref=' + encodeURIComponent(c.branch))).sha; } catch (e) { if (e.status !== 404) throw e; sync.sha = ''; } }
-    const text = JSON.stringify({ v: 1, cols: state.cols, rows: state.rows, set: state.set });
+    const text = JSON.stringify({ v: 1, sv: state.sv, cols: state.cols, rows: state.rows, set: state.set });
     const o = await encryptData(text);
     const d = new Date();
     const body = { message: 'luvmom-data: 관리화면에서 수정 (' + ymd(d.getFullYear(), d.getMonth() + 1, d.getDate()) + ' ' + hhmm() + ')',
@@ -1098,6 +1166,7 @@ function syncInit(){
 window.__luvmam = { regionOf, calcAge, parseYMD, state, render, moveRowBy, sync };
 
 load();
+if (state.sv < 2){ migrate(); save(); }
 $('#asof').value = state.asOf;
 render();
 syncInit();
