@@ -117,7 +117,7 @@ td a{color:#1d4ed8;word-break:break-all}
 #sim .sm2{display:inline-block;font:inherit;font-size:12px;height:24px;margin:2px 3px 0 0;padding:0 8px;border:1px solid var(--navy);background:#fff;color:var(--navy);border-radius:4px;cursor:pointer}
 @page sim{size:A4 portrait;margin:10mm}
 @page tbl{size:A4 landscape;margin:8mm}
-@media (max-width:760px){
+@media screen and (max-width:760px){
  #top small{display:none}
  #flt{max-height:38vh;overflow:auto}
  #res{height:70vh}
@@ -139,7 +139,13 @@ td a{color:#1d4ed8;word-break:break-all}
 @media print{
  html,body{height:auto;overflow:visible;display:block;background:#fff}
  #top,.noprint,#flt{display:none!important}
- body:not(.ps) #pgM{display:none!important}
+ #pgM{break-before:page;page-break-before:always;border-top:0;margin:0}
+ body.ps #pgM{break-before:auto;page-break-before:auto}
+ #ov,#ext .ei,#ft{break-inside:avoid}
+ #ov.off{display:block!important}
+ #sim .sec{break-after:avoid;page-break-after:avoid}
+ #sim .note,#sim #disc,#sim .src{break-inside:avoid;overflow-wrap:anywhere}
+ #ext{border-top:1px solid #94a3b8}
  body.ps #pgS{display:none!important}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  .pg{display:block;overflow:visible}
@@ -183,7 +189,7 @@ td a{color:#1d4ed8;word-break:break-all}
   <span class="sp"></span>
   <span id="asof"></span>
   <button id="goSim" type="button">목돈 만들기 ↓</button>
-  <button id="prtT" type="button">검색표 인쇄</button>
+  <button id="prtT" type="button">인쇄</button>
   <button id="tgl" type="button">개요 접기</button>
 </div>
 
@@ -274,7 +280,7 @@ td a{color:#1d4ed8;word-break:break-all}
   <div class="note" id="n2"></div>
   <div class="note" id="disc"></div>
   <div class="src">출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015 · 복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html · 보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&amp;bid=0027&amp;act=view&amp;list_no=1490257 · 임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100 · 서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980 · 경기 시군별 출산장려 지원현황 data.gg.go.kr · 임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279 · 경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02 · 아동수당 지역구분 정책브리핑 korea.kr/news/policyNewsView.do?newsId=148961693 · 인구감소지역 재지정 경향신문 2026.10.7 · 인천 자치구 개편 경기일보 2026.6.30 · 전남광주통합특별시 구성 위키독스</div>
-  <div class="noprint btns"><button type="button" id="prt">인쇄 / PDF 저장</button></div>
+  <div class="noprint btns"><button type="button" id="prt">시뮬레이션만 인쇄</button></div>
 </div>
 </div>
 
