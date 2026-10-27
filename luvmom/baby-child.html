@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>출산·육아 지원금 검색</title>
+<style>
+:root{--navy:#14365d;--bd:#cbd5e1;--bg2:#f1f5f9;--tx:#1a1a1a;--c1:#dbeafe;--c1b:#1e40af;--c2:#dcfce7;--c2b:#166534;--c3:#fef3c7;--c3b:#92400e;--c4:#fce7f3;--c4b:#9d174d;--c1w:64px;--c2w:132px}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:13px/1.35 "Malgun Gothic","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;color:var(--tx);background:#fff}
+#top{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:30;flex-wrap:wrap;background:var(--navy);color:#fff;padding:3px 8px;min-height:28px}
+#top h1{font-size:15px;margin:0;font-weight:700;white-space:nowrap}
+#top .sp{flex:1}
+#top small{font-size:11.5px;opacity:.95}
+#top button{font:inherit;font-size:12px;border:1px solid #fff;background:transparent;color:#fff;border-radius:4px;padding:1px 8px;cursor:pointer}
+#ov{padding:4px 8px;border-bottom:1px solid var(--bd);max-height:44vh;overflow:auto;background:#fff}
+#ov.off{display:none}
+.ovg{display:grid;grid-template-columns:var(--c1w) repeat(6,minmax(110px,1fr));gap:2px;min-width:780px}
+.ovg>div{padding:2px 4px;font-size:11.5px;line-height:1.3;border-radius:3px;display:flex;align-items:center;word-break:keep-all}
+.ovg .h{background:var(--navy);color:#fff;font-weight:700;justify-content:center;text-align:center}
+.ovg .l{font-weight:700;justify-content:center;text-align:center;background:var(--bg2)}
+.ovg .k{cursor:pointer}
+.ovg .k:hover{outline:2px solid var(--navy)}
+.k1{background:var(--c1);color:#0b2a6b}.k2{background:var(--c2);color:#0b3d1f}.k3{background:var(--c3);color:#5b2c06}.k4{background:var(--c4);color:#6b0f3a;border:1px dashed var(--c4b)}
+.tl{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;min-width:780px}
+.tl span{font-size:11.5px;border:1px solid var(--bd);border-radius:3px;padding:1px 5px;background:#fff}
+.tl span.p{background:var(--c4);border-style:dashed;border-color:var(--c4b)}
+.tl b{color:var(--navy)}
+#flt{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;padding:4px 8px;background:var(--bg2);border-bottom:2px solid var(--navy)}
+#flt label{display:flex;align-items:center;gap:3px;font-size:12px;white-space:nowrap}
+#flt select,#flt input[type=text]{font:inherit;font-size:12.5px;padding:2px 4px;border:1px solid #94a3b8;border-radius:4px;background:#fff;color:var(--tx);height:24px}
+#flt input[type=text]{width:190px}
+#flt button{font:inherit;font-size:12px;height:24px;padding:0 10px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
+#cnt{font-weight:700;color:var(--navy);margin-left:auto;font-size:12.5px}
+#res{height:62vh;min-height:300px;overflow:auto;position:relative}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:1340px;table-layout:fixed}
+th,td{padding:3px 5px;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);vertical-align:top;font-size:12px;line-height:1.35;word-break:keep-all;overflow-wrap:anywhere;background:#fff}
+thead th{position:sticky;top:0;z-index:3;background:var(--navy);color:#fff;font-size:12.5px;text-align:center;vertical-align:middle;border-color:#3b5b85}
+td:nth-child(1),th:nth-child(1){position:sticky;left:0;z-index:2;width:var(--c1w)}
+td:nth-child(2),th:nth-child(2){position:sticky;left:var(--c1w);z-index:2;width:var(--c2w);box-shadow:2px 0 0 #94a3b8}
+thead th:nth-child(1),thead th:nth-child(2){z-index:5}
+tbody tr:nth-child(even) td{background:#f8fafc}
+tbody tr.pend td{background:#fff7e6}
+tbody tr.end td{background:#fdecec}
+tbody tr:hover td{background:#e8f0fe}
+td:nth-child(2){font-weight:700}
+.w3{width:70px}.w4{width:190px}.w5{width:140px}.w6{width:270px}.w7{width:210px}.w8{width:230px}.w9{width:120px}.w10{width:60px}
+td b.k{color:var(--navy)}
+.tg{display:inline-block;font-size:10.5px;font-weight:700;border-radius:3px;padding:0 4px;margin-right:3px;color:#fff;vertical-align:1px}
+.tg.c{background:#b45309}.tg.f{background:#9d174d}.tg.w{background:#b91c1c}.tg.o{background:#166534}.tg.n{background:#1d4ed8}.tg.r{background:#92400e}
+.fd{color:#9d174d}
+.ap div{margin-bottom:1px}.ap b{color:var(--navy)}
+td a{color:#1d4ed8;word-break:break-all}
+.sm{font-size:11px;color:#475569;font-weight:400}
+#empty{padding:20px;text-align:center;color:#475569}
+#ft{padding:3px 8px;font-size:11.5px;border-top:1px solid var(--bd);background:var(--bg2);color:#334155}
+.pg{display:block}
+.pt{display:none}
+#pgM{scroll-margin-top:34px;padding:8px;background:#fff;border-top:4px solid var(--navy);margin-top:6px}
+#sim{max-width:880px;margin:0 auto;font-size:13px}
+#sim .sh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;border-bottom:3px solid var(--navy);padding-bottom:4px;margin-bottom:6px}
+#sim .st{font-size:18px;font-weight:800;color:var(--navy);line-height:1.25}
+#sim .ss{font-size:12px;color:#334155}
+#sim .sorg{font-size:11.5px;text-align:right;color:#334155;white-space:pre-line}
+#sim .sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:4px 6px;margin-bottom:5px}
+#sim .sg label{display:flex;flex-direction:column;font-size:11.5px;font-weight:700;color:var(--navy);gap:1px}
+#sim .sg input,#sim .sg select{font:inherit;font-size:14px;height:30px;border:1px solid #94a3b8;border-radius:4px;padding:0 5px;width:100%;background:#fff;color:var(--tx)}
+#sim .sg[hidden]{display:none}
+#sim .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
+#sim .cd{border:1px solid var(--bd);border-radius:6px;padding:4px 6px;text-align:center;background:#f8fafc;font-size:11.5px}
+#sim .cd b{display:block;font-size:18px;color:var(--navy);line-height:1.3}
+#sim .cd.t{background:var(--navy);color:#fff}
+#sim .cd.t b{color:#fff}
+#sim .sec{font-size:13.5px;font-weight:800;color:var(--navy);margin:8px 0 3px;border-left:4px solid var(--navy);padding-left:5px}
+#sim .tw{overflow-x:auto}
+#sim table{width:100%;min-width:0;table-layout:auto;border-collapse:collapse}
+#sim th,#sim td{position:static!important;width:auto;box-shadow:none;z-index:auto;border:1px solid var(--bd);padding:3px 6px;text-align:right;font-size:12.5px;background:#fff;font-weight:400}
+#sim thead th,#sim th{background:var(--navy);color:#fff;text-align:center;font-weight:700}
+#sim td:first-child{text-align:left;font-weight:700}
+#brk td:nth-child(2){text-align:left;color:#334155}
+#sim td.on,#sim th.on{background:#fff3c4;color:#1a1a1a}
+#sim tr.tt td{background:#e8f0fe;font-weight:800}
+#sim .note{font-size:11.5px;color:#334155;margin-top:3px;line-height:1.4}
+#sim .sv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
+#sim .br{display:flex;align-items:center;gap:6px;margin:2px 0;font-size:12px}
+#sim .br span{flex:0 0 52px;font-weight:700}
+#sim .br em{flex:0 0 70px;text-align:right;font-style:normal}
+#sim .bw{flex:1;display:flex;height:14px;background:#eef2f7;border-radius:3px;overflow:hidden}
+#sim .bw i{display:block;height:100%}
+#sim .b1{background:#2563eb}#sim .b2{background:#16a34a}
+#sim .cons label{display:flex;gap:6px;align-items:center;margin:2px 0;font-size:13px}
+#sim textarea{width:100%;font:inherit;font-size:13px;border:1px solid #94a3b8;border-radius:4px;padding:4px;min-height:44px}
+#sim .sign{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:12.5px;border-top:1px solid var(--bd);padding-top:4px}
+#sim .src{font-size:10.5px;color:#475569;margin-top:4px;line-height:1.35;word-break:break-all}
+#sim .btns{margin:8px 0;text-align:center}
+#sim .btns button{font:inherit;font-size:14px;font-weight:700;padding:6px 18px;border:0;border-radius:6px;background:var(--navy);color:#fff;cursor:pointer}
+#sim .sm2{display:inline-block;font:inherit;font-size:12px;height:24px;margin:2px 3px 0 0;padding:0 8px;border:1px solid var(--navy);background:#fff;color:var(--navy);border-radius:4px;cursor:pointer}
+@page sim{size:A4 portrait;margin:10mm}
+@page tbl{size:A4 landscape;margin:8mm}
+@media (max-width:760px){
+ #top small{display:none}
+ #flt{max-height:38vh;overflow:auto}
+ #res{height:70vh}
+ #flt label{flex:1 1 44%}
+ #flt label select,#flt label input[type=text]{flex:1;min-width:0;width:100%}
+ #flt label:has(input[type=checkbox]){flex:0 0 auto}
+ #res table,#res thead,#res tbody,#res tr,#res td{display:block;min-width:0;width:auto}
+ #res thead{display:none}
+ #res tr{border:1px solid #94a3b8;border-radius:6px;margin:5px;padding:2px 4px;background:#fff}
+ #res td,#res td:nth-child(1),#res td:nth-child(2){position:static;box-shadow:none;width:auto;border:0;border-bottom:1px dashed #cbd5e1;padding:3px 2px;background:transparent!important}
+ #res td::before{content:attr(data-l);display:block;font-weight:700;color:var(--navy);font-size:11px}
+ #res td:nth-child(1),#res td:nth-child(2){display:inline-block;border:0}
+ #res td:nth-child(1)::before,#res td:nth-child(2)::before{display:none}
+ #res td:nth-child(2){font-size:14px}
+ #res td:last-child{border-bottom:0}
+ #sim .cards,#sim .sv{grid-template-columns:repeat(2,1fr)}
+ #sim .st{font-size:16px}
+}
+@media print{
+ html,body{height:auto;overflow:visible;display:block;background:#fff}
+ #top,.noprint,#flt{display:none!important}
+ body:not(.ps) #pgM{display:none!important}
+ body.ps #pgS{display:none!important}
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .pg{display:block;overflow:visible}
+ #pgS{page:tbl}
+ #pgM{page:sim;overflow:visible;padding:0}
+ .pt{display:block;font-size:14px;font-weight:800;color:var(--navy);margin-bottom:3px}
+ #ov{max-height:none;overflow:visible}
+ #res{overflow:visible;height:auto}
+ #res table{min-width:0;table-layout:auto}
+ #res th,#res td{position:static!important;box-shadow:none!important;font-size:8.5px;padding:2px 3px}
+ #res thead th{position:static!important}
+ #res thead{display:table-header-group}
+ #res tr{break-inside:avoid}
+ #sim .sg input,#sim .sg select{border:0;border-bottom:1px solid #94a3b8;border-radius:0;height:22px;font-size:12px;padding:0;-webkit-appearance:none;appearance:none}
+ #sim textarea{border:1px solid #94a3b8}
+ #sim .cd b{font-size:16px}
+ #sim table,#sim .cd,#sim .br{break-inside:avoid}
+ #sim{font-size:11px}
+ #sim .st{font-size:16px}
+ #sim .sg{gap:2px 6px;margin-bottom:3px}
+ #sim .sg label{font-size:10.5px}
+ #sim .sg input,#sim .sg select{height:20px;font-size:11px}
+ #sim .cards,#sim .sv{margin:3px 0;gap:3px}
+ #sim .cd{padding:2px 4px;font-size:10.5px}
+ #sim .cd b{font-size:14px;line-height:1.2}
+ #sim .sec{font-size:12px;margin:5px 0 2px}
+ #sim th,#sim td{padding:1px 5px;font-size:10.5px}
+ #sim .note{font-size:10px;margin-top:2px;line-height:1.3}
+ #sim .br{margin:1px 0;font-size:10.5px}
+ #sim .bw{height:10px}
+ #sim .cons label{font-size:11px;margin:1px 0}
+ #sim textarea{min-height:30px;font-size:11px}
+ #sim .src{font-size:9px}
+}
+</style>
+</head>
+<body>
+<div id="top">
+  <h1 id="hTitle">출산·육아 지원금 검색</h1>
+  <small id="hSub">중앙정부·지자체 | 기준일 2026.10.27</small>
+  <span class="sp"></span>
+  <button id="goSim" type="button">목돈 만들기 ↓</button>
+  <button id="prtT" type="button">검색표 인쇄</button>
+  <button id="tgl" type="button">개요 접기</button>
+</div>
+
+<div class="pg" id="pgS">
+<div class="pt" id="pTitle"></div>
+<div id="ov"></div>
+
+<div id="flt">
+  <label>지역 <select id="reg"></select></label>
+  <label>시·군·구 <select id="sub"></select></label>
+  <label><input type="checkbox" id="inc" checked>전국 공통 포함</label>
+  <label>유형 <select id="cat"></select></label>
+  <label>시기 <select id="stg"></select></label>
+  <label>지급방식 <select id="pay"></select></label>
+  <label>검색어 <input type="text" id="kw" placeholder="예: 산후조리, 120만원, 고용24"></label>
+  <label><input type="checkbox" id="onlyCh">변경 있음</label>
+  <label><input type="checkbox" id="onlyFu">변경 예정</label>
+  <button id="rst" type="button">초기화</button>
+  <span id="cnt"></span>
+</div>
+
+<div id="res">
+  <table>
+    <thead><tr>
+      <th>구분</th><th>지원명</th><th class="w3">유형</th><th class="w4">지원금액</th><th class="w5">지급방식</th>
+      <th class="w6">신청방법 (접수처 · 기한 · 서류)</th><th class="w7">기존 대비 변경</th><th class="w8">향후 변경 예정 (시행일)</th><th class="w9">출처</th>
+    </tr></thead>
+    <tbody id="tb"></tbody>
+  </table>
+  <div id="empty" hidden>조건에 맞는 지원제도가 없습니다. 조건을 줄이거나 초기화해 주세요.</div>
+</div>
+
+<div id="ft">※ 지자체 제도는 대표 사례만 수록(전 시·군·구 전수 아님)하며, 지급액·요건·기한은 각 지자체 공고가 우선합니다. 「확인필요」는 단일 출처·출처 간 상이·시행 전(심의 중) 항목입니다. 출처 구분: 공식(정부·지자체 게시) / 보도(언론) / 참고(2차 정리글). 아이사랑포털 childcare.go.kr, 복지로 bokjiro.go.kr에서 최종 확인하세요.</div>
+
+</div>
+
+<div class="pg" id="pgM">
+<div id="sim">
+  <div class="sh"><div><div class="st" id="sTitle"></div><div class="ss" id="sSub"></div></div><div class="sorg" id="sOrg"></div></div>
+  <div class="sg">
+    <label>출산(예정)일<input id="sDue" type="date"></label>
+    <label>시·도<select id="sSido"></select></label>
+    <label>시·군·구<select id="sSgg"></select></label>
+    <label>이번 아이 출생순위<select id="sRank"></select></label>
+    <label>아동수당 지역구분<select id="sAd">
+      <option value="10">수도권 월 10만원</option>
+      <option value="10.5">비수도권 월 10.5만원</option>
+      <option value="11">인구감소 우대 월 11만원</option>
+      <option value="12">인구감소 특별 월 12만원</option>
+    </select></label>
+  </div>
+  <div class="sg" id="manD" hidden>
+    <label>시·도 지원 첫째(만원)<input id="mD0" type="number" inputmode="decimal" min="0" value="0"></label>
+    <label>둘째<input id="mD1" type="number" inputmode="decimal" min="0" value="0"></label>
+    <label>셋째<input id="mD2" type="number" inputmode="decimal" min="0" value="0"></label>
+    <label>넷째 이상<input id="mD3" type="number" inputmode="decimal" min="0" value="0"></label>
+  </div>
+  <div class="sg" id="manG" hidden>
+    <label>시·군·구 지원 첫째(만원)<input id="mG0" type="number" inputmode="decimal" min="0" value="0"></label>
+    <label>둘째<input id="mG1" type="number" inputmode="decimal" min="0" value="0"></label>
+    <label>셋째<input id="mG2" type="number" inputmode="decimal" min="0" value="0"></label>
+    <label>넷째 이상<input id="mG3" type="number" inputmode="decimal" min="0" value="0"></label>
+  </div>
+  <div class="cards" id="cards"></div>
+  <div class="sec">출생순위별 예상 수령액 (단위: 만원)</div>
+  <div class="tw"><table id="t4"></table></div>
+  <div class="sec">산출 내역 (선택한 출생순위 기준, 단위: 만원)</div>
+  <div class="tw"><table id="brk"></table></div>
+  <div class="note" id="n1"></div>
+  <div class="sec">💰 목돈 만들기 시뮬레이션</div>
+  <div class="sg">
+    <label>월 적립액(만원)<input id="sMon" type="number" inputmode="decimal" min="0" step="1"></label>
+    <label>적립 종료 나이(만 세)<input id="sAge" type="number" inputmode="numeric" min="1" max="30" step="1"></label>
+    <label>가정 연 수익률(%)<input id="sRate" type="number" inputmode="decimal" min="0" max="20" step="0.5"></label>
+  </div>
+  <div class="noprint"><button type="button" class="sm2" id="pAd">아동수당 전액 적립</button><button type="button" class="sm2" id="pP">원금만 보기(수익률 0)</button></div>
+  <div class="sv" id="sv"></div>
+  <div id="bars"></div>
+  <div class="note" id="n2"></div>
+  <div class="note" id="disc"></div>
+  <div class="src">출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015 · 복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html · 보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&amp;bid=0027&amp;act=view&amp;list_no=1490257 · 임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100 · 서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980 · 경기 시군별 출산장려 지원현황 data.gg.go.kr · 임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279 · 경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02</div>
+  <div class="noprint btns"><button type="button" id="prt">인쇄 / PDF 저장</button></div>
+</div>
+</div>
+
+<script src="baby_child_config.js"></script>
+<script>
+"use strict";
+var U={
+ mohwAd:["보건복지부 아동수당","https://www.mohw.go.kr/menu.es?mid=a10711030100"],
+ adRule:["아동수당 시행령 개정(2026.3)","https://medicalworldnews.co.kr/m/view.php?idx=1510973690"],
+ parent:["2026 부모급여 정리","https://wikidocs.net/blog/@Insight_Lab/20882/"],
+ first:["2026 첫만남이용권 정리","https://wikidocs.net/blog/@knarchive/20825/"],
+ mom:["2026 하반기 출산혜택(부모급여 연혁)","https://mom-mom.net/tips/6a509cc76b5734afc4e7eeed"],
+ lv1:["2026 육아휴직급여 정리","https://wikidocs.net/blog/@Insight_Lab/22509/"],
+ lv2:["육아휴직급여 2026 신청·6+6","https://wikidocs.net/blog/@mythos/21350/"],
+ lv3:["2025 육아휴직 제도 변경","https://tmsstory.co.kr/2025-육아휴직-제도-변경-혜택-정리/"],
+ pat:["2026 아빠 육아휴직·6+6(시행령 제95조의3)","https://shiftee.io/ko/blog/article/2026-paternity-leave-parental-leave-guide-and-employer-support"],
+ mat:["2026 출산축하금 지원 가이드","https://studygov.kr/blog/1028-childbirth-support-26/"],
+ b27a:["2027 복지부 예산안(뉴시스)","https://www.fnnews.com/news/202609011218243180"],
+ b27b:["2027 예산안 아이 1명 최대 7,500만원(SBS Biz)","https://biz.sbs.co.kr/amp/article/20000331915"],
+ b27c:["2027 복지부 예산(세계일보)","https://www.segye.com/newsView/20260904508422"],
+ b27d:["2027 복지부 152.4조(의약일보)","https://medicaldaily.co.kr/news/120120"],
+ b27e:["2027 출산지원 1월·7월 구분(유가크루)","https://www.yugacrew.com/crewletter/childbirth-support-2027-january-july"],
+ b27f:["육아수당 신설(SBS Biz)","https://biz.sbs.co.kr/amp/article/20000331952"],
+ seoulA:["동대문구 서울형 산후조리경비","https://www.ddm.go.kr/health/contents.do?key=3361"],
+ seoulB:["구로구 서울형 산후조리비용","https://www.guro.go.kr/health/contents.do?key=1337"],
+ seoulC:["서울 6개월 거주요건 폐지(2024)","https://www.fnnews.com/news/202402130904346998"],
+ busanA:["부산시 2026 인생 로드맵","https://www.busan.go.kr/briefing/1745607"],
+ busanB:["부산형 산후조리경비(트윅)","https://www.twig24.com/news/local_bs/2025/01/20/20250120500040"],
+ gg:["구리시 산후조리비(경기도 사업 종료 공지)","https://www.guri.go.kr/health/contents.do?key=3563"],
+ hanam:["하남시 산후조리비 지원","https://www.hanam.go.kr/health/contents.do?key=4000"],
+ siheung:["시흥시 산후조리비 확대(헤럴드경제)","https://www.heraldk.com/article/2026042614511054399"],
+ pyeong:["평택시 출산 축하·지원금(경기일보)","https://www.kyeonggi.com/article/20260318580158"],
+ incheonA:["인천 천사지원금(2026.9 보도)","https://www.livesnews.com/news/article.html?no=48470"],
+ incheonB:["인천 1억+i dream 발표(2023.12)","https://www.kukinews.com/article/view/kuk202312180036"],
+ incheonC:["인천 출산정책 통폐합(2024.3)","https://www.kyeonggi.com/article/20240326580403"],
+ incheonD:["인천 아이플러스 성과(2026.2)","https://news.tf.co.kr/read/ogmeta/2293862.htm"],
+ gn:["경상남도 산모·신생아 건강관리 2026 지침","https://welfare.gyeongnam.go.kr/board/atchDown.do?no=157"],
+ gimje:["김제시 출산장려정책(전북일보 2024)","https://www.jjan.kr/article/20240725580053"],
+ wiki:["전국 출산지원금 순위(위키트리 2026.4)","https://www.wikitree.co.kr/articles/1133548"],
+ buan:["부안군 산후조리비 확대(쿠키뉴스)","https://www.kukinews.com/article/view/kuk202601130125"],
+ haenam:["해남군 출산정책(서울신문 2016)","https://m.go.seoul.co.kr/news/2016/03/09/20160309012026"],
+ haenam2:["2026 지자체 출산지원금 순위(참고)","https://policy.ambitstock.com/posts/birth-grant-local-ranking-2026/"],
+ maternal:["출산 가정 지원 총정리(유가크루)","https://www.yugacrew.com/news/maternal-newborn-support-guide"],
+ hk:["수당 통합 추진(한국경제 2026.1)","https://www.hankyung.com/article/2026012889031"],
+ gov1:["정부24 첫만남이용권","https://www.gov.kr/portal/service/serviceInfo/135200005015"],
+ bk:["복지로 복지서비스 찾기","https://www.bokjiro.go.kr"],
+ childcare:["아이사랑 지자체 출산지원금 게시판","https://www.childcare.go.kr/?menuno=279"],
+ seoulWel:["서울시 산후조리경비·임산부 교통비 순위별 차등","https://news.seoul.go.kr/welfare/archives/577980"],
+ mediaHub:["내 손안에 서울 무주택 출산가구 주거비","https://mediahub.seoul.go.kr/archives/2018691"],
+ ggdata:["경기데이터드림 시군별 출산장려 현황","https://data.gg.go.kr"],
+ mohwPreg:["보건복지부 임신·출산 지원","https://www.mohw.go.kr/menu.es?mid=a10711020100"]
+};
+function S(){var a=[];for(var i=0;i<arguments.length;i++){a.push(U[arguments[i]]);}return a;}
+
+var DATA=[
+/* ===== 중앙정부 ===== */
+{r:"전국",q:"",n:"첫만남이용권",c:"바우처·지역화폐",g:["임신·출산"],
+ a:"첫째 200만원 / 둘째 이상 300만원 (소득 무관)",
+ p:"출생 후 1회, 국민행복카드 바우처(포인트) 충전",pf:["바우처"],
+ w:"복지로·정부24(행복출산 원스톱) 또는 주소지 주민센터",
+ d:"출생신고 때 주민센터·복지로·정부24에서 신청. 2024년 이후 출생아는 출생일부터 2년 안에 사용(유흥·사행업종 등 일부 업종 제외)",
+ x:"신분증, 국민행복카드(미보유 시 발급) 등. 세부는 주민센터 확인",
+ ch:"2026년 현재 첫째 200만원·둘째 이상 300만원 유지",
+ fu:"부모급여와 통합되어 「아이맞이지원금」으로 개편 예정(국회 심의 중, 현금 지급)",fd:"2027.7.1 이후 출생아",
+ src:S("gov1","first","b27e"),rel:"공식",chk:false},
+{r:"전국",q:"",n:"부모급여",c:"수당·장려금(현금)",g:["영아(0~1세)"],
+ a:"만 0세(0~11개월) 월 100만원 / 만 1세(12~23개월) 월 50만원 (소득 무관)",
+ p:"매월 25일 신청 계좌로 현금 입금. 어린이집 이용 시 보육료 바우처 적용 후 부모급여와의 차액을 현금 지급",pf:["월 정기","현금","바우처"],
+ w:"복지로·정부24(행복출산 원스톱) 또는 주민센터",
+ d:"출생일 포함 60일 이내 신청 시 출생월부터 소급(초과 시 소급 불가). 어린이집 입·퇴소 시 변경 신고",
+ x:"신청서, 신분증, 신청인 명의 통장 사본",
+ ch:"2023년 0세 70만원·1세 35만원 → 2024년 100만원·50만원으로 인상, 2026년 하반기 현재 동일 유지",
+ fu:"「아이맞이지원금」으로 통합 예정(1년 4회 분할 현금, 보도). 6월 30일까지 출생아는 현행 유지",fd:"2027.7.1 이후 출생아",
+ src:S("parent","mom","b27e"),rel:"참고",chk:false},
+{r:"전국",q:"",n:"아동수당",c:"수당·장려금(현금)",g:["영아(0~1세)","유아·아동(2세~)"],
+ a:"만 9세 미만 월 10만원(수도권) · 10.5만원(비수도권) · 11만원(인구감소 우대지역) · 12만원(인구감소 특별지역). 인구감소지역이 지역사랑상품권으로 지급 시 +1만원(최대 13만원)",
+ p:"매월 25일 현금(또는 지역사랑상품권) 지급",pf:["월 정기","현금","지역화폐"],
+ w:"복지로·정부24 또는 주민센터. 기존 수급 아동은 별도 신청 불필요",
+ d:"출생일 포함 60일 이내 신청 시 출생월부터 소급(초과 시 소급 불가)",
+ x:"신청서, 신분증, 통장 사본",
+ ch:"2025년 만 8세 미만·전국 월 10만원 → 2026년 만 9세 미만 + 지역 가산 신설. 4월 지급분부터 반영, 1월분 소급",
+ fu:"지급 연령 단계 확대: 2027 만 10세 → 2028 만 11세 → 2029 만 12세 → 2030 만 13세 미만. 별도로 「아동기본수당」 개편안(아래 행) 심의 중",fd:"2027~2030년 단계 확대",
+ src:S("mohwAd","adRule","b27a"),rel:"공식",chk:false},
+{r:"전국",q:"",n:"가정양육수당",c:"수당·장려금(현금)",g:["유아·아동(2세~)"],
+ a:"24~86개월 월 10만원(어린이집·유치원 미이용 시, 부모급여 종료 후 만 2세~취학 전). 소득·장애 등 조건별 상이 가능 — 복지로 확인",
+ p:"매월 현금",pf:["월 정기","현금"],
+ w:"복지로·정부24 또는 주민센터",
+ d:"확인 필요(복지로 안내 기준)",x:"확인 필요(복지로 안내 기준)",
+ ch:"",
+ fu:"2027년 예산안에 0~1세 가정양육 월 30만원 추가안 포함. 가정양육수당 존치·통합 여부는 확인 필요",fd:"미정",
+ src:S("bk","hk","b27b"),rel:"공식",chk:false},
+{r:"전국",q:"",n:"임신·출산 진료비 지원(국민행복카드)",c:"산후조리·의료",g:["임신·출산"],
+ a:"임신 1회 100만원(다태아는 태아당 100만원), 분만취약지 +20만원",
+ p:"국민행복카드 바우처. 진료비·약제비, 출생아 2세까지 진료비에도 사용",pf:["바우처"],
+ w:"임신 확인 후 카드사·건강보험공단에서 국민행복카드 발급",
+ d:"임신 확인 즉시 신청. 출산일부터 2년까지 사용",x:"임신 확인 서류 등",
+ ch:"",fu:"",fd:"",
+ src:S("mohwPreg","first"),rel:"공식",chk:false},
+{r:"전국",q:"",n:"출산전후휴가급여",c:"휴직·휴가급여",g:["임신·출산","부모 근로"],
+ a:"월 상한 220만원(30일 기준). 출산전후휴가 90일(다태아 120일)",
+ p:"고용보험에서 휴가 기간 중 지급",pf:["급여"],
+ w:"고용24(고용센터)",
+ d:"확인 필요(고용24 안내 기준)",x:"출산전후휴가급여 신청서 등(고용24 안내)",
+ ch:"2026년 월 상한액 220만원으로 인상(직전 상한액은 확인 필요)",fu:"",fd:"",
+ src:S("mat","lv3"),rel:"참고",chk:true},
+{r:"전국",q:"",n:"배우자 출산휴가",c:"휴직·휴가급여",g:["임신·출산","부모 근로"],
+ a:"20일 · 급여 상한 1,684,210원(20일 기준, 2026)",
+ p:"휴가 사용 후 고용보험 급여 지급(상한 적용)",pf:["급여"],
+ w:"고용24(고용센터)",
+ d:"출산 이후 사용. 2026년 하반기부터 출산 예정일 50일 전부터도 사용 가능(개정 반영, 시행 여부 확인 필요)",x:"확인 필요(고용24 안내)",
+ ch:"2025년 20일로 확대 → 2026년 하반기 출산 전 사용 허용 개정(보도)",fu:"",fd:"",
+ src:S("pat","lv3"),rel:"참고",chk:true},
+{r:"전국",q:"",n:"육아휴직급여",c:"휴직·휴가급여",g:["영아(0~1세)","유아·아동(2세~)","부모 근로"],
+ a:"1~3개월차 통상임금 100%(월 상한 250만원) · 4~6개월차 월 상한 200만원 · 7개월차부터 통상임금 80%(월 상한 160만원)",
+ p:"휴직 중 매월 지급(사후지급금 폐지로 상한 내 전액 즉시 지급)",pf:["급여","월 정기"],
+ w:"고용24 온라인(또는 고용센터). 대상: 만 8세 이하(초2 이하) 자녀를 둔 고용보험 가입 근로자",
+ d:"휴직 시작 1개월 경과 후부터 신청(매월 또는 일괄). 같은 자녀 30일 미만 사용 시 급여 대상 아님",
+ x:"육아휴직 급여 지급 신청서 등(고용24 안내)",
+ ch:"2024년까지 통상임금 80%·월 상한 150만원(하한 70만원), 25% 사후지급 → 2025년 상한 250/200/160만원, 사후지급금 폐지. 기간 최대 1년 6개월(보도 기준, 요건은 고용24 확인)",
+ fu:"고용보험 사각지대(자영업자·특고·프리랜서)를 위한 「육아수당」 신설 추진(아래 행)",fd:"2027년(시행일 미정)",
+ src:S("lv1","lv2","lv3"),rel:"참고",chk:false},
+{r:"전국",q:"",n:"6+6 부모육아휴직제(급여 특례)",c:"휴직·휴가급여",g:["영아(0~1세)","부모 근로"],
+ a:"자녀 생후 18개월 이내 부모 모두 육아휴직 시 첫 6개월 상한 상향: 1개월차 200만원 → 2개월차 250만원 → 3개월차 300만원(이후 6개월차까지 단계 상향, 상세는 고용24 확인). 7개월차부터 일반 기준(월 상한 160만원)",
+ p:"휴직 중 매월 지급",pf:["급여","월 정기"],
+ w:"고용24",
+ d:"일반 육아휴직급여와 동일(휴직 1개월 경과 후 신청)",x:"일반 육아휴직급여와 동일(고용24 안내)",
+ ch:"구 3+3 부모육아휴직제를 6개월·상한 상향 형태로 확대한 특례. 근거: 고용보험법 시행령 제95조의3",fu:"",fd:"",
+ src:S("pat","lv2"),rel:"참고",chk:false},
+{r:"전국",q:"",n:"고용보험 미적용자 출산급여",c:"휴직·휴가급여",g:["임신·출산","부모 근로"],
+ a:"150만원(3개월 분할)",
+ p:"3개월 나누어 지급",pf:["급여","분할"],
+ w:"고용노동부(고용센터) — 창구는 확인 필요. 대상: 고용보험 출산휴가급여를 받지 못하는 1인 자영업자·특고·프리랜서 여성",
+ d:"확인 필요",x:"확인 필요",
+ ch:"",fu:"2027년 예산안: 육아기 소득 보전용 「육아수당」 신설 추진(아래 행)",fd:"2027년(시행일 미정)",
+ src:S("maternal","b27f"),rel:"참고",chk:true},
+{r:"전국",q:"",n:"아이돌봄서비스(정부지원)",c:"돌봄서비스",g:["영아(0~1세)","유아·아동(2세~)"],
+ a:"소득기준별 본인부담 비율 차등 지원",
+ p:"서비스 이용 + 정부지원(본인부담 차등)",pf:["서비스"],
+ w:"아이돌봄서비스(idolbom.go.kr) 또는 주민센터(확인 필요)",
+ d:"확인 필요",x:"소득 확인 서류 등(확인 필요)",
+ ch:"2026년 소득 기준 중위소득 200% → 250% 이하로 완화(2차 자료)",fu:"",fd:"",
+ src:S("lv3"),rel:"참고",chk:true},
+/* ===== 예정(신설) ===== */
+{r:"전국",q:"",n:"아이맞이지원금(신설 예정)",c:"예정(신설)",g:["임신·출산","영아(0~1세)"],
+ a:"첫째 1,000만원 · 둘째 1,200만원 · 셋째 이상 1,500만원. 지방 우대지역은 각 +500만원(보도)",
+ p:"현금, 1년간 4회 분할 지급(보도)",pf:["현금","분할"],
+ w:"미정(복지부 후속 안내. 2027년 상반기 전산·하위법령 정비 예정)",
+ d:"미정(현행은 출생 후 60일 이내 신청 기준)",x:"미정",
+ ch:"현행 첫만남이용권(200/300만원 바우처) + 부모급여(월 100/50만원)를 통합·현금화. 일부 보도는 출산·입양세액공제도 통합 대상으로 언급(세법 확인 필요)",
+ fu:"2027.7.1 이후 출생아부터 적용(복지부 2026.8.28 개편안). 6월 30일까지 출생아는 현행 유지. 연내 법 개정·국회 심의에서 변경 가능(복지부 장관 언급)",fd:"2027.7.1 이후 출생아",
+ src:S("b27a","b27b","b27c","b27d","b27e"),rel:"보도",chk:true},
+{r:"전국",q:"",n:"아동기본수당(개편 예정)",c:"예정(신설)",g:["영아(0~1세)","유아·아동(2세~)"],
+ a:"기본 월 20만원, 지방 우대지역 월 30만원(12세 이하, 보도). 0~1세 가정양육 시 월 30만원 추가",
+ p:"매월 현금",pf:["월 정기","현금"],
+ w:"미정(아동수당법 개정 후 안내)",d:"미정",x:"미정",
+ ch:"현행 아동수당(월 10~13만원, 만 9세 미만)을 확대·개편",
+ fu:"2027년 예산안 반영. 보도상 2027.7.1 출생아부터 개편안 적용 — 기존 아동의 전환 시기·방식은 확인 필요. 아동수당법 개정(연내) 필요",fd:"2027.7.1(출생아 기준, 확인필요)",
+ src:S("b27a","b27b","b27c","b27e"),rel:"보도",chk:true},
+{r:"전국",q:"",n:"육아수당(자영업자·특고·프리랜서, 신설 예정)",c:"예정(신설)",g:["영아(0~1세)","부모 근로"],
+ a:"총 150만원 수준 지원 추진(보도)",
+ p:"미정",pf:["현금"],
+ w:"미정(고용노동부 예산안 반영 후 안내)",d:"미정",x:"미정",
+ ch:"고용보험 중심의 육아휴직급여 밖에 있던 1인 자영업자·특고·프리랜서에게 별도 소득 지원 신설",
+ fu:"2027년도 고용노동부 예산안 편성. 국회 심의·의결 후 연말 확정",fd:"2027년(시행일 미정)",
+ src:S("b27f"),rel:"보도",chk:true},
+/* ===== 지자체 ===== */
+{r:"서울",q:"서울시 전역",n:"서울 임산부 교통비",c:"바우처·지역화폐",g:["임신·출산"],
+ a:"첫째 70만원 · 둘째 80만원 · 셋째 이상 100만원(출생순위별 총액)",
+ p:"교통포인트(신용·체크카드). 대중교통·택시·자가용 유류비 사용",pf:["바우처"],
+ w:"서울시 탄생육아 몽땅정보통(umppa.seoul.go.kr)",
+ d:"임신 중 ~ 출산 후 6개월까지 신청. 서울 거주 임산부",x:"온라인 신청(본인 인증)",
+ ch:"2026.1.1 이후 출생아부터 출생순위별 차등(2026.3 서울시 안내)",fu:"",fd:"",
+ src:S("seoulWel","childcare"),rel:"공식",chk:false},
+{r:"서울",q:"서울시 전역",n:"서울 무주택 출산가구 주거비 지원",c:"수당·장려금(현금)",g:["영아(0~1세)"],
+ a:"월 최대 30만원 × 24개월(최대 720만원). 추가 출산 시 1명당 1년 연장",
+ p:"현금 지급(조건부)",pf:["월 정기","현금"],
+ w:"서울시 탄생육아 몽땅정보통(umppa.seoul.go.kr)",
+ d:"2026년 하반기 신청 기간 7.1~12.31",x:"무주택·소득·임차 요건 확인서류(기준중위소득 180% 이하, 전세 5억 이하 등)",
+ ch:"2025.1.1 이후 출산 가구 대상. 소득·무주택 등 조건부로 예상 합계에서는 제외 처리",fu:"",fd:"신청 마감 2026.12.31",
+ src:S("mediaHub"),rel:"공식",chk:false,end:true},
+{r:"서울",q:"종로구",n:"종로구 셋째 이상 건강보험료 지원",c:"수당·장려금(현금)",g:["임신·출산"],
+ a:"셋째 이상: 어린이보험료 지원(5년 납입·10년 보장)",
+ p:"보험료 지원(현금 아님)",pf:["서비스"],
+ w:"종로구 아동복지과 02-2148-5824",
+ d:"출생일부터 1년 이내. 출생 10개월 전부터 종로구 거주",x:"구 공고 확인",
+ ch:"첫째·둘째 현금 지원은 없음(아이사랑 2026년 자료, 기준 2026.1.27)",fu:"",fd:"",
+ src:S("childcare"),rel:"공식",chk:false},
+{r:"서울",q:"용산구",n:"용산구 출산지원금",c:"수당·장려금(현금)",g:["임신·출산"],
+ a:"셋째 200만원 · 넷째 이상 400만원 (첫째·둘째 해당 없음)",
+ p:"현금",pf:["현금","일시금"],
+ w:"용산구 가족정책과 02-2199-7175",
+ d:"출생일부터 1년 이내. 출생일 1년 전부터 용산구 거주",x:"구 공고 확인",
+ ch:"",fu:"",fd:"",
+ src:S("childcare"),rel:"공식",chk:false},
+{r:"서울",q:"강동구",n:"강동구 출산지원금",c:"수당·장려금(현금)",g:["임신·출산"],
+ a:"구 자체 현금 출산지원금 없음(국가·서울시 지원만 해당)",
+ p:"해당 없음",pf:["현금"],
+ w:"강동구 가족정책과 02-3425-5876",
+ d:"구청에서 최신 여부 확인 권장",x:"해당 없음",
+ ch:"",fu:"",fd:"",
+ src:S("childcare"),rel:"공식",chk:true},
+{r:"경기",q:"화성시",n:"화성시 출산지원금",c:"수당·장려금(현금)",g:["임신·출산"],
+ a:"첫째 100만원 · 둘째 200만원 · 셋째 200만원 · 넷째 이상 300만원",
+ p:"1회 지급(넷째 이상 2회 분할)",pf:["일시금","분할"],
+ w:"화성시 출산지원 부서(시 공고 확인)",
+ d:"출생일 기준 6개월(180일) 이상 거주",x:"시 공고 확인",
+ ch:"경기도 산후조리비 종료분(2026.10~12월 출생)에 대한 시 자체 소급 지원을 검토 중(시의회 의결 필요)",fu:"경기도 산후조리비 종료분 시 자체 소급 지원 — 시의회 의결 후 확정",fd:"미정",
+ src:S("ggdata","childcare","gg"),rel:"공식",chk:true},
+{r:"서울",q:"서울시 전역",n:"서울형 산후조리경비",c:"산후조리·의료",g:["임신·출산"],
+ a:"출생아 1인당 첫째 100만원 · 둘째 120만원 · 셋째 이상 150만원(바우처). 다태아는 순차 합산(예: 첫째 쌍둥이 220만원). 소득 무관",
+ p:"산모 명의 신용·체크카드에 바우처 포인트 지급. 사용처: 산모신생아 건강관리서비스, 산후 운동, 의약품·한약, 건강식품 등",pf:["바우처"],
+ w:"탄생육아 몽땅정보통(umppa.seoul.go.kr) 온라인, 본인 명의 휴대폰 인증(대리신청 불가)",
+ d:"출생일로부터 180일 이내(미숙아 입원 시 신생아 퇴원일, 유·사산은 확인일 기준 180일)",
+ x:"온라인 신청(본인 인증), 별도 서류 불필요(공고 기준)",
+ ch:"2024.1 「6개월 이상 서울 거주」 요건 폐지 → 2026.7.1 「신청일 기준 90일 이상 서울 거주」 요건 시행. 자녀 수별 차등(100/120/150만원) 적용(변경 시점은 확인 필요)",
+ fu:"",fd:"",
+ src:S("seoulA","seoulB","seoulC"),rel:"공식",chk:false},
+{r:"부산",q:"부산시 전역",n:"부산형 산후조리경비 지원",c:"산후조리·의료",g:["임신·출산"],
+ a:"출생아 1인당 최대 100만원(쌍둥이 200만원, 삼태아 이상 300만원). 소득 무관",
+ p:"실비 지원: 산모·신생아 건강관리서비스 본인부담금, 산후조리원비, 산모 병·의원 진료비(한약 조제비 포함)",pf:["현금"],
+ w:"정부24(출산 관련 서비스 통합신청) 또는 출생신고한 보건소에 영수증 제출",
+ d:"출산일·신청일 기준 출생아와 부 또는 모가 부산시 주민등록. 2026년 신청기한은 보건소 확인",
+ x:"산후조리 비용 영수증 등",
+ ch:"2025.1.1 이후 출생아부터 시행(신설, 2025년 보도). 2026년 부산시 안내에도 사업 포함",
+ fu:"",fd:"",
+ src:S("busanB","busanA"),rel:"보도",chk:true},
+{r:"경기",q:"도 공통(시·군 공고)",n:"경기도 산후조리비 지원",c:"바우처·지역화폐",g:["임신·출산"],
+ a:"출생아 1인당 50만원(지역화폐)",
+ p:"지역화폐 지급(신청일 기준 14일 이내, 구리시 공고)",pf:["지역화폐"],
+ w:"출생등록 관할 행정복지센터 또는 경기민원24(gg24.gg.go.kr)",
+ d:"출생일 기준 12개월 이내(출생일·신청일 현재 경기도 주민등록)",
+ x:"신청서, 신분증, 주민등록 등·초본, 가족관계증명서(출생신고와 함께 신청 시 출생증명서)",
+ ch:"2025년까지 시행 → 2026년 10월부터 사업 종료. 10월 이후 신청 건은 지원 불가(구리시 공고, 2026.9.10 수정). 시·군 자체 사업은 별도",
+ fu:"",fd:"2026.10 종료(시행 중)",
+ src:S("gg"),rel:"공식",chk:false,end:true},
+{r:"경기",q:"하남시",n:"하남시 산후조리비 지원",c:"바우처·지역화폐",g:["임신·출산"],
+ a:"출생아 1인당 총 100만원(지역화폐 50만원 + 추가 현금 50만원)",
+ p:"지역화폐(카드) + 현금. 접수 후 2~3주 이내 지급. 하머니 가맹점 사용(대형마트·온라인·유흥주점 불가)",pf:["지역화폐","현금"],
+ w:"동 행정복지센터 방문 또는 정부24 「행복출산」 원스톱 서비스",
+ d:"출생 후 12개월 이내(출생신고 시 일괄 신청 가능). 부 또는 모가 하남시 주민등록, 하남시 출생등록",
+ x:"출산통합서비스 신청서, 신청인 명의 통장 사본, 신분증",
+ ch:"경기도 사업 종료(2026.10)에 따라 지역화폐 50만원분의 유지 여부는 하남시 확인 필요(2026.6.25 게시 안내는 100만원)",
+ fu:"",fd:"",
+ src:S("hanam","gg"),rel:"공식",chk:true},
+{r:"경기",q:"시흥시",n:"시흥시 출생축하금·산후조리비",c:"수당·장려금(현금)",g:["임신·출산"],
+ a:"출생축하금 첫째 50만원 · 둘째 100만원 · 셋째 200만원 · 넷째 800만원 + 산후조리비 50만원 (합산: 첫째 100 · 둘째 150 · 셋째 250 · 넷째 최대 850만원)",
+ p:"산후조리비는 지역화폐. 출생축하금 지급방식은 시 공고 확인",pf:["지역화폐"],
+ w:"주소지 동 행정복지센터(출생신고 시 신청)",
+ d:"출생일로부터 12개월 이내. 부 또는 모가 신청일 기준 시흥시 주민등록",
+ x:"시 공고 확인(보도상 미특정)",
+ ch:"2026.1.1 이후 출생아부터 첫째 출생축하금 신설, 둘째·셋째 인상. 산후조리비 40만 → 50만원(2026.5월~, 기수령 가정은 차액 10만원 소급 지급)",
+ fu:"",fd:"",
+ src:S("siheung"),rel:"보도",chk:false},
+{r:"경기",q:"평택시",n:"평택시 출산 축하·지원금",c:"수당·장려금(현금)",g:["임신·출산"],
+ a:"첫째 50만원 · 둘째 120만원 · 셋째 300만원 · 넷째 이상 500만원",
+ p:"조례에 따라 지급(지급방식은 시 공고 확인)",pf:["현금"],
+ w:"평택시(행정복지센터) — 시 공고 확인",
+ d:"출생·입양일부터 6개월 이내. 출생일 1년 전부터 신청일까지 부모 중 1인 평택 주민등록·거주(1년 미만이면 1년 6개월이 되는 날부터 6개월 이내)",
+ x:"확인 필요",
+ ch:"최근 제정된 「출산 축하·지원금 지원조례」 기반으로 지급(2026.3.18 보도)",
+ fu:"",fd:"",
+ src:S("pyeong"),rel:"보도",chk:false},
+{r:"인천",q:"인천시 전역(10개 군·구)",n:"인천 천사(1040) 지원금",c:"바우처·지역화폐",g:["영아(0~1세)","유아·아동(2세~)"],
+ a:"1~7세 매년 120만원(총 840만원). 출생 시 첫만남이용권 200만원 포함 시 1,040만원",
+ p:"지역화폐(인천사랑상품권 인천e음 포인트) 1년분 일시 지급. 지급일로부터 12개월 사용, 미사용분 소멸",pf:["지역화폐","일시금"],
+ w:"정부24(보조금24) 온라인(부모 신청 원칙). 부모 외 보호자·온라인 곤란 시 주소지 행정복지센터",
+ d:"매년 아동 생일로부터 60일 이내(미신청 시 당해 연도분 소급 불가). 신청 후 익월 말까지 지급",
+ x:"인천e음 앱 가입·카드 발급 필요. 부모와 주민등록 동일, 인천 1년 이상 계속 거주(2023.1.1 이후 출생 아동)",
+ ch:"군·구별 출산장려금(50~300만원) 폐지·통합 방침(2024.3 보도) → 인천시 천사지원금으로 일원화. 2023년생부터 시행. 2026년부터 「맘편한 산후조리비」도 확대(금액은 인천시 확인)",
+ fu:"",fd:"",
+ src:S("incheonA","incheonB","incheonC"),rel:"보도",chk:false},
+{r:"인천",q:"인천시 전역(10개 군·구)",n:"인천 아이(i) 꿈 수당",c:"수당·장려금(현금)",g:["유아·아동(2세~)"],
+ a:"8~18세 월 5만~15만원: 2016년생부터 월 5만원, 2020년생부터 월 10만원, 신생아는 8세부터 월 15만원(2023.12 발표 계획 기준)",
+ p:"월 단위 지급(상세 방식은 인천시 확인)",pf:["월 정기"],
+ w:"인천시 공고 확인",d:"확인 필요",x:"확인 필요",
+ ch:"2025.7부터 지원 개시(2026.9 보도). 1억+i dream(태아~18세 최대 1억원) 정책의 일부",
+ fu:"",fd:"",
+ src:S("incheonB","incheonA","incheonD"),rel:"보도",chk:true},
+{r:"인천",q:"강화군",n:"강화군 출산 지원(합산)",c:"수당·장려금(현금)",g:["임신·출산"],
+ a:"첫째 기준 천사지원금·아이꿈수당 등 합산 1,690만원(보도)",
+ p:"항목별 상이(강화군 확인)",pf:["현금"],
+ w:"강화군 확인",d:"확인 필요",x:"확인 필요",
+ ch:"",fu:"",fd:"",
+ src:S("wiki"),rel:"보도",chk:true},
+{r:"경남",q:"도내 시·군",n:"산모·신생아 건강관리지원 본인부담금 지원(경남)",c:"산후조리·의료",g:["임신·출산"],
+ a:"서비스 가격 본인부담금의 90% 지원(출생순위·지원기간별 차등, 출생아당 최대 15일·1회). 기준중위소득 180% 이하",
+ p:"산정표에 따른 정액 지원",pf:["서비스"],
+ w:"시·군 보건소. 서비스 신청일 기준 산모·출산아 주민등록 경남(외국인은 F-2, F-5, F-6 체류자격)",
+ d:"서비스 신청일 기준(세부 기한은 시·군 확인)",x:"지침 붙임서식 확인",
+ ch:"2026년 1월부터 신규 지침 시행(소요예산 67.46억원, 도비 30%·시군비 70%)",
+ fu:"",fd:"",
+ src:S("gn"),rel:"공식",chk:false},
+{r:"전북",q:"김제시",n:"김제시 출산장려금",c:"수당·장려금(현금)",g:["임신·출산"],
+ a:"첫만남이용권 포함 첫째 1,000만원 · 둘째 1,600만원 · 셋째 1,800만원 · 넷째 2,000만원 · 다섯째 이상 2,100만원(2024.7 보도)",
+ p:"시 공고 확인(분할 여부 미확인). 임산부 등록 시 출산축하용품 45만원 상당(임신 30주 이후 마더박스 등)",pf:["현금"],
+ w:"김제시보건소(시 공고 확인)",
+ d:"자녀 출생일(입양일) 기준 1년 전부터 신청일까지 부모가 김제시 주민등록·실거주 및 동일 세대",
+ x:"시 공고 확인",
+ ch:"2024.7 보도: 전북 최고 수준. 2026.4 보도는 결혼축하금 1,000만원 + 출산장려금 800만원(합산 1,800만원)으로 표기 — 기준 연도 상이",
+ fu:"",fd:"",
+ src:S("gimje","wiki"),rel:"보도",chk:true},
+{r:"전북",q:"부안군",n:"부안군 출산 산후조리비",c:"산후조리·의료",g:["임신·출산"],
+ a:"출생아 1인당 최대 130만원",
+ p:"실비 지원: 산후조리원, 산후 운동·마사지, 영양제, 산후관리용품 등(영수증 정산)",pf:["현금"],
+ w:"부안군보건소 방문 신청(서비스 이용 후 영수증 지참)",
+ d:"분만 후 1년 이내. 출생신고·주민등록 부안군, 출산일부터 신청일까지 부안군 거주",
+ x:"산후조리 관련 영수증",
+ ch:"50만원 → 최대 130만원으로 확대(2026.1.13 발표). 지난해 수급자도 잔여 최대 80만원 소급 신청 가능(출산일 1년 이내)",
+ fu:"",fd:"",
+ src:S("buan"),rel:"보도",chk:false},
+{r:"전남",q:"해남군",n:"해남군 출산장려금",c:"수당·장려금(현금)",g:["임신·출산"],
+ a:"첫째 300만원(2026 참고글). 2016년 보도 기준 둘째 350만원 · 셋째 600만원 · 넷째 이상 720만원",
+ p:"확인 필요(군 공고)",pf:["현금"],
+ w:"해남군청·읍면사무소(확인 필요)",
+ d:"군 주민등록 6개월 이상(참고글) — 군 공고 확인",x:"확인 필요",
+ ch:"확인 필요(2016년 자료와 2026년 참고글 간 차이)",fu:"",fd:"",
+ src:S("haenam2","haenam"),rel:"참고",chk:true}
+];
+
+/* ===== 개요 도식 ===== */
+var OV_HEAD=["","임신기","출산(출생)","0세 (0~11개월)","1세 (12~23개월)","2~8세 (만 9세 미만)","9~12세 (단계 확대)"];
+/* [행, 시작열, 끝열(미포함), 색, 내용, 검색어] */
+var OV=[
+ [2,1,2,"l","중앙정부<br>(수당·바우처)",""],
+ [2,2,3,"k1","임신·출산 진료비 <b>100만</b>","진료비"],
+ [2,3,4,"k1","첫만남이용권 <b>200/300만</b>","첫만남"],
+ [2,4,5,"k1","부모급여 <b>월100만</b> + 아동수당 <b>10~12만</b>","부모급여"],
+ [2,5,6,"k1","부모급여 <b>월50만</b> + 아동수당","부모급여"],
+ [2,6,7,"k1","아동수당 <b>월10~12만</b> · 가정양육수당","아동수당"],
+ [2,7,8,"k1","2027~2030 아동수당 연령 단계 확대(만 13세 미만)","아동수당"],
+ [3,1,2,"l","고용보험<br>(부모 근로)",""],
+ [3,2,3,"k2","배우자 출산휴가 20일","배우자"],
+ [3,3,4,"k2","출산전후휴가급여 <b>상한 월220만</b>","출산전후"],
+ [3,4,6,"k2","육아휴직급여 <b>250/200/160만</b> · 6+6 특례 <b>200→300만</b>","육아휴직"],
+ [3,6,7,"k2","아이돌봄서비스(소득기준 완화)","아이돌봄"],
+ [3,7,8,"k2","육아휴직 대상 자녀: 만 8세 이하(초2 이하)","육아휴직"],
+ [4,1,2,"l","지자체<br>(대표 사례)",""],
+ [4,2,3,"k3","인천 임산부 교통비","임산부"],
+ [4,3,4,"k3","산후조리경비 서울 100~150 · 부산 100 · 부안 최대130","산후조리"],
+ [4,4,5,"k3","시흥 출생축하금 · 평택 · 김제 등 지역별 상이","출산장려금"],
+ [4,5,7,"k3","인천 천사지원금 <b>연120만</b>(1~7세)","천사"],
+ [4,7,8,"k3","인천 아이꿈수당 월5~15만","아이꿈"],
+ [5,1,2,"l","2027 개편<br>(예정·심의 중)",""],
+ [5,3,6,"k4","<b>아이맞이지원금</b> 1,000/1,200/1,500만 (첫만남+부모급여 통합, 2027.7.1 출생아~)","아이맞이"],
+ [6,4,8,"k4","<b>아동기본수당</b> 월20만(지방우대 30만) · 0~1세 가정양육 +30만","아동기본수당"],
+ [7,2,8,"k4","<b>육아수당</b> 150만 — 일하는 부모 중 자영업자·특고·프리랜서(고용보험 사각지대)","육아수당"]
+];
+var TL=[
+ ["2024","부모급여 100/50만원(70/35 → 인상)"],
+ ["2025.1","육아휴직급여 250/200/160만원, 사후지급금 폐지"],
+ ["2026.1~4","아동수당 만 9세 미만·지역 가산(4월 지급분, 1월분 소급)"],
+ ["2026.7.1","서울형 산후조리경비 90일 거주요건"],
+ ["2026.10","경기도 산후조리비 사업 종료"],
+ ["2027.7.1","아이맞이지원금·아동기본수당(출생아 기준, 심의 중)","p"]
+];
+
+function $(s){return document.querySelector(s);}
+function build(){
+  var h='';
+  OV_HEAD.forEach(function(t,i){h+='<div class="h" style="grid-row:1;grid-column:'+(i+1)+'">'+t+'</div>';});
+  OV.forEach(function(o){
+    var cls=o[3]==="l"?"l":"k "+o[3];
+    h+='<div class="'+cls+'" style="grid-row:'+(o[3]==="l"&&o[0]===5?'5/8':o[0])+';grid-column:'+o[1]+'/'+o[2]+'"'+(o[5]?' data-kw="'+o[5]+'" title="클릭 시 아래 표에서 검색"':'')+'><span>'+o[4]+'</span></div>';
+  });
+  var t='<div class="tl"><b style="font-size:11.5px;align-self:center">주요 변경 흐름</b>';
+  TL.forEach(function(x){t+='<span class="'+(x[2]||"")+'"><b>'+x[0]+'</b> '+x[1]+'</span>';});
+  t+='</div>';
+  $("#ov").innerHTML='<div class="ovg">'+h+'</div>'+t;
+  fill("#reg",["","전국 공통만"].concat(uniq(DATA.filter(function(d){return d.r!=="전국";}).map(function(d){return d.r;}))),["전체 지역","전국 공통만"]);
+  fill("#cat",[""].concat(uniq(DATA.map(function(d){return d.c;}))),["전체 유형"]);
+  fill("#stg",[""].concat(["임신·출산","영아(0~1세)","유아·아동(2세~)","부모 근로"]),["전체 시기"]);
+  var pays=[];DATA.forEach(function(d){d.pf.forEach(function(p){if(pays.indexOf(p)<0)pays.push(p);});});
+  fill("#pay",[""].concat(pays),["전체 방식"]);
+  subFill();
+}
+function uniq(a){var r=[];a.forEach(function(x){if(r.indexOf(x)<0)r.push(x);});return r;}
+function fill(sel,vals,first){
+  var s=$(sel),h='';
+  vals.forEach(function(v,i){
+    var lab=v;
+    if(i<first.length)lab=first[i];
+    h+='<option value="'+(i===1&&sel==="#reg"?"전국":v)+'">'+lab+'</option>';
+  });
+  s.innerHTML=h;
+}
+function subFill(){
+  var reg=$("#reg").value,s=$("#sub"),h='<option value="">전체</option>';
+  if(reg&&reg!=="전국"){
+    uniq(DATA.filter(function(d){return d.r===reg;}).map(function(d){return d.q;})).forEach(function(q){h+='<option value="'+q+'">'+q+'</option>';});
+    s.disabled=false;
+  }else{s.disabled=true;}
+  s.innerHTML=h;
+}
+function txt(d){
+  return [d.r,d.q,d.n,d.c,d.g.join(" "),d.a,d.p,d.w,d.d,d.x,d.ch,d.fu,d.fd,d.rel,d.pf.join(" ")].join(" ").toLowerCase();
+}
+function ok(d){
+  var reg=$("#reg").value,sub=$("#sub").value,inc=$("#inc").checked;
+  if(reg==="전국"){if(d.r!=="전국")return false;}
+  else if(reg){
+    if(d.r==="전국"){if(!inc)return false;}
+    else{if(d.r!==reg)return false;if(sub&&d.q!==sub)return false;}
+  }
+  var c=$("#cat").value;if(c&&d.c!==c)return false;
+  var g=$("#stg").value;if(g&&d.g.indexOf(g)<0)return false;
+  var p=$("#pay").value;if(p&&d.pf.indexOf(p)<0)return false;
+  if($("#onlyCh").checked&&!d.ch)return false;
+  if($("#onlyFu").checked&&!d.fu)return false;
+  var k=$("#kw").value.trim().toLowerCase();
+  if(k){var t=txt(d);var ks=k.split(/\s+/);for(var i=0;i<ks.length;i++){if(t.indexOf(ks[i])<0)return false;}}
+  return true;
+}
+function row(d){
+  var area=d.r==="전국"?'<span class="tg n">전국</span>':'<b>'+d.r+'</b><br><span class="sm">'+d.q+'</span>';
+  var ap='<div class="ap"><div><b>접수처</b> '+d.w+'</div><div><b>기한</b> '+d.d+'</div><div><b>서류</b> '+d.x+'</div></div>';
+  var ch=d.ch?'<span class="tg c">변경</span>'+d.ch:'—';
+  var fu=d.fu?'<span class="tg f">예정</span>'+(d.fd?'<b class="fd">['+d.fd+']</b> ':'')+d.fu:(d.fd&&d.end?'<b class="fd">'+d.fd+'</b>':'—');
+  var rc=d.rel==="공식"?"o":(d.rel==="보도"?"n":"r");
+  var sr='<span class="tg '+rc+'">'+d.rel+'</span>'+(d.chk?'<span class="tg w">확인필요</span>':'')+'<br>';
+  d.src.forEach(function(s,i){sr+=(i?'<br>':'')+'<a href="'+s[1]+'" target="_blank" rel="noopener noreferrer">'+s[0]+'</a>';});
+  var cls=d.c==="예정(신설)"?"pend":(d.end?"end":"");
+  return '<tr class="'+cls+'"><td data-l="구분">'+area+'</td><td data-l="지원명">'+d.n+'</td><td data-l="유형">'+d.c+'</td><td data-l="지원금액">'+d.a+'</td><td data-l="지급방식">'+d.p+'</td><td data-l="신청방법">'+ap+'</td><td data-l="기존 대비 변경">'+ch+'</td><td data-l="향후 변경 예정">'+fu+'</td><td data-l="출처">'+sr+'</td></tr>';
+}
+function render(){
+  var rows=DATA.filter(ok);
+  $("#tb").innerHTML=rows.map(row).join("");
+  $("#cnt").textContent=rows.length+"건 / 전체 "+DATA.length+"건";
+  $("#empty").hidden=rows.length>0;
+  $("#res").scrollTop=0;
+}
+function reset(){
+  $("#reg").value="";subFill();$("#inc").checked=true;$("#cat").value="";$("#stg").value="";$("#pay").value="";
+  $("#kw").value="";$("#onlyCh").checked=false;$("#onlyFu").checked=false;render();
+}
+build();
+["#sub","#inc","#cat","#stg","#pay","#onlyCh","#onlyFu"].forEach(function(s){$(s).addEventListener("change",render);});
+$("#reg").addEventListener("change",function(){subFill();render();});
+$("#kw").addEventListener("input",render);
+$("#rst").addEventListener("click",reset);
+$("#ov").addEventListener("click",function(e){
+  var el=e.target.closest("[data-kw]");if(!el)return;
+  $("#kw").value=el.getAttribute("data-kw");render();
+});
+$("#tgl").addEventListener("click",function(){
+  var o=$("#ov");o.classList.toggle("off");
+  $("#tgl").textContent=o.classList.contains("off")?"개요 펼치기":"개요 접기";
+});
+if(window.innerWidth<760||window.innerHeight<650){$("#ov").classList.add("off");$("#tgl").textContent="개요 펼치기";}
+render();
+
+/* ===== 설정(관리페이지 연동) ===== */
+var CFG={title:"출산·육아 지원금 검색",sub:"중앙정부·지자체 | 기준일 2026.10.27",simTitle:"우리 지역 출산·육아 지원금 안내",
+ simSub:"국가 · 시·도 · 시·군·구 지원을 한 장에 모았습니다.",org:"",gaName:"",phone:"",saveMonthly:10,saveAge:18,saveRate:0,foot:"",
+ disc:"※ 금액 단위는 만원입니다. 지원 조건·금액은 수시로 바뀌므로 신청 전 주민센터·구청에서 꼭 확인하세요. 이 자료는 지원금 안내용이며 특정 보험·금융상품 가입을 권유하지 않습니다. 목돈 만들기의 수익률은 가정치이며 실제 상품의 수익을 보장하지 않습니다. 금액은 아이 1명 기준 총액이며, 분할 지급은 지급 기간 동안 거주 요건을 지켜야 받을 수 있습니다.",
+ consult:"육아지원금으로 목돈 만들기\n태아/어린이 보험 비교 점검\n자녀 교육 자금 / 저축 연금보험 점검"};
+(function(){
+  var k,a=window.BABY_CHILD_CONFIG;
+  if(a){for(k in a){CFG[k]=a[k];}}
+  try{var l=JSON.parse(localStorage.getItem("babyChildCfg")||"null");if(l){for(k in l){CFG[k]=l[k];}}}catch(e){}
+})();
+function applyCfg(){
+  $("#hTitle").textContent=CFG.title;
+  $("#hSub").textContent=CFG.sub;
+  document.title=CFG.title;
+  $("#pTitle").textContent=CFG.title+" ("+CFG.sub+")";
+  if(CFG.foot){$("#ft").textContent=CFG.foot;}
+  $("#sTitle").textContent=CFG.simTitle;
+  $("#sOrg").textContent=[CFG.org,CFG.phone].filter(function(x){return x;}).join("\n");
+  $("#disc").textContent=CFG.disc;
+}
+
+/* ===== 이동·인쇄 ===== */
+$("#goSim").addEventListener("click",function(){$("#pgM").scrollIntoView({behavior:"smooth",block:"start"});});
+window.addEventListener("afterprint",function(){document.body.classList.remove("ps");});
+$("#prtT").addEventListener("click",function(){document.body.classList.remove("ps");window.print();});
+
+/* ===== 목돈 만들기 시뮬레이션 ===== */
+var RK=["첫째","둘째","셋째","넷째 이상"];
+var NAT={meet:[200,300,300,300],p0:1200,p1:600,preg:100,adM:108};
+var SD={
+ "서울":{n:"서울특별시",s:"서울",ad:10,items:[["서울형 산후조리경비",[100,120,150,150]],["임산부 교통비",[70,80,100,100]]]},
+ "경기":{n:"경기도",s:"경기",ad:10,items:[["경기도 산후조리비(2026.9월 말 종료, 이후 지원 없음)",[0,0,0,0]]]},
+ "부산":{n:"부산광역시",s:"부산",ad:10.5,items:[["부산형 산후조리경비(확인 필요)",[100,100,100,100]]]},
+ "기타":{n:"그 외 지역(직접 입력)",s:"시·도",ad:10.5,items:[]}
+};
+var SG={
+ "서울":{"종로구":[0,0,0,0],"강동구":[0,0,0,0],"용산구":[0,0,200,400]},
+ "경기":{"화성시":[100,200,200,300]}
+};
+function num(id){var v=parseFloat($(id).value);return(isNaN(v)||v<0)?0:v;}
+function fm(n){return(Math.round(n*10)/10).toLocaleString("ko-KR");}
+function today(){var d=new Date(),m=d.getMonth()+1,dd=d.getDate();return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(dd<10?"0":"")+dd;}
+function fv(m,age,rate){
+  var n=age*12;
+  if(!rate){return m*n;}
+  var r=Math.pow(1+rate/100,1/12)-1;
+  return m*(Math.pow(1+r,n)-1)/r;
+}
+function sggFill(){
+  var si=$("#sSido").value,h="";
+  if(SG[si]){Object.keys(SG[si]).forEach(function(k){h+='<option value="'+k+'">'+k+'</option>';});}
+  h+='<option value="기타">그 외(직접 입력)</option>';
+  $("#sSgg").innerHTML=h;
+}
+function simInit(){
+  var h="",r="";
+  Object.keys(SD).forEach(function(k){h+='<option value="'+k+'">'+SD[k].n+'</option>';});
+  $("#sSido").innerHTML=h;
+  RK.forEach(function(t,i){r+='<option value="'+i+'">'+t+'</option>';});
+  $("#sRank").innerHTML=r;
+  $("#sMon").value=CFG.saveMonthly;$("#sAge").value=CFG.saveAge;$("#sRate").value=CFG.saveRate;
+  sggFill();
+  $("#sAd").value=String(SD[$("#sSido").value].ad);
+}
+function simRender(){
+  var si=$("#sSido").value,sg=$("#sSgg").value,rk=parseInt($("#sRank").value,10)||0,ad=parseFloat($("#sAd").value)||10,i;
+  var preset=!!(SG[si]&&SG[si][sg]);
+  $("#manD").hidden=(si!=="기타");
+  $("#manG").hidden=preset;
+  var sdv=[0,0,0,0],items=[];
+  if(si==="기타"){
+    for(i=0;i<4;i++){sdv[i]=num("#mD"+i);}
+    items.push(["시·도 지원(직접 입력)",sdv.slice()]);
+  }else{
+    SD[si].items.forEach(function(it){
+      items.push(it);
+      for(var j=0;j<4;j++){sdv[j]+=it[1][j];}
+    });
+  }
+  var sgv=[0,0,0,0];
+  if(preset){sgv=SG[si][sg].slice();}else{for(i=0;i<4;i++){sgv[i]=num("#mG"+i);}}
+  var sgName=preset?sg:"시·군·구";
+  var natv=[],tot=[];
+  for(i=0;i<4;i++){
+    natv[i]=NAT.meet[i]+NAT.p0+NAT.p1+NAT.preg+ad*NAT.adM;
+    tot[i]=natv[i]+sdv[i]+sgv[i];
+  }
+  $("#sSub").textContent=(si==="기타"?"":SD[si].n+" ")+(preset?sg+" · ":"")+RK[rk]+" 출생 기준 — "+CFG.simSub;
+  $("#cards").innerHTML=
+    '<div class="cd">국가 공통<b>'+fm(natv[rk])+'만원</b></div>'+
+    '<div class="cd">'+SD[si].s+' 시·도<b>'+fm(sdv[rk])+'만원</b></div>'+
+    '<div class="cd">'+sgName+'<b>'+fm(sgv[rk])+'만원</b></div>'+
+    '<div class="cd t">예상 합계(아이 1명)<b>'+fm(tot[rk])+'만원</b></div>';
+  var h='<thead><tr><th>구분 (만원)</th>';
+  for(i=0;i<4;i++){h+='<th'+(i===rk?' class="on"':'')+'>'+RK[i]+'</th>';}
+  h+='</tr></thead><tbody>';
+  function rw(lab,arr,cls){
+    var s='<tr'+(cls?' class="'+cls+'"':'')+'><td>'+lab+'</td>';
+    for(var k=0;k<4;k++){s+='<td'+(k===rk?' class="on"':'')+'>'+fm(arr[k])+'</td>';}
+    return s+'</tr>';
+  }
+  h+=rw("국가(공통)",natv)+rw(SD[si].s+" (시·도)",sdv)+rw(sgName+" (시·군·구)",sgv)+rw("합계(예상)",tot,"tt")+'</tbody>';
+  $("#t4").innerHTML=h;
+  var b='<thead><tr><th>항목</th><th>산식</th><th>금액</th></tr></thead><tbody>';
+  b+='<tr><td>첫만남이용권</td><td>'+RK[rk]+' '+NAT.meet[rk]+'</td><td>'+fm(NAT.meet[rk])+'</td></tr>';
+  b+='<tr><td>부모급여 0세</td><td>월 100 × 12개월</td><td>'+fm(NAT.p0)+'</td></tr>';
+  b+='<tr><td>부모급여 1세</td><td>월 50 × 12개월</td><td>'+fm(NAT.p1)+'</td></tr>';
+  b+='<tr><td>아동수당</td><td>월 '+ad+' × '+NAT.adM+'개월(만 9세 미만)</td><td>'+fm(ad*NAT.adM)+'</td></tr>';
+  b+='<tr><td>임신·출산 진료비</td><td>임신 1회(단태아)</td><td>'+fm(NAT.preg)+'</td></tr>';
+  b+='<tr class="tt"><td>국가 공통 소계</td><td></td><td>'+fm(natv[rk])+'</td></tr>';
+  items.forEach(function(it){b+='<tr><td>'+it[0]+'</td><td>'+RK[rk]+'</td><td>'+fm(it[1][rk])+'</td></tr>';});
+  b+='<tr><td>'+sgName+' 지원</td><td>'+RK[rk]+'</td><td>'+fm(sgv[rk])+'</td></tr>';
+  b+='<tr class="tt"><td>예상 합계</td><td></td><td>'+fm(tot[rk])+'</td></tr></tbody>';
+  $("#brk").innerHTML=b;
+  $("#n1").textContent="※ 부모급여 2년 전액 · 아동수당 만 9세 미만 기준(어린이집 이용 시 부모급여는 보육료를 뺀 차액만 현금, 0세 약 41.6만원) · 양육수당·육아휴직급여·산후도우미·조건부 항목(무주택 출산가구 주거비 등)은 합계에서 제외했습니다. 아동수당은 2027년부터 매년 1세씩 확대 예정이며, 2027.7.1 이후 출생아는 아이맞이지원금·아동기본수당으로 개편될 수 있습니다(국회 심의 중).";
+  /* 목돈 만들기 */
+  var mon=num("#sMon"),age=Math.min(30,Math.max(1,Math.round(num("#sAge"))||18)),rate=num("#sRate");
+  var n=age*12,prin=mon*n,val=fv(mon,age,rate);
+  var covered=Math.min(mon,ad)*Math.min(n,NAT.adM);
+  $("#sv").innerHTML=
+    '<div class="cd">월 적립 '+fm(mon)+'만원 × '+n+'개월<b>원금 '+fm(prin)+'만원</b></div>'+
+    '<div class="cd t">연 '+rate+'% 가정 시<b>'+fm(val)+'만원</b></div>'+
+    '<div class="cd">수익(가정)<b>'+fm(val-prin)+'만원</b></div>'+
+    '<div class="cd">아동수당으로 충당<b>'+fm(covered)+'만원</b></div>';
+  var ages=[],a;
+  for(a=3;a<age;a+=3){ages.push(a);}
+  ages.push(age);
+  var mx=Math.max(val,prin,1),bars="";
+  ages.forEach(function(x){
+    var p=mon*x*12,v=fv(mon,x,rate);
+    bars+='<div class="br"><span>만 '+x+'세</span><div class="bw"><i class="b1" style="width:'+(p/mx*100)+'%"></i><i class="b2" style="width:'+(Math.max(v-p,0)/mx*100)+'%"></i></div><em>'+fm(v)+'만원</em></div>';
+  });
+  $("#bars").innerHTML=bars;
+  $("#n2").textContent="💰 매월 "+fm(mon)+"만원씩 아이 만 "+age+"세까지 모으면 원금 "+fm(prin)+"만원(막대: 파랑=원금, 초록=가정 수익). 아동수당은 만 9세 미만까지 받으므로 그 이후 적립분 "+fm(Math.max(prin-covered,0))+"만원은 가계에서 이어서 적립하는 가정입니다. 이자·수익은 상품마다 달라 수익률 0%면 원금만 표시됩니다.";
+}
+$("#sim").addEventListener("input",function(e){
+  var id=e.target.id;
+  if(id==="sSido"){sggFill();$("#sAd").value=String(SD[$("#sSido").value].ad);}
+  simRender();
+});
+$("#pAd").addEventListener("click",function(){$("#sMon").value=$("#sAd").value;simRender();});
+$("#pP").addEventListener("click",function(){$("#sRate").value=0;simRender();});
+$("#prt").addEventListener("click",function(){document.body.classList.add("ps");window.print();});
+applyCfg();
+simInit();
+simRender();
+</script>
+</body>
+</html>

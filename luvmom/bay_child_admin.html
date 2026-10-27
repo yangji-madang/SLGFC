@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>출산·육아 지원금 관리페이지</title>
+<style>
+:root{--navy:#14365d;--bd:#cbd5e1;--bg2:#f1f5f9}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.4 "Malgun Gothic","Noto Sans KR",system-ui,sans-serif;color:#1a1a1a;background:#fff}
+header{background:var(--navy);color:#fff;padding:6px 10px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+header h1{font-size:16px;margin:0;flex:1}
+header a{color:#fff;font-size:13px}
+main{max-width:900px;margin:0 auto;padding:8px}
+fieldset{border:1px solid var(--bd);border-radius:6px;margin:0 0 8px;padding:6px 8px;background:#fff}
+legend{font-weight:800;color:var(--navy);padding:0 4px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:6px 10px}
+label{display:flex;flex-direction:column;font-size:12.5px;font-weight:700;color:var(--navy);gap:2px}
+input[type=text],input[type=number],textarea{font:inherit;font-size:14px;padding:5px 6px;border:1px solid #94a3b8;border-radius:4px;width:100%;color:#1a1a1a;background:#fff}
+textarea{min-height:64px}
+.full{grid-column:1/-1}
+.hint{font-size:11.5px;font-weight:400;color:#475569}
+.bar{position:sticky;bottom:0;background:var(--bg2);border-top:2px solid var(--navy);padding:6px 8px;display:flex;flex-wrap:wrap;gap:6px;z-index:5}
+button{font:inherit;font-size:14px;font-weight:700;padding:6px 12px;border:1px solid var(--navy);border-radius:5px;background:var(--navy);color:#fff;cursor:pointer}
+button.w{background:#fff;color:var(--navy)}
+button.gh{background:#166534;border-color:#166534}
+.chk{flex-direction:row;align-items:center;gap:6px;font-weight:400;color:#334155}
+.chk input{width:auto}
+#msg{font-size:13px;padding:4px 8px;color:#166534;font-weight:700;min-height:22px}
+.note{font-size:12px;color:#334155;background:var(--bg2);border-radius:5px;padding:6px 8px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>출산·육아 지원금 관리페이지</h1>
+  <a href="baby-child.html" target="_blank" rel="noopener">결과 페이지 열기 (baby-child.html)</a>
+</header>
+<main>
+  <div class="note">① 내용을 수정하고 「저장」을 누르면 이 브라우저의 baby-child.html에 바로 반영됩니다. ② 다른 기기·고객에게도 반영하려면 아래 「GitHub 반영」을 쓰세요(제목·문구 설정 파일 <b>baby_child_config.js</b>가 GitHub의 같은 폴더에 저장됩니다). 직접 올릴 때는 「설정 파일 내려받기」를 쓰세요. ③ 입력값은 화면에 글자로만 표시되며 코드로 실행되지 않습니다.</div>
+
+  <fieldset><legend>검색 페이지 상단</legend>
+    <div class="g">
+      <label>상단 제목<input type="text" id="title"></label>
+      <label>상단 부제(기준일 등)<input type="text" id="sub"></label>
+      <label class="full">검색 페이지 하단 안내문구<span class="hint">비워 두면 기본 문구가 표시됩니다.</span><textarea id="foot"></textarea></label>
+    </div>
+  </fieldset>
+
+  <fieldset><legend>시뮬레이션·인쇄 페이지</legend>
+    <div class="g">
+      <label>안내서 제목<input type="text" id="simTitle"></label>
+      <label>안내서 부제<input type="text" id="simSub"></label>
+      <label>회사·기관명<span class="hint">줄바꿈 가능(우측 상단 표시)</span><textarea id="org"></textarea></label>
+      <label>연락처·소속 등<input type="text" id="phone"></label>
+      <label class="full">면책·유의 문구<textarea id="disc"></textarea></label>
+    </div>
+  </fieldset>
+
+  <fieldset><legend>목돈 만들기 기본값</legend>
+    <div class="g">
+      <label>월 적립액(만원)<input type="number" id="saveMonthly" min="0" step="1" inputmode="decimal"></label>
+      <label>적립 종료 나이(만 세)<input type="number" id="saveAge" min="1" max="30" step="1" inputmode="numeric"></label>
+      <label>가정 연 수익률(%)<span class="hint">0이면 원금만 표시</span><input type="number" id="saveRate" min="0" max="20" step="0.5" inputmode="decimal"></label>
+    </div>
+  </fieldset>
+
+  <fieldset><legend>GitHub 반영 (yangji-madang/SLGFC/luvmom)</legend>
+    <div class="g">
+      <label>저장소(소유자/이름)<input type="text" id="ghRepo" value="yangji-madang/SLGFC" autocomplete="off"></label>
+      <label>브랜치<input type="text" id="ghBranch" value="main" autocomplete="off"></label>
+      <label>폴더<input type="text" id="ghDir" value="luvmom" autocomplete="off"></label>
+      <label>액세스 토큰 (Contents: Read and write)<input type="password" id="ghTok" autocomplete="off" placeholder="github_pat_…"></label>
+      <label class="chk full"><input type="checkbox" id="ghRem">이 브라우저에 토큰 기억 (공용 기기에서는 끄세요)</label>
+    </div>
+    <div class="hint" style="margin-top:4px">「GitHub에 반영」은 위 입력값으로 <b>baby_child_config.js</b>만 저장합니다(다른 파일은 건드리지 않습니다). 반영 후 GitHub Pages에 보이기까지 약 1분 걸립니다.</div>
+  </fieldset>
+
+  <fieldset><legend>설정 불러오기</legend>
+    <div class="g"><label>설정 파일(JSON 또는 baby_child_config.js)<input type="file" id="file" accept=".json,.js,application/json,text/javascript"></label></div>
+  </fieldset>
+  <div id="msg"></div>
+</main>
+<div class="bar">
+  <button type="button" id="save">저장(이 브라우저에 반영)</button>
+  <button type="button" class="gh" id="gh">GitHub에 반영</button>
+  <button type="button" class="w" id="pub">GitHub 게시본 불러오기</button>
+  <button type="button" id="dl">설정 파일 내려받기</button>
+  <button type="button" class="w" id="rst">기본값으로 되돌리기</button>
+</div>
+
+<script>
+"use strict";
+var KEYS=["title","sub","foot","simTitle","simSub","org","phone","disc","saveMonthly","saveAge","saveRate"];
+var NUMS={saveMonthly:1,saveAge:1,saveRate:1};
+var DEF={
+ title:"출산·육아 지원금 검색",
+ sub:"중앙정부·지자체 | 기준일 2026.10.27",
+ foot:"",
+ simTitle:"우리 지역 출산·육아 지원금 안내",
+ simSub:"국가 · 시·도 · 시·군·구 지원을 한 장에 모았습니다.",
+ org:"",phone:"",
+ disc:"※ 금액 단위는 만원입니다. 지원 조건·금액은 수시로 바뀌므로 신청 전 주민센터·구청에서 꼭 확인하세요. 이 자료는 지원금 안내용이며 특정 보험·금융상품 가입을 권유하지 않습니다. 목돈 만들기의 수익률은 가정치이며 실제 상품의 수익을 보장하지 않습니다. 금액은 아이 1명 기준 총액이며, 분할 지급은 지급 기간 동안 거주 요건을 지켜야 받을 수 있습니다.",
+ saveMonthly:10,saveAge:18,saveRate:0
+};
+function $(id){return document.getElementById(id);}
+function msg(t){$("msg").textContent=t;setTimeout(function(){$("msg").textContent="";},9000);}
+function fillForm(o){KEYS.forEach(function(k){$(k).value=(o[k]===undefined||o[k]===null)?DEF[k]:o[k];});}
+function readForm(){
+  var o={};
+  KEYS.forEach(function(k){
+    var v=$(k).value;
+    if(NUMS[k]){v=parseFloat(v);if(isNaN(v)||v<0){v=DEF[k];}}
+    o[k]=v;
+  });
+  return o;
+}
+function load(){
+  var o={},k;
+  for(k in DEF){o[k]=DEF[k];}
+  try{var l=JSON.parse(localStorage.getItem("babyChildCfg")||"null");if(l){for(k in l){o[k]=l[k];}}}catch(e){}
+  fillForm(o);
+}
+$("save").addEventListener("click",function(){
+  try{localStorage.setItem("babyChildCfg",JSON.stringify(readForm()));msg("저장했습니다. baby-child.html을 새로고침하면 반영됩니다.");}
+  catch(e){msg("저장하지 못했습니다. 브라우저 저장소 사용이 차단되어 있습니다. 설정 파일 내려받기를 이용해 주세요.");}
+});
+$("dl").addEventListener("click",function(){
+  var txt="window.BABY_CHILD_CONFIG = "+JSON.stringify(readForm(),null,2)+";\n";
+  var b=new Blob([txt],{type:"text/javascript"}),a=document.createElement("a");
+  a.href=URL.createObjectURL(b);a.download="baby_child_config.js";
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  msg("baby_child_config.js를 baby-child.html과 같은 폴더에 올려 주세요.");
+});
+$("rst").addEventListener("click",function(){
+  if(!confirm("모든 항목을 기본값으로 되돌립니다. 계속할까요?")){return;}
+  try{localStorage.removeItem("babyChildCfg");}catch(e){}
+  fillForm(DEF);msg("기본값으로 되돌렸습니다. 필요하면 다시 저장해 주세요.");
+});
+function parseCfgText(t){
+  var i=t.indexOf("{"),j=t.lastIndexOf("}"),o=JSON.parse(t.slice(i,j+1)),m={},k;
+  for(k in DEF){m[k]=DEF[k];}
+  for(k in o){if(KEYS.indexOf(k)>=0){m[k]=o[k];}}
+  return m;
+}
+/* ---------- GitHub (Contents API) ---------- */
+var GHCFG="babyChildGh";
+function b64(s){var b=new TextEncoder().encode(s),x="";for(var i=0;i<b.length;i++){x+=String.fromCharCode(b[i]);}return btoa(x);}
+function ghc(){
+  var d=$("ghDir").value.trim().replace(/^\/+|\/+$/g,"");
+  return {repo:$("ghRepo").value.trim(),branch:$("ghBranch").value.trim()||"main",dir:d,tok:$("ghTok").value.trim()};
+}
+function ghApi(url,opt){
+  opt=opt||{};
+  opt.headers=Object.assign({"Accept":"application/vnd.github+json","Authorization":"Bearer "+$("ghTok").value.trim(),"X-GitHub-Api-Version":"2022-11-28"},opt.headers||{});
+  return fetch(url,opt).then(function(r){return r.json().catch(function(){return {};}).then(function(j){
+    if(!r.ok){var e=new Error((j&&j.message)||r.status);e.status=r.status;throw e;}
+    return j;});});
+}
+$("gh").addEventListener("click",function(){
+  var c=ghc();
+  if(!/^[\w.-]+\/[\w.-]+$/.test(c.repo)){msg("저장소 이름 형식이 올바르지 않습니다. (예: yangji-madang/SLGFC)");return;}
+  if(!/^[\w.\-\/]*$/.test(c.dir)||c.dir.indexOf("..")>=0){msg("폴더 이름이 올바르지 않습니다. (예: luvmom)");return;}
+  if(!c.tok){msg("GitHub에 반영하려면 액세스 토큰을 입력하세요.");return;}
+  var o=readForm(),path=(c.dir?c.dir+"/":"")+"baby_child_config.js";
+  var url="https://api.github.com/repos/"+c.repo+"/contents/"+path.split("/").map(encodeURIComponent).join("/");
+  var txt="window.BABY_CHILD_CONFIG = "+JSON.stringify(o,null,2)+";\n";
+  $("gh").disabled=true;msg("GitHub에 반영하는 중입니다…");
+  ghApi(url+"?ref="+encodeURIComponent(c.branch)).then(function(cur){return cur.sha;},function(e){if(e.status===404){return null;}throw e;})
+  .then(function(sha){
+    var body={message:"baby_child_config: 관리화면에서 수정 ("+new Date().toISOString().slice(0,16).replace("T"," ")+")",content:b64(txt),branch:c.branch};
+    if(sha){body.sha=sha;}
+    return ghApi(url,{method:"PUT",body:JSON.stringify(body)});
+  })
+  .then(function(){
+    try{localStorage.setItem("babyChildCfg",JSON.stringify(o));}catch(e){}
+    try{if($("ghRem").checked){localStorage.setItem(GHCFG,JSON.stringify({repo:c.repo,branch:c.branch,dir:c.dir,tok:c.tok}));}else{localStorage.removeItem(GHCFG);}}catch(e){}
+    msg("GitHub에 반영했습니다. 페이지에 보이기까지 약 1분 걸립니다(안 보이면 새로고침).");
+  })
+  .catch(function(e){
+    var h=e.status===401?" (토큰이 올바르지 않거나 만료되었습니다)":(e.status===403||e.status===404)?" (토큰에 이 저장소의 Contents 쓰기 권한이 있는지 확인하세요)":(e.status===409||e.status===422)?" (다른 곳에서 먼저 수정됨 — 다시 시도하세요)":"";
+    msg("반영 실패: "+e.message+h);
+  })
+  .then(function(){$("gh").disabled=false;});
+});
+$("pub").addEventListener("click",function(){
+  msg("게시본을 불러오는 중입니다…");
+  fetch("baby_child_config.js?t="+Date.now(),{cache:"no-store"})
+  .then(function(r){if(!r.ok){throw new Error("HTTP "+r.status);}return r.text();})
+  .then(function(t){fillForm(parseCfgText(t));msg("게시본을 불러왔습니다. 수정 후 「GitHub에 반영」을 누르세요.");})
+  .catch(function(e){msg("게시본을 불러오지 못했습니다("+e.message+"). 이 페이지가 GitHub Pages(또는 서버)에서 열려 있어야 합니다.");});
+});
+(function(){
+  try{var g=JSON.parse(localStorage.getItem(GHCFG)||"null");
+    if(g){$("ghRepo").value=g.repo;$("ghBranch").value=g.branch;$("ghDir").value=g.dir;$("ghTok").value=g.tok||"";$("ghRem").checked=!!g.tok;}}catch(e){}
+  $("ghRem").addEventListener("change",function(){if(!this.checked){try{localStorage.removeItem(GHCFG);}catch(e){}}});
+})();
+$("file").addEventListener("change",function(e){
+  var f=e.target.files[0];if(!f){return;}
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      fillForm(parseCfgText(String(r.result).trim()));msg("불러왔습니다. 저장을 눌러 반영하세요.");
+    }catch(err){msg("파일을 읽지 못했습니다. 형식을 확인해 주세요.");}
+  };
+  r.readAsText(f,"utf-8");
+});
+load();
+</script>
+</body>
+</html>
