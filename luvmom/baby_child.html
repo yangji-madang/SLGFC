@@ -67,6 +67,17 @@ td a{color:#1d4ed8;word-break:break-all}
 #sim .sg label{display:flex;flex-direction:column;font-size:11.5px;font-weight:700;color:var(--navy);gap:1px}
 #sim .sg input,#sim .sg select{font:inherit;font-size:14px;height:30px;border:1px solid #94a3b8;border-radius:4px;padding:0 5px;width:100%;background:#fff;color:var(--tx)}
 #sim .sg[hidden]{display:none}
+#sim .rs{position:relative;margin-bottom:4px}
+#sim .rs input{font:inherit;font-size:14px;height:32px;width:100%;border:2px solid var(--navy);border-radius:4px;padding:0 8px;background:#fff;color:var(--tx)}
+#rqL{position:absolute;left:0;right:0;top:100%;z-index:30;background:#fff;border:1px solid #64748b;max-height:230px;overflow:auto;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+#rqL[hidden]{display:none}
+#rqL button{display:block;width:100%;text-align:left;padding:7px 8px;border:0;border-bottom:1px solid #e2e8f0;background:#fff;font:inherit;font-size:13px;color:var(--tx);cursor:pointer}
+#rqL button:hover,#rqL button.on{background:#dbeafe}
+#sim .mchk{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--navy);margin:2px 0}
+#sim .mchk input{width:auto;height:auto}
+#sim .rh{font-size:11.5px;color:#334155;margin:0 0 3px}
+#sim .rh b{color:#b45309}
+#sim .mcap{font-size:11.5px;font-weight:800;color:var(--navy);margin:2px 0 1px}
 #sim .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
 #sim .cd{border:1px solid var(--bd);border-radius:6px;padding:4px 6px;text-align:center;background:#f8fafc;font-size:11.5px}
 #sim .cd b{display:block;font-size:18px;color:var(--navy);line-height:1.3}
@@ -203,29 +214,36 @@ td a{color:#1d4ed8;word-break:break-all}
 <div class="pg" id="pgM">
 <div id="sim">
   <div class="sh"><div><div class="st" id="sTitle"></div><div class="ss" id="sSub"></div></div><div class="sorg" id="sOrg"></div></div>
+  <div class="rs noprint"><input id="rq" type="search" placeholder="🔍 지역 검색 (예: 화성, 종로, 광주 북구, 영월)" autocomplete="off" aria-label="지역 검색"><div id="rqL" hidden></div></div>
   <div class="sg">
     <label>출산(예정)일<input id="sDue" type="date"></label>
     <label>시·도<select id="sSido"></select></label>
     <label>시·군·구<select id="sSgg"></select></label>
     <label>이번 아이 출생순위<select id="sRank"></select></label>
-    <label>아동수당 지역구분<select id="sAd">
+    <label>아동수당 지역구분 (지역 선택 시 자동)<select id="sAd">
       <option value="10">수도권 월 10만원</option>
       <option value="10.5">비수도권 월 10.5만원</option>
       <option value="11">인구감소 우대 월 11만원</option>
       <option value="12">인구감소 특별 월 12만원</option>
     </select></label>
   </div>
-  <div class="sg" id="manD" hidden>
-    <label>시·도 지원 첫째(만원)<input id="mD0" type="number" inputmode="decimal" min="0" value="0"></label>
-    <label>둘째<input id="mD1" type="number" inputmode="decimal" min="0" value="0"></label>
-    <label>셋째<input id="mD2" type="number" inputmode="decimal" min="0" value="0"></label>
-    <label>넷째 이상<input id="mD3" type="number" inputmode="decimal" min="0" value="0"></label>
-  </div>
-  <div class="sg" id="manG" hidden>
-    <label>시·군·구 지원 첫째(만원)<input id="mG0" type="number" inputmode="decimal" min="0" value="0"></label>
-    <label>둘째<input id="mG1" type="number" inputmode="decimal" min="0" value="0"></label>
-    <label>셋째<input id="mG2" type="number" inputmode="decimal" min="0" value="0"></label>
-    <label>넷째 이상<input id="mG3" type="number" inputmode="decimal" min="0" value="0"></label>
+  <div class="rh" id="rH"></div>
+  <label class="mchk noprint"><input type="checkbox" id="sMan">지원금 직접 입력 (시·도/시·군·구 금액을 직접 고쳐서 계산)</label>
+  <div id="manB" class="noprint" hidden>
+    <div class="mcap">시·도 지원금 (만원)</div>
+    <div class="sg">
+      <label>첫째<input id="mD0" type="number" inputmode="decimal" min="0" value="0"></label>
+      <label>둘째<input id="mD1" type="number" inputmode="decimal" min="0" value="0"></label>
+      <label>셋째<input id="mD2" type="number" inputmode="decimal" min="0" value="0"></label>
+      <label>넷째 이상<input id="mD3" type="number" inputmode="decimal" min="0" value="0"></label>
+    </div>
+    <div class="mcap">시·군·구 지원금 (만원)</div>
+    <div class="sg">
+      <label>첫째<input id="mG0" type="number" inputmode="decimal" min="0" value="0"></label>
+      <label>둘째<input id="mG1" type="number" inputmode="decimal" min="0" value="0"></label>
+      <label>셋째<input id="mG2" type="number" inputmode="decimal" min="0" value="0"></label>
+      <label>넷째 이상<input id="mG3" type="number" inputmode="decimal" min="0" value="0"></label>
+    </div>
   </div>
   <div class="cards" id="cards"></div>
   <div class="sec">출생순위별 예상 수령액 (단위: 만원)</div>
@@ -244,7 +262,7 @@ td a{color:#1d4ed8;word-break:break-all}
   <div id="bars"></div>
   <div class="note" id="n2"></div>
   <div class="note" id="disc"></div>
-  <div class="src">출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015 · 복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html · 보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&amp;bid=0027&amp;act=view&amp;list_no=1490257 · 임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100 · 서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980 · 경기 시군별 출산장려 지원현황 data.gg.go.kr · 임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279 · 경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02</div>
+  <div class="src">출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015 · 복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html · 보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&amp;bid=0027&amp;act=view&amp;list_no=1490257 · 임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100 · 서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980 · 경기 시군별 출산장려 지원현황 data.gg.go.kr · 임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279 · 경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02 · 아동수당 지역구분 정책브리핑 korea.kr/news/policyNewsView.do?newsId=148961693 · 인구감소지역 재지정 경향신문 2026.10.7 · 인천 자치구 개편 경기일보 2026.6.30 · 전남광주통합특별시 구성 위키독스</div>
   <div class="noprint btns"><button type="button" id="prt">인쇄 / PDF 저장</button></div>
 </div>
 </div>
@@ -725,11 +743,40 @@ $("#prtT").addEventListener("click",function(){document.body.classList.remove("p
 /* ===== 목돈 만들기 시뮬레이션 ===== */
 var RK=["첫째","둘째","셋째","넷째 이상"];
 var NAT={meet:[200,300,300,300],p0:1200,p1:600,preg:100,adM:108};
+var CAP={"서울":1,"인천":1,"경기":1};
+var REG=[
+ {k:"서울",n:"서울특별시",a:"",g:"종로구 중구 용산구 성동구 광진구 동대문구 중랑구 성북구 강북구 도봉구 노원구 은평구 서대문구 마포구 양천구 강서구 구로구 금천구 영등포구 동작구 관악구 서초구 강남구 송파구 강동구"},
+ {k:"부산",n:"부산광역시",a:"",g:"중구 서구 동구 영도구 부산진구 동래구 남구 북구 해운대구 사하구 금정구 강서구 연제구 수영구 사상구 기장군"},
+ {k:"대구",n:"대구광역시",a:"",g:"중구 동구 서구 남구 북구 수성구 달서구 달성군 군위군"},
+ {k:"인천",n:"인천광역시",a:"",g:"제물포구 영종구 서해구 검단구 미추홀구 연수구 남동구 부평구 계양구 강화군 옹진군"},
+ {k:"전남광주",n:"전남광주통합특별시",a:"광주광역시 전라남도 광주 전남",g:"광주_동구 광주_서구 광주_남구 광주_북구 광주_광산구 목포시 여수시 순천시 나주시 광양시 담양군 곡성군 구례군 고흥군 보성군 화순군 장흥군 강진군 해남군 영암군 무안군 함평군 영광군 장성군 완도군 진도군 신안군"},
+ {k:"대전",n:"대전광역시",a:"",g:"동구 중구 서구 유성구 대덕구"},
+ {k:"울산",n:"울산광역시",a:"",g:"중구 남구 동구 북구 울주군"},
+ {k:"세종",n:"세종특별자치시",a:"",g:"세종시_전체"},
+ {k:"경기",n:"경기도",a:"",g:"수원시 성남시 의정부시 안양시 부천시 광명시 평택시 동두천시 안산시 고양시 과천시 구리시 남양주시 오산시 시흥시 군포시 의왕시 하남시 용인시 파주시 이천시 안성시 김포시 화성시 광주시 양주시 포천시 여주시 연천군 가평군 양평군"},
+ {k:"강원",n:"강원특별자치도",a:"",g:"춘천시 원주시 강릉시 동해시 태백시 속초시 삼척시 홍천군 횡성군 영월군 평창군 정선군 철원군 화천군 양구군 인제군 고성군 양양군"},
+ {k:"충북",n:"충청북도",a:"",g:"청주시 충주시 제천시 보은군 옥천군 영동군 증평군 진천군 괴산군 음성군 단양군"},
+ {k:"충남",n:"충청남도",a:"",g:"천안시 공주시 보령시 아산시 서산시 논산시 계룡시 당진시 금산군 부여군 서천군 청양군 홍성군 예산군 태안군"},
+ {k:"전북",n:"전북특별자치도",a:"",g:"전주시 군산시 익산시 정읍시 남원시 김제시 완주군 진안군 무주군 장수군 임실군 순창군 고창군 부안군"},
+ {k:"경북",n:"경상북도",a:"",g:"포항시 경주시 김천시 안동시 구미시 영주시 영천시 상주시 문경시 경산시 의성군 청송군 영양군 영덕군 청도군 고령군 성주군 칠곡군 예천군 봉화군 울진군 울릉군"},
+ {k:"경남",n:"경상남도",a:"",g:"창원시 진주시 통영시 사천시 김해시 밀양시 거제시 양산시 의령군 함안군 창녕군 고성군 남해군 하동군 산청군 함양군 거창군 합천군"},
+ {k:"제주",n:"제주특별자치도",a:"",g:"제주시 서귀포시"}
+];
+/* 아동수당 인구감소지역 우대(월 11만원)·특별(월 12만원) — 보건복지부 2026.3 발표 기준(정책브리핑 korea.kr) */
+var UDL={"부산":"동구 서구 영도구","대구":"군위군 남구 서구","인천":"강화군 옹진군","경기":"가평군 연천군","강원":"고성군 삼척시 양양군 영월군 정선군 철원군 태백시 평창군 홍천군 횡성군","충북":"옥천군 제천시","충남":"공주시 금산군 논산시 보령시 예산군 태안군","전북":"김제시 남원시 정읍시","전남광주":"담양군 영광군 영암군 진도군 화순군","경북":"고령군 문경시 성주군 안동시 영주시 영천시 울릉군 울진군","경남":"거창군 밀양시 산청군 창녕군 함안군"};
+var TKL={"강원":"양구군 화천군","충북":"보은군 영동군 괴산군 단양군","충남":"부여군 서천군 청양군","전북":"고창군 무주군 부안군 순창군 임실군 장수군 진안군","전남광주":"강진군 고흥군 곡성군 구례군 보성군 신안군 완도군 장성군 장흥군 함평군 해남군","경북":"봉화군 상주시 영덕군 영양군 의성군 청도군 청송군","경남":"고성군 남해군 의령군 하동군 함양군 합천군"};
+var REGM={},UD={},TK={};
+REG.forEach(function(r){
+  r.g=r.g.split(" ").map(function(x){return x.replace(/_/g," ");});
+  REGM[r.k]=r;
+});
+function mkSet(src,dst){Object.keys(src).forEach(function(k){src[k].split(" ").forEach(function(g){dst[k+"|"+g]=1;});});}
+mkSet(UDL,UD);mkSet(TKL,TK);
+/* 조사 반영분: 시·도 지원(SD), 시·군·구 지원(SG). 없는 지역은 조사 전이므로 0원으로 계산하고 직접 입력으로 보정 */
 var SD={
- "서울":{n:"서울특별시",s:"서울",ad:10,items:[["서울형 산후조리경비",[100,120,150,150]],["임산부 교통비",[70,80,100,100]]]},
- "경기":{n:"경기도",s:"경기",ad:10,items:[["경기도 산후조리비(2026.9월 말 종료, 이후 지원 없음)",[0,0,0,0]]]},
- "부산":{n:"부산광역시",s:"부산",ad:10.5,items:[["부산형 산후조리경비(확인 필요)",[100,100,100,100]]]},
- "기타":{n:"그 외 지역(직접 입력)",s:"시·도",ad:10.5,items:[]}
+ "서울":{items:[["서울형 산후조리경비",[100,120,150,150]],["임산부 교통비",[70,80,100,100]]]},
+ "경기":{items:[["경기도 산후조리비(2026.9월 말 종료, 이후 지원 없음)",[0,0,0,0]]]},
+ "부산":{items:[["부산형 산후조리경비(확인 필요)",[100,100,100,100]]]}
 };
 var SG={
  "서울":{"종로구":[0,0,0,0],"강동구":[0,0,0,0],"용산구":[0,0,200,400]},
@@ -744,49 +791,102 @@ function fv(m,age,rate){
   var r=Math.pow(1+rate/100,1/12)-1;
   return m*(Math.pow(1+r,n)-1)/r;
 }
+function adInfo(si,sg){
+  if(sg&&TK[si+"|"+sg]){return[12,"인구감소 특별"];}
+  if(sg&&UD[si+"|"+sg]){return[11,"인구감소 우대"];}
+  return CAP[si]?[10,"수도권"]:[10.5,"비수도권"];
+}
 function sggFill(){
-  var si=$("#sSido").value,h="";
-  if(SG[si]){Object.keys(SG[si]).forEach(function(k){h+='<option value="'+k+'">'+k+'</option>';});}
-  h+='<option value="기타">그 외(직접 입력)</option>';
+  var r=REGM[$("#sSido").value],h='<option value="">시·군·구 선택</option>';
+  r.g.forEach(function(g){h+='<option value="'+g+'">'+g+'</option>';});
   $("#sSgg").innerHTML=h;
+}
+function presetOf(si,sg){
+  var sd=[0,0,0,0],items=[];
+  if(SD[si]){SD[si].items.forEach(function(it){items.push(it);for(var j=0;j<4;j++){sd[j]+=it[1][j];}});}
+  var g=(SG[si]&&SG[si][sg])?SG[si][sg].slice():[0,0,0,0];
+  return{sd:sd,sg:g,items:items};
+}
+function manFill(){
+  var p=presetOf($("#sSido").value,$("#sSgg").value);
+  for(var i=0;i<4;i++){$("#mD"+i).value=p.sd[i];$("#mG"+i).value=p.sg[i];}
+}
+function autoAd(){
+  var f=adInfo($("#sSido").value,$("#sSgg").value);
+  $("#sAd").value=String(f[0]);
+}
+function regionChanged(){
+  autoAd();
+  if($("#sMan").checked){manFill();}
+}
+function pickRegion(si,sg){
+  $("#sSido").value=si;sggFill();$("#sSgg").value=sg||"";
+  $("#rq").value="";$("#rqL").hidden=true;$("#rqL").innerHTML="";
+  regionChanged();simRender();
+}
+function rqRun(){
+  var q=$("#rq").value.replace(/\s+/g,"").toLowerCase(),box=$("#rqL");
+  if(!q){box.hidden=true;box.innerHTML="";return;}
+  var out=[],more=false;
+  REG.forEach(function(r){
+    var ks=[r.k,r.n].concat(r.a?r.a.split(" "):[]),ok=false;
+    ks.forEach(function(x){if(x.toLowerCase().indexOf(q)===0){ok=true;}});
+    if(ok){out.push([r.k,"",r.n+" (시·도 전체)"]);}
+  });
+  REG.forEach(function(r){
+    r.g.forEach(function(g){
+      var gg=g.replace(/\s+/g,"").toLowerCase(),pre=[r.k,r.n.replace(/\s+/g,"")];
+      if(r.k==="전남광주"){pre=g.indexOf("광주 ")===0?["광주광역시"]:["전남","전라남도"];}
+      var hit=gg.indexOf(q)>=0;
+      pre.forEach(function(x){if((x+gg).toLowerCase().indexOf(q)>=0){hit=true;}});
+      if(hit){if(out.length<30){out.push([r.k,g,r.n+" "+g]);}else{more=true;}}
+    });
+  });
+  if(!out.length){box.innerHTML='<button type="button" disabled>검색 결과가 없습니다</button>';box.hidden=false;return;}
+  var h="";
+  out.forEach(function(o,i){h+='<button type="button" data-si="'+o[0]+'" data-sg="'+o[1]+'"'+(i===0?' class="on"':'')+'>'+o[2]+'</button>';});
+  if(more){h+='<button type="button" disabled>…더 많은 결과는 검색어를 더 입력해 주세요</button>';}
+  box.innerHTML=h;box.hidden=false;
 }
 function simInit(){
   var h="",r="";
-  Object.keys(SD).forEach(function(k){h+='<option value="'+k+'">'+SD[k].n+'</option>';});
+  REG.forEach(function(x){h+='<option value="'+x.k+'">'+x.n+'</option>';});
   $("#sSido").innerHTML=h;
   RK.forEach(function(t,i){r+='<option value="'+i+'">'+t+'</option>';});
   $("#sRank").innerHTML=r;
   $("#sMon").value=CFG.saveMonthly;$("#sAge").value=CFG.saveAge;$("#sRate").value=CFG.saveRate;
-  sggFill();
-  $("#sAd").value=String(SD[$("#sSido").value].ad);
+  $("#sSido").value="서울";sggFill();$("#sSgg").value="종로구";
+  autoAd();
 }
 function simRender(){
   var si=$("#sSido").value,sg=$("#sSgg").value,rk=parseInt($("#sRank").value,10)||0,ad=parseFloat($("#sAd").value)||10,i;
-  var preset=!!(SG[si]&&SG[si][sg]);
-  $("#manD").hidden=(si!=="기타");
-  $("#manG").hidden=preset;
-  var sdv=[0,0,0,0],items=[];
-  if(si==="기타"){
-    for(i=0;i<4;i++){sdv[i]=num("#mD"+i);}
+  var man=$("#sMan").checked,pre=presetOf(si,sg),R=REGM[si];
+  $("#manB").hidden=!man;
+  var sdv=[0,0,0,0],items=[],sgv=[0,0,0,0];
+  if(man){
+    for(i=0;i<4;i++){sdv[i]=num("#mD"+i);sgv[i]=num("#mG"+i);}
     items.push(["시·도 지원(직접 입력)",sdv.slice()]);
   }else{
-    SD[si].items.forEach(function(it){
-      items.push(it);
-      for(var j=0;j<4;j++){sdv[j]+=it[1][j];}
-    });
+    sdv=pre.sd;sgv=pre.sg;items=pre.items;
   }
-  var sgv=[0,0,0,0];
-  if(preset){sgv=SG[si][sg].slice();}else{for(i=0;i<4;i++){sgv[i]=num("#mG"+i);}}
-  var sgName=preset?sg:"시·군·구";
+  var f=adInfo(si,sg),sdDone=!!SD[si],sgDone=!!(SG[si]&&SG[si][sg]);
+  var hint="아동수당 지역구분: <b style=\"color:#14365d\">"+f[1]+" 월 "+f[0]+"만원</b>"+(ad===f[0]?"(지역 기준 자동 적용)":" → 현재 직접 변경: 월 "+ad+"만원");
+  if(man){hint+=" · 지자체 지원금은 <b>직접 입력값</b>으로 계산 중";}
+  else{
+    hint+=" · 시·도 지원 "+(sdDone?"조사 반영":"<b>조사 전(0원 계산)</b>")+" · 시·군·구 지원 "+(!sg?"<b>시·군·구 미선택</b>":(sgDone?"조사 반영":"<b>조사 전(0원 계산)</b>"));
+    if(!sdDone||!sg||!sgDone){hint+=" — 실제 지원이 있으면 아래 「지원금 직접 입력」으로 보정하세요.";}
+  }
+  $("#rH").innerHTML=hint;
+  var sgName=sg||"시·군·구";
   var natv=[],tot=[];
   for(i=0;i<4;i++){
     natv[i]=NAT.meet[i]+NAT.p0+NAT.p1+NAT.preg+ad*NAT.adM;
     tot[i]=natv[i]+sdv[i]+sgv[i];
   }
-  $("#sSub").textContent=(si==="기타"?"":SD[si].n+" ")+(preset?sg+" · ":"")+RK[rk]+" 출생 기준 — "+CFG.simSub;
+  $("#sSub").textContent=R.n+" "+(sg?sg+" · ":"")+RK[rk]+" 출생 기준 — "+CFG.simSub;
   $("#cards").innerHTML=
     '<div class="cd">국가 공통<b>'+fm(natv[rk])+'만원</b></div>'+
-    '<div class="cd">'+SD[si].s+' 시·도<b>'+fm(sdv[rk])+'만원</b></div>'+
+    '<div class="cd">'+R.k+' 시·도<b>'+fm(sdv[rk])+'만원</b></div>'+
     '<div class="cd">'+sgName+'<b>'+fm(sgv[rk])+'만원</b></div>'+
     '<div class="cd t">예상 합계(아이 1명)<b>'+fm(tot[rk])+'만원</b></div>';
   var h='<thead><tr><th>구분 (만원)</th>';
@@ -797,7 +897,7 @@ function simRender(){
     for(var k=0;k<4;k++){s+='<td'+(k===rk?' class="on"':'')+'>'+fm(arr[k])+'</td>';}
     return s+'</tr>';
   }
-  h+=rw("국가(공통)",natv)+rw(SD[si].s+" (시·도)",sdv)+rw(sgName+" (시·군·구)",sgv)+rw("합계(예상)",tot,"tt")+'</tbody>';
+  h+=rw("국가(공통)",natv)+rw(R.k+" (시·도)",sdv)+rw(sgName+" (시·군·구)",sgv)+rw("합계(예상)",tot,"tt")+'</tbody>';
   $("#t4").innerHTML=h;
   var b='<thead><tr><th>항목</th><th>산식</th><th>금액</th></tr></thead><tbody>';
   b+='<tr><td>첫만남이용권</td><td>'+RK[rk]+' '+NAT.meet[rk]+'</td><td>'+fm(NAT.meet[rk])+'</td></tr>';
@@ -810,7 +910,7 @@ function simRender(){
   b+='<tr><td>'+sgName+' 지원</td><td>'+RK[rk]+'</td><td>'+fm(sgv[rk])+'</td></tr>';
   b+='<tr class="tt"><td>예상 합계</td><td></td><td>'+fm(tot[rk])+'</td></tr></tbody>';
   $("#brk").innerHTML=b;
-  $("#n1").textContent="※ 부모급여 2년 전액 · 아동수당 만 9세 미만 기준(어린이집 이용 시 부모급여는 보육료를 뺀 차액만 현금, 0세 약 41.6만원) · 양육수당·육아휴직급여·산후도우미·조건부 항목(무주택 출산가구 주거비 등)은 합계에서 제외했습니다. 아동수당은 2027년부터 매년 1세씩 확대 예정이며, 2027.7.1 이후 출생아는 아이맞이지원금·아동기본수당으로 개편될 수 있습니다(국회 심의 중).";
+  $("#n1").textContent="※ 부모급여 2년 전액 · 아동수당 만 9세 미만 기준(어린이집 이용 시 부모급여는 보육료를 뺀 차액만 현금, 0세 약 41.6만원) · 양육수당·육아휴직급여·산후도우미·조건부 항목(무주택 출산가구 주거비 등)은 합계에서 제외했습니다. 아동수당은 2027년부터 매년 1세씩 확대 예정이며, 2027.7.1 이후 출생아는 아이맞이지원금·아동기본수당으로 개편될 수 있습니다(국회 심의 중). 아동수당 지역구분은 보건복지부 2026.3 발표(수도권 10만·비수도권 10.5만·인구감소 우대 11만·특별 12만) 기준이며, 행정안전부 2026.10.7 인구감소지역 재지정(89→92곳, 금정구·동두천시·통영시 추가)의 아동수당 반영 시점은 확인 전입니다. 지역사랑상품권 지급 시 인구감소지역 월 1만원 추가는 지자체별 자율이라 합계에서 제외했습니다.";
   /* 목돈 만들기 */
   var mon=num("#sMon"),age=Math.min(30,Math.max(1,Math.round(num("#sAge"))||18)),rate=num("#sRate");
   var n=age*12,prin=mon*n,val=fv(mon,age,rate);
@@ -831,11 +931,28 @@ function simRender(){
   $("#bars").innerHTML=bars;
   $("#n2").textContent="💰 매월 "+fm(mon)+"만원씩 아이 만 "+age+"세까지 모으면 원금 "+fm(prin)+"만원(막대: 파랑=원금, 초록=가정 수익). 아동수당은 만 9세 미만까지 받으므로 그 이후 적립분 "+fm(Math.max(prin-covered,0))+"만원은 가계에서 이어서 적립하는 가정입니다. 이자·수익은 상품마다 달라 수익률 0%면 원금만 표시됩니다.";
 }
-$("#sim").addEventListener("input",function(e){
+function simEv(e){
   var id=e.target.id;
-  if(id==="sSido"){sggFill();$("#sAd").value=String(SD[$("#sSido").value].ad);}
+  if(id==="rq"){if(e.type==="input"){rqRun();}return;}
+  if(id==="sSido"){sggFill();regionChanged();}
+  else if(id==="sSgg"){regionChanged();}
+  else if(id==="sMan"){if(e.target.checked){manFill();}}
   simRender();
+}
+$("#sim").addEventListener("input",simEv);
+$("#sim").addEventListener("change",simEv);
+$("#rqL").addEventListener("click",function(e){
+  var b=e.target.closest("button");
+  if(b&&b.getAttribute("data-si")){pickRegion(b.getAttribute("data-si"),b.getAttribute("data-sg"));}
 });
+$("#rq").addEventListener("keydown",function(e){
+  if(e.key==="Enter"){
+    e.preventDefault();
+    var b=$("#rqL").querySelector("button[data-si]");
+    if(b){pickRegion(b.getAttribute("data-si"),b.getAttribute("data-sg"));}
+  }else if(e.key==="Escape"){$("#rqL").hidden=true;}
+});
+document.addEventListener("click",function(e){if(!e.target.closest(".rs")){$("#rqL").hidden=true;}});
 $("#pAd").addEventListener("click",function(){$("#sMon").value=$("#sAd").value;simRender();});
 $("#pP").addEventListener("click",function(){$("#sRate").value=0;simRender();});
 $("#prt").addEventListener("click",function(){document.body.classList.add("ps");window.print();});
