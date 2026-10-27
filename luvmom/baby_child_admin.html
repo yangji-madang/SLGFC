@@ -41,7 +41,10 @@ button.gh{background:#166534;border-color:#166534}
   <fieldset><legend>검색 페이지 상단</legend>
     <div class="g">
       <label>상단 제목<input type="text" id="title"></label>
-      <label>상단 부제(기준일 등)<input type="text" id="sub"></label>
+      <label>상단 부제<input type="text" id="sub"></label>
+      <label>기준일 표시(우측 상단)<span class="hint">비워 두면 업데이트 파일(baby_child_updates.js)의 기준일을 표시합니다. 예: 2026-10-27</span><input type="text" id="asOf" placeholder="YYYY-MM-DD"></label>
+      <label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="showChg" style="width:auto">변경 내용 표시 <span class="hint">(체크 시 이전과 달라진 내용을 흐린 회색 가운데선으로 표시)</span></label>
+      <label>변경 내용 표시 기간(일)<span class="hint">변경 확인일로부터 이 기간 동안만 표시합니다.</span><input type="number" id="chgDays" min="1" max="365" step="1" inputmode="numeric"></label>
       <label class="full">검색 페이지 하단 안내문구<span class="hint">비워 두면 기본 문구가 표시됩니다.</span><textarea id="foot"></textarea></label>
     </div>
   </fieldset>
@@ -90,11 +93,11 @@ button.gh{background:#166534;border-color:#166534}
 
 <script>
 "use strict";
-var KEYS=["title","sub","foot","simTitle","simSub","org","phone","disc","saveMonthly","saveAge","saveRate"];
-var NUMS={saveMonthly:1,saveAge:1,saveRate:1};
+var KEYS=["title","sub","asOf","showChg","chgDays","foot","simTitle","simSub","org","phone","disc","saveMonthly","saveAge","saveRate"];
+var NUMS={chgDays:1,saveMonthly:1,saveAge:1,saveRate:1};
 var DEF={
  title:"출산·육아 지원금 검색",
- sub:"중앙정부·지자체 | 기준일 2026.10.27",
+ sub:"중앙정부·지자체",asOf:"",showChg:true,chgDays:30,
  foot:"",
  simTitle:"우리 지역 출산·육아 지원금 안내",
  simSub:"국가 · 시·도 · 시·군·구 지원을 한 장에 모았습니다.",
@@ -104,11 +107,11 @@ var DEF={
 };
 function $(id){return document.getElementById(id);}
 function msg(t){$("msg").textContent=t;setTimeout(function(){$("msg").textContent="";},9000);}
-function fillForm(o){KEYS.forEach(function(k){$(k).value=(o[k]===undefined||o[k]===null)?DEF[k]:o[k];});}
+function fillForm(o){KEYS.forEach(function(k){var v=(o[k]===undefined||o[k]===null)?DEF[k]:o[k];if(k==="showChg"){$(k).checked=(v!==false&&v!=="false");}else{$(k).value=v;}});}
 function readForm(){
   var o={};
   KEYS.forEach(function(k){
-    var v=$(k).value;
+    var v=(k==="showChg")?$(k).checked:$(k).value;
     if(NUMS[k]){v=parseFloat(v);if(isNaN(v)||v<0){v=DEF[k];}}
     o[k]=v;
   });

@@ -1,7 +1,10 @@
 /* 관리페이지(baby_child_admin.html)에서 「설정 파일 내려받기」로 받은 파일로 덮어쓰세요. */
 window.BABY_CHILD_CONFIG = {
   "title": "출산·육아 지원금 검색",
-  "sub": "중앙정부·지자체 | 기준일 2026.10.27",
+  "sub": "중앙정부·지자체",
+  "asOf": "",
+  "showChg": true,
+  "chgDays": 30,
   "foot": "",
   "simTitle": "우리 지역 출산·육아 지원금 안내",
   "simSub": "국가 · 시·도 · 시·군·구 지원을 한 장에 모았습니다.",
