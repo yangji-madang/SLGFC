@@ -81,7 +81,7 @@ tr.rdb td{box-shadow:inset 0 -3px 0 var(--pri)}
 .rz:hover,.rz.on{background:rgba(29,98,196,.4)}
 body.resizing,body.resizing *{cursor:col-resize !important;user-select:none}
 .ib.on{background:var(--pri);color:#fff;border-color:var(--pri)}
-td.wc{white-space:normal;word-break:break-all;line-height:1.35;padding-top:5px;padding-bottom:5px}
+td.wc{white-space:pre-line;word-break:break-all;line-height:1.35;padding-top:5px;padding-bottom:5px}
 .dt{display:flex;gap:6px}
 .dt input{flex:1;min-width:0}
 .form select{border:1px solid #aab7c8;border-radius:6px;padding:6px 8px;background:#fff;width:100%}
@@ -304,6 +304,7 @@ const DEFAULT_COLS = [
   {key:'관심항목',type:'text',w:280,area:true},
   {key:'상담 희망 시간',type:'text',w:128},
   {key:'상담결과',type:'select',w:110,wrap:true,opts:RESULT_OPTS},
+  {key:'상담 내용',type:'text',w:260,area:true,wrap:true},
   {key:'상담일시',type:'datetime',w:150}
 ].map(c => Object.assign({label:c.key, visible:true}, c));
 const PROTECT = new Set(['고객명', '생년월일', '주소', '휴대폰']);
@@ -312,7 +313,7 @@ const DEFAULT_SET = { freezeCols:6, freezeRows:1, suffix:false, ageMode:'man', w
 const LS_KEY = 'luvmam.db.v1';
 
 const state = {
-  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 2,
+  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 3,
   q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: '', dragRow: ''
 };
 const sync = { cfg: null, sha: '', key: null, salt: null, timer: 0, pushing: false, again: false, applying: false, rev: 0 };
@@ -331,7 +332,27 @@ function save(){
   if (!sync.applying) markChanged();
 }
 /* 구조 변경(sv 2): 상담결과(선택·줄바꿈) 추가, 상담일시(날짜+시:분), 상담일 삭제 */
+/* 구조 변경(sv 3): 상담 내용(여러 줄 텍스트) 추가 — 이전 상담결과의 자유 입력 텍스트는 상담 내용으로 이동 */
 function migrate(){
+  const a = migrate2(); let b = false;
+  if (state.sv < 3){
+    const cols = state.cols, f = l => cols.findIndex(c => c.label.replace(/\s/g, '') === l);
+    let ci = f('상담내용');
+    if (ci >= 0){ Object.assign(cols[ci], { type: 'text', area: true, wrap: true, visible: true }); }
+    else { const ri = f('상담결과'); cols.splice(ri >= 0 ? ri + 1 : cols.length, 0, { key: '상담 내용', label: '상담 내용', type: 'text', w: 260, area: true, wrap: true, visible: true }); }
+    const ri2 = f('상담결과'), ci2 = f('상담내용');
+    if (ri2 >= 0 && ci2 >= 0){
+      const rk = cols[ri2].key, ck = cols[ci2].key;
+      state.rows.forEach(r => {
+        const v = r[rk];
+        if (v && RESULT_OPTS.indexOf(String(v).trim()) < 0){ r[ck] = r[ck] ? r[ck] + '\n' + v : v; r[rk] = ''; }
+      });
+    }
+    state.sv = 3; b = true;
+  }
+  return a || b;
+}
+function migrate2(){
   if (state.sv >= 2) return false;
   const cols = state.cols, f = l => cols.findIndex(c => c.label.replace(/\s/g, '') === l);
   let i = f('상담일');
@@ -633,7 +654,7 @@ function openForm(id, afterId){
     const wide = c.wide || c.area;
     const val = esc(rec[c.key] || '');
     let inp;
-    if (c.area) inp = '<textarea data-k="' + esc(c.key) + '" rows="2">' + val + '</textarea>';
+    if (c.area) inp = '<textarea data-k="' + esc(c.key) + '" rows="' + (c.wrap ? 4 : 2) + '">' + val + '</textarea>';
     else if (c.type === 'select'){
       const ops = (c.opts || []).slice(); if (rec[c.key] && !ops.includes(rec[c.key])) ops.push(rec[c.key]);
       inp = '<select data-k="' + esc(c.key) + '"><option value="">선택</option>' + ops.map(o => '<option value="' + esc(o) + '"' + (o === rec[c.key] ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select>';
@@ -1166,7 +1187,7 @@ function syncInit(){
 window.__luvmam = { regionOf, calcAge, parseYMD, state, render, moveRowBy, sync };
 
 load();
-if (state.sv < 2){ migrate(); save(); }
+if (state.sv < 3){ migrate(); save(); }
 $('#asof').value = state.asOf;
 render();
 syncInit();
