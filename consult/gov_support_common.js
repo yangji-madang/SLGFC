@@ -348,8 +348,7 @@
       law: '중소기업창업 지원법 제2조 제3호·제5호, 같은 법 시행령 제2조'
     }
   };
-  G.showDef = function (name) {
-    var D = G.DEF[name]; if (!D) return;
+  G.pop = function (html) {
     var m = document.getElementById('defPop');
     if (!m) {
       m = document.createElement('div'); m.id = 'defPop'; m.className = 'defpop noprint';
@@ -358,10 +357,41 @@
       m.addEventListener('click', function (e) { if (e.target === m || e.target.classList.contains('dpx')) m.style.display = 'none'; });
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') m.style.display = 'none'; });
     }
+    m.querySelector('.dpc').innerHTML = html; m.style.display = 'flex';
+  };
+  G.showDef = function (name) {
+    var D = G.DEF[name]; if (!D) return;
     var h = '<h3>' + esc(name) + '의 정의</h3><p class="dpd">' + esc(D.d) + '</p><table class="dpt"><tbody>';
     D.rows.forEach(function (r) { h += '<tr><th>' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'; });
     h += '</tbody></table><p class="dpl"><b>근거</b> ' + esc(D.law) + '</p><p class="dpn">※ 법령은 개정될 수 있으므로 실제 적용 전 국가법령정보센터(law.go.kr)의 현행 조문·별표를 확인하세요.</p>';
-    m.querySelector('.dpc').innerHTML = h; m.style.display = 'flex';
+    G.pop(h);
+  };
+
+  /* 세율표 — 개인 종합소득세(소득세법 제55조, 2023년 이후 귀속), 법인세(법인세법 제55조, 2026.1.1 이후 개시 사업연도) */
+  G.PTAX = [[1400, 6, 0], [5000, 15, 126], [8800, 24, 576], [15000, 35, 1544], [30000, 38, 1994], [50000, 40, 2594], [100000, 42, 3594], [Infinity, 45, 6594]]; /* 과세표준 상한(만원), 세율(%), 누진공제(만원) */
+  G.CTAX = [[2, 10, 0], [200, 20, 0.2], [3000, 22, 4.2], [Infinity, 25, 94.2]]; /* 과세표준 상한(억원), 세율(%), 누진공제(억원) */
+  function pick(tb, x) { for (var i = 0; i < tb.length; i++) if (x <= tb[i][0]) return i; return tb.length - 1; }
+  G.mtrOf = function (man) { return (typeof man === 'number' && man > 0 && isFinite(man)) ? pick(G.PTAX, man) : -1; };
+  G.ctrOf = function (eok) { return (typeof eok === 'number' && eok > 0 && isFinite(eok)) ? pick(G.CTAX, eok) : -1; };
+  function fm(v) { /* 만원 → 억·만 표기 */ var e = Math.floor(v / 10000), m = Math.round(v - e * 10000); return (e ? e + '억' : '') + (m ? (e ? ' ' : '') + m.toLocaleString('ko-KR') + '만' : (e ? '' : '0')) + '원'; }
+  function fe(v) { /* 억원 → 조·억·만 표기 */ var j = Math.floor(v / 10000), e = v - j * 10000, ee = Math.floor(e + 1e-9), mm = Math.round((e - ee) * 10000); return (j ? j + '조 ' : '') + (ee ? ee.toLocaleString('ko-KR') + '억' : '') + (mm ? (ee ? ' ' : '') + mm.toLocaleString('ko-KR') + '만' : '') + '원'; }
+  G.showTax = function (kind, val) {
+    var P = kind === 'p', T = P ? G.PTAX : G.CTAX, hi = P ? G.mtrOf(val) : G.ctrOf(val), h;
+    h = '<h3>' + (P ? '개인 종합소득세율표 (과세표준 기준)' : '법인세율표 (2026.1.1 이후 개시 사업연도)') + '</h3>';
+    h += '<table class="dpt tx"><thead><tr><th>과세표준</th><th>세율</th><th>누진공제액</th><th>지방소득세 포함</th></tr></thead><tbody>';
+    T.forEach(function (r, i) {
+      var lo = i ? T[i - 1][0] : 0, f = P ? fm : fe;
+      var rng = (i === 0 ? f(r[0]) + ' 이하' : (r[0] === Infinity ? f(lo) + ' 초과' : f(lo) + ' 초과 ~ ' + f(r[0]) + ' 이하'));
+      h += '<tr' + (i === hi ? ' class="hi"' : '') + '><td>' + rng + '</td><td class="c">' + r[1] + '%</td><td class="a">' + (r[2] ? f(r[2]) : '-') + '</td><td class="c">' + (Math.round(r[1] * 11) / 10) + '%</td></tr>';
+    });
+    h += '</tbody></table>';
+    if (hi >= 0) {
+      var r = T[hi], tax = P ? val * r[1] / 100 - r[2] : val * r[1] / 100 - r[2];
+      h += '<p class="dpl"><b>입력값 ' + (P ? fm(val) : fe(val)) + '</b> → ' + r[1] + '% 구간 · 산출세액 약 <b>' + (P ? fm(tax) : fe(tax)) + '</b> (과세표준 × 세율 − 누진공제액)</p>';
+    }
+    h += '<p class="dpl"><b>근거</b> ' + (P ? '소득세법 제55조(종합소득세 세율), 지방소득세는 소득세액의 10%(지방세법 제92조)' : '법인세법 제55조, 지방소득세는 법인세액의 10%(지방세법 제103조의19). 2026.1.1 이후 개시 사업연도부터 종전 9·19·21·24%에서 10·20·22·25%로 환원') + '</p>';
+    h += '<p class="dpn">※ 실제 세액은 감면·세액공제·가산세 등에 따라 달라질 수 있습니다. 적용 전 국가법령정보센터(law.go.kr)에서 현행 조문을 확인하세요.</p>';
+    G.pop(h);
   };
   document.addEventListener('click', function (e) {
     var t = e.target.closest && e.target.closest('[data-def]');

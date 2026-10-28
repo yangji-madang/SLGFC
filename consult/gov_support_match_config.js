@@ -376,7 +376,7 @@ window.GOV_MATCH_CONFIG = {
    "export": 50,
    "assets": 40,
    "bizinc": 7000,
-   "mtr": 35,
+   "mtr": 24,
    "emp": 18,
    "prevemp": 15,
    "youth": 6,

@@ -234,3 +234,6 @@ body[data-vt=tb] #paneOv{display:none}
 /* '내 회사 지원금?' 버튼 — 상단 메뉴에서 눈에 띄도록 강조색 */
 #top .lk[href="gov_support_match.html"]{background:#f59e0b;border-color:#fcd34d;color:#1f2937;font-weight:800}
 #top .lk[href="gov_support_match.html"]:hover{background:#fbbf24}
+.defpop .dpt.tx thead th{width:auto;background:#14365d;color:#fff;text-align:center;white-space:normal}
+.defpop .dpt.tx td.c{text-align:center}.defpop .dpt.tx td.a{text-align:right;white-space:nowrap}
+.defpop .dpt.tx tr.hi td{background:#fde68a;font-weight:800}

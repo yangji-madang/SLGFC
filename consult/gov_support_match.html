@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>내 회사에 적합한 지원제도 찾기</title>
-<link rel="stylesheet" href="gov_support.css?v=20261028p">
+<link rel="stylesheet" href="gov_support.css?v=20261028q">
 <style>
 body{display:block;min-height:0}
 main{padding-bottom:70px}
@@ -69,6 +69,9 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 .mtb td.a{text-align:right;white-space:nowrap}
 .mtb td.c{text-align:center}
 .hnt{font-size:11.5px;margin-top:2px;line-height:1.35}
+.calc{flex:1;min-width:0;border:1px solid var(--bd);background:#f1f5f9;border-radius:6px;padding:5px 8px;font-weight:800;color:var(--navy);font-size:13px}
+.tbtn{border:1px solid #f59e0b;background:#fffbeb;color:#92400e;border-radius:6px;padding:3px 7px;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit}
+.tbtn:hover{background:#fde68a}
 .hnt.okk{color:#166534}.hnt.bad{color:#b91c1c;font-weight:700}
 .hnt button{border:1px solid var(--bd);background:#f8fafc;border-radius:12px;padding:0 8px;margin:2px 3px 0 0;font-size:11.5px;cursor:pointer;font-family:inherit}
 .pf.wide{grid-column:span 2}
@@ -190,7 +193,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js?v=20261028p"></script>
+<script src="gov_support_common.js?v=20261028q"></script>
 <script src="gov_support_match_config.js"></script>
 <script src="gov_support_rules.js?v=20261028"></script>
 <script>
@@ -276,8 +279,9 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       {k:'age',l:'업력(창업 후 경과)',t:'n',u:'년',h:'예: 3.5'},{k:'ceoage',l:'대표자 나이',t:'n',u:'세'}]},
     {g:'매출·과세·수출·자산',f:[
       {k:'sales',l:'직전연도 매출액',t:'n',u:'억원',h:'예: 1억400만원 → 1.04'},{k:'taxbase',l:'법인세 과세표준',t:'n',u:'억원'},
+      {k:'ctr',l:'적용 법인세율',t:'c',tx:'c',h:'과세표준을 입력하면 자동 계산'},
       {k:'export',l:'직전연도 수출액',t:'n',u:'만달러'},{k:'assets',l:'자산총액',t:'n',u:'억원'},
-      {k:'bizinc',l:'대표 연소득(사업소득금액·총급여)',t:'n',u:'만원'},{k:'mtr',l:'소득세 한계세율',t:'s'}]},
+      {k:'bizinc',l:'대표 연소득(사업소득금액·총급여)',t:'n',u:'만원'},{k:'mtr',l:'소득세 한계세율',t:'s',tx:'p',h:'연소득을 입력하면 자동 선택(직접 변경 가능)'}]},
     {g:'근로자 수',f:[
       {k:'emp',l:'상시근로자 수',t:'n',u:'명'},{k:'prevemp',l:'전년도 상시근로자 수',t:'n',u:'명'},
       {k:'youth',l:'청년 근로자 수(만 15~34세)',t:'n',u:'명'},{k:'newyouth',l:'올해 청년 신규 채용(정규직)',t:'n',u:'명'},
@@ -304,12 +308,16 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     g.f.forEach(function(f){
       LBL[f.k]=f;
       h+='<div class="pf'+(f.w?' wide':'')+'"><label for="p_'+f.k+'">'+esc(f.l)+'</label><div class="in">';
-      if(f.t==='s'){
+      if(f.t==='c'){
+        h+='<output id="p_'+f.k+'" class="calc">-</output>';
+      }
+      else if(f.t==='s'){
         h+='<select id="p_'+f.k+'" data-k="'+f.k+'">'+SEL[f.k].map(function(o){return '<option value="'+esc(o[0])+'">'+esc(o[1])+'</option>';}).join('')+'</select>';
         if(f.typed) h+='<input type="text" list="dl_'+f.k+'" id="p_'+f.k+'Txt" data-x="'+f.k+'Txt" placeholder="'+esc(f.ph)+'" autocomplete="off" maxlength="40">';
       }
       else{h+='<input type="number" step="any" min="0" inputmode="decimal" id="p_'+f.k+'" data-k="'+f.k+'" placeholder="미입력">'+(f.u?'<span class="u">'+esc(f.u)+'</span>':'');}
-      h+='</div>'+(f.typed?'<div class="hnt" id="n_'+f.k+'"></div>':'')+(f.h?'<div class="h">'+esc(f.h)+'</div>':'')+'</div>';
+      if(f.tx) h+='<button type="button" class="tbtn" data-tax="'+f.tx+'" title="세율표 보기">세율표</button>';
+      h+='</div>'+((f.typed||f.tx)?'<div class="hnt" id="n_'+f.k+'"></div>':'')+(f.h?'<div class="h">'+esc(f.h)+'</div>':'')+'</div>';
     });
     h+='</div></div>';
   });
@@ -339,7 +347,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     document.querySelectorAll('#pf [data-k],#pf [data-x]').forEach(function(el){el.value='';});
     Object.keys(o.v||{}).forEach(function(k){var el=$('p_'+k);if(el)el.value=o.v[k];});
     Object.keys(o.f||{}).forEach(function(k){if(o.f[k])flags[k]=true;});
-    syncChips(); typedSync('region',false); typedSync('ind',false);
+    syncChips(); typedSync('region',false); typedSync('ind',false); taxSync(false);
   }
   function syncChips(){document.querySelectorAll('#fl .chip').forEach(function(b){var on=!!flags[b.dataset.f];b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');});}
 
@@ -554,14 +562,33 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     var P=readP(); evalAll(P); renderView(P); renderMe(P); G.freezeAll();
   }
 
+  /* 소득세·법인세율 연동 */
+  function taxSync(fromInc){
+    var inc=parseFloat($('p_bizinc').value), i=G.mtrOf(inc), sel=$('p_mtr'), n=$('n_mtr');
+    if(i>=0){
+      var r=G.PTAX[i][1];
+      if(fromInc){ sel.value=String(r); }
+      var cur=parseFloat(sel.value);
+      n.className='hnt '+(cur===r?'okk':'bad');
+      n.textContent=(cur===r?'✔ 연소득 '+inc.toLocaleString('ko-KR')+'만원 → ':'연소득 기준 자동값은 ')+r+'% 구간'+(cur===r?'':' (현재 선택: '+(cur?cur+'%':'없음')+')');
+    } else { n.className='hnt'; n.textContent=''; }
+    var tb=parseFloat($('p_taxbase').value), j=G.ctrOf(tb), o=$('p_ctr'), m=$('n_ctr');
+    if(j>=0){
+      var q=G.CTAX[j], tx=tb*q[1]/100-q[2];
+      o.textContent=q[1]+'%'; m.className='hnt okk';
+      m.textContent='✔ 산출세액 약 '+(Math.round(tx*100)/100).toLocaleString('ko-KR')+'억원 (누진공제 '+(q[2]?q[2]+'억원':'없음')+')';
+    } else { o.textContent='-'; m.className='hnt'; m.textContent=''; }
+  }
   /* 이벤트 */
   $('pf').addEventListener('input',function(e){
     var t=e.target;
     if(t.dataset.x){typedSync(t.dataset.x.replace('Txt',''),true);}
+    if(t.id==='p_bizinc'||t.id==='p_taxbase') taxSync(t.id==='p_bizinc');
     save();renderAll();
   });
   $('pf').addEventListener('change',function(e){
     var t=e.target;
+    if(t.id==='p_mtr') taxSync(false);
     if(t.dataset.k&&LBL[t.dataset.k].typed){ // 선택하면 직접입력값은 비우고 선택값을 따름
       var k=t.dataset.k; $('p_'+k+'Txt').value=''; typedSync(k,false);
       var nt=$('n_'+k); if(t.value){nt.className='hnt okk';nt.textContent='✔ '+SEL[k].filter(function(o){return o[0]===t.value;})[0][1];}
@@ -569,6 +596,8 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     save();renderAll();
   });
   $('pf').addEventListener('click',function(e){
+    var tb=e.target.closest('button[data-tax]');
+    if(tb){ G.showTax(tb.dataset.tax, parseFloat($(tb.dataset.tax==='p'?'p_bizinc':'p_taxbase').value)); return; }
     var b=e.target.closest('button[data-fill]'); if(!b) return;
     var box=b.closest('.pf'), tx=box.querySelector('input[type=text]');
     tx.value=b.dataset.fill; typedSync(tx.dataset.x.replace('Txt',''),true); save(); renderAll();
