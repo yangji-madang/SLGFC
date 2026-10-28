@@ -159,7 +159,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
       <label><input type="radio" name="ps" value="view"> 검색 결과만</label>
       <label><input type="radio" name="ps" value="me"> 내 회사 예시만</label>
       <label><input type="radio" name="ps" value="both" checked> 둘 다 (예시는 새 페이지부터)</label>
-      <button type="button" class="btn" id="bPrint">인쇄하기</button>
+      <button type="button" class="btn" id="bPrint">인쇄 화면으로</button>
     </div>
   </div>
 
@@ -581,7 +581,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
   });});
   document.querySelectorAll('input[name=ps]').forEach(function(r){r.addEventListener('change',function(){document.body.dataset.ps=r.value;});});
   $('bPrint').addEventListener('click',function(){
-    var sel=document.querySelector('input[name=ps]:checked').value; document.body.dataset.ps=sel; window.print();
+    var sel=document.querySelector('input[name=ps]:checked').value; save(); location.href='gov_support_match_print.html?ps='+sel;
   });
   window.addEventListener('beforeprint',function(){document.body.dataset.ps=document.querySelector('input[name=ps]:checked').value;});
   $('bReset').addEventListener('click',function(){
