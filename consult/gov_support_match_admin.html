@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>내 회사 찾기 관리</title>
-<link rel="stylesheet" href="gov_support.css">
+<link rel="stylesheet" href="gov_support.css?v=20261028b">
 <style>
 body{display:block;min-height:0}
 main{padding-bottom:70px}
@@ -14,8 +14,6 @@ main{padding-bottom:70px}
 .fld textarea.mono{font-family:Consolas,'Courier New',monospace;font-size:12px;min-height:150px}
 table.at{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px;background:#fff}
 .at th,.at td{border:0;border-right:1px solid #8493a8;border-bottom:1px solid #8493a8;padding:3px 6px;vertical-align:middle}
-.at td:first-child,.at th:first-child{position:sticky;left:0;z-index:1;background:#fff}
-.at thead th:first-child{background:var(--navy);z-index:4}
 .at th{background:var(--navy);color:#fff;text-align:center}
 .at td.c{text-align:center}
 .at tbody tr:nth-child(even) td{background:#f8fafc}
@@ -51,7 +49,7 @@ table.at{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px;b
       <button type="button" class="btn sub" id="bAllShow">전체 표시</button>
       <button type="button" class="btn sub" id="bAllSum">전체 합계 반영</button>
     </div>
-    <div class="tbw"><table class="at"><thead><tr><th style="width:5%">ID</th><th>지원·정책명</th><th style="width:16%">지급 주체</th><th style="width:11%">내 회사 찾기에 표시</th><th style="width:11%">금액 합계에 반영</th></tr></thead><tbody id="tbI"></tbody></table></div>
+    <div class="tbw"><table class="at" data-fz="2"><thead><tr><th style="width:5%">ID</th><th>지원·정책명</th><th style="width:16%">지급 주체</th><th style="width:11%">내 회사 찾기에 표시</th><th style="width:11%">금액 합계에 반영</th></tr></thead><tbody id="tbI"></tbody></table></div>
     <p class="mini">‘표시’를 끄면 판정·인쇄·합계에서 모두 빠집니다. ‘합계에 반영’만 끄면 표에는 나오지만 소계·통합계에서는 제외됩니다.</p>
     <div class="fld" style="margin-top:8px"><label for="cExcl">택일(중복 적용 불가) 제도 묶음 — 한 줄에 한 묶음, ID를 쉼표로 (묶음 안에서 더 큰 세금 절감액 1건만 합계 반영)</label><textarea id="cExcl" style="min-height:52px"></textarea></div>
   </fieldset>
@@ -97,7 +95,7 @@ table.at{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px;b
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js"></script>
+<script src="gov_support_common.js?v=20261028b"></script>
 <script src="gov_support_match_config.js"></script>
 <script>
 (function(){
@@ -204,7 +202,7 @@ table.at{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px;b
     $('bGh').disabled=false;
   });
 
-  fillAll();
+  fillAll(); G.freezeAll();
 })();
 </script>
 </body>

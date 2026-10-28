@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>중소기업·소상공인 정부지원·세제지원 현황</title>
-<link rel="stylesheet" href="gov_support.css">
+<link rel="stylesheet" href="gov_support.css?v=20261028b">
 </head>
 <body data-vt="ov">
 <div id="top">
@@ -39,7 +39,7 @@
   </section>
   <p id="cnt"></p>
   <p class="mhint">← 좌우로 밀면 PC와 같은 전체 표를 볼 수 있습니다. (두 손가락으로 확대·축소도 가능)</p>
-  <div class="tw"><table class="gt"><thead id="th"></thead><tbody id="tb"></tbody></table></div>
+  <div class="tw"><table class="gt" data-fz="2"><thead id="th"></thead><tbody id="tb"></tbody></table></div>
   </div>
   <section class="sec" style="margin-top:10px">
     <p class="note" id="foot"></p>
@@ -50,7 +50,7 @@
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js"></script>
+<script src="gov_support_common.js?v=20261028b"></script>
 <script>
 (function(){
   var G=GS, F=G.F0(), $=function(i){return document.getElementById(i);}, esc=G.esc;
@@ -67,7 +67,7 @@
 
   /* 개요 도식 + 탭 */
   function mxRender(){$('mxl').innerHTML=G.matrixLegend(G.items);$('mxb').innerHTML=G.matrix(G.items,{click:true});}
-  function vtab(t){document.body.dataset.vt=t;Array.prototype.forEach.call(document.querySelectorAll('.vtab'),function(b){b.classList.toggle('on',b.dataset.t===t);});}
+  function vtab(t){document.body.dataset.vt=t;setTimeout(function(){G.freezeAll();},0);Array.prototype.forEach.call(document.querySelectorAll('.vtab'),function(b){b.classList.toggle('on',b.dataset.t===t);});}
   $('vtabs').addEventListener('click',function(e){var b=e.target.closest('.vtab');if(!b)return;vtab(b.dataset.t);window.scrollTo({top:0});});
   function goItem(id){
     var it=G.items.filter(function(i){return i.id===id;})[0]; if(!it) return;
@@ -118,6 +118,7 @@
     var qs=G.toQS(F);
     $('prt').href='gov_support_print.html'+(qs?'?'+qs:'')+(G.preview?(qs?'&':'?')+'preview=1':'');
     ovRender();
+    G.freezeAll();
   }
   G.initFilterUI(F,render);
   mxRender(); render();

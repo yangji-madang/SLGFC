@@ -110,7 +110,6 @@ footer .cp{font-weight:900;font-size:13.5px;color:var(--navy);letter-spacing:.2p
  .fld.w2{grid-column:1/-1}
  .srcrow{grid-template-columns:1fr}
  .gt{font-size:12px}
- .gt td:first-child,.gt th:first-child{width:150px;min-width:150px;max-width:150px}
  .gt .nm{font-size:12.5px}
  footer .cp{font-size:11px;gap:2px 10px;flex-wrap:wrap}
  .mhint{display:block!important}
@@ -176,4 +175,27 @@ body[data-vt=tb] #paneOv{display:none}
   .mx{font-size:8.6px}.mxc{font-size:8px}
   #top,footer{display:none!important}
   main{max-width:none;padding:0}
+}
+
+/* 틀고정 보조 */
+.fzc{background:#fff}
+.gt tr:nth-child(even) td.fzc,.mtb tbody tr:nth-child(even) td.fzc,.at tbody tr:nth-child(even) td.fzc{background:#f4f7fb}
+.fzl{box-shadow:2px 0 0 #8493a8}
+@media (max-width:760px){
+ .gt[data-fz] th,.gt[data-fz] td:nth-child(-n+2) *{white-space:normal}
+ .gt[data-fz]{table-layout:fixed;min-width:0;width:1478px}
+ .gt[data-fz] th:nth-child(1){width:96px}
+ .gt[data-fz] th:nth-child(2){width:132px}
+ .gt[data-fz] th:nth-child(3){width:110px}
+ .gt[data-fz] th:nth-child(4){width:130px}
+ .gt[data-fz] th:nth-child(5){width:300px}
+ .gt[data-fz] th:nth-child(6){width:200px}
+ .gt[data-fz] th:nth-child(7){width:200px}
+ .gt[data-fz] th:nth-child(8){width:160px}
+ .gt[data-fz] th:nth-child(9){width:150px}
+}
+}
+
+@media print{
+  table[data-fz] th,table[data-fz] td{position:static!important;left:auto!important;box-shadow:none!important}
 }

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>내 회사에 적합한 지원제도 찾기</title>
-<link rel="stylesheet" href="gov_support.css">
+<link rel="stylesheet" href="gov_support.css?v=20261028b">
 <style>
 body{display:block;min-height:0}
 main{padding-bottom:70px}
@@ -36,9 +36,6 @@ body[data-tab=me] #secView{display:none}
 table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--ln);border-left:1px solid var(--ln);width:100%;table-layout:fixed;font-size:12.5px;line-height:1.4;min-width:1100px}
 .mtb th,.mtb td{border:0;border-right:1px solid var(--ln);border-bottom:1px solid var(--ln);padding:4px 5px;vertical-align:top;word-break:keep-all;overflow-wrap:anywhere}
 .mtb th{background:var(--navy);color:#fff;text-align:center;vertical-align:middle;position:sticky;top:0;z-index:2}
-.mtb tbody td:first-child:not([colspan]){position:sticky;left:0;z-index:1;background:#fff;box-shadow:1px 0 0 var(--ln)}
-.mtb tbody tr:nth-child(even) td:first-child:not([colspan]){background:#f1f5f9}
-.mtb thead th:first-child{left:0;z-index:4}
 .mtb tbody tr:nth-child(even) td{background:#f8fafc}
 .mtb .nm{font-weight:800;color:var(--navy);font-size:13px}
 .mtb .sm{font-size:11px;color:#475569}
@@ -93,6 +90,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
  .tabs .prp{margin-left:0;width:100%}
  .pf.wide{grid-column:auto}
  .tw2{border:0}
+}
 }
 @media print{
   .tw2{max-height:none!important}
@@ -164,7 +162,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     <h2>1. 내 회사 지원금액 예시 <span class="hint">입력하신 회사 정보로 계산한 추정 예시입니다(실제 지원액은 공고·심사·신고 결과에 따라 달라집니다).</span></h2>
     <table class="cmp" id="cmpM"></table>
     <div class="h3t">1-1. 예시 결과</div>
-    <div class="tw2"><table class="mtb"><colgroup><col style="width:4%"><col style="width:6%"><col style="width:8%"><col style="width:16%"><col style="width:17%"><col style="width:24%"><col style="width:12%"><col style="width:13%"></colgroup>
+    <div class="tw2"><table class="mtb" data-fz="4" data-fzw="34,50,62,112"><colgroup><col style="width:4%"><col style="width:6%"><col style="width:8%"><col style="width:16%"><col style="width:17%"><col style="width:24%"><col style="width:12%"><col style="width:13%"></colgroup>
       <thead><tr><th>No</th><th>판정</th><th>구분</th><th>지원·정책명</th><th>산출항목</th><th>산출근거</th><th>예상금액</th><th>비고</th></tr></thead>
       <tbody id="tbM"></tbody></table></div>
     <ul class="warn" id="warn"></ul>
@@ -176,11 +174,11 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     <div class="ovrow noprint" id="vflt" style="margin:0 0 8px"></div>
     <table class="cmp" id="cmpV"></table>
     <div class="h3t">2-1. 지원제도 요약표 (판정 · 지원금액 · 판정항목) 및 총액</div>
-    <div class="tw2"><table class="mtb"><colgroup><col style="width:4%"><col style="width:7%"><col style="width:22%"><col style="width:35%"><col style="width:32%"></colgroup>
+    <div class="tw2"><table class="mtb" data-fz="3" data-fzw="34,50,118"><colgroup><col style="width:4%"><col style="width:7%"><col style="width:22%"><col style="width:35%"><col style="width:32%"></colgroup>
       <thead><tr><th>No</th><th>판정</th><th>지원 정책명</th><th>지원금액 (내 회사 기준 예시)</th><th>비고 (판정 항목)</th></tr></thead>
       <tbody id="tbS"></tbody></table></div>
     <div class="h3t">2-2. 상세 — 어떤 이유로 지원되는지</div>
-    <div class="tw2"><table class="mtb"><colgroup><col style="width:3.5%"><col style="width:6%"><col style="width:11%"><col style="width:20%"><col style="width:18%"><col style="width:18%"><col style="width:14%"><col style="width:9.5%"></colgroup>
+    <div class="tw2"><table class="mtb" data-fz="3" data-fzw="34,50,118"><colgroup><col style="width:3.5%"><col style="width:6%"><col style="width:11%"><col style="width:20%"><col style="width:18%"><col style="width:18%"><col style="width:14%"><col style="width:9.5%"></colgroup>
       <thead><tr><th>No</th><th>판정</th><th>지원·정책명</th><th>지원 내용</th><th>지원 사유 (조건별 판정)</th><th>지원금액 산출</th><th>신청·문의·시기</th><th>출처</th></tr></thead>
       <tbody id="tbV"></tbody></table></div>
     <p class="note" id="foot" style="margin-top:6px"></p>
@@ -192,7 +190,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js"></script>
+<script src="gov_support_common.js?v=20261028b"></script>
 <script src="gov_support_match_config.js"></script>
 <script src="gov_support_rules.js?v=20261028"></script>
 <script>
@@ -553,7 +551,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
   }
 
   function renderAll(){
-    var P=readP(); evalAll(P); renderView(P); renderMe(P);
+    var P=readP(); evalAll(P); renderView(P); renderMe(P); G.freezeAll();
   }
 
   /* 이벤트 */
@@ -585,7 +583,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     VF[b.dataset.s]=!VF[b.dataset.s]; renderAll();
   });
   document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){
-    document.body.dataset.tab=b.dataset.t;
+    document.body.dataset.tab=b.dataset.t; setTimeout(function(){G.freezeAll();},0);
     document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===b);});
     window.scrollTo({top:$('tabsbar').offsetTop-10});
   });});

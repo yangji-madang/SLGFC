@@ -264,6 +264,51 @@
     }).join('') + '<span class="mxs">같은 제도가 여러 대상 기업에 해당하면 각 열에 함께 표시</span><span class="mxs"><b>총 ' + list.length + '건</b></span></div>';
   };
 
+
+  /* 표 틀고정: 머리글 행 + 왼쪽 n개 열(예: ‘지원·정책명’까지)을 고정 — rowspan·colspan 반영 */
+  G.freeze = function (table, n) {
+    var hr = table && table.tHead && table.tHead.rows[0];
+    if (!hr || !table.offsetWidth) return;
+    var acc = [0], i;
+    for (i = 0; i < n && i < hr.cells.length; i++) acc[i + 1] = acc[i] + hr.cells[i].getBoundingClientRect().width;
+    for (i = 0; i < n && i < hr.cells.length; i++) {
+      var h = hr.cells[i]; h.style.position = 'sticky'; h.style.left = acc[i] + 'px'; h.style.zIndex = 4;
+      h.classList.toggle('fzl', i === n - 1);
+    }
+    Array.prototype.forEach.call(table.tBodies, function (tb) {
+      var occ = [];
+      Array.prototype.forEach.call(tb.rows, function (r) {
+        var col = 0, k;
+        Array.prototype.forEach.call(r.cells, function (cell) {
+          while (occ[col] > 0) col++;
+          var cs = cell.colSpan, rs = cell.rowSpan;
+          if (col < n && col + cs <= n) {
+            cell.style.position = 'sticky'; cell.style.left = acc[col] + 'px'; cell.style.zIndex = 1;
+            cell.classList.add('fzc'); cell.classList.toggle('fzl', col + cs === n);
+          }
+          for (k = 0; k < cs; k++) occ[col + k] = rs;
+          col += cs;
+        });
+        for (k = 0; k < occ.length; k++) if (occ[k] > 0) occ[k]--;
+      });
+    });
+  };
+  /* 모바일: 고정 열은 좁게(px), 나머지 열은 PC 폭(1100px 기준) 그대로 — 표 모양은 PC와 동일하게 유지 */
+  G.fitMobile = function (t) {
+    var cg = t.querySelector('colgroup'); if (!cg) return;
+    var mob = window.innerWidth <= 760, fw = (t.dataset.fzw || '').split(',').map(Number), tot = 0;
+    Array.prototype.forEach.call(cg.children, function (c, i) {
+      if (!c.dataset.p) c.dataset.p = parseFloat(c.style.width) || 0;
+      if (mob) { var px = (fw[i] > 0) ? fw[i] : c.dataset.p * 11; c.style.setProperty('width', px + 'px', 'important'); tot += px; }
+      else c.style.width = c.dataset.p + '%';
+    });
+    t.style.width = mob ? tot + 'px' : ''; t.style.minWidth = mob ? '0' : '';
+  };
+  G.freezeAll = function (root) {
+    Array.prototype.forEach.call((root || document).querySelectorAll('table[data-fz]'), function (t) { G.fitMobile(t); G.freeze(t, parseInt(t.dataset.fz, 10) || 1); });
+  };
+  window.addEventListener('resize', function () { G.freezeAll(); });
+
   G.setTop = function () {
     var c = G.cfg || {};
     var h = document.getElementById('ttl');
