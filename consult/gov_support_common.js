@@ -375,6 +375,7 @@
   G.ctrOf = function (eok) { return (typeof eok === 'number' && eok > 0 && isFinite(eok)) ? pick(G.CTAX, eok) : -1; };
   function fm(v) { /* 만원 → 억·만 표기 */ var e = Math.floor(v / 10000), m = Math.round(v - e * 10000); return (e ? e + '억' : '') + (m ? (e ? ' ' : '') + m.toLocaleString('ko-KR') + '만' : (e ? '' : '0')) + '원'; }
   function fe(v) { /* 억원 → 조·억·만 표기 */ var j = Math.floor(v / 10000), e = v - j * 10000, ee = Math.floor(e + 1e-9), mm = Math.round((e - ee) * 10000); return (j ? j + '조 ' : '') + (ee ? ee.toLocaleString('ko-KR') + '억' : '') + (mm ? (ee ? ' ' : '') + mm.toLocaleString('ko-KR') + '만' : '') + '원'; }
+  G.fmMan = fm; G.fmEok = fe;
   G.showTax = function (kind, val) {
     var P = kind === 'p', T = P ? G.PTAX : G.CTAX, hi = P ? G.mtrOf(val) : G.ctrOf(val), h;
     h = '<h3>' + (P ? '개인 종합소득세율표 (과세표준 기준)' : '법인세율표 (2026.1.1 이후 개시 사업연도)') + '</h3>';

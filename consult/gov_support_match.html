@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>내 회사에 적합한 지원제도 찾기</title>
-<link rel="stylesheet" href="gov_support.css?v=20261028r">
+<link rel="stylesheet" href="gov_support.css?v=20261028s">
 <style>
 body{display:block;min-height:0}
 main{padding-bottom:70px}
@@ -73,8 +73,8 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 .gnote{font-size:11.5px;font-weight:700;color:#b45309;margin-left:8px}
 .pf.lnk select,.pf.lnk .calc{background:#fef3c7!important;border:1px solid #f59e0b!important;font-weight:800;color:#78350f}
 .calc{flex:1;min-width:0;border:1px solid var(--bd);background:#f1f5f9;border-radius:6px;padding:5px 8px;font-weight:800;color:var(--navy);font-size:13px}
-.tbtn{border:1px solid #f59e0b;background:#fffbeb;color:#92400e;border-radius:6px;padding:3px 7px;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit}
-.tbtn:hover{background:#fde68a}
+.tbtn{border:0;background:none;color:#1d4ed8;text-decoration:underline;padding:0;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
+.tbtn:hover{color:#1e3a8a}
 .hnt.okk{color:#166534}.hnt.bad{color:#b91c1c;font-weight:700}
 .hnt button{border:1px solid var(--bd);background:#f8fafc;border-radius:12px;padding:0 8px;margin:2px 3px 0 0;font-size:11.5px;cursor:pointer;font-family:inherit}
 .pf.wide{grid-column:span 2}
@@ -196,7 +196,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js?v=20261028r"></script>
+<script src="gov_support_common.js?v=20261028s"></script>
 <script src="gov_support_match_config.js"></script>
 <script src="gov_support_rules.js?v=20261028"></script>
 <script>
@@ -282,9 +282,9 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       {k:'age',l:'업력(창업 후 경과)',t:'n',u:'년',h:'예: 3.5'},{k:'ceoage',l:'대표자 나이',t:'n',u:'세'}]},
     {g:'매출·과세·수출·자산',note:'※ 소득세 한계세율은 공제 전 ‘대표연소득’기준이므로 공제적용시 세율이 낮아질 수 있습니다.',f:[
       {k:'sales',l:'직전연도 매출액',t:'n',u:'억원',h:'예: 1억400만원 → 1.04'},{k:'taxbase',l:'법인세 과세표준',t:'n',u:'억원'},
-      {k:'ctr',l:'적용 법인세율',t:'c',tx:'c',h:'과세표준을 입력하면 자동 계산'},
+      {k:'ctr',l:'적용 법인세율',t:'c',tx:'c',h:'과세표준을 입력하면 자동 계산'},{k:'ctx',l:'예상 법인세',t:'c',h:'자동 계산(산출세액)'},
       {k:'export',l:'직전연도 수출액',t:'n',u:'만달러'},{k:'assets',l:'자산총액',t:'n',u:'억원'},
-      {k:'bizinc',l:'대표 연소득(사업소득금액·총급여)',t:'n',u:'만원'},{k:'mtr',l:'소득세 한계세율',t:'s',tx:'p',h:'연소득을 입력하면 자동 선택(직접 변경 가능)'}]},
+      {k:'bizinc',l:'대표 연소득(사업소득금액·총급여)',t:'n',u:'만원'},{k:'mtr',l:'소득세 한계세율',t:'s',tx:'p',h:'연소득을 입력하면 자동 선택(직접 변경 가능)'},{k:'itx',l:'예상 소득세',t:'c',h:'자동 계산(산출세액)'}]},
     {g:'근로자 수',f:[
       {k:'emp',l:'상시근로자 수',t:'n',u:'명'},{k:'prevemp',l:'전년도 상시근로자 수',t:'n',u:'명'},
       {k:'youth',l:'청년 근로자 수(만 15~34세)',t:'n',u:'명'},{k:'newyouth',l:'올해 청년 신규 채용(정규직)',t:'n',u:'명'},
@@ -310,7 +310,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     h+='<div class="pgrp"><h3>'+esc(g.g)+(g.note?' <span class="gnote">'+esc(g.note)+'</span>':'')+'</h3><div class="pg">';
     g.f.forEach(function(f){
       LBL[f.k]=f;
-      h+='<div class="pf'+(f.w?' wide':'')+(f.tx?' lnk':'')+'"><div class="lbr"><label for="p_'+f.k+'">'+esc(f.l)+'</label>'+(f.tx?'<button type="button" class="tbtn" data-tax="'+f.tx+'" title="세율표 보기">세율표</button>':'')+'</div><div class="in">';
+      h+='<div class="pf'+(f.w?' wide':'')+((f.tx||f.t==='c')?' lnk':'')+'"><div class="lbr"><label for="p_'+f.k+'">'+esc(f.l)+'</label>'+(f.tx?'<button type="button" class="tbtn" data-tax="'+f.tx+'" title="세율표 보기">세율표</button>':'')+'</div><div class="in">';
       if(f.t==='c'){
         h+='<output id="p_'+f.k+'" class="calc">-</output>';
       }
@@ -319,7 +319,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
         if(f.typed) h+='<input type="text" list="dl_'+f.k+'" id="p_'+f.k+'Txt" data-x="'+f.k+'Txt" placeholder="'+esc(f.ph)+'" autocomplete="off" maxlength="40">';
       }
       else{h+='<input type="number" step="any" min="0" inputmode="decimal" id="p_'+f.k+'" data-k="'+f.k+'" placeholder="미입력">'+(f.u?'<span class="u">'+esc(f.u)+'</span>':'');}
-      h+='</div>'+((f.typed||f.tx)?'<div class="hnt" id="n_'+f.k+'"></div>':'')+(f.h?'<div class="h">'+esc(f.h)+'</div>':'')+'</div>';
+      h+='</div>'+((f.typed||f.tx||f.t==='c')?'<div class="hnt" id="n_'+f.k+'"></div>':'')+(f.h?'<div class="h">'+esc(f.h)+'</div>':'')+'</div>';
     });
     h+='</div></div>';
   });
@@ -574,12 +574,20 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       n.className='hnt '+(cur===r?'okk':'bad');
       n.textContent=(cur===r?'✔ 연소득 '+inc.toLocaleString('ko-KR')+'만원 → ':'연소득 기준 자동값은 ')+r+'% 구간'+(cur===r?'':' (현재 선택: '+(cur?cur+'%':'없음')+')');
     } else { n.className='hnt'; n.textContent=''; }
+    var oi=$('p_itx'), ni=$('n_itx'), cr=parseFloat(sel.value), ri=-1;
+    G.PTAX.forEach(function(r,k){ if(r[1]===cr) ri=k; });
+    if(inc>0 && ri>=0){
+      var it=Math.max(0,inc*cr/100-G.PTAX[ri][2]);
+      oi.textContent=G.fmMan(it); ni.className='hnt okk'; ni.textContent='✔ 연소득×'+cr+'%−누진공제 '+G.fmMan(G.PTAX[ri][2])+' · 지방소득세(10%) 포함 약 '+G.fmMan(it*1.1);
+    } else { oi.textContent='-'; ni.className='hnt'; ni.textContent=''; }
     var tb=parseFloat($('p_taxbase').value), j=G.ctrOf(tb), o=$('p_ctr'), m=$('n_ctr');
     if(j>=0){
       var q=G.CTAX[j], tx=tb*q[1]/100-q[2];
       o.textContent=q[1]+'%'; m.className='hnt okk';
-      m.textContent='✔ 산출세액 약 '+(Math.round(tx*100)/100).toLocaleString('ko-KR')+'억원 (누진공제 '+(q[2]?q[2]+'억원':'없음')+')';
-    } else { o.textContent='-'; m.className='hnt'; m.textContent=''; }
+      m.textContent='✔ 과세표준 '+G.fmEok(tb)+' 구간';
+      $('p_ctx').textContent=G.fmEok(tx); $('n_ctx').className='hnt okk';
+      $('n_ctx').textContent='✔ 과세표준×'+q[1]+'%−누진공제 '+(q[2]?G.fmEok(q[2]):'없음')+' · 지방소득세(10%) 포함 약 '+G.fmEok(tx*1.1);
+    } else { o.textContent='-'; m.className='hnt'; m.textContent=''; $('p_ctx').textContent='-'; $('n_ctx').className='hnt'; $('n_ctx').textContent=''; }
   }
   /* 이벤트 */
   $('pf').addEventListener('input',function(e){
