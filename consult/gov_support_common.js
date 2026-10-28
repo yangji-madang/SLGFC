@@ -113,18 +113,16 @@
     if (F.lvs && F.lvs.length && F.lvs.indexOf(it.lv) < 0) return false;
     if (F.tgs && F.tgs.length && !F.tgs.some(function (x) { return (it.tg || []).indexOf(x) >= 0 || (it.ind || []).indexOf(x) >= 0; })) return false;
     if (F.lts && F.lts.length && !F.lts.some(function (x) { return (it.lt || []).indexOf(x) >= 0; })) return false;
-    if (F.lv) {
-      s = F.lv.trim().toLowerCase();
-      if (s && (it.lv + ' ' + it.ag + ' ' + it.r + ' ' + (it.q || '')).toLowerCase().indexOf(s) < 0) return false;
+    function terms(v) { return String(v || '').split(/[,，、]/).map(function (x) { return x.trim().toLowerCase(); }).filter(Boolean); }
+    var tl = terms(F.lv);
+    if (tl.length) {
+      var h1 = (it.lv + ' ' + it.ag + ' ' + it.r + ' ' + (it.q || '')).toLowerCase();
+      if (!tl.some(function (t) { return h1.indexOf(t) >= 0; })) return false;
     }
-    if (F.tg) {
-      s = F.tg.trim().toLowerCase();
-      if (s && (has(it.tg, s) ? 0 : (has(it.ind, s) ? 0 : 1))) return false;
-    }
-    if (F.lt) {
-      s = F.lt.trim().toLowerCase();
-      if (s && (has(it.lt, s) ? 0 : ((it.lim || '').toLowerCase().indexOf(s) >= 0 ? 0 : 1))) return false;
-    }
+    tl = terms(F.tg);
+    if (tl.length && !tl.some(function (t) { return has(it.tg, t) || has(it.ind, t); })) return false;
+    tl = terms(F.lt);
+    if (tl.length && !tl.some(function (t) { return has(it.lt, t) || (it.lim || '').toLowerCase().indexOf(t) >= 0; })) return false;
     if (F.q) {
       var ws = F.q.trim().toLowerCase().split(/\s+/);
       var hay = [it.n, it.sn, it.ag, it.lv, it.r, it.q, it.cat, (it.tg || []).join(' '), (it.ind || []).join(' '), (it.pf || []).join(' '),
@@ -216,9 +214,9 @@
     '<div class="cg"><label>분류 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="ccat"></div></div>' +
     '<div class="cg"><label>지원 형태 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="cpf"></div></div>' +
     '<div class="cg"><label>출처 등급 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="crel"></div></div>' +
-    '<div><label for="flv">지급 주체 직접 입력</label><input type="text" id="flv" list="dlv" placeholder="중앙정부·지자체·기관명" autocomplete="off"><datalist id="dlv"></datalist></div>' +
-    '<div><label for="ftg">대상 기업 직접 입력</label><input type="text" id="ftg" list="dtg" placeholder="소상공인·제조업 등" autocomplete="off"><datalist id="dtg"></datalist></div>' +
-    '<div><label for="flt2">제한조건 직접 입력</label><input type="text" id="flt2" list="dlt" placeholder="매출·업력·지역 등" autocomplete="off"><datalist id="dlt"></datalist></div>' +
+    '<div><label for="flv">지급 주체 직접 입력 (쉼표로 여러 개)</label><input type="text" id="flv" list="dlv" placeholder="예: 서울, 화성시, 경기" autocomplete="off"><datalist id="dlv"></datalist></div>' +
+    '<div><label for="ftg">대상 기업 직접 입력 (쉼표로 여러 개)</label><input type="text" id="ftg" list="dtg" placeholder="소상공인·제조업 등" autocomplete="off"><datalist id="dtg"></datalist></div>' +
+    '<div><label for="flt2">제한조건 직접 입력 (쉼표로 여러 개)</label><input type="text" id="flt2" list="dlt" placeholder="매출·업력·지역 등" autocomplete="off"><datalist id="dlt"></datalist></div>' +
     '<div class="ck"><input type="checkbox" id="fchk"><label for="fchk" style="margin:0">확인필요 항목만</label></div>' +
     '<div class="ck"><input type="checkbox" id="fend"><label for="fend" style="margin:0">마감·종료 가능 제외</label></div>' +
     '<div><button type="button" class="btn sub" id="freset">필터 초기화</button></div>';
