@@ -63,8 +63,9 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 /* 내 회사 예시 */
 .cmp{width:100%;border-collapse:collapse;table-layout:fixed;margin:0 0 8px;font-size:12.5px}
 .cmp th,.cmp td{border:1px solid var(--ln);padding:3px 6px}
-.cmp th{background:#eef3f9;color:var(--navy);width:10.5%;text-align:left;white-space:normal;word-break:keep-all}
-.cmp td{width:14.5%;word-break:keep-all;overflow-wrap:anywhere}
+.cmp th{background:#eef3f9;color:var(--navy);width:11%;text-align:left;white-space:normal;word-break:keep-all}
+.cmp th.e,.cmp td.e{background:#fff;border-color:transparent}
+.cmp td{width:9%;word-break:keep-all;overflow-wrap:anywhere}
 .h3t{margin:10px 0 4px;font-size:14px;color:var(--navy);font-weight:800}
 .mtb .tot td{background:#fffbeb!important;font-weight:700;border-top:2px solid var(--navy)}
 .mtb .tot2 td,.mtb .tot2 td .sm,.mtb .tot2 td.sm{background:#f1f5f9!important;font-weight:800}
@@ -106,6 +107,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
  .cmp,.cmp tbody{display:block}
  .cmp tr{display:grid;grid-template-columns:auto 1fr}
  .cmp th{white-space:normal;width:auto}
+ .cmp .e{display:none}
  .cmp caption{display:block}
  .tabs .prp{margin-left:0;width:100%}
  .pf.wide{grid-column:auto}
@@ -427,26 +429,29 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
   var ORD={ok:0,maybe:1,no:2};
   function badge(st){return st==='ok'?'<span class="bd b-ok">적합</span>':(st==='maybe'?'<span class="bd b-mb">확인필요</span>':'<span class="bd b-no">비해당</span>');}
 
+  var CLAY=[['form','scale','ind','region','age'],['assets','sales','export','taxbase'],['emp','prevemp','youth','newyouth','senior'],['retur','pay'],['ceoage','bizyears','stake','stakeyrs','ceoyrs'],['succage','succyrs','succstake','bizval','giftval']];
   function cmpHTML(P){
     function selLbl(k,v){var o=SEL[k].filter(function(x){return x[0]===String(v);})[0];return o?o[1]:'';}
-    var rows=[];
+    var map={};
     GROUPS.forEach(function(g){g.f.forEach(function(f){
-      var v=P[f.k]; if(v===null||v===''||v===undefined) return;
-      var lab=f.l.replace(/ \(선택 또는 직접입력\)/,'');
+      if(!f.k||f.t==='res') return;
+      var v=P[f.k]; var lab=f.l.replace(/ \(선택 또는 직접입력\)/,'');
+      if(v===null||v===''||v===undefined){map[f.k]=[lab,''];return;}
       var val=(f.t==='s'?selLbl(f.k,v):(Number(v).toLocaleString('ko-KR')+' '+(f.u||'')));
       if(f.typed&&P[f.k+'Txt']) val=P[f.k+'Txt'];
-      rows.push([lab,val]);
+      map[f.k]=[lab,val];
     });});
     var fl=FLAGS.filter(function(x){return flags[x[0]];}).map(function(x){return x[1];});
-    if(!rows.length&&!fl.length) return '<tr><td style="padding:6px;color:#475569">회사 정보를 입력하면 이곳에 요약됩니다.</td></tr>';
-    var out='<caption style="text-align:left;font-weight:800;color:#14365d;padding:0 0 3px">내 회사 정보 (입력값)</caption>',i;
-    for(i=0;i<rows.length;i+=4){
+    var any=fl.length>0; Object.keys(map).forEach(function(k){if(map[k][1]) any=true;});
+    if(!any) return '<tr><td style="padding:6px;color:#475569">회사 정보를 입력하면 이곳에 요약됩니다.</td></tr>';
+    var out='<caption style="text-align:left;font-weight:800;color:#14365d;padding:0 0 3px">내 회사 정보 (입력값)</caption>';
+    CLAY.forEach(function(row){
       out+='<tr>';
-      var left=Math.min(4,rows.length-i);
-      for(var j=0;j<left;j++){var r=rows[i+j];out+='<th>'+esc(r[0])+'</th><td'+((j===left-1&&left<4)?' colspan="'+(1+2*(4-left))+'"':'')+'>'+esc(r[1])+'</td>';}
+      for(var j=0;j<5;j++){var m=row[j]&&map[row[j]];
+        out+=m?'<th>'+esc(m[0])+'</th><td>'+esc(m[1])+'</td>':'<th class="e"></th><td class="e"></td>';}
       out+='</tr>';
-    }
-    if(fl.length) out+='<tr><th>선택한 상태·제한</th><td colspan="7">'+esc(fl.join(', '))+'</td></tr>';
+    });
+    out+='<tr><th>상태·제한</th><td colspan="9">'+esc(fl.join(', '))+'</td></tr>';
     return out;
   }
 

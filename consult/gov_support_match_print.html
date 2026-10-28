@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>내 회사에 적합한 지원제도 찾기 (인쇄용)</title>
-<link rel="stylesheet" href="gov_support.css?v=20261028za">
+<link rel="stylesheet" href="gov_support.css?v=20261028zb">
 <style>
 body{display:block;min-height:0;background:#e5e7eb}
 .noprint{max-width:1500px;margin:0 auto;padding:10px 16px 0}
@@ -115,8 +115,9 @@ s.oldv{color:#b91c1c}
 .cmpt{border-collapse:collapse;width:100%;font-size:11px;table-layout:fixed}
 .cmpt th,.cmpt td{border:1px solid var(--ln);padding:2px 5px}
 .cmpt{table-layout:fixed}
-.cmpt th{background:#eef3f9;color:var(--navy);text-align:left;width:10.5%;word-break:keep-all}
-.cmpt td{width:14.5%;word-break:keep-all;overflow-wrap:anywhere}
+.cmpt th{background:#eef3f9;color:var(--navy);text-align:left;width:11%;word-break:keep-all}
+.cmpt th.e,.cmpt td.e{background:#fff;border-color:transparent}
+.cmpt td{width:9%;word-break:keep-all;overflow-wrap:anywhere}
 .warn{margin:5px 0 0;padding-left:15px;font-size:10px;color:#334155}
 body[data-ps=view] #blkB{display:none}
 body[data-ps=me] #blkA{display:none}
@@ -163,7 +164,7 @@ body[data-ps=both] #blkA .cmpt{display:none}
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js?v=20261028za"></script>
+<script src="gov_support_common.js?v=20261028zb"></script>
 <script src="gov_support_match_config.js"></script>
 <script src="gov_support_rules.js?v=20261028"></script>
 <script>
@@ -193,7 +194,7 @@ body[data-ps=both] #blkA .cmpt{display:none}
 
   var S=null; try{S=JSON.parse(localStorage.getItem('govMatchProfile')||'null');}catch(e){}
   var V=(S&&S.v)||{}, FL=(S&&S.f)||{};
-  var P={f:FL,regionTxt:V.regionTxt||'',indTxt:V.indTxt||''}, rows=[];
+  var P={f:FL,regionTxt:V.regionTxt||'',indTxt:V.indTxt||''}, rows=[], RM={};
   FIELDS.forEach(function(f){
     var v=V[f[0]];
     if(f[2]==='n'){P[f[0]]=(v===undefined||v===''||isNaN(parseFloat(v)))?null:parseFloat(v);}
@@ -201,7 +202,7 @@ body[data-ps=both] #blkA .cmpt{display:none}
     else P[f[0]]=v||'';
     var val=P[f[0]]; if(val===null||val==='') return;
     var shown=(f[2]==='s')?(P[f[0]+'Txt']||SEL[f[0]][val]||val):(Number(val).toLocaleString('ko-KR')+' '+(f[3]||''));
-    rows.push([f[1],shown]);
+    rows.push([f[1],shown]); RM[f[0]]=[f[1],shown];
   });
   var fl=Object.keys(FLAGS).filter(function(k){return FL[k];}).map(function(k){return FLAGS[k];});
   var flTxt=fl.join(', ');
@@ -243,16 +244,17 @@ body[data-ps=both] #blkA .cmpt{display:none}
   var a=sum(res.filter(function(r){return r.st==='ok';})), b=sum(res.filter(function(r){return r.st!=='no';}));
   var ta=[a.tax[0]+a.cash[0],a.tax[1]+a.cash[1]], tb=[b.tax[0]+b.cash[0],b.tax[1]+b.cash[1]];
 
+  var CLAY=[['form','scale','ind','region','age'],['assets','sales','export','taxbase'],['emp','prevemp','youth','newyouth','senior'],['retur','pay'],['ceoage','bizyears','stake','stakeyrs','ceoyrs'],['succage','succyrs','succstake','bizval','giftval']];
   function cmpT(){
     if(!rows.length&&!flTxt) return '';
-    var h='<table class="cmpt"><caption style="text-align:left;font-weight:800;color:#14365d;font-size:11px;padding:0 0 2px">내 회사 정보</caption>',i;
-    for(i=0;i<rows.length;i+=4){
-      var left=Math.min(4,rows.length-i); h+='<tr>';
-      for(var j=0;j<left;j++){var r=rows[i+j];h+='<th>'+esc(r[0])+'</th><td'+((j===left-1&&left<4)?' colspan="'+(1+2*(4-left))+'"':'')+'>'+esc(r[1])+'</td>';}
+    var h='<table class="cmpt"><caption style="text-align:left;font-weight:800;color:#14365d;font-size:11px;padding:0 0 2px">내 회사 정보</caption>';
+    CLAY.forEach(function(row){
+      h+='<tr>';
+      for(var j=0;j<5;j++){var m=row[j]&&RM[row[j]]; if(row[j]&&!m){var fd=FIELDS.filter(function(x){return x[0]===row[j];})[0]; m=[fd?fd[1]:'','']; }
+        h+=m?'<th>'+esc(m[0])+'</th><td>'+esc(m[1])+'</td>':'<th class="e"></th><td class="e"></td>';}
       h+='</tr>';
-    }
-    if(flTxt) h+='<tr><th>상태·제한</th><td colspan="7">'+esc(flTxt)+'</td></tr>';
-    return h+'</table>';
+    });
+    return h+'<tr><th>상태·제한</th><td colspan="9">'+esc(flTxt)+'</td></tr></table>';
   }
   function tbl(cols,widths,body,foot){
     return '<table class="ptb"><colgroup>'+widths.map(function(w){return '<col style="width:'+w+'%">';}).join('')+'</colgroup><thead><tr class="spc"><th colspan="'+cols.length+'"></th></tr><tr>'+cols.map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+'</tr></thead><tbody>'+body+'</tbody>'+(foot?'<tfoot><tr><td colspan="'+cols.length+'"></td></tr></tfoot>':'')+'</table>';
