@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>중소기업·소상공인 정부지원·세제지원 현황</title>
-<link rel="stylesheet" href="gov_support.css?v=20261028i">
+<link rel="stylesheet" href="gov_support.css?v=20261028j">
 </head>
 <body data-vt="ov">
 <div id="top">
@@ -50,7 +50,7 @@
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js?v=20261028i"></script>
+<script src="gov_support_common.js?v=20261028j"></script>
 <script>
 (function(){
   var G=GS, F=G.F0(), $=function(i){return document.getElementById(i);}, esc=G.esc;
@@ -96,7 +96,7 @@
       return '<button type="button" class="chip'+(F.lvs.indexOf(l)>=0?' on':'')+'" data-g="lvs" data-v="'+esc(l)+'">'+esc(l)+' '+n+'</button>';
     }).join('');
     $('ovtg').innerHTML='<span class="lb">대상 기업</span><button type="button" class="chip all'+(F.tgs.length?'':' on')+'" data-g="tgs" data-v="">전체 '+G.items.length+'</button>'+G.TG.map(function(t){
-      var n=G.items.filter(function(i){return (i.tg||[]).indexOf(t)>=0;}).length;
+      var n=G.items.filter(function(i){return G.tgx(i).indexOf(t)>=0;}).length;
       return '<button type="button" class="chip'+(F.tgs.indexOf(t)>=0?' on':'')+'" data-g="tgs" data-v="'+esc(t)+'">'+esc(t)+' '+n+'</button>';
     }).join('');
   }

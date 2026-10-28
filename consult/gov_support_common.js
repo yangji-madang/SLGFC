@@ -5,6 +5,14 @@
   G.LV = ['중앙정부', '지자체', '공공·금융기관'];
   G.CAT = ['자금·보증', '보조금·바우처', '고용·사회보험', '세제지원', '창업·R&D·수출', '재기·채무조정', '승계·상속'];
   G.TG = ['소상공인', '소기업', '중소기업', '중견기업', '창업기업', '법인대표(개인)'];
+  /* 포함 관계: 소상공인 ⊂ 소기업 ⊂ 중소기업, 창업기업 ⊂ 중소기업 → 상위 규모 대상 제도는 하위 규모 기업에도 적용되는 것으로 본다
+     (근거: 소상공인기본법 제2조, 중소기업기본법 제2조, 중소기업창업 지원법 제2조). 표시용 대상 목록(it.tg)은 원문 그대로 둔다. */
+  G.TGDOWN = { '중소기업': ['소기업', '소상공인', '창업기업'], '소기업': ['소상공인'] };
+  G.tgx = function (it) {
+    var t = (it.tg || []).slice();
+    (it.tg || []).forEach(function (x) { (G.TGDOWN[x] || []).forEach(function (y) { if (t.indexOf(y) < 0) t.push(y); }); });
+    return t;
+  };
   G.IND = ['전업종', '제조업', '도소매업', '의료업', '서비스업', '업종 한정(공고·법령 확인)'];
   G.PF = ['융자', '보증', '이차보전', '보조금·바우처', '장려금', '보험료지원', '컨설팅·교육', '채무조정', '세액공제', '세액감면', '소득공제', '세율·과세특례', '상속·증여세 특례'];
   G.LT = ['매출·소득기준', '상시근로자·고용기준', '업력·창업기한', '업종 제한', '지역 제한', '신청기한·선착순', '체납·신용 제한', '사후관리·추징', '교육·인증 요건'];
@@ -112,7 +120,7 @@
     if (F.chk && !it.chk) return false;
     if (F.hideEnd && it.end) return false;
     if (F.lvs && F.lvs.length && F.lvs.indexOf(it.lv) < 0) return false;
-    if (F.tgs && F.tgs.length && !F.tgs.some(function (x) { return (it.tg || []).indexOf(x) >= 0 || (it.ind || []).indexOf(x) >= 0; })) return false;
+    if (F.tgs && F.tgs.length && !F.tgs.some(function (x) { return G.tgx(it).indexOf(x) >= 0 || (it.ind || []).indexOf(x) >= 0; })) return false;
     if (F.lts && F.lts.length && !F.lts.some(function (x) { return (it.lt || []).indexOf(x) >= 0; })) return false;
     function terms(v) { return String(v || '').split(/[,，、]/).map(function (x) { return x.trim().toLowerCase(); }).filter(Boolean); }
     var tl = terms(F.lv);
@@ -121,7 +129,7 @@
       if (!(F.lvm === 'and' ? tl.every : tl.some).call(tl, function (t) { return h1.indexOf(t) >= 0; })) return false;
     }
     tl = terms(F.tg);
-    if (tl.length && !(F.tgm === 'and' ? tl.every : tl.some).call(tl, function (t) { return has(it.tg, t) || has(it.ind, t); })) return false;
+    if (tl.length && !(F.tgm === 'and' ? tl.every : tl.some).call(tl, function (t) { return has(G.tgx(it), t) || has(it.ind, t); })) return false;
     tl = terms(F.lt);
     if (tl.length && !(F.ltm === 'and' ? tl.every : tl.some).call(tl, function (t) { return has(it.lt, t) || (it.lim || '').toLowerCase().indexOf(t) >= 0; })) return false;
     if (F.q) {
@@ -242,7 +250,7 @@
     var cols = G.TG.slice(), cats = G.CAT.slice();
     list.forEach(function (i) { if (cats.indexOf(i.cat) < 0 && i.cat) cats.push(i.cat); });
     if (list.some(function (i) { return !(i.tg || []).length; })) cols.push('공통·기타');
-    function inCol(i, c) { var t = i.tg || []; return c === '공통·기타' ? !t.length : t.indexOf(c) >= 0; }
+    function inCol(i, c) { var t = G.tgx(i); return c === '공통·기타' ? !t.length : t.indexOf(c) >= 0; }
     var h = '<table class="mx"><thead><tr><th class="cn"><span>지원 종류</span><i>▼</i><span class="r">대상 기업 ▶</span></th>';
     cols.forEach(function (c) {
       h += '<th' + (G.DEF[c] ? ' class="dfh" data-def="' + esc(c) + '" tabindex="0" role="button" title="클릭하면 ' + esc(c) + '의 정의를 볼 수 있습니다"' : '') + '>' + esc(c) + (G.DEF[c] ? '<i class="dfi">ⓘ</i>' : '') + '<span class="n">' + list.filter(function (i) { return inCol(i, c); }).length + '건</span></th>';
