@@ -230,3 +230,7 @@ body[data-vt=tb] #paneOv{display:none}
 .mxs2[data-id]{cursor:pointer}.mxs2[data-id]:hover{background:#dbeafe;outline:1px solid #14365d}
 @media print{.mx td.mxm,.mx td.mxn{padding:0 4px!important}.mx td.mxm .mxc{margin:1px 0;line-height:1.2}.mxgt{font-size:8px;margin-bottom:1px}.mxs2{font-size:7.4px;padding:0 1px;margin:0}.mxg{padding:1px 3px;line-height:1.3}}
 .mx td.mxm[colspan]:not([colspan="1"]) .mxc{text-align:center}
+
+/* '내 회사 지원금?' 버튼 — 상단 메뉴에서 눈에 띄도록 강조색 */
+#top .lk[href="gov_support_match.html"]{background:#f59e0b;border-color:#fcd34d;color:#1f2937;font-weight:800}
+#top .lk[href="gov_support_match.html"]:hover{background:#fbbf24}
