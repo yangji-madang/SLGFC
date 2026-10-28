@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>내 회사에 적합한 지원제도 찾기</title>
-<link rel="stylesheet" href="gov_support.css?v=20261028q">
+<link rel="stylesheet" href="gov_support.css?v=20261028r">
 <style>
 body{display:block;min-height:0}
 main{padding-bottom:70px}
@@ -69,6 +69,9 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 .mtb td.a{text-align:right;white-space:nowrap}
 .mtb td.c{text-align:center}
 .hnt{font-size:11.5px;margin-top:2px;line-height:1.35}
+.lbr{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.lbr label{margin:0}
+.gnote{font-size:11.5px;font-weight:700;color:#b45309;margin-left:8px}
+.pf.lnk select,.pf.lnk .calc{background:#fef3c7!important;border:1px solid #f59e0b!important;font-weight:800;color:#78350f}
 .calc{flex:1;min-width:0;border:1px solid var(--bd);background:#f1f5f9;border-radius:6px;padding:5px 8px;font-weight:800;color:var(--navy);font-size:13px}
 .tbtn{border:1px solid #f59e0b;background:#fffbeb;color:#92400e;border-radius:6px;padding:3px 7px;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit}
 .tbtn:hover{background:#fde68a}
@@ -193,7 +196,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js?v=20261028q"></script>
+<script src="gov_support_common.js?v=20261028r"></script>
 <script src="gov_support_match_config.js"></script>
 <script src="gov_support_rules.js?v=20261028"></script>
 <script>
@@ -277,7 +280,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       {k:'ind',l:'업종 (선택 또는 직접입력)',t:'s',typed:1,w:1,ph:'표준업종명 직접입력 (예: 음식점업)',h:'※ 한국표준산업분류(KSIC) 표준업종만 인정합니다. 목록에서 고르거나 업종명을 정확히 입력하세요.'},
       {k:'region',l:'소재지 (선택 또는 직접입력)',t:'s',typed:1,w:1,ph:'시·군 직접입력 (예: 수원시)',h:'시·도 또는 시·군 이름을 입력하면 자동으로 구분합니다.'},
       {k:'age',l:'업력(창업 후 경과)',t:'n',u:'년',h:'예: 3.5'},{k:'ceoage',l:'대표자 나이',t:'n',u:'세'}]},
-    {g:'매출·과세·수출·자산',f:[
+    {g:'매출·과세·수출·자산',note:'※ 소득세 한계세율은 공제 전 ‘대표연소득’기준이므로 공제적용시 세율이 낮아질 수 있습니다.',f:[
       {k:'sales',l:'직전연도 매출액',t:'n',u:'억원',h:'예: 1억400만원 → 1.04'},{k:'taxbase',l:'법인세 과세표준',t:'n',u:'억원'},
       {k:'ctr',l:'적용 법인세율',t:'c',tx:'c',h:'과세표준을 입력하면 자동 계산'},
       {k:'export',l:'직전연도 수출액',t:'n',u:'만달러'},{k:'assets',l:'자산총액',t:'n',u:'억원'},
@@ -304,10 +307,10 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
   /* 폼 생성 */
   var h='';
   GROUPS.forEach(function(g){
-    h+='<div class="pgrp"><h3>'+esc(g.g)+'</h3><div class="pg">';
+    h+='<div class="pgrp"><h3>'+esc(g.g)+(g.note?' <span class="gnote">'+esc(g.note)+'</span>':'')+'</h3><div class="pg">';
     g.f.forEach(function(f){
       LBL[f.k]=f;
-      h+='<div class="pf'+(f.w?' wide':'')+'"><label for="p_'+f.k+'">'+esc(f.l)+'</label><div class="in">';
+      h+='<div class="pf'+(f.w?' wide':'')+(f.tx?' lnk':'')+'"><div class="lbr"><label for="p_'+f.k+'">'+esc(f.l)+'</label>'+(f.tx?'<button type="button" class="tbtn" data-tax="'+f.tx+'" title="세율표 보기">세율표</button>':'')+'</div><div class="in">';
       if(f.t==='c'){
         h+='<output id="p_'+f.k+'" class="calc">-</output>';
       }
@@ -316,7 +319,6 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
         if(f.typed) h+='<input type="text" list="dl_'+f.k+'" id="p_'+f.k+'Txt" data-x="'+f.k+'Txt" placeholder="'+esc(f.ph)+'" autocomplete="off" maxlength="40">';
       }
       else{h+='<input type="number" step="any" min="0" inputmode="decimal" id="p_'+f.k+'" data-k="'+f.k+'" placeholder="미입력">'+(f.u?'<span class="u">'+esc(f.u)+'</span>':'');}
-      if(f.tx) h+='<button type="button" class="tbtn" data-tax="'+f.tx+'" title="세율표 보기">세율표</button>';
       h+='</div>'+((f.typed||f.tx)?'<div class="hnt" id="n_'+f.k+'"></div>':'')+(f.h?'<div class="h">'+esc(f.h)+'</div>':'')+'</div>';
     });
     h+='</div></div>';
