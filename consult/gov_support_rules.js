@@ -1,4 +1,4 @@
-/* 내 회사에 적합한 지원제도 찾기 — 제도별 대상·제한조건 판정 규칙 및 지원금액 예시 산식
+/* 내 회사에 적합한 지원제도 찾기 : 제도별 대상·제한조건 판정 규칙 및 지원금액 예시 산식
  * 각 제도(gov_support_data.js 의 id)의 '제한조건' 문구를 근거로 작성했습니다.
  * 금액 산식은 데이터 파일에 수록된 공식·보도 자료 기준의 '예시'이며, 실제 지원액은 공고·심사·신고 결과에 따라 달라집니다. */
 (function () {
@@ -51,7 +51,7 @@
     if (b > 3000) t += (b - 3000) * r[3];
     return t;
   }
-  /* 증여세(억원) — 일반세율 */
+  /* 증여세(억원) : 일반세율 */
   function giftGeneral(v) {
     var tx = v - 0.5; // 직계비속 증여재산공제 5천만원 가정
     if (tx <= 0) return 0;
@@ -209,7 +209,7 @@
         if (!P.ind) return c('u', l);
         if (['mfg', 'trade', 'med'].indexOf(P.ind) >= 0) return c('p', l);
         if (P.ind === 'consume' || P.ind === 'rental') return c('f', l);
-        return c('u', l + ' — 서비스업 등은 세부 해당 여부 확인');
+        return c('u', l + ' : 서비스업 등은 세부 해당 여부 확인');
       },
       function (P) {
         var l = '중기업은 수도권 내 감면 제외';
@@ -305,17 +305,17 @@
     }],
     info: ['간이과세 배제 업종·지역 요건 별도, 일반과세 유지는 포기신고']
   };
-  /* 가업상속·가업승계(증여) 판정 — 입력값 근거의 간이 판정
+  /* 가업상속·가업승계(증여) 판정 : 입력값 근거의 간이 판정
    * 법령: 상증세법 제18조의2·같은 법 시행령 제15조(가업상속공제), 조특법 제30조의6·같은 법 시행령 제27조의6(가업승계 증여세 과세특례) */
   function gen(k, v, label, unit) { return function (P) {
-    if (!N(P[k])) return c('u', label + ' — 입력 필요');
-    return P[k] >= v ? c('p', label) : c('f', label + ' — 입력 ' + P[k] + (unit || '') + ' (부족)');
+    if (!N(P[k])) return c('u', label + ' : 입력 필요');
+    return P[k] >= v ? c('p', label) : c('f', label + ' : 입력 ' + P[k] + (unit || '') + ' (부족)');
   }; }
-  function flagU(k, label) { return function (P) { return P.f[k] ? c('p', label) : c('u', label + ' — 해당되면 체크'); }; }
+  function flagU(k, label) { return function (P) { return P.f[k] ? c('p', label) : c('u', label + ' : 해당되면 체크'); }; }
   function sizeAsset(P) {
     var l = P.scale === 'mid' ? '직전 3개 사업연도 평균 매출 5,000억원 미만(중견기업)' : '자산총액 5,000억원 미만(중소기업)';
-    if (P.scale === 'mid') return N(P.sales) ? c(P.sales < 5000 ? 'p' : 'f', l) : c('u', l + ' — 매출 입력 필요');
-    return N(P.assets) ? c(P.assets < 5000 ? 'p' : 'f', l) : c('u', l + ' — 자산총액 입력 필요');
+    if (P.scale === 'mid') return N(P.sales) ? c(P.sales < 5000 ? 'p' : 'f', l) : c('u', l + ' : 매출 입력 필요');
+    return N(P.assets) ? c(P.assets < 5000 ? 'p' : 'f', l) : c('u', l + ' : 자산총액 입력 필요');
   }
   var SC = R.scale('mid', '중소기업 또는 중견기업');
   var IND = R.indNot(['rental', 'consume'], '가업 업종(부동산임대업·유흥주점업 제외, 별표 업종 해당 여부는 세부업종 확인)');
@@ -326,9 +326,9 @@
     req: [SC, sizeAsset, IND].concat(COMMON, [
       function (P) {
         var l = '피상속인 대표이사 재직(가업영위기간의 50% 이상, 또는 상속개시 전 10년 중 5년 이상 등)';
-        if (!N(P.ceoyrs)) return c('u', l + ' — 대표이사 재직연수 입력 필요');
+        if (!N(P.ceoyrs)) return c('u', l + ' : 대표이사 재직연수 입력 필요');
         if (N(P.bizyears) && P.ceoyrs >= P.bizyears * 0.5) return c('p', l);
-        return P.ceoyrs >= 5 ? c('u', l + ' — 재직 ' + P.ceoyrs + '년: 50% 미만이나 소급 10년 중 5년 이상 충족 여부 확인') : c('f', l + ' — 재직 ' + P.ceoyrs + '년 (부족)');
+        return P.ceoyrs >= 5 ? c('u', l + ' : 재직 ' + P.ceoyrs + '년: 50% 미만이나 소급 10년 중 5년 이상 충족 여부 확인') : c('f', l + ' : 재직 ' + P.ceoyrs + '년 (부족)');
       },
       gen('succage', 18, '승계자 상속개시일 현재 만 18세 이상', '세'),
       gen('succyrs', 2, '승계자 상속개시 전 2년 이상 가업 종사(피상속인 65세 이전 사망 등은 예외)', '년'),
@@ -349,7 +349,7 @@
       gen('ceoage', 60, '증여자(부모) 만 60세 이상', '세'),
       gen('succage', 18, '수증자 증여일 현재 만 18세 이상', '세'),
       flagU('succ_resident', '수증자 국내 거주자'),
-      function (P) { return N(P.succyrs) && P.succyrs > 0 ? c('p', '수증자 증여세 신고기한(증여월 말일부터 3개월)까지 가업 종사') : c('u', '수증자 증여세 신고기한까지 가업 종사 — 가업종사연수 입력 필요'); },
+      function (P) { return N(P.succyrs) && P.succyrs > 0 ? c('p', '수증자 증여세 신고기한(증여월 말일부터 3개월)까지 가업 종사') : c('u', '수증자 증여세 신고기한까지 가업 종사 : 가업종사연수 입력 필요'); },
       flagU('succ_ceo', '수증자 증여일부터 3년 내 대표이사 취임(예정 포함)')]),
     info: ['수증자 요건·사후관리(5년) 위반 시 추징, 정부안 개편 예정'],
     ex: function (P) {

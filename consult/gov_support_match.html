@@ -196,7 +196,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     <div class="tw2"><table class="mtb" data-fz="3" data-fzw="34,50,118"><colgroup><col style="width:4%"><col style="width:7%"><col style="width:22%"><col style="width:35%"><col style="width:32%"></colgroup>
       <thead><tr><th>No</th><th>판정</th><th>지원 정책명</th><th>지원금액 (내 회사 기준 예시)</th><th>비고 (판정 항목)</th></tr></thead>
       <tbody id="tbS"></tbody></table></div>
-    <div class="h3t">2-2. 상세 — 어떤 이유로 지원되는지</div>
+    <div class="h3t">2-2. 상세 : 어떤 이유로 지원되는지</div>
     <div class="tw2"><table class="mtb" data-fz="3" data-fzw="34,50,118"><colgroup><col style="width:3.5%"><col style="width:6%"><col style="width:11%"><col style="width:20%"><col style="width:18%"><col style="width:18%"><col style="width:14%"><col style="width:9.5%"></colgroup>
       <thead><tr><th>No</th><th>판정</th><th>지원·정책명</th><th>지원 내용</th><th>지원 사유 (조건별 판정)</th><th>지원금액 산출</th><th>신청·문의·시기</th><th>출처</th></tr></thead>
       <tbody id="tbV"></tbody></table></div>
@@ -308,7 +308,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       {k:'loan',l:'대출 이용·희망 금액',t:'n',u:'억원'},{k:'bonus',l:'경영성과급 지급 예정',t:'n',u:'만원'},{k:'partner',l:'상생결제 지급액',t:'n',u:'억원'},
       {k:'unsec',l:'무담보 부실채무',t:'n',u:'억원'}]},
     {g:'가업승계 · 가업상속',note:'※ 현행법 기준 간이 판정입니다(2026 세제개편안은 국회 확정 전). 입력값이 없으면 ‘확인필요’로 표시됩니다.',f:[
-      {t:'sub',l:'가업·대표자(피상속인·증여자) 요건 — 가업상속과 가업승계(증여) 공통'},
+      {t:'sub',l:'가업·대표자(피상속인·증여자) 요건 : 가업상속과 가업승계(증여) 공통'},
       {k:'bizyears',l:'가업 경영연수(대표)',t:'n',u:'년'},{k:'stake',l:'대표 지분율(특수관계인 합산)',t:'n',u:'%'},
       {k:'stakeyrs',l:'위 지분 보유연수',t:'n',u:'년',h:'지분 40%(상장 20%) 이상 유지 기간'},{k:'ceoyrs',l:'대표이사 재직연수',t:'n',u:'년'},
       {t:'sub',l:'승계자(자녀 등) 요건'},
@@ -518,7 +518,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     if(!list.length) s+='<tr><td colspan="5" style="text-align:center;padding:14px;color:#475569">표시할 제도가 없습니다. 위 ‘표시’ 버튼에서 항목을 선택하거나 회사 정보를 입력하세요.</td></tr>';
     s+='<tr class="tot"><td class="c tlb" colspan="3">총액 (1) 적합 제도 합계 (연)</td><td class="tlb">'+esc(rng(T.ta[0],T.ta[1]))+'</td><td class="sm">세금 절감 '+esc(rng(T.a.tax[0],T.a.tax[1]))+' + 지원금·이자 '+esc(rng(T.a.cash[0],T.a.cash[1]))+'</td></tr>'+
        '<tr class="tot2"><td class="c tlb" colspan="3">총액 (2) 적합 + 확인필요 포함 (연)</td><td class="tlb">'+esc(rng(T.tb[0],T.tb[1]))+'</td><td class="sm">입력 보완·공고 확인 후 확정되는 금액 포함</td></tr>'+
-       '<tr class="tot2"><td class="c" colspan="3">참고 (합계 제외) — 일회성 절세 · 융자 한도</td><td>일회성 절세 '+esc(T.b.once[1]?rng(T.a.once[0],T.a.once[1])+' (확인필요 포함 '+rng(T.b.once[0],T.b.once[1])+')':'-')+'<br>융자·보증 한도(제도별 최대) '+esc(T.b.loan?won(T.b.loan):'-')+'</td><td class="sm">한도·일회성 금액은 연간 합계에 합산하지 않음'+(T.b.cost[1]?' · 세 부담 증가(법인세율 환원) '+esc(rng(T.b.cost[0],T.b.cost[1]))+' 별도':'')+'</td></tr>';
+       '<tr class="tot2"><td class="c" colspan="3">참고 (합계 제외) : 일회성 절세 · 융자 한도</td><td>일회성 절세 '+esc(T.b.once[1]?rng(T.a.once[0],T.a.once[1])+' (확인필요 포함 '+rng(T.b.once[0],T.b.once[1])+')':'-')+'<br>융자·보증 한도(제도별 최대) '+esc(T.b.loan?won(T.b.loan):'-')+'</td><td class="sm">한도·일회성 금액은 연간 합계에 합산하지 않음'+(T.b.cost[1]?' · 세 부담 증가(법인세율 환원) '+esc(rng(T.b.cost[0],T.b.cost[1]))+' 별도':'')+'</td></tr>';
     sb.innerHTML=s;
 
     /* 2-2 상세 */
@@ -547,7 +547,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       g.forEach(function(id){if(id!==best)skip[id]=true;});});
     var ta=[a.tax[0]+a.cash[0],a.tax[1]+a.cash[1]], tb=[b.tax[0]+b.cash[0],b.tax[1]+b.cash[1]];
     var KO=['tax','cash','loan','once','cost','info'], NT={loan:'합산하지 않음(제도별 한도)',once:'연간 합계 제외',cost:'연간 합계 제외',info:'참고'};
-    var out='<tr class="tot"><td class="c" colspan="6">통합계 (세금 절감 + 지원금·이자, 연) — 적합 제도 기준</td><td class="a">'+esc(rng(ta[0],ta[1]))+'</td><td class="sm">확인필요 포함 시 '+esc(rng(tb[0],tb[1]))+'</td></tr>';
+    var out='<tr class="tot"><td class="c" colspan="6">통합계 (세금 절감 + 지원금·이자, 연) : 적합 제도 기준</td><td class="a">'+esc(rng(ta[0],ta[1]))+'</td><td class="sm">확인필요 포함 시 '+esc(rng(tb[0],tb[1]))+'</td></tr>';
     var any=false;
     KO.forEach(function(K){
       var items=[]; mb.slice().sort(function(x,y){return NO[x.it.id]-NO[y.it.id];}).forEach(function(r){r.rows.forEach(function(x){if(x.k===K)items.push([r,x]);});});
@@ -572,7 +572,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     $('cmpM').innerHTML=cmpHTML(P);
     $('tbM').innerHTML=exampleHTML(res,NO);
     $('warn').innerHTML=(MC.notes&&MC.notes.length?MC.notes:[
-      '합계는 제도별 예시를 단순 합산한 값이며, 중복 적용이 제한되는 제도는 하나만 반영했습니다(예: 창업중소기업 세액감면과 중소기업 특별세액감면은 택일 — 더 큰 값 반영).',
+      '합계는 제도별 예시를 단순 합산한 값이며, 중복 적용이 제한되는 제도는 하나만 반영했습니다(예: 창업중소기업 세액감면과 중소기업 특별세액감면은 택일 : 더 큰 값 반영).',
       '세액공제·감면은 최저한세, 공제 한도, 사후관리(고용 감소·자산 처분 시 추징) 등에 따라 달라지며, 소득금액이 감면 대상 소득에 모두 해당한다고 가정했습니다.',
       '‘확인필요’는 입력이 부족하거나 근거 자료가 단일·2차 출처인 항목입니다. 신청·신고 전 공고문과 국가법령정보센터(law.go.kr)에서 최종 확인하세요.',
       '정부안 단계의 제도(가업상속공제 개편 등)는 국회 확정 전 내용이므로 참고용입니다.'

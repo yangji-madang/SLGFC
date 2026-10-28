@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>내 회사에 적합한 지원제도 찾기 (인쇄용)</title>
-<link rel="stylesheet" href="gov_support.css?v=20261028y">
+<link rel="stylesheet" href="gov_support.css?v=20261028z">
 <style>
 body{display:block;min-height:0;background:#e5e7eb}
 .noprint{max-width:1500px;margin:0 auto;padding:10px 16px 0}
@@ -135,7 +135,7 @@ body[data-ps=both] #blkA .cmpt{display:none}
 </head>
 <body class="prt" data-ps="both">
 <div id="top" class="noprint">
-  <h1 id="ttl" data-fixed="1">내 회사 찾기 — 인쇄용 (A4 가로)</h1>
+  <h1 id="ttl" data-fixed="1">내 회사 찾기 : 인쇄용 (A4 가로)</h1>
   <span id="asof">기준일 : -</span>
   <button type="button" class="lk" onclick="window.print()">인쇄하기</button>
   <a class="lk" href="gov_support_match.html">내 회사 지원금?으로 돌아가기</a>
@@ -161,7 +161,7 @@ body[data-ps=both] #blkA .cmpt{display:none}
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js?v=20261028y"></script>
+<script src="gov_support_common.js?v=20261028z"></script>
 <script src="gov_support_match_config.js"></script>
 <script src="gov_support_rules.js?v=20261028"></script>
 <script>
@@ -276,7 +276,7 @@ body[data-ps=both] #blkA .cmpt{display:none}
       g.forEach(function(id){if(id!==best)skip[id]=true;});});
     var ta=[a.tax[0]+a.cash[0],a.tax[1]+a.cash[1]], tb=[b.tax[0]+b.cash[0],b.tax[1]+b.cash[1]];
     var KO=['tax','cash','loan','once','cost','info'], NT={loan:'합산하지 않음(제도별 한도)',once:'연간 합계 제외',cost:'연간 합계 제외',info:'참고'};
-    var out='<tr class="tot"><td class="c" colspan="6">통합계 (세금 절감 + 지원금·이자, 연) — 적합 제도 기준</td><td class="a">'+esc(rng(ta[0],ta[1]))+'</td><td class="sm">확인필요 포함 시 '+esc(rng(tb[0],tb[1]))+'</td></tr>';
+    var out='<tr class="tot"><td class="c" colspan="6">통합계 (세금 절감 + 지원금·이자, 연) : 적합 제도 기준</td><td class="a">'+esc(rng(ta[0],ta[1]))+'</td><td class="sm">확인필요 포함 시 '+esc(rng(tb[0],tb[1]))+'</td></tr>';
     var any=false;
     KO.forEach(function(K){
       var items=[]; mb.slice().sort(function(x,y){return NO[x.it.id]-NO[y.it.id];}).forEach(function(r){r.rows.forEach(function(x){if(x.k===K)items.push([r,x]);});});
@@ -307,7 +307,7 @@ body[data-ps=both] #blkA .cmpt{display:none}
     $('blkA').innerHTML=cmpT()+'<div class="ttl">2. 상세내용</div>'+
       tbl(['No','판정','지원·정책명','지원 내용','지원 사유 (조건별 판정)','내 회사 예상금액','비고 (판정 항목)'],[3.5,6,13,22,19,18,18.5],s2,true);
 
-    var wn=(MC.notes&&MC.notes.length)?MC.notes:['합계는 제도별 예시를 단순 합산한 값이며, 중복 적용이 제한되는 제도는 하나만 반영했습니다(창업중소기업 세액감면과 중소기업 특별세액감면은 택일 — 더 큰 값 반영).',
+    var wn=(MC.notes&&MC.notes.length)?MC.notes:['합계는 제도별 예시를 단순 합산한 값이며, 중복 적용이 제한되는 제도는 하나만 반영했습니다(창업중소기업 세액감면과 중소기업 특별세액감면은 택일 : 더 큰 값 반영).',
       '세액공제·감면은 최저한세, 공제 한도, 사후관리(고용 감소·자산 처분 시 추징) 등에 따라 달라지며, 소득금액이 감면 대상 소득에 모두 해당한다고 가정했습니다.',
       '‘확인필요’는 입력이 부족하거나 근거 자료가 단일·2차 출처인 항목입니다. 신청·신고 전 공고문과 국가법령정보센터(law.go.kr)에서 최종 확인하세요.',
       '정부안 단계의 제도(가업상속공제 개편 등)는 국회 확정 전 내용이므로 참고용입니다.'];

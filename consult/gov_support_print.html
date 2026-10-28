@@ -105,7 +105,7 @@ s.oldv{color:#b91c1c}
 </head>
 <body class="prt">
 <div id="top" class="noprint">
-  <h1 id="ttl" data-fixed="1">인쇄용 보기 — A4 가로</h1>
+  <h1 id="ttl" data-fixed="1">인쇄용 보기 : A4 가로</h1>
   <span id="asof">기준일 : -</span>
   <button type="button" class="lk" onclick="window.print()">인쇄하기</button>
   <a class="lk" id="back" href="gov_support.html">보기 페이지</a>
@@ -162,14 +162,14 @@ s.oldv{color:#b91c1c}
     var c9='<span class="bd '+relCls+'">'+esc(it.rel)+'</span>'+(it.chk?'<span class="bd b-ck">확인필요</span>':'')+(it.end?'<span class="bd b-end">마감·종료 가능</span>':'');
     if(it.chk) c9+='<div class="ckr">'+esc(it.chk)+'</div>';
     c9+='<ol class="sr">'+(it.src||[]).map(function(s){var u=G.safeUrl(s[1]);return '<li>'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+esc(s[0])+'</a>':esc(s[0]))+'</li>';}).join('')+'</ol><div class="sm">확인일 '+esc(G.fmtD(it.v))+'</div>';
-    var cells=[c1,c2,c3,c4,c5,c6,c7,c8||'—',c9];
+    var cells=[c1,c2,c3,c4,c5,c6,c7,c8||'-',c9];
     tr.innerHTML=cells.map(function(c,i){return '<td class="'+(i===0?'c1':'')+(i===7&&!c8?' emp':'')+'">'+c+'</td>';}).join('');
     return tr;
   }
 
   function overview(list,act){
     var lv=G.LV.map(function(l){return esc(l)+' <b>'+list.filter(function(i){return i.lv===l;}).length+'</b>건';}).join(' / ');
-    var h='<div class="ottl">개요 — 지원 종류 × 대상 기업 <span>총 '+list.length+'건 | 지급주체: '+lv+(act.length?' | <b>조건</b> '+esc(act.join(' · ')):'')+'</span></div>';
+    var h='<div class="ottl">개요 : 지원 종류 × 대상 기업 <span>총 '+list.length+'건 | 지급주체: '+lv+(act.length?' | <b>조건</b> '+esc(act.join(' · ')):'')+'</span></div>';
     h+=G.matrixLegend(list)+G.matrix(list,{});
     h+='<div class="ottl" style="margin-top:6px">주요 일정</div><div class="tlp">'+(G.timeline||[]).map(function(t){return '<span class="'+(t[2]==='p'?'p':'')+'"><b>'+esc(t[0])+'</b> '+esc(t[1])+'</span>';}).join('')+'</div>';
     return h;

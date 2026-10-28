@@ -1,4 +1,4 @@
-/* 정부지원금·세제지원 — 공통 로직 (보기·인쇄 페이지 공유) */
+/* 정부지원금·세제지원 : 공통 로직 (보기·인쇄 페이지 공유) */
 (function () {
   'use strict';
   var G = window.GS = {};
@@ -174,7 +174,7 @@
   G.fillDL = function (dl, arr) { dl.innerHTML = arr.map(function (x) { return '<option value="' + esc(x) + '">'; }).join(''); };
   G.uniq = function (arr) { return arr.filter(function (x, i) { return x && arr.indexOf(x) === i; }); };
 
-  /* 필터 UI 공통 구성 (보기·인쇄) — 요소 id: fq flv ftg flt fcat fpf frel fchk fend */
+  /* 필터 UI 공통 구성 (보기·인쇄) : 요소 id: fq flv ftg flt fcat fpf frel fchk fend */
   G.initFilterUI = function (F, onChange) {
     var $ = function (id) { return document.getElementById(id); };
     G.fillDL($('dlv'), G.uniq(G.LV.concat(G.items.map(function (i) { return i.ag.split('·'); }).reduce(function (a, b) { return a.concat(b); }, []), ['서울', '경기', '화성시'])));
@@ -225,7 +225,7 @@
   G.FILTER_HTML =
     '<div><label for="fq">통합 검색 (키워드, 공백·쉼표 구분)</label><span class="ao" data-f="q"><button type="button" data-m="or" class="on">OR</button><button type="button" data-m="and">AND</button></span><input type="search" id="fq" placeholder="예: 고용, 법인세, 새출발, 노란우산" autocomplete="off"></div>' +
     '<div class="cg"><label>지급 주체 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="clv"></div></div>' +
-    '<div class="cg"><label>대상 기업 — 규모·업종 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="ctg"></div></div>' +
+    '<div class="cg"><label>대상 기업 : 규모·업종 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="ctg"></div></div>' +
     '<div class="cg"><label>제한조건 유형 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="clt"></div></div>' +
     '<div class="cg"><label>분류 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="ccat"></div></div>' +
     '<div class="cg"><label>지원 형태 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="cpf"></div></div>' +
@@ -249,14 +249,14 @@
     inh: { t: '가업상속공제 요건표 (현행법)', law: '상속세 및 증여세법 제18조의2, 같은 법 시행령 제15조', rows: [
       ['가업 요건', '중소기업(자산총액 5,000억원 미만 등 중소기업기본법상 중소기업) 또는 중견기업(직전 3개 사업연도 매출액 평균 5,000억원 미만). 시행령 별표의 가업상속공제 적용 업종이며 부동산임대업·일반유흥주점업 등은 제외'],
       ['피상속인(대표자)', '10년 이상 계속 경영한 가업, 상속개시일 현재 국내 거주자. 최대주주로서 특수관계인 합산 지분 40% 이상(상장법인 20% 이상)을 10년 이상 계속 보유'],
-      ['피상속인 대표이사 재직', '다음 중 하나 — ① 가업영위기간의 50% 이상 대표이사 재직 ② 상속인이 직을 승계해 상속개시일까지 계속 재직하는 경우 10년 이상 재직 ③ 상속개시일 소급 10년 중 5년 이상 재직'],
+      ['피상속인 대표이사 재직', '다음 중 하나 : ① 가업영위기간의 50% 이상 대표이사 재직 ② 상속인이 직을 승계해 상속개시일까지 계속 재직하는 경우 10년 이상 재직 ③ 상속개시일 소급 10년 중 5년 이상 재직'],
       ['상속인(승계자)', '상속개시일 현재 만 18세 이상. 상속개시 전 2년 이상 직접 가업 종사(피상속인이 65세 이전 사망하거나 부득이한 사유가 있으면 예외). 상속세 신고기한까지 임원 취임, 신고기한부터 2년 이내 대표이사 취임. 상속인의 배우자가 요건을 갖추면 상속인이 충족한 것으로 봄(법인사업자)'],
       ['공제한도', '가업영위기간 10년 이상 300억원 · 20년 이상 400억원 · 30년 이상 600억원. 법인은 주식가액 × (1 − 사업무관자산 ÷ 총자산)'],
       ['중견기업 추가', '가업 외 상속재산가액이 가업상속공제를 적용하지 않을 때 납부할 상속세의 2배를 넘지 않을 것'],
       ['사후관리(5년)', '업종 유지 · 대표 종사 및 지분 유지 · 정규직 근로자 수와 총급여액 평균 90% 이상 유지 · 가업용 자산 40% 이상 처분 금지. 위반 시 공제세액과 이자상당액 추징']] },
     gift: { t: '가업승계 증여세 과세특례 요건표 (현행법)', law: '조세특례제한법 제30조의6, 같은 법 시행령 제27조의6', rows: [
       ['대상 재산', '법인의 주식·출자지분만 해당(개인사업자의 사업용 자산은 대상 아님)'],
-      ['가업 요건', '가업상속공제와 동일 — 중소기업 또는 매출액 평균 5,000억원 미만 중견기업, 시행령 별표 업종'],
+      ['가업 요건', '가업상속공제와 동일 : 중소기업 또는 매출액 평균 5,000억원 미만 중견기업, 시행령 별표 업종'],
       ['증여자', '증여일 현재 만 60세 이상 부모(부모가 사망한 경우 조부모 포함). 10년 이상 계속 경영, 최대주주로서 특수관계인 합산 지분 40% 이상(상장법인 20% 이상)을 10년 이상 계속 보유'],
       ['수증자', '증여일 현재 만 18세 이상 거주자인 자녀(직계비속). 수증자 또는 그 배우자가 증여세 신고기한(증여일이 속한 달의 말일부터 3개월)까지 가업에 종사하고, 증여일부터 3년 이내 대표이사 취임'],
       ['특례 내용', '증여세 과세가액에서 10억원을 공제한 뒤 과세표준 120억원 이하 10%, 초과분 20%. 한도는 가업영위기간 10년 이상 300억원 · 20년 이상 400억원 · 30년 이상 600억원. 증여세 신고세액공제는 적용하지 않음'],
@@ -272,7 +272,7 @@
     G.pop(h);
   };
 
-  /* 개요 도식: 지원 종류(행) × 대상 기업(열) 매트릭스 — 칩 색상 = 지급 주체 */
+  /* 개요 도식: 지원 종류(행) × 대상 기업(열) 매트릭스 : 칩 색상 = 지급 주체 */
   G.matrix = function (list, opt) {
     opt = opt || {};
     var cols = G.TG.slice(), cats = G.CAT.slice();
@@ -348,7 +348,7 @@
   };
 
 
-  /* 기업 규모 정의 팝업 — 개요 도식의 열 제목 클릭 시 표시 (근거: 각 법령 조항, 정확한 적용은 법제처 원문 확인) */
+  /* 기업 규모 정의 팝업 : 개요 도식의 열 제목 클릭 시 표시 (근거: 각 법령 조항, 정확한 적용은 법제처 원문 확인) */
   G.DEF = {
     '소상공인': {
       d: '소상공인기본법 제2조에 따라, 상시 근로자 수가 일정 규모 미만이면서 업종별 매출액 요건(소기업 기준)을 충족하는 사업자.',
@@ -395,7 +395,7 @@
     G.pop(h);
   };
 
-  /* 세율표 — 개인 종합소득세(소득세법 제55조, 2023년 이후 귀속), 법인세(법인세법 제55조, 2026.1.1 이후 개시 사업연도) */
+  /* 세율표 : 개인 종합소득세(소득세법 제55조, 2023년 이후 귀속), 법인세(법인세법 제55조, 2026.1.1 이후 개시 사업연도) */
   G.PTAX = [[1400, 6, 0], [5000, 15, 126], [8800, 24, 576], [15000, 35, 1544], [30000, 38, 1994], [50000, 40, 2594], [100000, 42, 3594], [Infinity, 45, 6594]]; /* 과세표준 상한(만원), 세율(%), 누진공제(만원) */
   G.CTAX = [[2, 10, 0], [200, 20, 0.2], [3000, 22, 4.2], [Infinity, 25, 94.2]]; /* 과세표준 상한(억원), 세율(%), 누진공제(억원) */
   function pick(tb, x) { for (var i = 0; i < tb.length; i++) if (x <= tb[i][0]) return i; return tb.length - 1; }
@@ -440,7 +440,7 @@
     st.textContent = '@page{@top-left{content:' + q(t('fht')) + '}@top-right{content:' + q(t('fha')) + '}@bottom-left{content:' + q(t('ctct')) + '}@bottom-right{content:' + q(t('cpyt')) + '}}';
   };
 
-  /* 표 틀고정: 머리글 행 + 왼쪽 n개 열(예: ‘지원·정책명’까지)을 고정 — rowspan·colspan 반영 */
+  /* 표 틀고정: 머리글 행 + 왼쪽 n개 열(예: ‘지원·정책명’까지)을 고정 : rowspan·colspan 반영 */
   G.freeze = function (table, n) {
     var hr = table && table.tHead && table.tHead.rows[0];
     if (!hr || !table.offsetWidth) return;
@@ -468,7 +468,7 @@
       });
     });
   };
-  /* 모바일: 고정 열은 좁게(px), 나머지 열은 PC 폭(1100px 기준) 그대로 — 표 모양은 PC와 동일하게 유지 */
+  /* 모바일: 고정 열은 좁게(px), 나머지 열은 PC 폭(1100px 기준) 그대로 : 표 모양은 PC와 동일하게 유지 */
   G.fitMobile = function (t) {
     var cg = t.querySelector('colgroup'); if (!cg) return;
     var mob = window.innerWidth <= 760, fw = (t.dataset.fzw || '').split(',').map(Number), tot = 0;

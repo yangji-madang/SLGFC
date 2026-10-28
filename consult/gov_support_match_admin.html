@@ -51,7 +51,7 @@ table.at{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px;b
     </div>
     <div class="tbw"><table class="at" data-fz="2"><thead><tr><th style="width:5%">ID</th><th>지원·정책명</th><th style="width:16%">지급 주체</th><th style="width:11%">내 회사 찾기에 표시</th><th style="width:11%">금액 합계에 반영</th></tr></thead><tbody id="tbI"></tbody></table></div>
     <p class="mini">‘표시’를 끄면 판정·인쇄·합계에서 모두 빠집니다. ‘합계에 반영’만 끄면 표에는 나오지만 소계·통합계에서는 제외됩니다.</p>
-    <div class="fld" style="margin-top:8px"><label for="cExcl">택일(중복 적용 불가) 제도 묶음 — 한 줄에 한 묶음, ID를 쉼표로 (묶음 안에서 더 큰 세금 절감액 1건만 합계 반영)</label><textarea id="cExcl" style="min-height:52px"></textarea></div>
+    <div class="fld" style="margin-top:8px"><label for="cExcl">택일(중복 적용 불가) 제도 묶음 : 한 줄에 한 묶음, ID를 쉼표로 (묶음 안에서 더 큰 세금 절감액 1건만 합계 반영)</label><textarea id="cExcl" style="min-height:52px"></textarea></div>
   </fieldset>
 
   <fieldset class="fs"><legend>3. 표준업종 목록 (직접입력 허용 업종) <span class="mini" id="ccnt"></span></legend>
@@ -119,8 +119,8 @@ table.at{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px;b
       return '<tr data-id="'+esc(it.id)+'"><td class="c">'+esc(it.id)+'</td><td>'+esc(it.n)+'</td><td class="c">'+esc(it.lv)+'</td><td class="c"><input type="checkbox" class="cs"'+(hid[it.id]?'':' checked')+' aria-label="표시"></td><td class="c"><input type="checkbox" class="cm"'+(ns[it.id]?'':' checked')+' aria-label="합계 반영"></td></tr>';
     }).join(''); icnt();
   }
-  function icnt(){var rs=$('tbI').querySelectorAll('tr');var s=0,m=0;rs.forEach(function(r){if(r.querySelector('.cs').checked)s++;if(r.querySelector('.cm').checked)m++;r.classList.toggle('off',!r.querySelector('.cs').checked);});$('icnt').textContent='— 표시 '+s+' / 합계 반영 '+m+' / 전체 '+rs.length+'건';}
-  function cnt(){$('ccnt').textContent='— '+$('cInd').value.split('\n').filter(function(l){return l.trim();}).length+'개';}
+  function icnt(){var rs=$('tbI').querySelectorAll('tr');var s=0,m=0;rs.forEach(function(r){if(r.querySelector('.cs').checked)s++;if(r.querySelector('.cm').checked)m++;r.classList.toggle('off',!r.querySelector('.cs').checked);});$('icnt').textContent=' : 표시 '+s+' / 합계 반영 '+m+' / 전체 '+rs.length+'건';}
+  function cnt(){$('ccnt').textContent=' : '+$('cInd').value.split('\n').filter(function(l){return l.trim();}).length+'개';}
   $('tbI').addEventListener('change',icnt); $('cInd').addEventListener('input',cnt);
   $('bAllShow').addEventListener('click',function(){$('tbI').querySelectorAll('.cs').forEach(function(c){c.checked=true;});icnt();});
   $('bAllSum').addEventListener('click',function(){$('tbI').querySelectorAll('.cm').forEach(function(c){c.checked=true;});icnt();});
@@ -160,7 +160,7 @@ table.at{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px;b
     return o;
   }
   function commit(){try{C=read();return true;}catch(e){msg(e.message,false);return false;}}
-  function fileText(){return '/* 내 회사 찾기 설정 — 관리페이지(gov_support_match_admin.html)가 갱신합니다. */\nwindow.GOV_MATCH_CONFIG = '+JSON.stringify(C,null,1)+';\n';}
+  function fileText(){return '/* 내 회사 찾기 설정 : 관리페이지(gov_support_match_admin.html)가 갱신합니다. */\nwindow.GOV_MATCH_CONFIG = '+JSON.stringify(C,null,1)+';\n';}
   var FN='gov_support_match_config.js';
 
   $('bPrev').addEventListener('click',function(){
@@ -193,11 +193,11 @@ table.at{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px;b
       var path=(dir?dir+'/':'')+FN, url='https://api.github.com/repos/'+repo+'/contents/'+path.split('/').map(encodeURIComponent).join('/');
       msg('업로드 중… '+FN,true);
       var sha,g=await ghApi('GET',url+'?ref='+encodeURIComponent(br),tok);
-      if(g.ok){sha=(await g.json()).sha;}else if(g.status!==404){throw new Error(FN+' 조회 실패 (HTTP '+g.status+')'+(g.status===401?' — 토큰 확인':''));}
+      if(g.ok){sha=(await g.json()).sha;}else if(g.status!==404){throw new Error(FN+' 조회 실패 (HTTP '+g.status+')'+(g.status===401?' : 토큰 확인':''));}
       var body={message:'gov_support_match: 관리화면에서 수정 ('+stamp+')',content:b64(fileText()),branch:br}; if(sha)body.sha=sha;
       var r=await ghApi('PUT',url,tok,body);
       if(!r.ok){var t='';try{t=(await r.json()).message||'';}catch(e){}throw new Error(FN+' 저장 실패 (HTTP '+r.status+') '+t);}
-      msg('GitHub 업데이트 완료: '+FN+' — 반영까지 1~2분 걸릴 수 있습니다.',true);
+      msg('GitHub 업데이트 완료: '+FN+' : 반영까지 1~2분 걸릴 수 있습니다.',true);
     }catch(e){msg('실패: '+e.message,false);}
     $('bGh').disabled=false;
   });

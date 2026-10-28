@@ -34,8 +34,8 @@
       <div class="w3" style="border:1px solid var(--bd);border-radius:6px;padding:6px 8px;background:#f8fafc">
         <label style="font-size:13px">하단 푸터 (보기·인쇄 모든 페이지 하단에 고정 표시)</label>
         <div class="g2" style="margin-top:4px">
-          <div class="w2"><label for="cCt">좌측 — 담당자 연락처</label><input type="text" id="cCt"></div>
-          <div class="w2"><label for="cCp">우측 — Copyright (비우면 기본 문구)</label><input type="text" id="cCp"></div>
+          <div class="w2"><label for="cCt">좌측 : 담당자 연락처</label><input type="text" id="cCt"></div>
+          <div class="w2"><label for="cCp">우측 : Copyright (비우면 기본 문구)</label><input type="text" id="cCp"></div>
         </div>
         <div class="mini" style="margin-top:4px">미리보기: <b id="fpL"></b> &nbsp;|&nbsp; <b id="fpR"></b></div>
       </div>
@@ -160,7 +160,7 @@
   function buildForm(){
     var it=cur;
     if(!it){$('eForm').innerHTML='<p class="mini">왼쪽 목록에서 항목을 선택하거나 ‘+ 새 항목’을 누르세요.</p>';$('eHead').textContent='항목 편집';return;}
-    $('eHead').textContent='항목 편집 — '+it.id;
+    $('eHead').textContent='항목 편집 : '+it.id;
     $('eForm').innerHTML='<div class="g2">'+
       tx('eN','지원·정책명',it.n,'w2')+tx('eSn','약칭(개요·카드용)',it.sn)+
       '<div><label for="eLv">지급 주체 구분</label>'+sel('eLv',G.LV,it.lv)+'</div>'+
@@ -230,9 +230,9 @@
   function files(){
     var c=Object.assign({},W.cfg); if(!c.extras)c.extras=[];
     return {
-      'gov_support_data.js':'/* 정부지원금·세제지원 데이터 — 관리페이지(gov_support_admin.html) 또는 일일 업데이트가 갱신합니다. */\nwindow.GOV_SUPPORT_DATA = '+JSON.stringify(W.data,null,1)+';\n',
+      'gov_support_data.js':'/* 정부지원금·세제지원 데이터 : 관리페이지(gov_support_admin.html) 또는 일일 업데이트가 갱신합니다. */\nwindow.GOV_SUPPORT_DATA = '+JSON.stringify(W.data,null,1)+';\n',
       'gov_support_config.js':'window.GOV_SUPPORT_CONFIG = '+JSON.stringify(c,null,2)+';\n',
-      'gov_support_updates.js':'/* 업데이트 기록 — asOf(기준일)=마지막 확인일, log=변경 전 내용(n=지원명, f=항목 a/lim/w/d, old=변경 전, date=변경 확인일) */\nwindow.GOV_SUPPORT_UPDATES = '+JSON.stringify(W.upd,null,1)+';\n'
+      'gov_support_updates.js':'/* 업데이트 기록 : asOf(기준일)=마지막 확인일, log=변경 전 내용(n=지원명, f=항목 a/lim/w/d, old=변경 전, date=변경 확인일) */\nwindow.GOV_SUPPORT_UPDATES = '+JSON.stringify(W.upd,null,1)+';\n'
     };
   }
   function commit(){ if(cur&&$('eN')&&!applyForm())return false; try{readCfg();}catch(e){msg(e.message,false);return false;} return true; }
@@ -283,13 +283,13 @@
         var path=(dir?dir+'/':'')+names[i], url='https://api.github.com/repos/'+repo+'/contents/'+path.split('/').map(encodeURIComponent).join('/');
         msg('업로드 중… '+names[i]+' ('+(i+1)+'/'+names.length+')',true);
         var sha, g=await ghApi('GET',url+'?ref='+encodeURIComponent(br),tok);
-        if(g.ok){sha=(await g.json()).sha;}else if(g.status!==404){throw new Error(names[i]+' 조회 실패 (HTTP '+g.status+')'+(g.status===401?' — 토큰 확인':'')); }
+        if(g.ok){sha=(await g.json()).sha;}else if(g.status!==404){throw new Error(names[i]+' 조회 실패 (HTTP '+g.status+')'+(g.status===401?' : 토큰 확인':'')); }
         var body={message:'gov_support: 관리화면에서 수정 ('+stamp+')',content:b64(f[names[i]]),branch:br}; if(sha)body.sha=sha;
         var r=await ghApi('PUT',url,tok,body);
         if(!r.ok){var t='';try{t=(await r.json()).message||'';}catch(e){}throw new Error(names[i]+' 저장 실패 (HTTP '+r.status+') '+t);}
         done.push(names[i]);
       }
-      msg('GitHub 업데이트 완료: '+done.join(', ')+' — 반영까지 1~2분 걸릴 수 있습니다.',true);
+      msg('GitHub 업데이트 완료: '+done.join(', ')+' : 반영까지 1~2분 걸릴 수 있습니다.',true);
     }catch(e){msg('실패: '+e.message+(done.length?' (완료: '+done.join(', ')+')':''),false);}
     $('bGh').disabled=false;
   });
