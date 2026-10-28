@@ -106,7 +106,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
   #secView,#secMe{display:block!important}
   body[data-ps=view] #secMe{display:none!important}
   body[data-ps=me] #secView{display:none!important}
-  body[data-ps=both] #secMe{break-before:page;page-break-before:always}
+  body[data-ps=both] #secView{break-before:page;page-break-before:always}
   .fixh{display:flex;position:fixed;left:0;right:0;top:0;height:5.4mm;justify-content:space-between;align-items:flex-end;font-size:14px;font-weight:800;color:var(--navy);border-bottom:2px solid var(--navy);background:#fff;padding-bottom:1px}
   .fixh .pa{font-size:10.5px;font-weight:700;color:#334155}
   .fixf{display:block;position:fixed;left:0;right:0;bottom:0;height:7mm;font-size:9.5px;background:#fff;border-top:2px solid var(--navy);padding-top:2px}
@@ -131,18 +131,18 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
 }
 </style>
 </head>
-<body data-tab="view" data-ps="both">
+<body data-tab="me" data-ps="both">
 <div id="top">
   <h1 id="ttl" data-fixed="1">내 회사에 적합한 지원제도 찾기<small>회사 정보를 입력하면 해당 지원제도와 지원금액 예시를 보여 드립니다</small></h1>
   <span id="asof">기준일 : -</span>
   <a class="lk" href="gov_support.html">전체 제도 보기</a>
   <a class="lk" href="gov_support_print.html">전체 인쇄</a>
 </div>
-<div class="fixh"><span>내 회사에 적합한 지원제도 찾기</span><span class="pa" id="fha"></span></div>
+<div class="fixh"><span id="fht"></span><span class="pa" id="fha"></span></div>
 <div class="fixf"><div class="cpf"><span class="ct" id="fct"></span><span class="cr" id="fcr"></span></div></div>
 <main>
   <section class="sec noprint" id="fm">
-    <h2>1. 내 회사 정보 지정 <span class="hint">입력하지 않은 항목은 ‘확인필요’로 판단합니다. 입력값은 이 브라우저에만 저장되며 외부로 전송되지 않습니다.</span></h2>
+    <h2>회사 정보 입력 <span class="hint">입력하지 않은 항목은 ‘확인필요’로 판단합니다. 입력값은 이 브라우저에만 저장되며 외부로 전송되지 않습니다.</span></h2>
     <div id="pf"></div>
     <div class="ctl">
       <button type="button" class="btn gd" id="bSample">예시 회사 채우기</button>
@@ -153,17 +153,28 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
 
   <div id="sumbar0" class="sumbar"></div>
   <div class="tabs" id="tabsbar">
-    <button type="button" class="tab on" data-t="view">2. 검색 결과 (요약표·상세 사유)</button>
-    <button type="button" class="tab" data-t="me">3. 내 회사 지원금액 예시</button>
+    <button type="button" class="tab on" data-t="me">1. 내 회사 지원금액 예시</button>
+    <button type="button" class="tab" data-t="view">2. 검색 결과 (요약표·상세 사유)</button>
     <div class="prp"><b>인쇄 범위</b>
-      <label><input type="radio" name="ps" value="view"> 검색 결과만</label>
       <label><input type="radio" name="ps" value="me"> 내 회사 예시만</label>
+      <label><input type="radio" name="ps" value="view"> 검색 결과만</label>
       <label><input type="radio" name="ps" value="both" checked> 둘 다 (인쇄: 예시 → 검색 결과 순)</label>
       <button type="button" class="btn" id="bPrint">인쇄 화면으로</button>
     </div>
   </div>
 
 <table class="pw"><thead><tr><td class="spc"></td></tr></thead><tfoot><tr><td class="spc"></td></tr></tfoot><tbody><tr><td>
+
+  <section class="sec" id="secMe">
+    <h2>1. 내 회사 지원금액 예시 <span class="hint">입력하신 회사 정보로 계산한 추정 예시입니다(실제 지원액은 공고·심사·신고 결과에 따라 달라집니다).</span></h2>
+    <table class="cmp" id="cmpM"></table>
+    <div class="h3t">1-1. 예시 결과</div>
+    <div class="tw2"><table class="mtb"><colgroup><col style="width:4%"><col style="width:6%"><col style="width:8%"><col style="width:16%"><col style="width:17%"><col style="width:24%"><col style="width:12%"><col style="width:13%"></colgroup>
+      <thead><tr><th>No</th><th>판정</th><th>구분</th><th>지원·정책명</th><th>산출항목</th><th>산출근거</th><th>예상금액</th><th>비고</th></tr></thead>
+      <tbody id="tbM"></tbody></table></div>
+    <ul class="warn" id="warn"></ul>
+    <p class="disc" id="disc" style="margin-top:6px"></p>
+  </section>
 
   <section class="sec" id="secView">
     <h2>2. 검색 결과 <span class="hint">판정: 입력한 조건을 모두 충족 = 적합 / 입력 누락 = 확인필요 / 하나라도 미충족 = 비해당</span></h2>
@@ -180,17 +191,6 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
     <p class="note" id="foot" style="margin-top:6px"></p>
   </section>
 
-  <section class="sec" id="secMe">
-    <h2>3. 내 회사 지원금액 예시 <span class="hint">입력하신 회사 정보로 계산한 추정 예시입니다(실제 지원액은 공고·심사·신고 결과에 따라 달라집니다).</span></h2>
-    <table class="cmp" id="cmpM"></table>
-    <div class="h3t">3-1. 예시 결과</div>
-    <div class="tw2"><table class="mtb"><colgroup><col style="width:4%"><col style="width:6%"><col style="width:8%"><col style="width:16%"><col style="width:17%"><col style="width:24%"><col style="width:12%"><col style="width:13%"></colgroup>
-      <thead><tr><th>No</th><th>판정</th><th>구분</th><th>지원·정책명</th><th>산출항목</th><th>산출근거</th><th>예상금액</th><th>비고</th></tr></thead>
-      <tbody id="tbM"></tbody></table></div>
-    <ul class="warn" id="warn"></ul>
-    <p class="disc" id="disc" style="margin-top:6px"></p>
-  </section>
-
 </td></tr></tbody></table>
 </main>
 <footer><div class="cp"><span class="ct" id="ctc"></span><span class="cr" id="cpy"></span></div></footer>
@@ -198,6 +198,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
 <script src="gov_support_common.js"></script>
+<script src="gov_support_match_config.js"></script>
 <script src="gov_support_rules.js?v=20261028"></script>
 <script>
 (function(){
@@ -205,7 +206,13 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
   var G=GS, RU=GOV_SUPPORT_RULES, esc=G.esc, $=function(i){return document.getElementById(i);};
   var W=1e8, M=1e4, KEY='govMatchProfile';
   G.load(); G.setTop(); G.setFoot();
-  document.title='내 회사에 적합한 지원제도 찾기';
+  var MC=window.GOV_MATCH_CONFIG||{};
+  if(/[?&]preview=1/.test(location.search)){try{var pv=JSON.parse(sessionStorage.getItem('govMatchPreview')||'null');if(pv)MC=pv;}catch(e){}}
+  var MT=MC.title||'내 회사에 적합한 지원제도 찾기', MS=(MC.sub!=null)?MC.sub:'회사 정보를 입력하면 해당 지원제도와 지원금액 예시를 보여 드립니다';
+  $('ttl').innerHTML=esc(MT)+'<small>'+esc(MS)+'</small>'; $('fht').textContent=MC.prtTitle||MT;
+  document.title=MT+(MC.title&&/preview=1/.test(location.search)?' (미리보기)':'');
+  var HID={},NS={}; (MC.hidden||[]).forEach(function(i){HID[i]=1;}); (MC.noSum||[]).forEach(function(i){NS[i]=1;});
+  var ITEMS=G.items.filter(function(i){return !HID[i.id];});
   $('foot').textContent=G.cfg.foot||''; $('disc').textContent=G.cfg.disc||'';
 
   var SEL={
@@ -218,8 +225,8 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
 
   /* ── 소재지 직접입력: 시·도/시·군 → 판정 구분 ── */
   function nz(s){return String(s==null?'':s).replace(/[\s·ㆍ,()\-]/g,'');}
-  var GG=/경기|수원|성남|의정부|안양|부천|광명|평택|동두천|안산|고양|과천|구리|남양주|오산|시흥|군포|의왕|하남|용인|파주|이천|안성|김포|양주|여주|연천|포천|가평|양평/;
-  var OT=/부산|대구|대전|울산|세종|강원|충북|충청북|충남|충청남|전북|전라북|전남|전라남|경북|경상북|경남|경상남|제주|청주|천안|전주|창원|포항|구미|춘천|원주|강릉|목포|여수|순천|진주|김해|양산|아산|익산|군산|안동|제천|충주|서산|당진|경주|거제|통영|사천|밀양|광양|나주|서귀포|속초|동해|태백|삼척|영주|영천|상주|문경|경산|김천|논산|공주|보령|계룡|홍성|남원|정읍|김제/;
+  var GG=new RegExp(MC.regionGG||'경기|수원|성남|의정부|안양|부천|광명|평택|동두천|안산|고양|과천|구리|남양주|오산|시흥|군포|의왕|하남|용인|파주|이천|안성|김포|양주|여주|연천|포천|가평|양평');
+  var OT=new RegExp(MC.regionOT||'부산|대구|대전|울산|세종|강원|충북|충청북|충남|충청남|전북|전라북|전남|전라남|경북|경상북|경남|경상남|제주|청주|천안|전주|창원|포항|구미|춘천|원주|강릉|목포|여수|순천|진주|김해|양산|아산|익산|군산|안동|제천|충주|서산|당진|경주|거제|통영|사천|밀양|광양|나주|서귀포|속초|동해|태백|삼척|영주|영천|상주|문경|경산|김천|논산|공주|보령|계룡|홍성|남원|정읍|김제');
   var REG_OPT=['서울특별시','인천광역시','경기도 화성시','경기도 수원시','경기도 성남시','경기도 용인시','경기도 고양시','경기도 부천시','경기도 안산시','경기도 안양시','경기도 평택시','경기도 시흥시','경기도 김포시','경기도 파주시','경기도 광주시','경기도 남양주시','경기도 오산시','부산광역시','대구광역시','대전광역시','광주광역시','울산광역시','세종특별자치시','강원특별자치도','충청북도 청주시','충청남도 천안시','전북특별자치도 전주시','전라남도','경상북도 구미시','경상남도 창원시','제주특별자치도'];
   function resRegion(txt){
     var t=nz(txt); if(!t) return {empty:true};
@@ -238,7 +245,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
   }
 
   /* ── 업종 직접입력: 한국표준산업분류(KSIC) 표준업종만 인정 ── */
-  var IND_LIST=[
+  var IND_DEF=[
     ['식료품 제조업','mfg'],['음료 제조업','mfg'],['섬유제품 제조업','mfg'],['의복·의복 액세서리 및 모피제품 제조업','mfg'],['목재 및 나무제품 제조업','mfg'],
     ['인쇄 및 기록매체 복제업','mfg'],['화학물질 및 화학제품 제조업','mfg'],['의료용 물질 및 의약품 제조업','mfg'],['고무 및 플라스틱제품 제조업','mfg'],
     ['비금속 광물제품 제조업','mfg'],['1차 금속 제조업','mfg'],['금속가공제품 제조업','mfg'],['전자부품·컴퓨터·영상·음향 및 통신장비 제조업','mfg'],
@@ -259,6 +266,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
     ['주점업','svc','음식점업(일반 주점)'],['치과','med','치과 병·의원'],['한의원','med','한의원·한방병원'],['건설업','svc','종합 건설업·전문직별 공사업'],
     ['정보통신업','svc','소프트웨어 개발 및 공급업 등'],['학원업','svc','교육서비스업'],['운수업','svc','육상·수상·항공 운송업'],['미용업','svc','미용·욕탕 및 유사 서비스업'],['서비스업','svc','기타 서비스업']
   ];
+  var IND_LIST=(MC.industries&&MC.industries.length)?MC.industries:IND_DEF;
   var IND_MAP={}; IND_LIST.forEach(function(x){IND_MAP[nz(x[0])]=x;});
   function resInd(txt){
     var t=nz(txt); if(!t) return {empty:true};
@@ -385,7 +393,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
   /* 판정 */
   var VF={ok:true,maybe:true,no:false}, res=[];
   function evalAll(P){
-    res=G.items.map(function(it){var r=RU.evaluate(it.id,P);r.it=it;return r;});
+    res=ITEMS.map(function(it){var r=RU.evaluate(it.id,P);r.it=it;return r;});
   }
   var ORD={ok:0,maybe:1,no:2};
   function badge(st){return st==='ok'?'<span class="bd b-ok">적합</span>':(st==='maybe'?'<span class="bd b-mb">확인필요</span>':'<span class="bd b-no">비해당</span>');}
@@ -402,7 +410,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
     });});
     var fl=FLAGS.filter(function(x){return flags[x[0]];}).map(function(x){return x[1];});
     if(fl.length) rows.push(['선택한 상태·제한',fl.join(', ')]);
-    if(!rows.length) return '<tr><td style="padding:6px;color:#475569">1. 회사 정보를 입력하면 이곳에 요약됩니다.</td></tr>';
+    if(!rows.length) return '<tr><td style="padding:6px;color:#475569">회사 정보를 입력하면 이곳에 요약됩니다.</td></tr>';
     var out='<caption style="text-align:left;font-weight:800;color:#14365d;padding:0 0 3px">내 회사 정보 (입력값)</caption>',i;
     for(i=0;i<rows.length;i+=3){
       out+='<tr>';
@@ -437,10 +445,10 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
   var NO={};
 
   /* 합계 계산 */
-  var EXCL=[['g18','g19']];
+  var EXCL=MC.excl||[['g18','g19']];
   function sum(list){
     var t={tax:[0,0],cash:[0,0],loan:0,cost:[0,0],once:[0,0]};
-    var skip={};
+    var skip=Object.assign({},NS);
     EXCL.forEach(function(g){
       var best=null,bv=-1;
       g.forEach(function(id){var r=list.filter(function(x){return x.it.id===id;})[0];if(!r)return;
@@ -505,7 +513,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
   /* 예시 결과: 구분별 소계 + 통합계(최상단) */
   function exampleHTML(res,NO){
     var mb=res.filter(function(r){return r.st!=='no';}), ok=res.filter(function(r){return r.st==='ok';});
-    var a=sum(ok), b=sum(mb), skip={};
+    var a=sum(ok), b=sum(mb), skip=Object.assign({},NS);
     EXCL.forEach(function(g){var best=null,bv=-1;
       g.forEach(function(id){var r=mb.filter(function(x){return x.it.id===id;})[0];if(!r)return;var v=0;r.rows.forEach(function(x){if(x.k==='tax')v+=(x.hi||0);});if(v>bv){bv=v;best=id;}});
       g.forEach(function(id){if(id!==best)skip[id]=true;});});
@@ -535,12 +543,12 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
   function renderMe(P){
     $('cmpM').innerHTML=cmpHTML(P);
     $('tbM').innerHTML=exampleHTML(res,NO);
-    $('warn').innerHTML=[
+    $('warn').innerHTML=(MC.notes&&MC.notes.length?MC.notes:[
       '합계는 제도별 예시를 단순 합산한 값이며, 중복 적용이 제한되는 제도는 하나만 반영했습니다(예: 창업중소기업 세액감면과 중소기업 특별세액감면은 택일 — 더 큰 값 반영).',
       '세액공제·감면은 최저한세, 공제 한도, 사후관리(고용 감소·자산 처분 시 추징) 등에 따라 달라지며, 소득금액이 감면 대상 소득에 모두 해당한다고 가정했습니다.',
       '‘확인필요’는 입력이 부족하거나 근거 자료가 단일·2차 출처인 항목입니다. 신청·신고 전 공고문과 국가법령정보센터(law.go.kr)에서 최종 확인하세요.',
       '정부안 단계의 제도(가업상속공제 개편 등)는 국회 확정 전 내용이므로 참고용입니다.'
-    ].map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
+    ]).map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
   }
 
   function setFixed(){
@@ -597,9 +605,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
     $('sv').textContent='입력값을 초기화했습니다.'; renderAll();
   });
   $('bSample').addEventListener('click',function(){
-    fill({v:{form:'corp',scale:'small',ind:'mfg',region:'hwaseong',age:4,ceoage:58,sales:25,taxbase:3,export:50,assets:40,bizinc:7000,mtr:35,
-      emp:18,prevemp:15,youth:6,newyouth:2,senior:1,retur:1,pay:260,invest:5,rnd:1.2,rndprev:0.8,loan:3,bonus:3000,partner:10,
-      bizyears:12,stake:60,bizval:80,giftval:30},f:{rnd_lab:1,bonus_agree:1,faithful:1,edu_done:1}});
+    fill(MC.sample||{v:{form:'corp',scale:'small',ind:'mfg',region:'hwaseong',sales:25,emp:18},f:{}});
     save(); renderAll();
     $('sv').textContent='예시 회사 값을 채웠습니다. 실제 회사 값으로 바꿔 입력하세요.';
   });

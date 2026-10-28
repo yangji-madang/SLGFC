@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>내 회사 찾기 관리</title>
+<link rel="stylesheet" href="gov_support.css">
+<style>
+body{display:block;min-height:0}
+main{padding-bottom:70px}
+.mini{font-size:12px;color:var(--mut)}
+.fld textarea.tall{min-height:180px;font-family:inherit}
+.fld textarea.mono{font-family:Consolas,'Courier New',monospace;font-size:12px;min-height:150px}
+table.at{border-collapse:collapse;width:100%;font-size:12.5px;background:#fff}
+.at th,.at td{border:1px solid #8493a8;padding:3px 6px;vertical-align:middle}
+.at th{background:var(--navy);color:#fff;text-align:center}
+.at td.c{text-align:center}
+.at tbody tr:nth-child(even) td{background:#f8fafc}
+.at tr.off td{color:#94a3b8}
+.tbw{max-height:420px;overflow:auto;border:1px solid var(--bd);border-radius:6px}
+.tbw thead th{position:sticky;top:0}
+.g2 .w2{grid-column:span 2}.g2 .w3{grid-column:1/-1}
+@media(max-width:700px){.g2 .w2{grid-column:1/-1}}
+.bs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 6px}
+</style>
+</head>
+<body>
+<div id="top">
+  <h1 id="ttl" data-fixed="1">내 회사 찾기 관리<small>문구 · 제도 노출/합계 · 표준업종 · 소재지 인식 · 예시 회사 · GitHub 업데이트</small></h1>
+  <span id="asof">기준일 : -</span>
+  <a class="lk" href="gov_support_match.html" target="_blank" rel="noopener">내 회사 찾기</a>
+  <a class="lk" href="gov_support_match_print.html" target="_blank" rel="noopener">인쇄 페이지</a>
+  <a class="lk" href="gov_support_admin.html" target="_blank" rel="noopener">제도 데이터 관리</a>
+</div>
+<main>
+  <fieldset class="fs"><legend>1. 페이지 문구</legend>
+    <div class="g2 fld">
+      <div class="w2"><label for="cTitle">페이지 제목</label><input type="text" id="cTitle" maxlength="60"></div>
+      <div class="w2"><label for="cSub">부제</label><input type="text" id="cSub" maxlength="120"></div>
+      <div class="w2"><label for="cPrt">인쇄 제목 (인쇄물 매 페이지 상단)</label><input type="text" id="cPrt" maxlength="60"></div>
+      <div class="w3"><label for="cNotes">예시 하단 유의사항 (한 줄에 하나, 비우면 기본 문구)</label><textarea id="cNotes"></textarea></div>
+    </div>
+    <p class="mini">하단 푸터(연락처·copyright)와 유의사항·면책 문구는 ‘제도 데이터 관리’(gov_support_admin.html)의 기본 설정과 공통입니다.</p>
+  </fieldset>
+
+  <fieldset class="fs"><legend>2. 제도 노출 · 합계 반영 <span class="mini" id="icnt"></span></legend>
+    <div class="bs">
+      <button type="button" class="btn sub" id="bAllShow">전체 표시</button>
+      <button type="button" class="btn sub" id="bAllSum">전체 합계 반영</button>
+    </div>
+    <div class="tbw"><table class="at"><thead><tr><th style="width:5%">ID</th><th>지원·정책명</th><th style="width:16%">지급 주체</th><th style="width:11%">내 회사 찾기에 표시</th><th style="width:11%">금액 합계에 반영</th></tr></thead><tbody id="tbI"></tbody></table></div>
+    <p class="mini">‘표시’를 끄면 판정·인쇄·합계에서 모두 빠집니다. ‘합계에 반영’만 끄면 표에는 나오지만 소계·통합계에서는 제외됩니다.</p>
+    <div class="fld" style="margin-top:8px"><label for="cExcl">택일(중복 적용 불가) 제도 묶음 — 한 줄에 한 묶음, ID를 쉼표로 (묶음 안에서 더 큰 세금 절감액 1건만 합계 반영)</label><textarea id="cExcl" style="min-height:52px"></textarea></div>
+  </fieldset>
+
+  <fieldset class="fs"><legend>3. 표준업종 목록 (직접입력 허용 업종) <span class="mini" id="ccnt"></span></legend>
+    <div class="fld"><label for="cInd">한 줄에 하나: 업종명 | 구분 | 표준업종명(선택)</label><textarea id="cInd" class="tall"></textarea></div>
+    <p class="mini">구분 값: <b>mfg</b> 제조업 · <b>trade</b> 도소매업 · <b>med</b> 의료업 · <b>svc</b> 기타 서비스업·건설 등 · <b>rental</b> 부동산임대업 · <b>consume</b> 소비향락(유흥·사행) 서비스업. 이 목록에 없는 업종명은 입력 화면에서 차단됩니다(한국표준산업분류 기준으로 등록하세요).</p>
+  </fieldset>
+
+  <fieldset class="fs"><legend>4. 소재지 인식 키워드</legend>
+    <div class="g2 fld">
+      <div class="w3"><label for="cGG">경기 기타 지역으로 인식할 단어 (쉼표 또는 줄바꿈 구분)</label><textarea id="cGG" style="min-height:70px"></textarea></div>
+      <div class="w3"><label for="cOT">비수도권(기타)으로 인식할 단어 (쉼표 또는 줄바꿈 구분)</label><textarea id="cOT" style="min-height:70px"></textarea></div>
+    </div>
+    <p class="mini">‘서울’, ‘화성’, ‘인천’은 고정 규칙입니다. 서울·화성·인천을 먼저 판별한 뒤 위 단어로 경기 기타·비수도권을 구분하며, 어느 쪽에도 없으면 ‘인식 불가’로 안내합니다.</p>
+  </fieldset>
+
+  <fieldset class="fs"><legend>5. 예시 회사 값 (‘예시 회사 채우기’ 버튼)</legend>
+    <div class="bs"><button type="button" class="btn sub" id="bGrab">이 브라우저의 입력값을 예시로 가져오기</button></div>
+    <div class="fld"><label for="cSmp">JSON 형식 (v = 입력값, f = 상태·제한 체크)</label><textarea id="cSmp" class="mono"></textarea></div>
+  </fieldset>
+
+  <fieldset class="fs"><legend>GitHub 업데이트</legend>
+    <div class="g2 fld">
+      <div><label for="ghRepo">저장소 (owner/repo)</label><input type="text" id="ghRepo" value="yangji-madang/SLGFC"></div>
+      <div><label for="ghBranch">브랜치</label><input type="text" id="ghBranch" value="main"></div>
+      <div><label for="ghDir">폴더</label><input type="text" id="ghDir" value="consult"></div>
+      <div><label for="ghTok">Personal Access Token (contents 쓰기 권한)</label><input type="password" id="ghTok" autocomplete="off" placeholder="ghp_… / github_pat_…"></div>
+      <div><label>&nbsp;</label><label style="font-weight:400"><input type="checkbox" id="ghRem"> 이 브라우저에 토큰 기억</label></div>
+    </div>
+    <p class="mini">토큰은 이 화면에서 GitHub로만 전송되며 저장소·파일에는 기록되지 않습니다. 업로드 대상: gov_support_match_config.js</p>
+  </fieldset>
+</main>
+<div class="bar">
+  <button type="button" class="btn sub" id="bPrev">미리보기</button>
+  <button type="button" class="btn sub" id="bDraft">임시저장(이 브라우저)</button>
+  <button type="button" class="btn sub" id="bLoad">임시저장 불러오기</button>
+  <button type="button" class="btn sub" id="bDl">파일 내려받기</button>
+  <button type="button" class="btn gd" id="bGh">GitHub 업데이트</button>
+  <span id="msg"></span>
+</div>
+<footer style="position:static"><div class="cp"><span class="ct" id="ctc"></span><span class="cr" id="cpy"></span></div></footer>
+<script src="gov_support_data.js"></script>
+<script src="gov_support_config.js"></script>
+<script src="gov_support_updates.js"></script>
+<script src="gov_support_common.js"></script>
+<script src="gov_support_match_config.js"></script>
+<script>
+(function(){
+  'use strict';
+  var G=GS, esc=G.esc, $=function(i){return document.getElementById(i);};
+  var DRAFT='govMatchAdminDraft', TOKK='govSupportGhTok', REPK='govMatchGhRepo', KEYS=['mfg','trade','med','svc','rental','consume'];
+  var C=JSON.parse(JSON.stringify(window.GOV_MATCH_CONFIG||{}));
+  G.load(); G.setFoot();
+  $('asof').textContent='기준일 : '+G.fmtD(G.asOf);
+  function msg(t,ok){var m=$('msg');m.textContent=t;m.className=ok?'ok':'er';}
+
+  function fillAll(){
+    $('cTitle').value=C.title||''; $('cSub').value=C.sub||''; $('cPrt').value=C.prtTitle||'';
+    $('cNotes').value=(C.notes||[]).join('\n');
+    $('cExcl').value=(C.excl||[]).map(function(g){return g.join(', ');}).join('\n');
+    $('cInd').value=(C.industries||[]).map(function(x){return x.join(' | ');}).join('\n'); cnt();
+    $('cGG').value=(C.regionGG||'').split('|').join(', '); $('cOT').value=(C.regionOT||'').split('|').join(', ');
+    $('cSmp').value=JSON.stringify(C.sample||{v:{},f:{}},null,1);
+    var hid={},ns={}; (C.hidden||[]).forEach(function(i){hid[i]=1;}); (C.noSum||[]).forEach(function(i){ns[i]=1;});
+    $('tbI').innerHTML=G.items.map(function(it){
+      return '<tr data-id="'+esc(it.id)+'"><td class="c">'+esc(it.id)+'</td><td>'+esc(it.n)+'</td><td class="c">'+esc(it.lv)+'</td><td class="c"><input type="checkbox" class="cs"'+(hid[it.id]?'':' checked')+' aria-label="표시"></td><td class="c"><input type="checkbox" class="cm"'+(ns[it.id]?'':' checked')+' aria-label="합계 반영"></td></tr>';
+    }).join(''); icnt();
+  }
+  function icnt(){var rs=$('tbI').querySelectorAll('tr');var s=0,m=0;rs.forEach(function(r){if(r.querySelector('.cs').checked)s++;if(r.querySelector('.cm').checked)m++;r.classList.toggle('off',!r.querySelector('.cs').checked);});$('icnt').textContent='— 표시 '+s+' / 합계 반영 '+m+' / 전체 '+rs.length+'건';}
+  function cnt(){$('ccnt').textContent='— '+$('cInd').value.split('\n').filter(function(l){return l.trim();}).length+'개';}
+  $('tbI').addEventListener('change',icnt); $('cInd').addEventListener('input',cnt);
+  $('bAllShow').addEventListener('click',function(){$('tbI').querySelectorAll('.cs').forEach(function(c){c.checked=true;});icnt();});
+  $('bAllSum').addEventListener('click',function(){$('tbI').querySelectorAll('.cm').forEach(function(c){c.checked=true;});icnt();});
+  $('bGrab').addEventListener('click',function(){
+    try{var s=JSON.parse(localStorage.getItem('govMatchProfile')||'null');
+      if(!s||!s.v||!Object.keys(s.v).length){msg('이 브라우저에 저장된 입력값이 없습니다. 내 회사 찾기에서 먼저 입력하세요.',false);return;}
+      var f={};Object.keys(s.f||{}).forEach(function(k){if(s.f[k])f[k]=1;});
+      $('cSmp').value=JSON.stringify({v:s.v,f:f},null,1); msg('입력값을 예시로 가져왔습니다. (아직 GitHub에는 반영되지 않았습니다)',true);
+    }catch(e){msg('가져오기 실패',false);}
+  });
+
+  function words(id){return $(id).value.split(/[,\n|]/).map(function(x){return x.trim();}).filter(Boolean);}
+  function read(){
+    var o={};
+    o.title=$('cTitle').value.trim(); o.sub=$('cSub').value.trim(); o.prtTitle=$('cPrt').value.trim();
+    if(!o.title) throw new Error('페이지 제목을 입력하세요.');
+    o.hidden=[];o.noSum=[];
+    $('tbI').querySelectorAll('tr').forEach(function(r){var id=r.dataset.id;if(!r.querySelector('.cs').checked)o.hidden.push(id);if(!r.querySelector('.cm').checked)o.noSum.push(id);});
+    var ids={};G.items.forEach(function(i){ids[i.id]=1;});
+    o.excl=$('cExcl').value.split('\n').map(function(l){return l.split(',').map(function(x){return x.trim();}).filter(Boolean);}).filter(function(g){return g.length;});
+    o.excl.forEach(function(g){if(g.length<2)throw new Error('택일 묶음에는 제도 ID가 2개 이상 필요합니다: '+g.join(','));g.forEach(function(i){if(!ids[i])throw new Error('택일 묶음의 존재하지 않는 ID: '+i);});});
+    o.notes=$('cNotes').value.split('\n').map(function(x){return x.trim();}).filter(Boolean);
+    var seen={}; o.industries=$('cInd').value.split('\n').map(function(l){return l.trim();}).filter(Boolean).map(function(l,i){
+      var p=l.split('|').map(function(x){return x.trim();});
+      if(!p[0]) throw new Error('표준업종 '+(i+1)+'번째 줄: 업종명이 비어 있습니다.');
+      if(KEYS.indexOf(p[1])<0) throw new Error('표준업종 “'+p[0]+'”: 구분은 '+KEYS.join('/')+' 중 하나여야 합니다.');
+      var k=p[0].replace(/[\s·ㆍ,()\-]/g,''); if(seen[k]) throw new Error('표준업종 중복: '+p[0]); seen[k]=1;
+      return p[2]?[p[0],p[1],p[2]]:[p[0],p[1]];
+    });
+    if(!o.industries.length) throw new Error('표준업종은 1개 이상 필요합니다.');
+    o.regionGG=words('cGG').join('|'); o.regionOT=words('cOT').join('|');
+    try{new RegExp(o.regionGG);new RegExp(o.regionOT);}catch(e){throw new Error('소재지 키워드에 사용할 수 없는 문자가 있습니다.');}
+    if(!o.regionGG||!o.regionOT) throw new Error('소재지 인식 키워드를 입력하세요.');
+    try{o.sample=JSON.parse($('cSmp').value||'{}');}catch(e){throw new Error('예시 회사 값이 올바른 JSON이 아닙니다.');}
+    if(!o.sample.v||typeof o.sample.v!=='object') throw new Error('예시 회사 값에는 v(입력값) 객체가 필요합니다.');
+    if(!o.sample.f) o.sample.f={};
+    return o;
+  }
+  function commit(){try{C=read();return true;}catch(e){msg(e.message,false);return false;}}
+  function fileText(){return '/* 내 회사 찾기 설정 — 관리페이지(gov_support_match_admin.html)가 갱신합니다. */\nwindow.GOV_MATCH_CONFIG = '+JSON.stringify(C,null,1)+';\n';}
+  var FN='gov_support_match_config.js';
+
+  $('bPrev').addEventListener('click',function(){
+    if(!commit())return;
+    try{sessionStorage.setItem('govMatchPreview',JSON.stringify(C));}catch(e){msg('미리보기 저장 실패',false);return;}
+    window.open('gov_support_match.html?preview=1','_blank');
+  });
+  $('bDraft').addEventListener('click',function(){if(!commit())return;try{localStorage.setItem(DRAFT,JSON.stringify(C));msg('이 브라우저에 임시저장했습니다.',true);}catch(e){msg('임시저장 실패',false);}});
+  $('bLoad').addEventListener('click',function(){try{var s=JSON.parse(localStorage.getItem(DRAFT)||'null');if(!s){msg('임시저장본이 없습니다.',false);return;}C=s;fillAll();msg('임시저장본을 불러왔습니다.',true);}catch(e){msg('불러오기 실패',false);}});
+  $('bDl').addEventListener('click',function(){
+    if(!commit())return;
+    var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([fileText()],{type:'text/javascript;charset=utf-8'}));a.download=FN;document.body.appendChild(a);a.click();a.remove();msg('파일을 내려받았습니다.',true);
+  });
+
+  /* GitHub */
+  (function(){try{var t=localStorage.getItem(TOKK);if(t){$('ghTok').value=t;$('ghRem').checked=true;}var r=JSON.parse(localStorage.getItem(REPK)||'null');if(r){$('ghRepo').value=r.repo||$('ghRepo').value;$('ghBranch').value=r.br||$('ghBranch').value;$('ghDir').value=(r.dir!=null)?r.dir:$('ghDir').value;}}catch(e){}})();
+  function b64(s){var b=new TextEncoder().encode(s),bin='',i;for(i=0;i<b.length;i+=0x8000)bin+=String.fromCharCode.apply(null,b.subarray(i,i+0x8000));return btoa(bin);}
+  function ghApi(method,url,tok,body){return fetch(url,{method:method,headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+tok,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});}
+  $('bGh').addEventListener('click',async function(){
+    if(!commit())return;
+    var repo=$('ghRepo').value.trim(),br=$('ghBranch').value.trim()||'main',dir=$('ghDir').value.trim().replace(/^\/+|\/+$/g,''),tok=$('ghTok').value.trim();
+    if(!/^[\w.-]+\/[\w.-]+$/.test(repo)){msg('저장소는 owner/repo 형식이어야 합니다.',false);return;}
+    if(/\.\./.test(dir)||/[^\w\/.-]/.test(dir)){msg('폴더 경로가 올바르지 않습니다.',false);return;}
+    if(!tok){msg('토큰을 입력하세요.',false);return;}
+    try{if($('ghRem').checked){localStorage.setItem(TOKK,tok);}else{localStorage.removeItem(TOKK);}localStorage.setItem(REPK,JSON.stringify({repo:repo,br:br,dir:dir}));}catch(e){}
+    var d=new Date(),p=function(n){return ('0'+n).slice(-2);};
+    var stamp=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+    $('bGh').disabled=true;
+    try{
+      var path=(dir?dir+'/':'')+FN, url='https://api.github.com/repos/'+repo+'/contents/'+path.split('/').map(encodeURIComponent).join('/');
+      msg('업로드 중… '+FN,true);
+      var sha,g=await ghApi('GET',url+'?ref='+encodeURIComponent(br),tok);
+      if(g.ok){sha=(await g.json()).sha;}else if(g.status!==404){throw new Error(FN+' 조회 실패 (HTTP '+g.status+')'+(g.status===401?' — 토큰 확인':''));}
+      var body={message:'gov_support_match: 관리화면에서 수정 ('+stamp+')',content:b64(fileText()),branch:br}; if(sha)body.sha=sha;
+      var r=await ghApi('PUT',url,tok,body);
+      if(!r.ok){var t='';try{t=(await r.json()).message||'';}catch(e){}throw new Error(FN+' 저장 실패 (HTTP '+r.status+') '+t);}
+      msg('GitHub 업데이트 완료: '+FN+' — 반영까지 1~2분 걸릴 수 있습니다.',true);
+    }catch(e){msg('실패: '+e.message,false);}
+    $('bGh').disabled=false;
+  });
+
+  fillAll();
+})();
+</script>
+</body>
+</html>

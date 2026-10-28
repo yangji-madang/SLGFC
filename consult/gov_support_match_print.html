@@ -157,6 +157,7 @@ body[data-ps=me] #blkA{display:none}
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
 <script src="gov_support_common.js"></script>
+<script src="gov_support_match_config.js"></script>
 <script src="gov_support_rules.js?v=20261028"></script>
 <script>
 (function(){
@@ -164,7 +165,10 @@ body[data-ps=me] #blkA{display:none}
   var G=GS, RU=GOV_SUPPORT_RULES, esc=G.esc, $=function(i){return document.getElementById(i);};
   var W=1e8, M=1e4;
   G.load(); G.setTop(); G.setFoot();
-  var pt='내 회사에 적합한 지원제도 찾기', asTxt='(기준일 : '+G.fmtD(G.asOf)+')';
+  var MC=window.GOV_MATCH_CONFIG||{};
+  if(/[?&]preview=1/.test(location.search)){try{var pv=JSON.parse(sessionStorage.getItem('govMatchPreview')||'null');if(pv)MC=pv;}catch(e){}}
+  var HID={},NS={}; (MC.hidden||[]).forEach(function(i){HID[i]=1;}); (MC.noSum||[]).forEach(function(i){NS[i]=1;});
+  var pt=MC.prtTitle||MC.title||'내 회사에 적합한 지원제도 찾기', asTxt='(기준일 : '+G.fmtD(G.asOf)+')';
   ['sht','fht'].forEach(function(i){$(i).textContent=pt;}); ['sha','fha'].forEach(function(i){$(i).textContent=asTxt;});
   $('foot').textContent=G.cfg.foot||''; $('disc').textContent=G.cfg.disc||'';
   document.title=pt+' (기준일 '+G.fmtD(G.asOf)+')';
@@ -214,12 +218,12 @@ body[data-ps=me] #blkA{display:none}
   var ORD={ok:0,maybe:1,no:2};
   function badge(st){return st==='ok'?'<span class="bd b-ok">적합</span>':(st==='maybe'?'<span class="bd b-mb">확인필요</span>':'<span class="bd b-no">비해당</span>');}
 
-  var res=G.items.map(function(it){var r=RU.evaluate(it.id,P);r.it=it;return r;});
+  var res=G.items.filter(function(i){return !HID[i.id];}).map(function(it){var r=RU.evaluate(it.id,P);r.it=it;return r;});
   var NO={}; res.slice().sort(function(a,b){return ORD[a.st]-ORD[b.st];}).forEach(function(r,i){NO[r.it.id]=i+1;});
 
-  var EXCL=[['g18','g19']];
+  var EXCL=MC.excl||[['g18','g19']];
   function sum(list){
-    var t={tax:[0,0],cash:[0,0],loan:0,cost:[0,0],once:[0,0]}, skip={};
+    var t={tax:[0,0],cash:[0,0],loan:0,cost:[0,0],once:[0,0]}, skip=Object.assign({},NS);
     EXCL.forEach(function(g){var best=null,bv=-1;
       g.forEach(function(id){var r=list.filter(function(x){return x.it.id===id;})[0];if(!r)return;var v=0;r.rows.forEach(function(x){if(x.k==='tax')v+=(x.hi||0);});if(v>bv){bv=v;best=id;}});
       g.forEach(function(id){if(id!==best)skip[id]=true;});});
@@ -260,7 +264,7 @@ body[data-ps=me] #blkA{display:none}
   /* 예시 결과: 구분별 소계 + 통합계(최상단) */
   function exampleHTML(res,NO){
     var mb=res.filter(function(r){return r.st!=='no';}), ok=res.filter(function(r){return r.st==='ok';});
-    var a=sum(ok), b=sum(mb), skip={};
+    var a=sum(ok), b=sum(mb), skip=Object.assign({},NS);
     EXCL.forEach(function(g){var best=null,bv=-1;
       g.forEach(function(id){var r=mb.filter(function(x){return x.it.id===id;})[0];if(!r)return;var v=0;r.rows.forEach(function(x){if(x.k==='tax')v+=(x.hi||0);});if(v>bv){bv=v;best=id;}});
       g.forEach(function(id){if(id!==best)skip[id]=true;});});
@@ -307,7 +311,7 @@ body[data-ps=me] #blkA{display:none}
       '<div class="ttl">2-2. 상세 — 어떤 이유로 지원되는지</div>'+
       tbl(['No','판정','지원·정책명','지원 내용','지원 사유 (조건별 판정)','지원금액 산출','신청·문의·시기','출처'],[3.5,6,11,20,18,18,15,8.5],s2,true);
 
-    var wn=['합계는 제도별 예시를 단순 합산한 값이며, 중복 적용이 제한되는 제도는 하나만 반영했습니다(창업중소기업 세액감면과 중소기업 특별세액감면은 택일 — 더 큰 값 반영).',
+    var wn=(MC.notes&&MC.notes.length)?MC.notes:['합계는 제도별 예시를 단순 합산한 값이며, 중복 적용이 제한되는 제도는 하나만 반영했습니다(창업중소기업 세액감면과 중소기업 특별세액감면은 택일 — 더 큰 값 반영).',
       '세액공제·감면은 최저한세, 공제 한도, 사후관리(고용 감소·자산 처분 시 추징) 등에 따라 달라지며, 소득금액이 감면 대상 소득에 모두 해당한다고 가정했습니다.',
       '‘확인필요’는 입력이 부족하거나 근거 자료가 단일·2차 출처인 항목입니다. 신청·신고 전 공고문과 국가법령정보센터(law.go.kr)에서 최종 확인하세요.',
       '정부안 단계의 제도(가업상속공제 개편 등)는 국회 확정 전 내용이므로 참고용입니다.'];
