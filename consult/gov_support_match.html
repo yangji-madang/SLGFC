@@ -142,7 +142,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
 <div class="fixf"><div class="cpf"><span class="ct" id="fct"></span><span class="cr" id="fcr"></span></div></div>
 <main>
   <section class="sec noprint" id="fm">
-    <h2>① 내 회사 정보 지정 <span class="hint">입력하지 않은 항목은 ‘확인필요’로 판단합니다. 입력값은 이 브라우저에만 저장되며 외부로 전송되지 않습니다.</span></h2>
+    <h2>1. 내 회사 정보 지정 <span class="hint">입력하지 않은 항목은 ‘확인필요’로 판단합니다. 입력값은 이 브라우저에만 저장되며 외부로 전송되지 않습니다.</span></h2>
     <div id="pf"></div>
     <div class="ctl">
       <button type="button" class="btn gd" id="bSample">예시 회사 채우기</button>
@@ -153,8 +153,8 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
 
   <div id="sumbar0" class="sumbar"></div>
   <div class="tabs" id="tabsbar">
-    <button type="button" class="tab on" data-t="view">② 검색 결과 (요약표·상세 사유)</button>
-    <button type="button" class="tab" data-t="me">③ 내 회사 지원금액 예시 (산출 근거)</button>
+    <button type="button" class="tab on" data-t="view">2. 검색 결과 (요약표·상세 사유)</button>
+    <button type="button" class="tab" data-t="me">3. 내 회사 지원금액 예시</button>
     <div class="prp"><b>인쇄 범위</b>
       <label><input type="radio" name="ps" value="view"> 검색 결과만</label>
       <label><input type="radio" name="ps" value="me"> 내 회사 예시만</label>
@@ -166,7 +166,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
 <table class="pw"><thead><tr><td class="spc"></td></tr></thead><tfoot><tr><td class="spc"></td></tr></tfoot><tbody><tr><td>
 
   <section class="sec" id="secView">
-    <h2>② 검색 결과 <span class="hint">판정: 입력한 조건을 모두 충족 = 적합 / 입력 누락 = 확인필요 / 하나라도 미충족 = 비해당</span></h2>
+    <h2>2. 검색 결과 <span class="hint">판정: 입력한 조건을 모두 충족 = 적합 / 입력 누락 = 확인필요 / 하나라도 미충족 = 비해당</span></h2>
     <div class="ovrow noprint" id="vflt" style="margin:0 0 8px"></div>
     <table class="cmp" id="cmpV"></table>
     <div class="h3t">2-1. 지원제도 요약표 (판정 · 지원금액 · 판정항목) 및 총액</div>
@@ -181,15 +181,11 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
   </section>
 
   <section class="sec" id="secMe">
-    <h2>③ 내 회사 지원금액 예시 <span class="hint">입력하신 회사 정보로 계산한 추정 예시입니다(실제 지원액은 공고·심사·신고 결과에 따라 달라집니다).</span></h2>
+    <h2>3. 내 회사 지원금액 예시 <span class="hint">입력하신 회사 정보로 계산한 추정 예시입니다(실제 지원액은 공고·심사·신고 결과에 따라 달라집니다).</span></h2>
     <table class="cmp" id="cmpM"></table>
-    <div class="h3t">3-1. 예상 혜택 총괄</div>
-    <div class="tw2"><table class="mtb"><colgroup><col style="width:28%"><col style="width:22%"><col style="width:22%"><col style="width:28%"></colgroup>
-      <thead><tr><th>구분</th><th>적합 제도 기준</th><th>확인필요 포함 시</th><th>비고</th></tr></thead>
-      <tbody id="tbK"></tbody></table></div>
-    <div class="h3t">3-2. 제도별 산출 근거</div>
-    <div class="tw2"><table class="mtb"><colgroup><col style="width:4%"><col style="width:6%"><col style="width:19%"><col style="width:9%"><col style="width:21%"><col style="width:29%"><col style="width:12%"></colgroup>
-      <thead><tr><th>No</th><th>판정</th><th>지원·정책명</th><th>구분</th><th>산출 항목</th><th>산식·근거</th><th>예상 금액</th></tr></thead>
+    <div class="h3t">3-1. 예시 결과</div>
+    <div class="tw2"><table class="mtb"><colgroup><col style="width:4%"><col style="width:6%"><col style="width:8%"><col style="width:16%"><col style="width:17%"><col style="width:24%"><col style="width:12%"><col style="width:13%"></colgroup>
+      <thead><tr><th>No</th><th>판정</th><th>구분</th><th>지원·정책명</th><th>산출항목</th><th>산출근거</th><th>예상금액</th><th>비고</th></tr></thead>
       <tbody id="tbM"></tbody></table></div>
     <ul class="warn" id="warn"></ul>
     <p class="disc" id="disc" style="margin-top:6px"></p>
@@ -406,7 +402,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
     });});
     var fl=FLAGS.filter(function(x){return flags[x[0]];}).map(function(x){return x[1];});
     if(fl.length) rows.push(['선택한 상태·제한',fl.join(', ')]);
-    if(!rows.length) return '<tr><td style="padding:6px;color:#475569">① 회사 정보를 입력하면 이곳에 요약됩니다.</td></tr>';
+    if(!rows.length) return '<tr><td style="padding:6px;color:#475569">1. 회사 정보를 입력하면 이곳에 요약됩니다.</td></tr>';
     var out='<caption style="text-align:left;font-weight:800;color:#14365d;padding:0 0 3px">내 회사 정보 (입력값)</caption>',i;
     for(i=0;i<rows.length;i+=3){
       out+='<tr>';
@@ -484,8 +480,8 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
       s+='<tr><td class="c" data-l="No">'+NO[it.id]+'</td><td class="c" data-l="판정">'+badge(r.st)+'</td><td data-l="지원 정책명"><div class="nm">'+esc(it.n)+'</div><div class="sm">'+esc(it.ag)+'</div></td><td data-l="지원금액">'+amtLines(r)+'</td><td data-l="비고(판정 항목)">'+noteHTML(r)+'</td></tr>';
     });
     if(!list.length) s+='<tr><td colspan="5" style="text-align:center;padding:14px;color:#475569">표시할 제도가 없습니다. 위 ‘표시’ 버튼에서 항목을 선택하거나 회사 정보를 입력하세요.</td></tr>';
-    s+='<tr class="tot"><td class="c tlb" colspan="3">총액 ① 적합 제도 합계 (연)</td><td class="tlb">'+esc(rng(T.ta[0],T.ta[1]))+'</td><td class="sm">세금 절감 '+esc(rng(T.a.tax[0],T.a.tax[1]))+' + 지원금·이자 '+esc(rng(T.a.cash[0],T.a.cash[1]))+'</td></tr>'+
-       '<tr class="tot2"><td class="c tlb" colspan="3">총액 ② 적합 + 확인필요 포함 (연)</td><td class="tlb">'+esc(rng(T.tb[0],T.tb[1]))+'</td><td class="sm">입력 보완·공고 확인 후 확정되는 금액 포함</td></tr>'+
+    s+='<tr class="tot"><td class="c tlb" colspan="3">총액 (1) 적합 제도 합계 (연)</td><td class="tlb">'+esc(rng(T.ta[0],T.ta[1]))+'</td><td class="sm">세금 절감 '+esc(rng(T.a.tax[0],T.a.tax[1]))+' + 지원금·이자 '+esc(rng(T.a.cash[0],T.a.cash[1]))+'</td></tr>'+
+       '<tr class="tot2"><td class="c tlb" colspan="3">총액 (2) 적합 + 확인필요 포함 (연)</td><td class="tlb">'+esc(rng(T.tb[0],T.tb[1]))+'</td><td class="sm">입력 보완·공고 확인 후 확정되는 금액 포함</td></tr>'+
        '<tr class="tot2"><td class="c" colspan="3">참고 (합계 제외) — 일회성 절세 · 융자 한도</td><td>일회성 절세 '+esc(T.b.once[1]?rng(T.a.once[0],T.a.once[1])+' (확인필요 포함 '+rng(T.b.once[0],T.b.once[1])+')':'-')+'<br>융자·보증 한도(제도별 최대) '+esc(T.b.loan?won(T.b.loan):'-')+'</td><td class="sm">한도·일회성 금액은 연간 합계에 합산하지 않음'+(T.b.cost[1]?' · 세 부담 증가(법인세율 환원) '+esc(rng(T.b.cost[0],T.b.cost[1]))+' 별도':'')+'</td></tr>';
     sb.innerHTML=s;
 
@@ -505,29 +501,40 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
     if(!list.length) tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:14px;color:#475569">표시할 제도가 없습니다.</td></tr>';
   }
 
+
+  /* 예시 결과: 구분별 소계 + 통합계(최상단) */
+  function exampleHTML(res,NO){
+    var mb=res.filter(function(r){return r.st!=='no';}), ok=res.filter(function(r){return r.st==='ok';});
+    var a=sum(ok), b=sum(mb), skip={};
+    EXCL.forEach(function(g){var best=null,bv=-1;
+      g.forEach(function(id){var r=mb.filter(function(x){return x.it.id===id;})[0];if(!r)return;var v=0;r.rows.forEach(function(x){if(x.k==='tax')v+=(x.hi||0);});if(v>bv){bv=v;best=id;}});
+      g.forEach(function(id){if(id!==best)skip[id]=true;});});
+    var ta=[a.tax[0]+a.cash[0],a.tax[1]+a.cash[1]], tb=[b.tax[0]+b.cash[0],b.tax[1]+b.cash[1]];
+    var KO=['tax','cash','loan','once','cost','info'], NT={loan:'합산하지 않음(제도별 한도)',once:'연간 합계 제외',cost:'연간 합계 제외',info:'참고'};
+    var out='<tr class="tot"><td class="c" colspan="6">통합계 (세금 절감 + 지원금·이자, 연) — 적합 제도 기준</td><td class="a">'+esc(rng(ta[0],ta[1]))+'</td><td class="sm">확인필요 포함 시 '+esc(rng(tb[0],tb[1]))+'</td></tr>';
+    var any=false;
+    KO.forEach(function(K){
+      var items=[]; mb.slice().sort(function(x,y){return NO[x.it.id]-NO[y.it.id];}).forEach(function(r){r.rows.forEach(function(x){if(x.k===K)items.push([r,x]);});});
+      if(!items.length) return; any=true;
+      items.forEach(function(p,i){
+        var r=p[0],x=p[1],it=r.it,nt=[];
+        if(r.st==='maybe') nt.push('확인필요');
+        if(skip[it.id]&&x.k!=='info') nt.push('택일 제외(합계 미반영)');
+        if(NT[K]) nt.push(NT[K]);
+        out+='<tr><td class="c">'+NO[it.id]+'</td><td class="c">'+badge(r.st)+'</td>'+(i===0?'<td class="c" rowspan="'+items.length+'"><span class="kd '+K+'">'+KN[K]+'</span></td>':'')+
+          '<td><div class="nm">'+esc(it.sn||it.n)+'</div></td><td>'+esc(x.l)+'</td><td class="sm">'+esc(x.f)+'</td><td class="a"><b>'+esc(rng(x.lo,x.hi))+'</b></td><td class="sm">'+esc(nt.join(' · '))+'</td></tr>';
+      });
+      if(K==='info') return;
+      var sa=(K==='loan')?(a.loan?won(a.loan):'-'):rng(a[K][0],a[K][1]), sb=(K==='loan')?(b.loan?won(b.loan):'-'):rng(b[K][0],b[K][1]);
+      out+='<tr class="tot2"><td class="c" colspan="6">'+KN[K]+' 소계'+(K==='loan'?' (제도별 최대)':'')+'</td><td class="a"><b>'+esc(sa)+'</b></td><td class="sm">확인필요 포함 시 '+esc(sb)+'</td></tr>';
+    });
+    if(!any) out='<tr><td colspan="8" style="padding:10px;color:#475569">계산할 수 있는 예시가 없습니다. 회사 정보(규모·업종·소재지·근로자 수·투자·대출 금액 등)를 입력해 주세요.</td></tr>';
+    return out;
+  }
+
   function renderMe(P){
     $('cmpM').innerHTML=cmpHTML(P);
-    var T=totals(), a=T.a, b=T.b;
-    function kr(t,x,y,n,cls){return '<tr class="'+(cls||'')+'"><td class="tlb">'+t+'</td><td class="a">'+esc(x)+'</td><td class="a">'+esc(y)+'</td><td class="sm">'+n+'</td></tr>';}
-    var k=kr('예상 혜택 합계 (연) = 세금 절감 + 지원금·이자',rng(T.ta[0],T.ta[1]),rng(T.tb[0],T.tb[1]),'총액','tot')+
-      kr('세금 절감 효과',rng(a.tax[0],a.tax[1]),rng(b.tax[0],b.tax[1]),'세액공제·감면·소득공제 효과')+
-      kr('지원금·이자 절감',rng(a.cash[0],a.cash[1]),rng(b.cash[0],b.cash[1]),'장려금·보조금·이자지원')+
-      kr('융자·보증 활용 한도(제도별 최대)',a.loan?won(a.loan):'-',b.loan?won(b.loan):'-','제도별 한도이며 합산하지 않음');
-    if(b.once[1]) k+=kr('일회성 절세 효과(승계·증여 등)',rng(a.once[0],a.once[1]),rng(b.once[0],b.once[1]),'연간 합계에 포함하지 않음');
-    if(b.cost[1]) k+=kr('세 부담 증가(법인세율 환원)',rng(a.cost[0],a.cost[1]),rng(b.cost[0],b.cost[1]),'종전 세율 대비 추정');
-    $('tbK').innerHTML=k;
-
-    var cards=res.filter(function(r){return (r.st==='ok'||r.st==='maybe')&&r.rows.length;}).sort(function(x,y){return (NO[x.it.id]||999)-(NO[y.it.id]||999);});
-    var out='';
-    if(!cards.length){out='<tr><td colspan="7" style="padding:10px;color:#475569">계산할 수 있는 예시가 없습니다. ① 회사 정보(규모·업종·소재지·근로자 수·투자·대출 금액 등)를 입력해 주세요.</td></tr>';}
-    else cards.forEach(function(r){
-      var it=r.it;
-      r.rows.forEach(function(x,i){
-        out+='<tr>'+(i===0?'<td class="c" rowspan="'+r.rows.length+'">'+(NO[it.id]||'')+'</td><td class="c" rowspan="'+r.rows.length+'">'+badge(r.st)+'</td><td rowspan="'+r.rows.length+'"><div class="nm">'+esc(it.sn||it.n)+'</div><div class="sm">'+esc(it.ag)+'</div></td>':'')+
-          '<td class="c"><span class="kd '+x.k+'">'+KN[x.k]+'</span></td><td>'+esc(x.l)+'</td><td class="sm">'+esc(x.f)+'</td><td class="a"><b>'+esc(rng(x.lo,x.hi))+'</b></td></tr>';
-      });
-    });
-    $('tbM').innerHTML=out;
+    $('tbM').innerHTML=exampleHTML(res,NO);
     $('warn').innerHTML=[
       '합계는 제도별 예시를 단순 합산한 값이며, 중복 적용이 제한되는 제도는 하나만 반영했습니다(예: 창업중소기업 세액감면과 중소기업 특별세액감면은 택일 — 더 큰 값 반영).',
       '세액공제·감면은 최저한세, 공제 한도, 사후관리(고용 감소·자산 처분 시 추징) 등에 따라 달라지며, 소득금액이 감면 대상 소득에 모두 해당한다고 가정했습니다.',

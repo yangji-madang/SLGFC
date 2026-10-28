@@ -256,6 +256,37 @@ body[data-ps=me] #blkA{display:none}
     return s;
   }
 
+
+  /* 예시 결과: 구분별 소계 + 통합계(최상단) */
+  function exampleHTML(res,NO){
+    var mb=res.filter(function(r){return r.st!=='no';}), ok=res.filter(function(r){return r.st==='ok';});
+    var a=sum(ok), b=sum(mb), skip={};
+    EXCL.forEach(function(g){var best=null,bv=-1;
+      g.forEach(function(id){var r=mb.filter(function(x){return x.it.id===id;})[0];if(!r)return;var v=0;r.rows.forEach(function(x){if(x.k==='tax')v+=(x.hi||0);});if(v>bv){bv=v;best=id;}});
+      g.forEach(function(id){if(id!==best)skip[id]=true;});});
+    var ta=[a.tax[0]+a.cash[0],a.tax[1]+a.cash[1]], tb=[b.tax[0]+b.cash[0],b.tax[1]+b.cash[1]];
+    var KO=['tax','cash','loan','once','cost','info'], NT={loan:'합산하지 않음(제도별 한도)',once:'연간 합계 제외',cost:'연간 합계 제외',info:'참고'};
+    var out='<tr class="tot"><td class="c" colspan="6">통합계 (세금 절감 + 지원금·이자, 연) — 적합 제도 기준</td><td class="a">'+esc(rng(ta[0],ta[1]))+'</td><td class="sm">확인필요 포함 시 '+esc(rng(tb[0],tb[1]))+'</td></tr>';
+    var any=false;
+    KO.forEach(function(K){
+      var items=[]; mb.slice().sort(function(x,y){return NO[x.it.id]-NO[y.it.id];}).forEach(function(r){r.rows.forEach(function(x){if(x.k===K)items.push([r,x]);});});
+      if(!items.length) return; any=true;
+      items.forEach(function(p,i){
+        var r=p[0],x=p[1],it=r.it,nt=[];
+        if(r.st==='maybe') nt.push('확인필요');
+        if(skip[it.id]&&x.k!=='info') nt.push('택일 제외(합계 미반영)');
+        if(NT[K]) nt.push(NT[K]);
+        out+='<tr><td class="c">'+NO[it.id]+'</td><td class="c">'+badge(r.st)+'</td>'+(i===0?'<td class="c" rowspan="'+items.length+'"><span class="kd '+K+'">'+KN[K]+'</span></td>':'')+
+          '<td><div class="nm">'+esc(it.sn||it.n)+'</div></td><td>'+esc(x.l)+'</td><td class="sm">'+esc(x.f)+'</td><td class="a"><b>'+esc(rng(x.lo,x.hi))+'</b></td><td class="sm">'+esc(nt.join(' · '))+'</td></tr>';
+      });
+      if(K==='info') return;
+      var sa=(K==='loan')?(a.loan?won(a.loan):'-'):rng(a[K][0],a[K][1]), sb=(K==='loan')?(b.loan?won(b.loan):'-'):rng(b[K][0],b[K][1]);
+      out+='<tr class="tot2"><td class="c" colspan="6">'+KN[K]+' 소계'+(K==='loan'?' (제도별 최대)':'')+'</td><td class="a"><b>'+esc(sa)+'</b></td><td class="sm">확인필요 포함 시 '+esc(sb)+'</td></tr>';
+    });
+    if(!any) out='<tr><td colspan="8" style="padding:10px;color:#475569">계산할 수 있는 예시가 없습니다. 회사 정보(규모·업종·소재지·근로자 수·투자·대출 금액 등)를 입력해 주세요.</td></tr>';
+    return out;
+  }
+
   function build(){
     var vf={}; document.querySelectorAll('.vf').forEach(function(c){vf[c.value]=c.checked;});
     var list=res.filter(function(r){return vf[r.st];}).sort(function(x,y){return NO[x.it.id]-NO[y.it.id];});
@@ -263,40 +294,25 @@ body[data-ps=me] #blkA{display:none}
     list.forEach(function(r){var it=r.it;
       s1+='<tr><td class="c">'+NO[it.id]+'</td><td class="c">'+badge(r.st)+'</td><td><div class="nm">'+esc(it.n)+'</div><div class="sm">'+esc(it.ag)+'</div></td><td>'+amtL(r,false)+'</td><td>'+noteL(r)+'</td></tr>';});
     if(!list.length) s1+='<tr><td colspan="5" class="emp" style="padding:12px">표시할 제도가 없습니다.</td></tr>';
-    s1+='<tr class="tot"><td class="c" colspan="3">총액 ① 적합 제도 합계 (연)</td><td>'+esc(rng(ta[0],ta[1]))+'</td><td class="sm">세금 절감 '+esc(rng(a.tax[0],a.tax[1]))+' + 지원금·이자 '+esc(rng(a.cash[0],a.cash[1]))+'</td></tr>'+
-      '<tr class="tot2"><td class="c" colspan="3">총액 ② 적합 + 확인필요 포함 (연)</td><td>'+esc(rng(tb[0],tb[1]))+'</td><td class="sm">입력 보완·공고 확인 후 확정되는 금액 포함</td></tr>'+
+    s1+='<tr class="tot"><td class="c" colspan="3">총액 (1) 적합 제도 합계 (연)</td><td>'+esc(rng(ta[0],ta[1]))+'</td><td class="sm">세금 절감 '+esc(rng(a.tax[0],a.tax[1]))+' + 지원금·이자 '+esc(rng(a.cash[0],a.cash[1]))+'</td></tr>'+
+      '<tr class="tot2"><td class="c" colspan="3">총액 (2) 적합 + 확인필요 포함 (연)</td><td>'+esc(rng(tb[0],tb[1]))+'</td><td class="sm">입력 보완·공고 확인 후 확정되는 금액 포함</td></tr>'+
       '<tr class="tot2"><td class="c" colspan="3">참고 (합계 제외) 일회성 절세 · 융자 한도</td><td>일회성 절세 '+esc(b.once[1]?rng(a.once[0],a.once[1])+' (확인필요 포함 '+rng(b.once[0],b.once[1])+')':'-')+'<br>융자·보증 한도(제도별 최대) '+esc(b.loan?won(b.loan):'-')+'</td><td class="sm">한도·일회성 금액은 연간 합계에 합산하지 않음'+(b.cost[1]?' · 세 부담 증가(법인세율 환원) '+esc(rng(b.cost[0],b.cost[1]))+' 별도':'')+'</td></tr>';
     var s2='';
     list.forEach(function(r){var it=r.it;
       var src=(it.src||[]).slice(0,1).map(function(x){return esc(x[0]);}).join('');
       s2+='<tr><td class="c">'+NO[it.id]+'</td><td class="c">'+badge(r.st)+'</td><td><div class="nm">'+esc(it.n)+'</div><div class="sm">'+esc(it.ag)+'</div></td><td>'+G.txt(it.a)+'</td><td>'+condL(r)+'</td><td>'+amtL(r,true)+'</td><td>'+G.txt(it.w)+(it.d?'<span class="ln"><span class="lb">시기·기한:</span> '+esc(it.d)+'</span>':'')+'</td><td class="sm">'+src+'</td></tr>';});
     if(!list.length) s2='<tr><td colspan="8" class="emp" style="padding:12px">표시할 제도가 없습니다.</td></tr>';
-    $('blkA').innerHTML=cmpT()+'<div class="ttl">② 검색 결과 · 2-1. 지원제도 요약표 (판정 · 지원금액 · 판정항목) 및 총액</div>'+
+    $('blkA').innerHTML=cmpT()+'<div class="ttl">2. 검색 결과 · 2-1. 지원제도 요약표 (판정 · 지원금액 · 판정항목) 및 총액</div>'+
       tbl(['No','판정','지원 정책명','지원금액 (내 회사 기준 예시)','비고 (판정 항목)'],[4,7,22,35,32],s1,true)+
       '<div class="ttl">2-2. 상세 — 어떤 이유로 지원되는지</div>'+
       tbl(['No','판정','지원·정책명','지원 내용','지원 사유 (조건별 판정)','지원금액 산출','신청·문의·시기','출처'],[3.5,6,11,20,18,18,15,8.5],s2,true);
 
-    var cards=res.filter(function(r){return r.st!=='no'&&r.rows.length;}).sort(function(x,y){return NO[x.it.id]-NO[y.it.id];});
-    function k(t,x,y,n,c){return '<tr class="'+(c||'')+'"><td>'+t+'</td><td class="a">'+esc(x)+'</td><td class="a">'+esc(y)+'</td><td class="sm">'+n+'</td></tr>';}
-    var k1=k('예상 혜택 합계 (연) = 세금 절감 + 지원금·이자',rng(ta[0],ta[1]),rng(tb[0],tb[1]),'총액','tot')+
-      k('세금 절감 효과',rng(a.tax[0],a.tax[1]),rng(b.tax[0],b.tax[1]),'세액공제·감면·소득공제 효과')+
-      k('지원금·이자 절감',rng(a.cash[0],a.cash[1]),rng(b.cash[0],b.cash[1]),'장려금·보조금·이자지원')+
-      k('융자·보증 활용 한도(제도별 최대)',a.loan?won(a.loan):'-',b.loan?won(b.loan):'-','제도별 한도이며 합산하지 않음')+
-      (b.once[1]?k('일회성 절세 효과(승계·증여 등)',rng(a.once[0],a.once[1]),rng(b.once[0],b.once[1]),'연간 합계에 포함하지 않음'):'')+
-      (b.cost[1]?k('세 부담 증가(법인세율 환원)',rng(a.cost[0],a.cost[1]),rng(b.cost[0],b.cost[1]),'종전 세율 대비 추정'):'');
-    var k2='';
-    cards.forEach(function(r){var it=r.it;r.rows.forEach(function(x,i){
-      k2+='<tr>'+(i===0?'<td class="c" rowspan="'+r.rows.length+'">'+NO[it.id]+'</td><td class="c" rowspan="'+r.rows.length+'">'+badge(r.st)+'</td><td rowspan="'+r.rows.length+'"><div class="nm">'+esc(it.sn||it.n)+'</div><div class="sm">'+esc(it.ag)+'</div></td>':'')+
-        '<td class="c"><span class="kd '+x.k+'">'+KN[x.k]+'</span></td><td>'+esc(x.l)+'</td><td class="sm">'+esc(x.f)+'</td><td class="a"><b>'+esc(rng(x.lo,x.hi))+'</b></td></tr>';});});
-    if(!k2) k2='<tr><td colspan="7" class="emp" style="padding:12px">계산할 수 있는 예시가 없습니다. 회사 정보를 더 입력하세요.</td></tr>';
     var wn=['합계는 제도별 예시를 단순 합산한 값이며, 중복 적용이 제한되는 제도는 하나만 반영했습니다(창업중소기업 세액감면과 중소기업 특별세액감면은 택일 — 더 큰 값 반영).',
       '세액공제·감면은 최저한세, 공제 한도, 사후관리(고용 감소·자산 처분 시 추징) 등에 따라 달라지며, 소득금액이 감면 대상 소득에 모두 해당한다고 가정했습니다.',
       '‘확인필요’는 입력이 부족하거나 근거 자료가 단일·2차 출처인 항목입니다. 신청·신고 전 공고문과 국가법령정보센터(law.go.kr)에서 최종 확인하세요.',
       '정부안 단계의 제도(가업상속공제 개편 등)는 국회 확정 전 내용이므로 참고용입니다.'];
-    $('blkB').innerHTML=cmpT()+'<div class="ttl">③ 내 회사 지원금액 예시 · 3-1. 예상 혜택 총괄</div>'+
-      tbl(['구분','적합 제도 기준','확인필요 포함 시','비고'],[28,22,22,28],k1,false)+
-      '<div class="ttl">3-2. 제도별 산출 근거</div>'+
-      tbl(['No','판정','지원·정책명','구분','산출 항목','산식·근거','예상 금액'],[4,6,19,9,21,29,12],k2,true)+
+    $('blkB').innerHTML=cmpT()+'<div class="ttl">3. 내 회사 지원금액 예시 · 3-1. 예시 결과</div>'+
+      tbl(['No', '판정', '구분', '지원·정책명', '산출항목', '산출근거', '예상금액', '비고'],[4, 6, 8, 16, 17, 24, 12, 13],exampleHTML(res,NO),true)+
       '<ul class="warn">'+wn.map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>';
   }
   document.querySelectorAll('input[name=ps]').forEach(function(r){r.addEventListener('change',function(){document.body.dataset.ps=r.value;});});
