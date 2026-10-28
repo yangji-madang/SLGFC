@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>내 회사에 적합한 지원제도 찾기 (인쇄용)</title>
-<link rel="stylesheet" href="gov_support.css?v=20261028k">
+<link rel="stylesheet" href="gov_support.css?v=20261028m">
 <style>
 body{display:block;min-height:0;background:#e5e7eb}
 .noprint{max-width:1500px;margin:0 auto;padding:10px 16px 0}
@@ -61,31 +61,34 @@ s.oldv{color:#b91c1c}
 .fixf .ct{font-weight:700;color:var(--tx)}
 .fixf .cr{font-weight:900;color:var(--navy)}
 @media print{
-  @page{size:A4 landscape;margin:8mm 8mm 6.5mm 8mm;@bottom-center{content:"- " counter(page) " -";font:700 9px "Malgun Gothic",sans-serif;color:#111;vertical-align:bottom;padding-bottom:1.3mm;background:#fff}@bottom-left{content:"";background:#fff}@bottom-right{content:"";background:#fff}}
+  @page{size:A4 landscape;margin:13mm 8mm 10mm 8mm;
+    @top-left{width:72%;font-weight:800;font-size:14px;color:#14365d;text-align:left;vertical-align:bottom;border-bottom:1px solid #14365d;padding-bottom:1mm;background:#fff}
+    @top-right{width:28%;font-weight:700;font-size:10.5px;color:#334155;text-align:right;vertical-align:bottom;border-bottom:1px solid #14365d;padding-bottom:1mm;background:#fff}
+    @bottom-left{width:42%;font-weight:700;font-size:9.5px;color:#111;text-align:left;vertical-align:top;border-top:1px solid #14365d;padding-top:1.2mm;background:#fff}
+    @bottom-center{width:16%;content:"- " counter(page) " -";font-weight:700;font-size:9.5px;color:#111;text-align:center;vertical-align:top;border-top:1px solid #14365d;padding-top:1.2mm;background:#fff}
+    @bottom-right{width:42%;font-weight:900;font-size:9.5px;color:#14365d;text-align:right;vertical-align:top;border-top:1px solid #14365d;padding-top:1.2mm;background:#fff}}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   body{background:#fff;font-size:8.4px}
   .noprint,#top,.scrh{display:none!important}
   .sheet{max-width:none;margin:0;padding:0;overflow:visible}
   .paper{min-width:0}
-  .fixh{display:flex;position:fixed;left:0;right:0;top:0;z-index:1;height:5.2mm;font-size:14px;align-items:flex-end;background:#fff}
+  .fixh,.fixf{display:none!important}
   .fixh .pa{font-size:10.5px}
-  #ovbox{padding-top:6mm;margin-bottom:5mm}
+  #ovbox{padding-top:1.5mm;margin-bottom:5mm}
   .ovt{font-size:8.6px;margin-bottom:3px}.ovt th,.ovt td{padding:1px 4px}
   .sumline{font-size:8.4px;margin-bottom:3px}
   .tlp{font-size:8px;margin-bottom:0}.tlp span{padding:0 3px}
-  table.ptb{font-size:8.2px;line-height:1.32;margin-top:-5mm}
-  .ptb .spc td,.ptb .spc th{height:5.5mm!important}
+  table.ptb{font-size:8.2px;line-height:1.32;margin-top:0}
+  .ptb .spc td,.ptb .spc th{height:1.5mm!important}
   .ptb th,.ptb td{padding:2px 3px}
   .ptb th{font-size:8.6px}
   .ptb .nm{font-size:8.8px}.ptb .sm,.ckr,.sr{font-size:7.6px}
   .bd{font-size:7.6px;padding:0 3px}
   .ptb thead{display:table-header-group}
   .ptb tfoot{display:table-footer-group}
-  .ptb tfoot td{height:9mm!important}
+  .ptb tfoot td{height:2mm!important}
   .ptb tbody tr{break-inside:avoid;page-break-inside:avoid}
   .notes{font-size:8px;break-inside:avoid}
-  .fixf{display:block;position:fixed;left:0;right:0;bottom:-2.4mm;height:9.4mm;font-size:9.5px;z-index:99;overflow:hidden;background:#fff}
-  .fixf .cpf{height:5mm}
   a{color:#1d4ed8}
 }
 
@@ -122,7 +125,7 @@ body[data-ps=me] #blkA{display:none}
   .warn{font-size:8px}
   .ptb .spc th,.ptb .spc td{background:transparent!important}
   body[data-ps=both] #blkA{break-before:page;page-break-before:always}
-  #blkA .cmpt:first-child,#blkB .cmpt:first-child{margin-top:6mm}
+  #blkA .cmpt:first-child,#blkB .cmpt:first-child{margin-top:1.5mm}
   .fixh{z-index:5}
 }
 
@@ -156,7 +159,7 @@ body[data-ps=me] #blkA{display:none}
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js?v=20261028k"></script>
+<script src="gov_support_common.js?v=20261028m"></script>
 <script src="gov_support_match_config.js"></script>
 <script src="gov_support_rules.js?v=20261028"></script>
 <script>
@@ -164,7 +167,7 @@ body[data-ps=me] #blkA{display:none}
   'use strict';
   var G=GS, RU=GOV_SUPPORT_RULES, esc=G.esc, $=function(i){return document.getElementById(i);};
   var W=1e8, M=1e4;
-  G.load(); G.setTop(); G.setFoot();
+  G.load(); G.setTop(); G.setFoot(); setTimeout(G.hf,0); window.addEventListener("beforeprint",G.hf);
   var MC=window.GOV_MATCH_CONFIG||{};
   if(/[?&]preview=1/.test(location.search)){try{var pv=JSON.parse(sessionStorage.getItem('govMatchPreview')||'null');if(pv)MC=pv;}catch(e){}}
   var HID={},NS={}; (MC.hidden||[]).forEach(function(i){HID[i]=1;}); (MC.noSum||[]).forEach(function(i){NS[i]=1;});

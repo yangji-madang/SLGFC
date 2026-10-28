@@ -372,6 +372,15 @@
   });
 
 
+  /* 인쇄 머리글·바닥글: 쪽 여백 영역(@page 여백 상자)에 넣어 모든 쪽에서 잘리지 않고 쪽번호와 같은 줄에 표시 */
+  G.hf = function () {
+    function t(id) { var e = document.getElementById(id); return e ? e.textContent : ''; }
+    function q(x) { return '"' + String(x).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ') + '"'; }
+    var st = document.getElementById('hfStyle');
+    if (!st) { st = document.createElement('style'); st.id = 'hfStyle'; document.head.appendChild(st); }
+    st.textContent = '@page{@top-left{content:' + q(t('fht')) + '}@top-right{content:' + q(t('fha')) + '}@bottom-left{content:' + q(t('ctct')) + '}@bottom-right{content:' + q(t('cpyt')) + '}}';
+  };
+
   /* 표 틀고정: 머리글 행 + 왼쪽 n개 열(예: ‘지원·정책명’까지)을 고정 — rowspan·colspan 반영 */
   G.freeze = function (table, n) {
     var hr = table && table.tHead && table.tHead.rows[0];
