@@ -101,13 +101,13 @@
   G.THEAD = '<tr><th style="min-width:200px">지원·정책명 / 주체</th><th style="min-width:110px">분류·형태</th><th style="min-width:150px">대상 기업</th><th style="min-width:330px">지원 내용</th><th style="min-width:270px">제한조건</th><th style="min-width:190px">신청·문의</th><th style="min-width:230px">확인·출처</th></tr>';
 
   /* 필터 */
-  G.F0 = function () { return { q: '', lv: '', tg: '', lt: '', lvs: [], tgs: [], lts: [], cat: '', pf: '', rel: '', chk: false, hideEnd: false }; };
+  G.F0 = function () { return { q: '', lv: '', tg: '', lt: '', lvs: [], tgs: [], lts: [], cats: [], pfs: [], rels: [], chk: false, hideEnd: false }; };
   function has(arr, s) { return (arr || []).join(' ').toLowerCase().indexOf(s) >= 0; }
   G.match = function (it, F) {
     var s;
-    if (F.cat && it.cat !== F.cat) return false;
-    if (F.pf && (it.pf || []).indexOf(F.pf) < 0) return false;
-    if (F.rel && it.rel !== F.rel) return false;
+    if (F.cats.length && F.cats.indexOf(it.cat) < 0) return false;
+    if (F.pfs.length && !F.pfs.some(function (x) { return (it.pf || []).indexOf(x) >= 0; })) return false;
+    if (F.rels.length && F.rels.indexOf(it.rel) < 0) return false;
     if (F.chk && !it.chk) return false;
     if (F.hideEnd && it.end) return false;
     if (F.lvs && F.lvs.length && F.lvs.indexOf(it.lv) < 0) return false;
@@ -139,8 +139,8 @@
   /* URL 파라미터 ↔ 필터 (보기 → 인쇄 연동) */
   G.toQS = function (F) {
     var p = [];
-    ['q', 'lv', 'tg', 'lt', 'cat', 'pf', 'rel'].forEach(function (k) { if (F[k]) p.push(k + '=' + encodeURIComponent(F[k])); });
-    ['lvs', 'tgs', 'lts'].forEach(function (k) { if (F[k].length) p.push(k + '=' + encodeURIComponent(F[k].join('~'))); });
+    ['q', 'lv', 'tg', 'lt'].forEach(function (k) { if (F[k]) p.push(k + '=' + encodeURIComponent(F[k])); });
+    ['lvs', 'tgs', 'lts', 'cats', 'pfs', 'rels'].forEach(function (k) { if (F[k].length) p.push(k + '=' + encodeURIComponent(F[k].join('~'))); });
     if (F.chk) p.push('chk=1');
     if (F.hideEnd) p.push('he=1');
     return p.join('&');
@@ -151,8 +151,8 @@
       if (!kv) return;
       var i = kv.indexOf('='), k = kv.slice(0, i), v = '';
       try { v = decodeURIComponent(kv.slice(i + 1)); } catch (e) { v = ''; }
-      if (['q', 'lv', 'tg', 'lt', 'cat', 'pf', 'rel'].indexOf(k) >= 0) F[k] = v;
-      else if (k === 'lvs' || k === 'tgs' || k === 'lts') F[k] = v ? v.split('~') : [];
+      if (['q', 'lv', 'tg', 'lt'].indexOf(k) >= 0) F[k] = v;
+      else if (k === 'lvs' || k === 'tgs' || k === 'lts' || k === 'cats' || k === 'pfs' || k === 'rels') F[k] = v ? v.split('~') : [];
       else if (k === 'chk') F.chk = v === '1';
       else if (k === 'he') F.hideEnd = v === '1';
     });
@@ -168,13 +168,10 @@
   /* 필터 UI 공통 구성 (보기·인쇄) — 요소 id: fq flv ftg flt fcat fpf frel fchk fend */
   G.initFilterUI = function (F, onChange) {
     var $ = function (id) { return document.getElementById(id); };
-    G.fillSel($('fcat'), G.CAT, '전체 분류');
-    G.fillSel($('fpf'), G.PF, '전체 형태');
-    G.fillSel($('frel'), G.REL, '전체 등급');
     G.fillDL($('dlv'), G.uniq(G.LV.concat(G.items.map(function (i) { return i.ag.split('·'); }).reduce(function (a, b) { return a.concat(b); }, []), ['서울', '경기', '화성시'])));
     G.fillDL($('dtg'), G.TG.concat(G.IND));
     G.fillDL($('dlt'), G.LT);
-    var GR = [['clv', 'lvs', G.LV], ['ctg', 'tgs', G.TG.concat(G.IND)], ['clt', 'lts', G.LT]];
+    var GR = [['clv', 'lvs', G.LV], ['ctg', 'tgs', G.TG.concat(G.IND)], ['clt', 'lts', G.LT], ['ccat', 'cats', G.CAT], ['cpf', 'pfs', G.PF], ['crel', 'rels', G.REL]];
     function chips() {
       GR.forEach(function (g) {
         $(g[0]).innerHTML = '<button type="button" class="chip all' + (F[g[1]].length ? '' : ' on') + '" data-g="' + g[1] + '" data-v="">전체</button>' +
@@ -192,14 +189,14 @@
     });
     function read() {
       F.q = $('fq').value; F.lv = $('flv').value; F.tg = $('ftg').value; F.lt = $('flt2').value;
-      F.cat = $('fcat').value; F.pf = $('fpf').value; F.rel = $('frel').value; F.chk = $('fchk').checked; F.hideEnd = $('fend').checked;
+      F.chk = $('fchk').checked; F.hideEnd = $('fend').checked;
     }
     G.syncUI = function () {
       $('fq').value = F.q; $('flv').value = F.lv; $('ftg').value = F.tg; $('flt2').value = F.lt;
       chips();
-      $('fcat').value = F.cat; $('fpf').value = F.pf; $('frel').value = F.rel; $('fchk').checked = F.chk; $('fend').checked = F.hideEnd;
+      $('fchk').checked = F.chk; $('fend').checked = F.hideEnd;
     };
-    ['fq', 'flv', 'ftg', 'flt2', 'fcat', 'fpf', 'frel', 'fchk', 'fend'].forEach(function (id) {
+    ['fq', 'flv', 'ftg', 'flt2', 'fchk', 'fend'].forEach(function (id) {
       var ev = (id === 'fq' || id === 'flv' || id === 'ftg' || id === 'flt2') ? 'input' : 'change';
       $(id).addEventListener(ev, function () { read(); onChange(); });
     });
@@ -216,12 +213,12 @@
     '<div class="cg"><label>지급 주체 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="clv"></div></div>' +
     '<div class="cg"><label>대상 기업 — 규모·업종 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="ctg"></div></div>' +
     '<div class="cg"><label>제한조건 유형 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="clt"></div></div>' +
+    '<div class="cg"><label>분류 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="ccat"></div></div>' +
+    '<div class="cg"><label>지원 형태 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="cpf"></div></div>' +
+    '<div class="cg"><label>출처 등급 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="crel"></div></div>' +
     '<div><label for="flv">지급 주체 직접 입력</label><input type="text" id="flv" list="dlv" placeholder="중앙정부·지자체·기관명" autocomplete="off"><datalist id="dlv"></datalist></div>' +
     '<div><label for="ftg">대상 기업 직접 입력</label><input type="text" id="ftg" list="dtg" placeholder="소상공인·제조업 등" autocomplete="off"><datalist id="dtg"></datalist></div>' +
     '<div><label for="flt2">제한조건 직접 입력</label><input type="text" id="flt2" list="dlt" placeholder="매출·업력·지역 등" autocomplete="off"><datalist id="dlt"></datalist></div>' +
-    '<div><label for="fcat">분류</label><select id="fcat"></select></div>' +
-    '<div><label for="fpf">지원 형태</label><select id="fpf"></select></div>' +
-    '<div><label for="frel">출처 등급</label><select id="frel"></select></div>' +
     '<div class="ck"><input type="checkbox" id="fchk"><label for="fchk" style="margin:0">확인필요 항목만</label></div>' +
     '<div class="ck"><input type="checkbox" id="fend"><label for="fend" style="margin:0">마감·종료 가능 제외</label></div>' +
     '<div><button type="button" class="btn sub" id="freset">필터 초기화</button></div>';

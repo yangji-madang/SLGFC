@@ -14,7 +14,7 @@
 </div>
 <main>
   <section class="sec" id="ov">
-    <h2>전체 개요 <span class="hint">카드를 누르면 아래 표에 해당 항목만 표시됩니다. 다시 누르면 해제됩니다.</span></h2>
+    <h2>전체 개요 <span class="hint">카드를 누르면 아래 표에 해당 항목만 표시됩니다(여러 개 선택 가능, 다시 누르면 해제).</span></h2>
     <div class="ovg" id="ovg"></div>
     <div class="ovrow" id="ovlv"></div>
     <div class="ovrow" id="ovtg"></div>
@@ -55,12 +55,12 @@
 
   /* 개요 카드: 분류별 */
   function ovRender(){
-    var base=G.items.filter(function(i){return G.match(i,Object.assign({},F,{cat:''}));});
-    var h='<button type="button" class="ovc'+(F.cat?'':' on')+'" data-c=""><b>전체</b><span class="n">'+base.length+'<small> / '+G.items.length+'건</small></span><span class="s">모든 분류 보기</span></button>'+G.CAT.map(function(c){
+    var base=G.items.filter(function(i){return G.match(i,Object.assign({},F,{cats:[]}));});
+    var h='<button type="button" class="ovc'+(F.cats.length?'':' on')+'" data-c=""><b>전체</b><span class="n">'+base.length+'<small> / '+G.items.length+'건</small></span><span class="s">모든 분류 보기</span></button>'+G.CAT.map(function(c){
       var n=G.items.filter(function(i){return i.cat===c;}).length;
       var m=base.filter(function(i){return i.cat===c;}).length;
       var ex=G.items.filter(function(i){return i.cat===c;}).slice(0,3).map(function(i){return i.sn||i.n;}).join(' · ');
-      return '<button type="button" class="ovc'+(F.cat===c?' on':'')+'" data-c="'+esc(c)+'"><b>'+esc(c)+'</b><span class="n">'+m+'<small> / '+n+'건</small></span><span class="s">'+esc(ex)+'</span></button>';
+      return '<button type="button" class="ovc'+(F.cats.indexOf(c)>=0?' on':'')+'" data-c="'+esc(c)+'"><b>'+esc(c)+'</b><span class="n">'+m+'<small> / '+n+'건</small></span><span class="s">'+esc(ex)+'</span></button>';
     }).join('');
     var nck=G.items.filter(function(i){return i.chk;}).length;
     h+='<button type="button" class="ovc'+(F.chk?' on':'')+'" data-k="chk"><b>확인필요 항목</b><span class="n">'+nck+'<small> / '+G.items.length+'건</small></span><span class="s">단일·2차 출처, 정부안, 한도 미확인</span></button>';
@@ -76,7 +76,7 @@
   }
   $('ov').addEventListener('click',function(e){
     var b=e.target.closest('button'); if(!b) return;
-    if(b.dataset.c!==undefined) F.cat=(b.dataset.c&&F.cat!==b.dataset.c?b.dataset.c:'');
+    if(b.dataset.c!==undefined) G.toggleSel('cats',b.dataset.c);
     else if(b.dataset.k==='chk') F.chk=!F.chk;
     else if(b.dataset.g!==undefined) G.toggleSel(b.dataset.g,b.dataset.v);
     G.syncUI(); render();

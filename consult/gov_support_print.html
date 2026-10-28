@@ -96,7 +96,7 @@ body.prt{background:#e5e7eb}
     var list=G.filter(F), tb=$('tb'); tb.innerHTML='';
     list.forEach(function(it){tb.appendChild(G.row(it));});
     var act=[]; if(F.q)act.push('검색어 '+F.q); if(F.lvs.length)act.push('주체 '+F.lvs.join('/')); if(F.lv)act.push('주체 '+F.lv); if(F.tgs.length)act.push('대상 '+F.tgs.join('/')); if(F.tg)act.push('대상 '+F.tg); if(F.lts.length)act.push('제한유형 '+F.lts.join('/')); if(F.lt)act.push('제한 '+F.lt);
-    if(F.cat)act.push('분류 '+F.cat); if(F.pf)act.push('형태 '+F.pf); if(F.rel)act.push('출처 '+F.rel); if(F.chk)act.push('확인필요만'); if(F.hideEnd)act.push('마감 제외');
+    if(F.cats.length)act.push('분류 '+F.cats.join('/')); if(F.pfs.length)act.push('형태 '+F.pfs.join('/')); if(F.rels.length)act.push('출처 '+F.rels.join('/')); if(F.chk)act.push('확인필요만'); if(F.hideEnd)act.push('마감 제외');
     $('cnt').textContent='총 '+list.length+'건'+(act.length?' | 조건: '+act.join(' · '):' (전체)');
     if(!list.length) tb.innerHTML='<tr><td colspan="7" class="empty">조건에 맞는 항목이 없습니다.</td></tr>';
   }
