@@ -12,8 +12,10 @@ main{padding-bottom:70px}
 .mini{font-size:12px;color:var(--mut)}
 .fld textarea.tall{min-height:180px;font-family:inherit}
 .fld textarea.mono{font-family:Consolas,'Courier New',monospace;font-size:12px;min-height:150px}
-table.at{border-collapse:collapse;width:100%;font-size:12.5px;background:#fff}
-.at th,.at td{border:1px solid #8493a8;padding:3px 6px;vertical-align:middle}
+table.at{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px;background:#fff}
+.at th,.at td{border:0;border-right:1px solid #8493a8;border-bottom:1px solid #8493a8;padding:3px 6px;vertical-align:middle}
+.at td:first-child,.at th:first-child{position:sticky;left:0;z-index:1;background:#fff}
+.at thead th:first-child{background:var(--navy);z-index:4}
 .at th{background:var(--navy);color:#fff;text-align:center}
 .at td.c{text-align:center}
 .at tbody tr:nth-child(even) td{background:#f8fafc}

@@ -47,7 +47,7 @@ main{max-width:1500px;margin:0 auto;padding:12px 16px 8px}
 #cnt{font-size:13px;color:var(--mut);margin:0 0 6px}
 #cnt b{color:var(--navy)}
 /* 표 */
-.tw{overflow-x:auto;border:1px solid var(--bd);border-radius:8px;background:#fff}
+.tw{overflow:auto;max-height:calc(100vh - 140px);border:1px solid var(--bd);border-radius:8px;background:#fff}
 table.gt{border-collapse:separate;border-spacing:0;width:100%;min-width:1380px;font-size:13px}
 .gt th{background:var(--navy);color:#fff;font-weight:700;padding:7px 8px;text-align:left;position:sticky;top:0;z-index:2;border-right:1px solid #2b4f7c;white-space:nowrap}
 .gt td{padding:7px 8px;vertical-align:top;border-top:1px solid var(--bd);border-right:1px solid #e2e8f0}
@@ -133,7 +133,7 @@ footer .cp{font-weight:900;font-size:13.5px;color:var(--navy);letter-spacing:.2p
 #flt input[type=text],#flt input[type=search]{display:block}
 
 /* 개요 도식 (지원 종류 × 대상 기업) */
-table.mx{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;font-size:12px;border:1px solid #8493a8;border-radius:6px;overflow:hidden;background:#fff}
+table.mx{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;font-size:12px;border:1px solid #8493a8;background:#fff}
 .mx th,.mx td{border-right:1px solid #cbd5e1;border-bottom:1px solid #cbd5e1;padding:5px 6px;vertical-align:top}
 .mx thead th{background:#14365d;color:#fff;text-align:center;vertical-align:middle;font-size:13px;border-color:#3b5b85}
 .mx thead th .n{display:block;font-size:11px;font-weight:600;color:#fcd34d}
@@ -162,8 +162,13 @@ table.mx{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed
 .vtab.on{background:#14365d;color:#fff}
 body[data-vt=ov] #paneTb{display:none}
 body[data-vt=tb] #paneOv{display:none}
-.mxw{overflow-x:auto}
+.mxw{overflow:auto;max-height:calc(100vh - 160px)}
+/* 틀 고정: 머리글 행 + 첫 열 (교차점 고정) */
+.mx thead th{position:sticky;top:0;z-index:2}
+.mx tbody th.rh{position:sticky;left:0;z-index:1}
+.mx thead th.cn{position:sticky;left:0;top:0;z-index:4}
 @media print{
+  .tw,.tw2,.mxw,.tbw{max-height:none!important;overflow:visible!important}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .vtabs,#flt,.noprint{display:none!important}
   body[data-vt] #paneOv,body[data-vt] #paneTb{display:block!important}
