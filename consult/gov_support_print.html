@@ -6,75 +6,113 @@
 <title>중소기업·소상공인 정부지원·세제지원 현황 (인쇄용)</title>
 <link rel="stylesheet" href="gov_support.css">
 <style>
-body.prt{background:#e5e7eb}
+body{display:block;min-height:0;background:#e5e7eb}
 .noprint{max-width:1500px;margin:0 auto;padding:10px 16px 0}
-.sheet{max-width:1500px;margin:0 auto 10px;background:#fff;padding:10px 12px}
-.ph{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid var(--navy);padding-bottom:4px;margin-bottom:6px}
-.ph h1{margin:0;font-size:19px;color:var(--navy)}
-.ph .as{font-size:13px;font-weight:700;color:var(--navy);white-space:nowrap}
-.prt table.gt{min-width:0;table-layout:fixed}
-.prt .gt th.sp,.phr th{background:#fff!important;color:var(--navy);border:0!important;padding:0 0 3px!important;border-bottom:2px solid var(--navy)!important}
-.ph2{display:flex;justify-content:space-between;align-items:flex-end}
-.ph2 .pt{font-size:17px;font-weight:700;color:var(--navy)}
-.ph2 .pa{font-size:12.5px;font-weight:700;color:var(--navy);white-space:nowrap}
-.gt td.tcp{background:#fff!important;border:0;border-top:2px solid var(--navy);color:var(--navy);padding:3px 0 0}
-.tcp .cr{font-weight:900;color:var(--navy)}
-.prt .gt th{position:static}
-.prt .gt td:first-child,.prt .gt th:first-child{position:static;box-shadow:none}
-.prt .tw{overflow:visible}
-.fixf{display:none;background:#fff;border-top:2px solid var(--navy);padding-top:2px}
+#top{position:static}
+.sheet{max-width:1500px;margin:0 auto 12px;background:#fff;padding:10px 12px;overflow-x:auto}
+.paper{min-width:1180px}
+:root{--ln:#8493a8}
+.scrh,.fixh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-weight:800;color:var(--navy);border-bottom:2px solid var(--navy);padding-bottom:2px}
+.scrh{font-size:17px;margin-bottom:5px}
+.scrh .pa,.fixh .pa{font-size:12.5px;font-weight:700;color:#334155;white-space:nowrap}
+.fixh{display:none}
+/* 전체개요 (표) */
+.ovt{border-collapse:collapse;width:100%;margin-bottom:5px;font-size:11.5px;table-layout:fixed}
+.ovt th,.ovt td{border:1px solid var(--ln);padding:2px 5px;vertical-align:middle}
+.ovt th{background:var(--navy);color:#fff;font-weight:700;text-align:center}
+.ovt td.k{font-weight:800;color:var(--navy);text-align:center}
+.ovt td.n{text-align:center;font-weight:700}
+.ovt tr:nth-child(odd) td{background:#f1f5f9}
+.sumline{font-size:11px;margin:0 0 4px;color:#1e293b}
+.sumline b{color:var(--navy)}
+.tlp{display:flex;flex-wrap:wrap;gap:3px 4px;margin:0 0 6px;font-size:10.5px}
+.tlp span{border:1px solid var(--navy);border-radius:3px;padding:0 5px;background:#eff6ff;color:#0f172a}
+.tlp span.p{border:1px dashed #9d174d;background:#fdf2f8}
+.tlp b{color:var(--navy)}
+/* 본표 */
+table.ptb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:10.5px;line-height:1.38}
+.ptb th,.ptb td{border:1px solid var(--ln);padding:3px 4px;vertical-align:top;word-break:keep-all;overflow-wrap:anywhere}
+.ptb th{background:var(--navy);color:#fff;font-weight:700;text-align:center;vertical-align:middle;padding:4px 3px}
+.ptb tbody tr:nth-child(even) td{background:#f8fafc}
+.ptb td.c1{text-align:center;background:#f1f5f9!important}
+.ptb .nm{font-weight:800;color:var(--navy);font-size:11px}
+.ptb .sm{font-size:9.3px;color:#475569}
+.ptb .ln{display:block}
+.ptb .bl{padding-left:8px;text-indent:-8px}
+.ptb .lb{font-weight:800;color:#1e293b}
+.bd{display:inline-block;border-radius:3px;padding:0 5px;font-size:9.5px;font-weight:800;line-height:1.45;color:#fff;margin:0 2px 2px 0}
+.b-lv0{background:#1d4ed8}.b-lv1{background:#15803d}.b-lv2{background:#6d28d9}
+.b-ok{background:#166534}.b-nw{background:#b45309}.b-rf{background:#64748b}.b-ck{background:#b91c1c}.b-end{background:#4b5563}
+.b-ch{background:#c2410c}.b-fu{background:#9d174d}
+.chb{border:1px solid #fdba74;background:#fff7ed;padding:1px 3px;margin-bottom:3px}
+.fub{border:1px dashed #be185d;background:#fdf2f8;padding:1px 3px}
+.ckr{color:#b91c1c;font-size:9.3px;margin:1px 0}
+.sr{padding-left:12px;margin:2px 0 0;font-size:9.3px}
+.sr li{margin:0}
+.sr a{color:#1d4ed8;text-decoration:underline}
+s.oldv{color:#b91c1c}
+.ptb td.emp{text-align:center;color:#64748b}
+.ptb .spc td,.ptb .spc th{border:0!important;background:#fff!important;padding:0!important;height:0}
+.ptb tfoot td{border:0!important;background:#fff!important;padding:0;height:0}
+.notes{margin-top:6px;font-size:10px;color:#334155}
+.notes p{margin:0 0 2px;white-space:pre-line}
+.fixf{display:none;background:#fff;border-top:2px solid var(--navy);padding-top:2px;font-size:11px}
 .fixf .cpf{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .fixf .ct{font-weight:700;color:var(--tx)}
 .fixf .cr{font-weight:900;color:var(--navy)}
-.gt td.tsp{border:0!important;background:#fff!important;padding:0!important;height:9mm}
-@media screen and (max-width:900px){.prt .tw{overflow-x:auto}.prt table.gt{min-width:1100px}}
 @media print{
   @page{size:A4 landscape;margin:8mm 8mm 8mm 8mm}
-  body.prt{background:#fff;font-size:8.6px;line-height:1.38}
-  .noprint,#top{display:none!important}
-  .sheet{max-width:none;margin:0;padding:0}
-  footer{display:none}
-  .prt table.gt{width:100%;font-size:8.6px}
-  .ph2 .pt{font-size:13px}.ph2 .pa{font-size:10px}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;font-size:8.4px}
+  .noprint,#top,.scrh{display:none!important}
+  .sheet{max-width:none;margin:0;padding:0;overflow:visible}
+  .paper{min-width:0}
+  .fixh{display:flex;position:fixed;left:0;right:0;top:0;height:5.2mm;font-size:14px;align-items:flex-end;background:#fff}
+  .fixh .pa{font-size:10.5px}
+  #ovbox{padding-top:6mm;margin-bottom:5mm}
+  .ovt{font-size:8.6px;margin-bottom:3px}.ovt th,.ovt td{padding:1px 4px}
+  .sumline{font-size:8.4px;margin-bottom:3px}
+  .tlp{font-size:8px;margin-bottom:0}.tlp span{padding:0 3px}
+  table.ptb{font-size:8.2px;line-height:1.32;margin-top:-5mm}
+  .ptb .spc td,.ptb .spc th{height:5.5mm!important}
+  .ptb th,.ptb td{padding:2px 3px}
+  .ptb th{font-size:8.6px}
+  .ptb .nm{font-size:8.8px}.ptb .sm,.ckr,.sr{font-size:7.6px}
+  .bd{font-size:7.6px;padding:0 3px}
+  .ptb thead{display:table-header-group}
+  .ptb tfoot{display:table-footer-group}
+  .ptb tfoot td{height:9mm!important}
+  .ptb tbody tr{break-inside:avoid;page-break-inside:avoid}
+  .notes{font-size:8px;break-inside:avoid}
   .fixf{display:block;position:fixed;left:0;right:0;bottom:0;height:7mm;font-size:9.5px}
   .fixf .cpf{height:100%}
-  .gt th{padding:3px 4px;font-size:8.8px;white-space:normal;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .gt td{padding:3px 4px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .gt thead{display:table-header-group}
-  .gt tfoot{display:table-footer-group}
-  .gt tr{break-inside:avoid;page-break-inside:avoid}
-  .gt tr:nth-child(even) td,.gt tr:nth-child(even) td:first-child{background:#f8fafc!important}
-  .gt .nm{font-size:9.4px}
-  .gt .sm{font-size:7.9px}
-  .tgs{font-size:7.6px;padding:0 3px;margin:0 2px 1px 0}
-  .fu,.chg{padding:1px 4px;font-size:8.2px;margin-top:2px}
-  .src{font-size:7.8px}
-  .ckr{font-size:7.8px}
-  .tgs,.fu,.chg,.gt th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .note,.disc{font-size:8px}
-  .endnote{break-inside:avoid;margin-top:5px}
-  a{color:#1f4e82;text-decoration:none}
+  a{color:#1d4ed8}
 }
 </style>
 </head>
 <body class="prt">
-<div id="top" class="noprint" style="position:static">
-  <h1 id="ttl" data-fixed="1">인쇄용 보기 — 가로(A4 landscape)</h1>
+<div id="top" class="noprint">
+  <h1 id="ttl" data-fixed="1">인쇄용 보기 — A4 가로</h1>
   <span id="asof">기준일 : -</span>
   <button type="button" class="lk" onclick="window.print()">인쇄하기</button>
   <a class="lk" id="back" href="gov_support.html">보기 페이지</a>
 </div>
 <div class="noprint">
-  <section class="sec"><h2>인쇄할 조건 선택 <span class="hint">필터를 바꾸면 아래 인쇄 내용이 즉시 바뀝니다. 인쇄 설정에서 ‘배경 그래픽’을 켜면 색상이 표시됩니다.</span></h2><div id="flt"></div></section>
+  <section class="sec"><h2>인쇄할 조건 선택 <span class="hint">조건을 바꾸면 아래 인쇄 내용이 즉시 바뀝니다. 인쇄 설정에서 ‘배경 그래픽’을 켜 주세요.</span></h2><div id="flt"></div></section>
 </div>
+<div class="fixh"><span id="fht"></span><span class="pa" id="fha"></span></div>
 <div class="fixf"><div class="cpf"><span class="ct" id="ctct"></span><span class="cr" id="cpyt"></span></div></div>
-<div class="sheet">
-  <p id="cnt" style="margin:0 0 4px"></p>
-  <div class="tw"><table class="gt"><colgroup>
-    <col style="width:13%"><col style="width:7%"><col style="width:9%"><col style="width:25%"><col style="width:17%"><col style="width:13%"><col style="width:16%">
-  </colgroup><thead id="th"></thead><tbody id="tb"></tbody><tfoot><tr><td colspan="7" class="tsp"></td></tr></tfoot></table></div>
-  <div class="endnote"><p class="note" id="foot"></p><p class="disc" id="disc"></p></div>
-</div>
+<div class="sheet"><div class="paper">
+  <div class="scrh"><span id="sht"></span><span class="pa" id="sha"></span></div>
+  <div id="ovbox"></div>
+  <table class="ptb" id="mt">
+    <colgroup><col style="width:6.5%"><col style="width:10%"><col style="width:6.5%"><col style="width:7%"><col style="width:21%"><col style="width:14%"><col style="width:11.5%"><col style="width:11%"><col style="width:12.5%"></colgroup>
+    <thead id="th"></thead>
+    <tbody id="tb"></tbody>
+    <tfoot><tr><td colspan="9"></td></tr></tfoot>
+  </table>
+  <div class="notes"><p id="foot"></p><p id="disc"></p></div>
+</div></div>
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
@@ -85,20 +123,64 @@ body.prt{background:#e5e7eb}
   G.load(); G.setTop(); G.setFoot();
   var F=G.fromQS(location.search);
   $('flt').innerHTML=G.FILTER_HTML;
-    var pt=(G.cfg.prtTitle||G.cfg.title||'정부지원·세제지원 현황');
+  var pt=(G.cfg.prtTitle||G.cfg.title||'정부지원·세제지원 현황');
   var asTxt='(기준일 : '+G.fmtD(G.asOf)+')';
-  $('th').innerHTML='<tr class="phr"><th colspan="7"><div class="ph2"><span class="pt">'+esc(pt)+'</span><span class="pa">'+esc(asTxt)+'</span></div></th></tr>'+G.THEAD.replace(/ style="[^"]*"/g,'');
-  
+  ['sht','fht'].forEach(function(i){$(i).textContent=pt;}); ['sha','fha'].forEach(function(i){$(i).textContent=asTxt;});
   $('foot').textContent=G.cfg.foot||''; $('disc').textContent=G.cfg.disc||'';
   $('back').href='gov_support.html'+(G.preview?'?preview=1':'');
   document.title=pt+' (기준일 '+G.fmtD(G.asOf)+')';
+
+  function rowP(it){
+    var tr=document.createElement('tr');
+    var relCls=it.rel==='공식'?'b-ok':(it.rel==='보도'?'b-nw':'b-rf');
+    var lvc='b-lv'+Math.max(0,G.LV.indexOf(it.lv));
+    var reg=(it.r&&it.r!=='전국')?(it.r+(it.q?' '+it.q:'')):'전국';
+    var c1='<span class="bd '+lvc+'">'+esc(it.lv)+'</span><div class="ln"><b>'+esc(reg)+'</b></div><div class="sm">'+esc(it.ag)+'</div>';
+    var c2='<div class="nm">'+esc(it.n)+'</div>'+(it.law?'<div class="sm">근거: '+esc(it.law)+'</div>':'');
+    var c3='<span class="lb">'+esc(it.cat)+'</span><div class="sm">'+esc((it.pf||[]).join(', '))+'</div>';
+    var c4='<span class="lb">'+esc((it.tg||[]).join(', '))+'</span><div class="sm">업종: '+esc((it.ind||[]).join(', '))+'</div>';
+    var c5=G.cv(it,'a',G.txt(it.a));
+    var c6=((it.lt||[]).length?'<span class="ln"><span class="lb">유형:</span> '+esc(it.lt.join(', '))+'</span>':'')+G.cv(it,'lim',G.txt(it.lim));
+    var c7=G.cv(it,'w',G.txt(it.w))+(it.d?'<span class="ln"><span class="lb">시기·기한:</span> '+esc(it.d)+'</span>':'');
+    var c8='';
+    if(it.ch) c8+='<div class="chb"><span class="bd b-ch">변경</span> '+esc(it.ch)+'</div>';
+    if(it.fu) c8+='<div class="fub"><span class="bd b-fu">예정</span> '+esc(it.fu)+(it.fd?' <span class="sm">['+esc(it.fd)+']</span>':'')+'</div>';
+    var c9='<span class="bd '+relCls+'">'+esc(it.rel)+'</span>'+(it.chk?'<span class="bd b-ck">확인필요</span>':'')+(it.end?'<span class="bd b-end">마감·종료 가능</span>':'');
+    if(it.chk) c9+='<div class="ckr">'+esc(it.chk)+'</div>';
+    c9+='<ol class="sr">'+(it.src||[]).map(function(s){var u=G.safeUrl(s[1]);return '<li>'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+esc(s[0])+'</a>':esc(s[0]))+'</li>';}).join('')+'</ol><div class="sm">확인일 '+esc(G.fmtD(it.v))+'</div>';
+    var cells=[c1,c2,c3,c4,c5,c6,c7,c8||'—',c9];
+    tr.innerHTML=cells.map(function(c,i){return '<td class="'+(i===0?'c1':'')+(i===7&&!c8?' emp':'')+'">'+c+'</td>';}).join('');
+    return tr;
+  }
+
+  function overview(list,act){
+    var h='<table class="ovt"><colgroup><col style="width:9%"><col style="width:5%"><col style="width:7%"><col style="width:79%"></colgroup><thead><tr><th>분류</th><th>건수</th><th>확인필요</th><th>해당 제도 (선택한 조건 기준)</th></tr></thead><tbody>';
+    G.CAT.forEach(function(c){
+      var xs=list.filter(function(i){return i.cat===c;});
+      if(!xs.length) return;
+      h+='<tr><td class="k">'+esc(c)+'</td><td class="n">'+xs.length+'</td><td class="n">'+xs.filter(function(i){return i.chk;}).length+'</td><td>'+esc(xs.map(function(i){return i.sn||i.n;}).join(' · '))+'</td></tr>';
+    });
+    h+='</tbody></table>';
+    var lv=G.LV.map(function(l){return esc(l)+' <b>'+list.filter(function(i){return i.lv===l;}).length+'</b>건';}).join(' / ');
+    var tg=G.TG.map(function(t){return esc(t)+' <b>'+list.filter(function(i){return (i.tg||[]).indexOf(t)>=0;}).length+'</b>';}).join(' · ');
+    h+='<p class="sumline"><b>총 '+list.length+'건</b> | 지급주체: '+lv+' | 대상: '+tg+(act.length?'<br><b>조건</b> '+esc(act.join(' · ')):'')+'</p>';
+    h+='<div class="tlp">'+(G.timeline||[]).map(function(t){return '<span class="'+(t[2]==='p'?'p':'')+'"><b>'+esc(t[0])+'</b> '+esc(t[1])+'</span>';}).join('')+'</div>';
+    return h;
+  }
+
   function render(){
     var list=G.filter(F), tb=$('tb'); tb.innerHTML='';
-    list.forEach(function(it){tb.appendChild(G.row(it));});
-    var act=[]; if(F.q)act.push('검색어 '+F.q); if(F.lvs.length)act.push('주체 '+F.lvs.join('/')); if(F.lv)act.push('주체 '+F.lv); if(F.tgs.length)act.push('대상 '+F.tgs.join('/')); if(F.tg)act.push('대상 '+F.tg); if(F.lts.length)act.push('제한유형 '+F.lts.join('/')); if(F.lt)act.push('제한 '+F.lt);
-    if(F.cats.length)act.push('분류 '+F.cats.join('/')); if(F.pfs.length)act.push('형태 '+F.pfs.join('/')); if(F.rels.length)act.push('출처 '+F.rels.join('/')); if(F.chk)act.push('확인필요만'); if(F.hideEnd)act.push('마감 제외');
-    $('cnt').textContent='총 '+list.length+'건'+(act.length?' | 조건: '+act.join(' · '):' (전체)');
-    if(!list.length) tb.innerHTML='<tr><td colspan="7" class="empty">조건에 맞는 항목이 없습니다.</td></tr>';
+    var act=[];
+    if(F.q)act.push('검색어 '+F.q); if(F.lvs.length)act.push('주체 '+F.lvs.join('/')); if(F.lv)act.push('주체 '+F.lv);
+    if(F.tgs.length)act.push('대상 '+F.tgs.join('/')); if(F.tg)act.push('대상 '+F.tg);
+    if(F.lts.length)act.push('제한유형 '+F.lts.join('/')); if(F.lt)act.push('제한 '+F.lt);
+    if(F.cats.length)act.push('분류 '+F.cats.join('/')); if(F.pfs.length)act.push('형태 '+F.pfs.join('/')); if(F.rels.length)act.push('출처 '+F.rels.join('/'));
+    if(F.chk)act.push('확인필요만'); if(F.hideEnd)act.push('마감 제외');
+    var cols=['구분(지급주체·지역·소관)','지원·정책명','분류·형태','대상 기업','지원 내용','제한조건','신청·문의·시기','변경·예정','확인·출처'];
+    $('th').innerHTML='<tr class="spc"><th colspan="9"></th></tr><tr>'+cols.map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+'</tr>';
+    $('ovbox').innerHTML=overview(list,act);
+    list.forEach(function(it){tb.appendChild(rowP(it));});
+    if(!list.length) tb.innerHTML='<tr><td colspan="9" class="emp" style="padding:14px">조건에 맞는 항목이 없습니다.</td></tr>';
   }
   G.initFilterUI(F,render); render();
 })();
