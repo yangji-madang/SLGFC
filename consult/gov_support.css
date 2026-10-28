@@ -199,3 +199,19 @@ body[data-vt=tb] #paneOv{display:none}
 @media print{
   table[data-fz] th,table[data-fz] td{position:static!important;left:auto!important;box-shadow:none!important}
 }
+
+/* 기업 규모 정의 팝업 */
+.mx thead th.dfh{cursor:pointer}
+.mx thead th.dfh:hover{background:#244a7c}
+.dfi{font-style:normal;font-size:.9em;margin-left:3px;opacity:.85}
+.defpop{display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.5);align-items:center;justify-content:center;padding:16px}
+.defpop .dpb{position:relative;background:#fff;border-radius:10px;max-width:640px;width:100%;max-height:86vh;overflow:auto;padding:18px 20px 14px;box-shadow:0 12px 40px rgba(0,0,0,.35);color:#1e293b}
+.defpop .dpx{position:absolute;right:10px;top:6px;border:0;background:none;font-size:26px;line-height:1;cursor:pointer;color:#475569}
+.defpop h3{margin:0 24px 8px 0;font-size:17px;color:#14335f}
+.defpop .dpd{margin:0 0 10px;font-size:14px;line-height:1.55;font-weight:600}
+.defpop .dpt{width:100%;border-collapse:collapse;font-size:13px;line-height:1.5}
+.defpop .dpt th,.defpop .dpt td{border:1px solid #cbd5e1;padding:5px 8px;vertical-align:top;text-align:left}
+.defpop .dpt th{background:#eef3f9;color:#14335f;width:28%;white-space:nowrap}
+.defpop .dpl{margin:10px 0 2px;font-size:12.5px;color:#334155}
+.defpop .dpn{margin:2px 0 0;font-size:11.5px;color:#b45309}
+@media print{.defpop,.dfi{display:none!important}}

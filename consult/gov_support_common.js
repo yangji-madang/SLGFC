@@ -239,7 +239,7 @@
     function inCol(i, c) { var t = i.tg || []; return c === '공통·기타' ? !t.length : t.indexOf(c) >= 0; }
     var h = '<table class="mx"><thead><tr><th class="cn"><span>지원 종류</span><i>▼</i><span class="r">대상 기업 ▶</span></th>';
     cols.forEach(function (c) {
-      h += '<th>' + esc(c) + '<span class="n">' + list.filter(function (i) { return inCol(i, c); }).length + '건</span></th>';
+      h += '<th' + (G.DEF[c] ? ' class="dfh" data-def="' + esc(c) + '" tabindex="0" role="button" title="클릭하면 ' + esc(c) + '의 정의를 볼 수 있습니다"' : '') + '>' + esc(c) + (G.DEF[c] ? '<i class="dfi">ⓘ</i>' : '') + '<span class="n">' + list.filter(function (i) { return inCol(i, c); }).length + '건</span></th>';
     });
     h += '<th class="tt">합계</th></tr></thead><tbody>';
     cats.forEach(function (cat) {
@@ -263,6 +263,58 @@
       return '<span class="mxc l' + k + '">' + esc(l) + ' <b>' + list.filter(function (i) { return i.lv === l; }).length + '</b>건</span>';
     }).join('') + '<span class="mxs">같은 제도가 여러 대상 기업에 해당하면 각 열에 함께 표시</span><span class="mxs"><b>총 ' + list.length + '건</b></span></div>';
   };
+
+
+  /* 기업 규모 정의 팝업 — 개요 도식의 열 제목 클릭 시 표시 (근거: 각 법령 조항, 정확한 적용은 법제처 원문 확인) */
+  G.DEF = {
+    '소상공인': {
+      d: '소상공인기본법 제2조에 따라, 상시 근로자 수가 일정 규모 미만이면서 업종별 매출액 요건(소기업 기준)을 충족하는 사업자.',
+      rows: [['광업·제조업·건설업·운수업', '상시 근로자 10명 미만'], ['그 밖의 업종', '상시 근로자 5명 미만'], ['공통 요건', '중소기업기본법상 소기업 요건(업종별 3년 평균 매출액 기준 이내) 충족']],
+      law: '소상공인기본법 제2조, 같은 법 시행령 제3조'
+    },
+    '소기업': {
+      d: '중소기업 중 업종별 3년 평균 매출액이 아래 기준 이하이고 자산총액 5천억원 미만인 기업(소상공인은 소기업의 하위 개념).',
+      rows: [['120억원 이하', '식료품·화학·의약품·금속가공·전자부품·자동차·가구 등 제조업 일부, 전기·가스업'], ['80억원 이하', '농림어업·광업·섬유·목재·인쇄·고무·플라스틱 등 제조업 일부, 건설업, 운수·창고업'], ['50억원 이하', '도매·소매업, 정보통신업 등'], ['30억원 이하', '부동산업, 전문·과학·기술 서비스업, 사업시설관리·지원서비스업 등'], ['10억원 이하', '숙박·음식점업, 교육서비스업, 보건·사회복지업, 수리·개인서비스업 등']],
+      law: '중소기업기본법 제2조, 같은 법 시행령 제3조·별표 3 (업종별 상세 구간은 별표 원문 확인)'
+    },
+    '중소기업': {
+      d: '업종별 평균 매출액이 아래 기준 이하이고, 자산총액 5천억원 미만이며, 독립성 기준(대기업 계열 아님)을 충족하는 기업.',
+      rows: [['1,500억원 이하', '의복·가죽·펄프종이·1차 금속·전기장비·가구 제조업'], ['1,000억원 이하', '농림어업·광업·식료품·화학·고무플라스틱·금속가공·전자부품·자동차 제조업, 건설업, 도매·소매업 등'], ['800억원 이하', '음료·인쇄·의약품·비금속광물·의료정밀기기 제조업 등'], ['600억원 이하', '전문·과학·기술 서비스업, 사업시설관리·지원서비스업, 보건·사회복지업, 예술·스포츠업 등'], ['400억원 이하', '숙박·음식점업, 금융·보험업, 부동산업, 임대업, 교육서비스업'], ['독립성 기준', '자산총액 5천억원 이상 법인이 지분 30% 이상을 소유한 최다출자자인 경우, 상호출자제한기업집단 소속 회사 등은 제외']],
+      law: '중소기업기본법 제2조, 같은 법 시행령 제3조·별표 1 (업종별 상세 구간은 별표 원문 확인)'
+    },
+    '중견기업': {
+      d: '중소기업이 아니면서 아래 요건을 모두 갖춘 기업.',
+      rows: [['독립성', '상호출자제한기업집단 소속이 아니고, 자산총액이 상호출자제한기업집단 지정기준 이상인 법인이 지분 30% 이상을 보유한 최다출자자인 기업이 아닐 것'], ['제외 업종', '금융업, 보험 및 연금업, 금융·보험 관련 서비스업(일반지주회사는 제외 대상 아님)'], ['제외 기관', '공공기관, 지방공기업 등'], ['참고', '‘중견기업 후보기업’: 중소기업 중 3년 평균 매출액 증가율 15% 이상 또는 R&D 투자비율 평균 2% 이상인 기업']],
+      law: '중견기업 성장촉진 및 경쟁력 강화에 관한 특별법 제2조, 같은 법 시행령 제2조'
+    },
+    '창업기업': {
+      d: '창업자가 사업을 개시한 날부터 7년이 지나지 않은 중소기업.',
+      rows: [['기간 기준', '사업 개시일부터 7년 미만'], ['대상', '중소기업기본법상 중소기업'], ['창업 제외', '합병·분할·사업 양수 등으로 기존 사업을 승계하거나 업종만 추가·변경하는 경우, 폐업 후 동종 재개업 등은 창업으로 보지 않음(법 제2조·시행령 제2조)']],
+      law: '중소기업창업 지원법 제2조 제3호·제5호, 같은 법 시행령 제2조'
+    }
+  };
+  G.showDef = function (name) {
+    var D = G.DEF[name]; if (!D) return;
+    var m = document.getElementById('defPop');
+    if (!m) {
+      m = document.createElement('div'); m.id = 'defPop'; m.className = 'defpop noprint';
+      m.innerHTML = '<div class="dpb" role="dialog" aria-modal="true"><button type="button" class="dpx" aria-label="닫기">×</button><div class="dpc"></div></div>';
+      document.body.appendChild(m);
+      m.addEventListener('click', function (e) { if (e.target === m || e.target.classList.contains('dpx')) m.style.display = 'none'; });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') m.style.display = 'none'; });
+    }
+    var h = '<h3>' + esc(name) + '의 정의</h3><p class="dpd">' + esc(D.d) + '</p><table class="dpt"><tbody>';
+    D.rows.forEach(function (r) { h += '<tr><th>' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'; });
+    h += '</tbody></table><p class="dpl"><b>근거</b> ' + esc(D.law) + '</p><p class="dpn">※ 법령은 개정될 수 있으므로 실제 적용 전 국가법령정보센터(law.go.kr)의 현행 조문·별표를 확인하세요.</p>';
+    m.querySelector('.dpc').innerHTML = h; m.style.display = 'flex';
+  };
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-def]');
+    if (t) G.showDef(t.getAttribute('data-def'));
+  });
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.getAttribute && e.target.getAttribute('data-def')) { e.preventDefault(); G.showDef(e.target.getAttribute('data-def')); }
+  });
 
 
   /* 표 틀고정: 머리글 행 + 왼쪽 n개 열(예: ‘지원·정책명’까지)을 고정 — rowspan·colspan 반영 */
