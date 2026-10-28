@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-15",
+ "updated": "2026-10-28",
  "sections": [
   {
    "title": "SLI GFC",
@@ -88,6 +88,16 @@
        "pin": true
       },
       {
+       "label": "CO파트너",
+       "url": "https://copartner.kr/co-report",
+       "tags": [
+        "법인",
+        "리포트",
+        "컨설팅"
+       ],
+       "pin": false
+      },
+      {
        "label": "법인컨설팅AI",
        "url": "https://cc.learninvest.co.kr/",
        "tags": [
@@ -95,16 +105,6 @@
         "컨설팅",
         "AI",
         "상담"
-       ],
-       "pin": false
-      },
-      {
-       "label": "CO파트너",
-       "url": "https://copartner.kr/co-report",
-       "tags": [
-        "법인",
-        "리포트",
-        "컨설팅"
        ],
        "pin": false
       },
@@ -126,6 +126,34 @@
         "세금",
         "이자",
         "계산"
+       ],
+       "pin": false
+      }
+     ]
+    },
+    {
+     "title": "정부 지원 정책",
+     "pin": false,
+     "links": [
+      {
+       "label": "중소기업 정부지원정책 보기",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support.html",
+       "tags": [
+        "정부",
+        "지원",
+        "정책",
+        "세제"
+       ],
+       "pin": true
+      },
+      {
+       "label": "내 회사에 맞는 정부지원정책 찾기",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support_match.html",
+       "tags": [
+        "정부",
+        "지원",
+        "정책",
+        "내회사"
        ],
        "pin": false
       }
