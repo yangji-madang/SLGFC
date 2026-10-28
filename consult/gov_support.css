@@ -119,3 +119,9 @@ footer .cp{font-weight:900;font-size:13.5px;color:var(--navy);letter-spacing:.2p
  .fld.w2{grid-column:1/-1}
  .srcrow{grid-template-columns:1fr}
 }
+
+/* 중복 선택 칩 그룹 */
+#flt .cg{grid-column:1/-1}
+#flt .cg label{margin-bottom:3px}
+.chs{display:flex;flex-wrap:wrap;gap:6px}
+.chip.all{font-weight:700;border-color:var(--navy)}

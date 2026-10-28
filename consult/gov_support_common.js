@@ -101,7 +101,7 @@
   G.THEAD = '<tr><th style="min-width:200px">지원·정책명 / 주체</th><th style="min-width:110px">분류·형태</th><th style="min-width:150px">대상 기업</th><th style="min-width:330px">지원 내용</th><th style="min-width:270px">제한조건</th><th style="min-width:190px">신청·문의</th><th style="min-width:230px">확인·출처</th></tr>';
 
   /* 필터 */
-  G.F0 = function () { return { q: '', lv: '', tg: '', lt: '', cat: '', pf: '', rel: '', chk: false, hideEnd: false }; };
+  G.F0 = function () { return { q: '', lv: '', tg: '', lt: '', lvs: [], tgs: [], lts: [], cat: '', pf: '', rel: '', chk: false, hideEnd: false }; };
   function has(arr, s) { return (arr || []).join(' ').toLowerCase().indexOf(s) >= 0; }
   G.match = function (it, F) {
     var s;
@@ -110,6 +110,9 @@
     if (F.rel && it.rel !== F.rel) return false;
     if (F.chk && !it.chk) return false;
     if (F.hideEnd && it.end) return false;
+    if (F.lvs && F.lvs.length && F.lvs.indexOf(it.lv) < 0) return false;
+    if (F.tgs && F.tgs.length && !F.tgs.some(function (x) { return (it.tg || []).indexOf(x) >= 0 || (it.ind || []).indexOf(x) >= 0; })) return false;
+    if (F.lts && F.lts.length && !F.lts.some(function (x) { return (it.lt || []).indexOf(x) >= 0; })) return false;
     if (F.lv) {
       s = F.lv.trim().toLowerCase();
       if (s && (it.lv + ' ' + it.ag + ' ' + it.r + ' ' + (it.q || '')).toLowerCase().indexOf(s) < 0) return false;
@@ -137,6 +140,7 @@
   G.toQS = function (F) {
     var p = [];
     ['q', 'lv', 'tg', 'lt', 'cat', 'pf', 'rel'].forEach(function (k) { if (F[k]) p.push(k + '=' + encodeURIComponent(F[k])); });
+    ['lvs', 'tgs', 'lts'].forEach(function (k) { if (F[k].length) p.push(k + '=' + encodeURIComponent(F[k].join('~'))); });
     if (F.chk) p.push('chk=1');
     if (F.hideEnd) p.push('he=1');
     return p.join('&');
@@ -148,6 +152,7 @@
       var i = kv.indexOf('='), k = kv.slice(0, i), v = '';
       try { v = decodeURIComponent(kv.slice(i + 1)); } catch (e) { v = ''; }
       if (['q', 'lv', 'tg', 'lt', 'cat', 'pf', 'rel'].indexOf(k) >= 0) F[k] = v;
+      else if (k === 'lvs' || k === 'tgs' || k === 'lts') F[k] = v ? v.split('~') : [];
       else if (k === 'chk') F.chk = v === '1';
       else if (k === 'he') F.hideEnd = v === '1';
     });
@@ -169,12 +174,29 @@
     G.fillDL($('dlv'), G.uniq(G.LV.concat(G.items.map(function (i) { return i.ag.split('·'); }).reduce(function (a, b) { return a.concat(b); }, []), ['서울', '경기', '화성시'])));
     G.fillDL($('dtg'), G.TG.concat(G.IND));
     G.fillDL($('dlt'), G.LT);
+    var GR = [['clv', 'lvs', G.LV], ['ctg', 'tgs', G.TG.concat(G.IND)], ['clt', 'lts', G.LT]];
+    function chips() {
+      GR.forEach(function (g) {
+        $(g[0]).innerHTML = '<button type="button" class="chip all' + (F[g[1]].length ? '' : ' on') + '" data-g="' + g[1] + '" data-v="">전체</button>' +
+          g[2].map(function (x) { return '<button type="button" class="chip' + (F[g[1]].indexOf(x) >= 0 ? ' on' : '') + '" data-g="' + g[1] + '" data-v="' + esc(x) + '">' + esc(x) + '</button>'; }).join('');
+      });
+    }
+    G.toggleSel = function (g, v) {
+      if (!v) F[g] = [];
+      else { var i = F[g].indexOf(v); if (i >= 0) F[g].splice(i, 1); else F[g].push(v); }
+      G.syncUI();
+    };
+    $('flt').addEventListener('click', function (e) {
+      var b = e.target.closest('button.chip[data-g]'); if (!b) return;
+      G.toggleSel(b.dataset.g, b.dataset.v); onChange();
+    });
     function read() {
       F.q = $('fq').value; F.lv = $('flv').value; F.tg = $('ftg').value; F.lt = $('flt2').value;
       F.cat = $('fcat').value; F.pf = $('fpf').value; F.rel = $('frel').value; F.chk = $('fchk').checked; F.hideEnd = $('fend').checked;
     }
     G.syncUI = function () {
       $('fq').value = F.q; $('flv').value = F.lv; $('ftg').value = F.tg; $('flt2').value = F.lt;
+      chips();
       $('fcat').value = F.cat; $('fpf').value = F.pf; $('frel').value = F.rel; $('fchk').checked = F.chk; $('fend').checked = F.hideEnd;
     };
     ['fq', 'flv', 'ftg', 'flt2', 'fcat', 'fpf', 'frel', 'fchk', 'fend'].forEach(function (id) {
@@ -191,9 +213,12 @@
   /* 필터 영역 HTML */
   G.FILTER_HTML =
     '<div><label for="fq">통합 검색 (키워드 입력)</label><input type="search" id="fq" placeholder="예: 고용, 법인세, 새출발, 노란우산" autocomplete="off"></div>' +
-    '<div><label for="flv">지급 주체 (선택·입력)</label><input type="text" id="flv" list="dlv" placeholder="중앙정부·지자체·기관명" autocomplete="off"><datalist id="dlv"></datalist></div>' +
-    '<div><label for="ftg">대상 기업 (규모·업종, 선택·입력)</label><input type="text" id="ftg" list="dtg" placeholder="소상공인·제조업 등" autocomplete="off"><datalist id="dtg"></datalist></div>' +
-    '<div><label for="flt2">제한조건 (선택·입력)</label><input type="text" id="flt2" list="dlt" placeholder="매출·업력·지역 등" autocomplete="off"><datalist id="dlt"></datalist></div>' +
+    '<div class="cg"><label>지급 주체 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="clv"></div></div>' +
+    '<div class="cg"><label>대상 기업 — 규모·업종 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="ctg"></div></div>' +
+    '<div class="cg"><label>제한조건 유형 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="clt"></div></div>' +
+    '<div><label for="flv">지급 주체 직접 입력</label><input type="text" id="flv" list="dlv" placeholder="중앙정부·지자체·기관명" autocomplete="off"><datalist id="dlv"></datalist></div>' +
+    '<div><label for="ftg">대상 기업 직접 입력</label><input type="text" id="ftg" list="dtg" placeholder="소상공인·제조업 등" autocomplete="off"><datalist id="dtg"></datalist></div>' +
+    '<div><label for="flt2">제한조건 직접 입력</label><input type="text" id="flt2" list="dlt" placeholder="매출·업력·지역 등" autocomplete="off"><datalist id="dlt"></datalist></div>' +
     '<div><label for="fcat">분류</label><select id="fcat"></select></div>' +
     '<div><label for="fpf">지원 형태</label><select id="fpf"></select></div>' +
     '<div><label for="frel">출처 등급</label><select id="frel"></select></div>' +

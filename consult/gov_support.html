@@ -56,7 +56,7 @@
   /* 개요 카드: 분류별 */
   function ovRender(){
     var base=G.items.filter(function(i){return G.match(i,Object.assign({},F,{cat:''}));});
-    var h=G.CAT.map(function(c){
+    var h='<button type="button" class="ovc'+(F.cat?'':' on')+'" data-c=""><b>전체</b><span class="n">'+base.length+'<small> / '+G.items.length+'건</small></span><span class="s">모든 분류 보기</span></button>'+G.CAT.map(function(c){
       var n=G.items.filter(function(i){return i.cat===c;}).length;
       var m=base.filter(function(i){return i.cat===c;}).length;
       var ex=G.items.filter(function(i){return i.cat===c;}).slice(0,3).map(function(i){return i.sn||i.n;}).join(' · ');
@@ -65,21 +65,20 @@
     var nck=G.items.filter(function(i){return i.chk;}).length;
     h+='<button type="button" class="ovc'+(F.chk?' on':'')+'" data-k="chk"><b>확인필요 항목</b><span class="n">'+nck+'<small> / '+G.items.length+'건</small></span><span class="s">단일·2차 출처, 정부안, 한도 미확인</span></button>';
     $('ovg').innerHTML=h;
-    $('ovlv').innerHTML='<span class="lb">지급 주체</span>'+G.LV.map(function(l){
+    $('ovlv').innerHTML='<span class="lb">지급 주체</span><button type="button" class="chip all'+(F.lvs.length?'':' on')+'" data-g="lvs" data-v="">전체 '+G.items.length+'</button>'+G.LV.map(function(l){
       var n=G.items.filter(function(i){return i.lv===l;}).length;
-      return '<button type="button" class="chip'+(F.lv===l?' on':'')+'" data-l="'+esc(l)+'">'+esc(l)+' '+n+'</button>';
+      return '<button type="button" class="chip'+(F.lvs.indexOf(l)>=0?' on':'')+'" data-g="lvs" data-v="'+esc(l)+'">'+esc(l)+' '+n+'</button>';
     }).join('');
-    $('ovtg').innerHTML='<span class="lb">대상 기업</span>'+G.TG.map(function(t){
+    $('ovtg').innerHTML='<span class="lb">대상 기업</span><button type="button" class="chip all'+(F.tgs.length?'':' on')+'" data-g="tgs" data-v="">전체 '+G.items.length+'</button>'+G.TG.map(function(t){
       var n=G.items.filter(function(i){return (i.tg||[]).indexOf(t)>=0;}).length;
-      return '<button type="button" class="chip'+(F.tg===t?' on':'')+'" data-t="'+esc(t)+'">'+esc(t)+' '+n+'</button>';
+      return '<button type="button" class="chip'+(F.tgs.indexOf(t)>=0?' on':'')+'" data-g="tgs" data-v="'+esc(t)+'">'+esc(t)+' '+n+'</button>';
     }).join('');
   }
   $('ov').addEventListener('click',function(e){
     var b=e.target.closest('button'); if(!b) return;
-    if(b.dataset.c!==undefined) F.cat=(F.cat===b.dataset.c?'':b.dataset.c);
+    if(b.dataset.c!==undefined) F.cat=(b.dataset.c&&F.cat!==b.dataset.c?b.dataset.c:'');
     else if(b.dataset.k==='chk') F.chk=!F.chk;
-    else if(b.dataset.l!==undefined) F.lv=(F.lv===b.dataset.l?'':b.dataset.l);
-    else if(b.dataset.t!==undefined) F.tg=(F.tg===b.dataset.t?'':b.dataset.t);
+    else if(b.dataset.g!==undefined) G.toggleSel(b.dataset.g,b.dataset.v);
     G.syncUI(); render();
     $('cnt').scrollIntoView({behavior:'smooth',block:'start'});
   });
