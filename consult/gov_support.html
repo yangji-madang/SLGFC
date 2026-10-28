@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>중소기업·소상공인 정부지원·세제지원 현황</title>
+<link rel="stylesheet" href="gov_support.css">
+</head>
+<body>
+<div id="top">
+  <h1 id="ttl">중소기업·소상공인 정부지원·세제지원</h1>
+  <span id="asof">기준일 : -</span>
+  <a class="lk" id="prt" href="gov_support_print.html" target="_blank" rel="noopener">인쇄용 보기</a>
+</div>
+<main>
+  <section class="sec" id="ov">
+    <h2>전체 개요 <span class="hint">카드를 누르면 아래 표에 해당 항목만 표시됩니다. 다시 누르면 해제됩니다.</span></h2>
+    <div class="ovg" id="ovg"></div>
+    <div class="ovrow" id="ovlv"></div>
+    <div class="ovrow" id="ovtg"></div>
+  </section>
+  <section class="sec" id="tlsec">
+    <h2>주요 일정 <span class="hint">(보라·금색 = 예정·정부안, 국회 심의 등 확정 전)</span></h2>
+    <div class="tl" id="tl"></div>
+  </section>
+  <section class="sec">
+    <h2>조건 검색</h2>
+    <div id="flt"></div>
+  </section>
+  <p id="cnt"></p>
+  <div class="tw"><table class="gt"><thead id="th"></thead><tbody id="tb"></tbody></table></div>
+  <section class="sec" style="margin-top:10px">
+    <p class="note" id="foot"></p>
+    <p class="disc" id="disc"></p>
+  </section>
+</main>
+<footer><div class="cp"><span class="ct" id="ctc"></span><span class="cr" id="cpy"></span></div></footer>
+<script src="gov_support_data.js"></script>
+<script src="gov_support_config.js"></script>
+<script src="gov_support_updates.js"></script>
+<script src="gov_support_common.js"></script>
+<script>
+(function(){
+  var G=GS, F=G.F0(), $=function(i){return document.getElementById(i);}, esc=G.esc;
+  G.load(); G.setTop(); G.setFoot();
+  document.title=(G.cfg.title||'정부지원·세제지원')+(G.preview?' (미리보기)':'');
+  $('flt').innerHTML=G.FILTER_HTML;
+  $('th').innerHTML=G.THEAD;
+  $('foot').textContent=G.cfg.foot||''; $('disc').textContent=G.cfg.disc||'';
+
+  /* 주요 일정 */
+  $('tl').innerHTML=(G.timeline||[]).map(function(t){
+    return '<div class="'+(t[2]==='p'?'p':'')+'"><b>'+esc(t[0])+'</b>'+esc(t[1])+'</div>';
+  }).join('');
+
+  /* 개요 카드: 분류별 */
+  function ovRender(){
+    var base=G.items.filter(function(i){return G.match(i,Object.assign({},F,{cat:''}));});
+    var h=G.CAT.map(function(c){
+      var n=G.items.filter(function(i){return i.cat===c;}).length;
+      var m=base.filter(function(i){return i.cat===c;}).length;
+      var ex=G.items.filter(function(i){return i.cat===c;}).slice(0,3).map(function(i){return i.sn||i.n;}).join(' · ');
+      return '<button type="button" class="ovc'+(F.cat===c?' on':'')+'" data-c="'+esc(c)+'"><b>'+esc(c)+'</b><span class="n">'+m+'<small> / '+n+'건</small></span><span class="s">'+esc(ex)+'</span></button>';
+    }).join('');
+    var nck=G.items.filter(function(i){return i.chk;}).length;
+    h+='<button type="button" class="ovc'+(F.chk?' on':'')+'" data-k="chk"><b>확인필요 항목</b><span class="n">'+nck+'<small> / '+G.items.length+'건</small></span><span class="s">단일·2차 출처, 정부안, 한도 미확인</span></button>';
+    $('ovg').innerHTML=h;
+    $('ovlv').innerHTML='<span class="lb">지급 주체</span>'+G.LV.map(function(l){
+      var n=G.items.filter(function(i){return i.lv===l;}).length;
+      return '<button type="button" class="chip'+(F.lv===l?' on':'')+'" data-l="'+esc(l)+'">'+esc(l)+' '+n+'</button>';
+    }).join('');
+    $('ovtg').innerHTML='<span class="lb">대상 기업</span>'+G.TG.map(function(t){
+      var n=G.items.filter(function(i){return (i.tg||[]).indexOf(t)>=0;}).length;
+      return '<button type="button" class="chip'+(F.tg===t?' on':'')+'" data-t="'+esc(t)+'">'+esc(t)+' '+n+'</button>';
+    }).join('');
+  }
+  $('ov').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.c!==undefined) F.cat=(F.cat===b.dataset.c?'':b.dataset.c);
+    else if(b.dataset.k==='chk') F.chk=!F.chk;
+    else if(b.dataset.l!==undefined) F.lv=(F.lv===b.dataset.l?'':b.dataset.l);
+    else if(b.dataset.t!==undefined) F.tg=(F.tg===b.dataset.t?'':b.dataset.t);
+    G.syncUI(); render();
+    $('cnt').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+
+  function render(){
+    var list=G.filter(F), tb=$('tb');
+    tb.innerHTML='';
+    list.forEach(function(it){tb.appendChild(G.row(it));});
+    $('cnt').innerHTML='검색 결과 <b>'+list.length+'</b>건 / 전체 '+G.items.length+'건';
+    if(!list.length) tb.innerHTML='<tr><td class="empty" colspan="7">조건에 맞는 항목이 없습니다. 필터를 줄여 보세요.</td></tr>';
+    var qs=G.toQS(F);
+    $('prt').href='gov_support_print.html'+(qs?'?'+qs:'')+(G.preview?(qs?'&':'?')+'preview=1':'');
+    ovRender();
+  }
+  G.initFilterUI(F,render);
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>중소기업·소상공인 정부지원·세제지원 현황 (인쇄용)</title>
+<link rel="stylesheet" href="gov_support.css">
+<style>
+body.prt{background:#e5e7eb}
+.noprint{max-width:1500px;margin:0 auto;padding:10px 16px 0}
+.sheet{max-width:1500px;margin:0 auto 10px;background:#fff;padding:10px 12px}
+.ph{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid var(--navy);padding-bottom:4px;margin-bottom:6px}
+.ph h1{margin:0;font-size:19px;color:var(--navy)}
+.ph .as{font-size:13px;font-weight:700;color:var(--navy);white-space:nowrap}
+.prt table.gt{min-width:0;table-layout:fixed}
+.prt .gt th.sp,.phr th{background:#fff!important;color:var(--navy);border:0!important;padding:0 0 3px!important;border-bottom:2px solid var(--navy)!important}
+.ph2{display:flex;justify-content:space-between;align-items:flex-end}
+.ph2 .pt{font-size:17px;font-weight:700;color:var(--navy)}
+.ph2 .pa{font-size:12.5px;font-weight:700;color:var(--navy);white-space:nowrap}
+.gt td.tcp{background:#fff!important;border:0;border-top:2px solid var(--navy);color:var(--navy);padding:3px 0 0}
+.tcp .cr{font-weight:900;color:var(--navy)}
+.prt .gt th{position:static}
+.prt .gt td:first-child,.prt .gt th:first-child{position:static;box-shadow:none}
+.prt .tw{overflow:visible}
+.fixf{display:none;background:#fff;border-top:2px solid var(--navy);padding-top:2px}
+.fixf .cpf{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.fixf .ct{font-weight:700;color:var(--tx)}
+.fixf .cr{font-weight:900;color:var(--navy)}
+.gt td.tsp{border:0!important;background:#fff!important;padding:0!important;height:9mm}
+@media screen and (max-width:900px){.prt .tw{overflow-x:auto}.prt table.gt{min-width:1100px}}
+@media print{
+  @page{size:A4 landscape;margin:8mm 8mm 8mm 8mm}
+  body.prt{background:#fff;font-size:8.6px;line-height:1.38}
+  .noprint,#top{display:none!important}
+  .sheet{max-width:none;margin:0;padding:0}
+  footer{display:none}
+  .prt table.gt{width:100%;font-size:8.6px}
+  .ph2 .pt{font-size:13px}.ph2 .pa{font-size:10px}
+  .fixf{display:block;position:fixed;left:0;right:0;bottom:0;height:7mm;font-size:9.5px}
+  .fixf .cpf{height:100%}
+  .gt th{padding:3px 4px;font-size:8.8px;white-space:normal;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .gt td{padding:3px 4px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .gt thead{display:table-header-group}
+  .gt tfoot{display:table-footer-group}
+  .gt tr{break-inside:avoid;page-break-inside:avoid}
+  .gt tr:nth-child(even) td,.gt tr:nth-child(even) td:first-child{background:#f8fafc!important}
+  .gt .nm{font-size:9.4px}
+  .gt .sm{font-size:7.9px}
+  .tgs{font-size:7.6px;padding:0 3px;margin:0 2px 1px 0}
+  .fu,.chg{padding:1px 4px;font-size:8.2px;margin-top:2px}
+  .src{font-size:7.8px}
+  .ckr{font-size:7.8px}
+  .tgs,.fu,.chg,.gt th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .note,.disc{font-size:8px}
+  .endnote{break-inside:avoid;margin-top:5px}
+  a{color:#1f4e82;text-decoration:none}
+}
+</style>
+</head>
+<body class="prt">
+<div id="top" class="noprint" style="position:static">
+  <h1 id="ttl" data-fixed="1">인쇄용 보기 — 가로(A4 landscape)</h1>
+  <span id="asof">기준일 : -</span>
+  <button type="button" class="lk" onclick="window.print()">인쇄하기</button>
+  <a class="lk" id="back" href="gov_support.html">보기 페이지</a>
+</div>
+<div class="noprint">
+  <section class="sec"><h2>인쇄할 조건 선택 <span class="hint">필터를 바꾸면 아래 인쇄 내용이 즉시 바뀝니다. 인쇄 설정에서 ‘배경 그래픽’을 켜면 색상이 표시됩니다.</span></h2><div id="flt"></div></section>
+</div>
+<div class="fixf"><div class="cpf"><span class="ct" id="ctct"></span><span class="cr" id="cpyt"></span></div></div>
+<div class="sheet">
+  <p id="cnt" style="margin:0 0 4px"></p>
+  <div class="tw"><table class="gt"><colgroup>
+    <col style="width:13%"><col style="width:7%"><col style="width:9%"><col style="width:25%"><col style="width:17%"><col style="width:13%"><col style="width:16%">
+  </colgroup><thead id="th"></thead><tbody id="tb"></tbody><tfoot><tr><td colspan="7" class="tsp"></td></tr></tfoot></table></div>
+  <div class="endnote"><p class="note" id="foot"></p><p class="disc" id="disc"></p></div>
+</div>
+<script src="gov_support_data.js"></script>
+<script src="gov_support_config.js"></script>
+<script src="gov_support_updates.js"></script>
+<script src="gov_support_common.js"></script>
+<script>
+(function(){
+  var G=GS, $=function(i){return document.getElementById(i);}, esc=G.esc;
+  G.load(); G.setTop(); G.setFoot();
+  var F=G.fromQS(location.search);
+  $('flt').innerHTML=G.FILTER_HTML;
+    var pt=(G.cfg.prtTitle||G.cfg.title||'정부지원·세제지원 현황');
+  var asTxt='(기준일 : '+G.fmtD(G.asOf)+')';
+  $('th').innerHTML='<tr class="phr"><th colspan="7"><div class="ph2"><span class="pt">'+esc(pt)+'</span><span class="pa">'+esc(asTxt)+'</span></div></th></tr>'+G.THEAD.replace(/ style="[^"]*"/g,'');
+  
+  $('foot').textContent=G.cfg.foot||''; $('disc').textContent=G.cfg.disc||'';
+  $('back').href='gov_support.html'+(G.preview?'?preview=1':'');
+  document.title=pt+' (기준일 '+G.fmtD(G.asOf)+')';
+  function render(){
+    var list=G.filter(F), tb=$('tb'); tb.innerHTML='';
+    list.forEach(function(it){tb.appendChild(G.row(it));});
+    var act=[]; if(F.q)act.push('검색어 '+F.q); if(F.lv)act.push('주체 '+F.lv); if(F.tg)act.push('대상 '+F.tg); if(F.lt)act.push('제한 '+F.lt);
+    if(F.cat)act.push('분류 '+F.cat); if(F.pf)act.push('형태 '+F.pf); if(F.rel)act.push('출처 '+F.rel); if(F.chk)act.push('확인필요만'); if(F.hideEnd)act.push('마감 제외');
+    $('cnt').textContent='총 '+list.length+'건'+(act.length?' | 조건: '+act.join(' · '):' (전체)');
+    if(!list.length) tb.innerHTML='<tr><td colspan="7" class="empty">조건에 맞는 항목이 없습니다.</td></tr>';
+  }
+  G.initFilterUI(F,render); render();
+})();
+</script>
+</body>
+</html>

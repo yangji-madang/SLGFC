@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>정부지원·세제지원 관리</title>
+<link rel="stylesheet" href="gov_support.css">
+<style>
+.two{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:10px;align-items:start}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+#flt{grid-template-columns:1fr}
+.mini{font-size:12px;color:var(--mut)}
+#tlta{min-height:150px;font-family:inherit}
+</style>
+</head>
+<body>
+<div id="top">
+  <h1 id="ttl" data-fixed="1">정부지원·세제지원 관리<small>항목 수정 · 미리보기 · GitHub 업데이트</small></h1>
+  <span id="asof">기준일 : -</span>
+  <a class="lk" href="gov_support.html" target="_blank" rel="noopener">보기 페이지</a>
+  <a class="lk" href="gov_support_print.html" target="_blank" rel="noopener">인쇄 페이지</a>
+</div>
+<main>
+  <fieldset class="fs"><legend>기본 설정</legend>
+    <div class="g2 fld">
+      <div><label for="cAsOf">기준일 (yyyy-mm-dd)</label><input type="date" id="cAsOf"></div>
+      <div class="w2"><label for="cTitle">보기 페이지 제목</label><input type="text" id="cTitle"></div>
+      <div class="w2"><label for="cSub">부제</label><input type="text" id="cSub"></div>
+      <div class="w2"><label for="cPrt">인쇄 제목</label><input type="text" id="cPrt"></div>
+      <div><label for="cDays">변경 표시 기간(일)</label><input type="text" id="cDays"></div>
+      <div><label>&nbsp;</label><label style="font-weight:400"><input type="checkbox" id="cShow"> 변경 전 값을 취소선으로 표시</label></div>
+      <div class="w3"><label for="cFoot">유의사항 (하단 주석, 줄바꿈 가능)</label><textarea id="cFoot"></textarea></div>
+      <div class="w3"><label for="cCt">하단 좌측 담당자 연락처 (보기·인쇄 모든 페이지 하단)</label><input type="text" id="cCt"></div>
+      <div class="w3"><label for="cDisc">면책 문구</label><textarea id="cDisc" style="min-height:48px"></textarea></div>
+      <div class="w3"><label for="tlta">주요 일정 (한 줄에 하나: 날짜 | 내용 | p ← 예정·정부안은 끝에 | p)</label><textarea id="tlta"></textarea></div>
+    </div>
+  </fieldset>
+
+  <div class="two">
+    <section class="sec">
+      <h2>항목 목록 <span class="hint" id="lcnt"></span></h2>
+      <div id="flt"></div>
+      <div style="margin:8px 0"><button type="button" class="btn gd" id="bNew">+ 새 항목</button></div>
+      <div class="lst" id="lst"></div>
+    </section>
+    <fieldset class="fs"><legend id="eHead">항목 편집</legend>
+      <div id="eForm" class="fld"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <button type="button" class="btn" id="bApply">항목 적용</button>
+        <button type="button" class="btn sub" id="bDup">복제</button>
+        <button type="button" class="btn rd" id="bDel">삭제</button>
+      </div>
+      <p class="mini">‘항목 적용’을 눌러야 편집 내용이 작업본에 반영됩니다. 지원내용·제한조건·신청·시기가 바뀌면 변경 전 값이 업데이트 기록에 자동 저장됩니다(보기 페이지에 취소선 표시).</p>
+    </fieldset>
+  </div>
+
+  <fieldset class="fs"><legend>GitHub 업데이트</legend>
+    <div class="g2 fld">
+      <div><label for="ghRepo">저장소 (owner/repo)</label><input type="text" id="ghRepo" value="yangji-madang/SLGFC"></div>
+      <div><label for="ghBranch">브랜치</label><input type="text" id="ghBranch" value="main"></div>
+      <div><label for="ghDir">폴더</label><input type="text" id="ghDir" value="consult"></div>
+      <div><label for="ghTok">Personal Access Token (contents 쓰기 권한)</label><input type="password" id="ghTok" autocomplete="off" placeholder="ghp_… / github_pat_…"></div>
+      <div><label>&nbsp;</label><label style="font-weight:400"><input type="checkbox" id="ghRem"> 이 브라우저에 토큰 기억</label></div>
+    </div>
+    <p class="mini">토큰은 이 화면에서 GitHub로만 전송되며 저장소·파일에는 기록되지 않습니다. 업로드 대상: gov_support_data.js · gov_support_config.js · gov_support_updates.js</p>
+  </fieldset>
+</main>
+<div class="bar">
+  <button type="button" class="btn sub" id="bPrev">미리보기</button>
+  <button type="button" class="btn sub" id="bDraft">임시저장(이 브라우저)</button>
+  <button type="button" class="btn sub" id="bLoad">임시저장 불러오기</button>
+  <button type="button" class="btn sub" id="bDl">파일 내려받기</button>
+  <button type="button" class="btn gd" id="bGh">GitHub 업데이트</button>
+  <span id="msg"></span>
+</div>
+<footer style="position:static"><div class="cp"><span class="ct" id="ctc"></span><span class="cr" id="cpy"></span></div></footer>
+<script src="gov_support_data.js"></script>
+<script src="gov_support_config.js"></script>
+<script src="gov_support_updates.js"></script>
+<script src="gov_support_common.js"></script>
+<script>
+(function(){
+  'use strict';
+  var G=GS, esc=G.esc, $=function(i){return document.getElementById(i);};
+  var DRAFT='govSupportDraft', TOKK='govSupportGhTok', REPK='govSupportGhRepo';
+  var W={data:null,cfg:null,upd:null}, F=G.F0(), cur=null, delArm=false;
+  function clone(o){return JSON.parse(JSON.stringify(o));}
+  function msg(t,ok){var m=$('msg');m.textContent=t;m.className=ok?'ok':'er';}
+  function todayStr(){var d=new Date(),p=function(n){return ('0'+n).slice(-2);};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
+
+  function init(){
+    G.load();
+    W.data=clone({items:G.items,timeline:G.timeline});
+    W.cfg=clone(G.cfg); W.upd=clone(G.upd);
+    if(!W.upd.log)W.upd.log=[];
+    G.items=W.data.items;
+    G.setFoot();
+    $('flt').innerHTML=G.FILTER_HTML;
+    G.initFilterUI(F,renderList);
+    fillCfg(); renderList(); buildForm(); loadGh();
+    $('asof').textContent='기준일 : '+G.fmtD(W.upd.asOf);
+  }
+
+  /* ───── 기본 설정 ───── */
+  function fillCfg(){
+    $('cAsOf').value=W.upd.asOf||''; $('cTitle').value=W.cfg.title||''; $('cSub').value=W.cfg.sub||'';
+    $('cPrt').value=W.cfg.prtTitle||''; $('cDays').value=W.cfg.chgDays||30; $('cShow').checked=W.cfg.showChg!==false;
+    $('cFoot').value=W.cfg.foot||''; $('cDisc').value=W.cfg.disc||''; $('cCt').value=W.cfg.contact!=null?W.cfg.contact:G.CONTACT;
+    $('tlta').value=(W.data.timeline||[]).map(function(t){return t.join(' | ');}).join('\n');
+  }
+  function readCfg(){
+    var d=parseInt($('cDays').value,10); if(isNaN(d)||d<0)d=30;
+    if($('cAsOf').value && !/^\d{4}-\d{2}-\d{2}$/.test($('cAsOf').value)) throw new Error('기준일 형식이 올바르지 않습니다.');
+    W.upd.asOf=$('cAsOf').value||W.upd.asOf;
+    W.cfg.title=$('cTitle').value; W.cfg.sub=$('cSub').value; W.cfg.prtTitle=$('cPrt').value;
+    W.cfg.chgDays=d; W.cfg.showChg=$('cShow').checked; W.cfg.foot=$('cFoot').value; W.cfg.disc=$('cDisc').value; W.cfg.contact=$('cCt').value;
+    W.data.timeline=$('tlta').value.split('\n').map(function(l){return l.trim();}).filter(Boolean).map(function(l){
+      var p=l.split('|').map(function(x){return x.trim();});
+      return p[2]==='p'?[p[0],p[1]||'','p']:[p[0],p[1]||''];
+    });
+    $('asof').textContent='기준일 : '+G.fmtD(W.upd.asOf);
+  }
+
+  /* ───── 목록 ───── */
+  function renderList(){
+    var list=G.filter(F), h='';
+    $('lcnt').textContent=list.length+' / '+W.data.items.length+'건';
+    list.forEach(function(it){
+      h+='<button type="button" data-id="'+esc(it.id)+'"'+(cur&&cur.id===it.id?' class="on"':'')+'>'+esc(it.n)+'<br><span class="mini">'+esc(it.lv)+' · '+esc(it.cat)+(it.chk?' · 확인필요':'')+'</span></button>';
+    });
+    $('lst').innerHTML=h||'<div class="empty">항목이 없습니다.</div>';
+  }
+  $('lst').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b)return;
+    cur=W.data.items.filter(function(i){return i.id===b.dataset.id;})[0]||null;
+    delArm=false; $('bDel').textContent='삭제'; buildForm(); renderList();
+  });
+
+  /* ───── 편집 폼 ───── */
+  function sel(id,arr,v){return '<select id="'+id+'">'+arr.map(function(x){return '<option'+(x===v?' selected':'')+'>'+esc(x)+'</option>';}).join('')+'</select>';}
+  function cks(name,arr,vals){
+    var extra=(vals||[]).filter(function(x){return arr.indexOf(x)<0;});
+    return '<div class="cks" id="'+name+'">'+arr.concat(extra).map(function(x){
+      return '<label><input type="checkbox" value="'+esc(x)+'"'+((vals||[]).indexOf(x)>=0?' checked':'')+'> '+esc(x)+'</label>';
+    }).join('')+'</div>';
+  }
+  function tx(id,l,v,cls){return '<div class="'+(cls||'')+'"><label for="'+id+'">'+l+'</label><input type="text" id="'+id+'" value="'+esc(v)+'"></div>';}
+  function ta(id,l,v,cls){return '<div class="'+(cls||'w3')+'"><label for="'+id+'">'+l+'</label><textarea id="'+id+'">'+esc(v)+'</textarea></div>';}
+  function srcRow(t,u){return '<div class="srcrow"><input type="text" class="st" placeholder="출처 제목" value="'+esc(t)+'"><input type="text" class="su" placeholder="https://…" value="'+esc(u)+'"><button type="button" class="btn rd" data-x="1">삭제</button></div>';}
+  function buildForm(){
+    var it=cur;
+    if(!it){$('eForm').innerHTML='<p class="mini">왼쪽 목록에서 항목을 선택하거나 ‘+ 새 항목’을 누르세요.</p>';$('eHead').textContent='항목 편집';return;}
+    $('eHead').textContent='항목 편집 — '+it.id;
+    $('eForm').innerHTML='<div class="g2">'+
+      tx('eN','지원·정책명',it.n,'w2')+tx('eSn','약칭(개요·카드용)',it.sn)+
+      '<div><label for="eLv">지급 주체 구분</label>'+sel('eLv',G.LV,it.lv)+'</div>'+
+      tx('eAg','소관 기관 (·로 구분)',it.ag,'w2')+tx('eR','지역(전국·서울·경기 등)',it.r)+tx('eQ','시·군·구 등',it.q)+
+      '<div><label for="eCat">분류</label>'+sel('eCat',G.CAT,it.cat)+'</div>'+
+      '<div><label for="eRel">출처 등급</label>'+sel('eRel',G.REL,it.rel)+'</div>'+
+      tx('eLaw','근거 법령·공고',it.law,'w2')+tx('eD','시기·기한',it.d,'w2')+tx('eFd','예정·변경 시기',it.fd)+tx('eV','확인일(yyyy-mm-dd)',it.v)+
+      '</div>'+
+      '<div class="g2" style="margin-top:8px">'+
+      '<div class="w3"><label>대상 기업(규모)</label>'+cks('eTg',G.TG,it.tg)+'</div>'+
+      '<div class="w3"><label>대상 업종</label>'+cks('eInd',G.IND,it.ind)+'</div>'+
+      '<div class="w3"><label>지원 형태</label>'+cks('ePf',G.PF,it.pf)+'</div>'+
+      '<div class="w3"><label>제한조건 유형</label>'+cks('eLt',G.LT,it.lt)+'</div>'+
+      ta('eA','지원 내용 (줄 시작 ‘- ’ = 글머리)',it.a)+ta('eLim','제한조건 상세',it.lim)+ta('eW','신청·문의',it.w)+
+      ta('eCh','변경 내용 (이미 시행된 변경)',it.ch,'w3')+ta('eFu','예정·개정 내용 (정부안 등)',it.fu,'w3')+
+      ta('eChk','확인필요 사유 (비우면 확인필요 표시 없음)',it.chk,'w3')+
+      '<div class="w3"><label style="font-weight:400"><input type="checkbox" id="eEnd"'+(it.end?' checked':'')+'> 마감·종료 가능(접수기간 경과 등)</label></div>'+
+      '<div class="w3"><label>출처 목록 (공식 URL 우선)</label><div id="eSrc">'+(it.src||[]).map(function(s){return srcRow(s[0],s[1]);}).join('')+'</div><button type="button" class="btn sub" id="bSrc">+ 출처 추가</button></div>'+
+      '</div>';
+    $('bSrc').addEventListener('click',function(){$('eSrc').insertAdjacentHTML('beforeend',srcRow('',''));});
+    $('eSrc').addEventListener('click',function(e){var b=e.target.closest('button[data-x]');if(b)b.parentNode.remove();});
+  }
+  function vals(id){return Array.prototype.map.call($(id).querySelectorAll('input:checked'),function(i){return i.value;});}
+  function applyForm(){
+    if(!cur){msg('편집할 항목이 없습니다.',false);return false;}
+    var o=cur, n=$('eN').value.trim();
+    if(!n){msg('지원·정책명을 입력하세요.',false);return false;}
+    var src=[],bad='';
+    Array.prototype.forEach.call($('eSrc').querySelectorAll('.srcrow'),function(r){
+      var t=r.querySelector('.st').value.trim(),u=r.querySelector('.su').value.trim();
+      if(!t&&!u)return;
+      if(!G.safeUrl(u))bad=t||u;
+      src.push([t,u]);
+    });
+    if(bad){msg('출처 URL은 http(s)://로 시작해야 합니다: '+bad,false);return false;}
+    if(!src.length){msg('출처를 1개 이상 입력하세요.',false);return false;}
+    var v=$('eV').value.trim(); if(v&&!/^\d{4}-\d{2}-\d{2}$/.test(v)){msg('확인일 형식은 yyyy-mm-dd 입니다.',false);return false;}
+    var logd=W.upd.asOf||todayStr();
+    var nv={a:$('eA').value,lim:$('eLim').value,w:$('eW').value,d:$('eD').value.trim()};
+    ['a','lim','w','d'].forEach(function(f){
+      if((o[f]||'')!==nv[f] && (o[f]||'')!==''){W.upd.log.push({n:o.n,f:f,old:o[f],date:logd});}
+    });
+    o.n=n; o.sn=$('eSn').value.trim()||n; o.lv=$('eLv').value; o.ag=$('eAg').value.trim(); o.r=$('eR').value.trim()||'전국'; o.q=$('eQ').value.trim();
+    o.cat=$('eCat').value; o.rel=$('eRel').value; o.law=$('eLaw').value.trim(); o.fd=$('eFd').value.trim(); o.v=v||logd;
+    o.tg=vals('eTg'); o.ind=vals('eInd'); o.pf=vals('ePf'); o.lt=vals('eLt');
+    o.a=nv.a; o.lim=nv.lim; o.w=nv.w; o.d=nv.d; o.ch=$('eCh').value; o.fu=$('eFu').value; o.chk=$('eChk').value.trim(); o.end=$('eEnd').checked; o.src=src;
+    renderList(); msg('항목을 적용했습니다. (아직 GitHub에는 반영되지 않았습니다)',true);
+    return true;
+  }
+  $('bApply').addEventListener('click',applyForm);
+  $('bNew').addEventListener('click',function(){
+    var ids=W.data.items.map(function(i){return parseInt(i.id.slice(1),10)||0;}), id='g'+('0'+(Math.max.apply(null,ids.concat([0]))+1)).slice(-2);
+    var it={id:id,n:'새 지원·정책',sn:'새 지원·정책',lv:G.LV[0],ag:'',r:'전국',q:'',cat:G.CAT[0],tg:[],ind:['전업종'],pf:[],lt:[],a:'',lim:'',w:'',d:'',law:'',ch:'',fu:'',fd:'',chk:'',end:false,src:[],rel:'공식',v:W.upd.asOf||todayStr()};
+    W.data.items.push(it); cur=it; buildForm(); renderList(); msg('새 항목을 추가했습니다. 내용을 입력하고 ‘항목 적용’을 누르세요(출처 1개 이상 필수).',true);
+  });
+  $('bDup').addEventListener('click',function(){
+    if(!cur)return; var c=clone(cur), ids=W.data.items.map(function(i){return parseInt(i.id.slice(1),10)||0;});
+    c.id='g'+('0'+(Math.max.apply(null,ids)+1)).slice(-2); c.n=c.n+' (복제)'; W.data.items.push(c); cur=c; buildForm(); renderList(); msg('복제했습니다.',true);
+  });
+  $('bDel').addEventListener('click',function(){
+    if(!cur)return;
+    if(!delArm){delArm=true;$('bDel').textContent='한 번 더 누르면 삭제';return;}
+    W.data.items=W.data.items.filter(function(i){return i!==cur;}); G.items=W.data.items; cur=null; delArm=false; $('bDel').textContent='삭제'; buildForm(); renderList(); msg('삭제했습니다.',true);
+  });
+
+  /* ───── 파일 생성 ───── */
+  function files(){
+    var c=Object.assign({},W.cfg); if(!c.extras)c.extras=[];
+    return {
+      'gov_support_data.js':'/* 정부지원금·세제지원 데이터 — 관리페이지(gov_support_admin.html) 또는 일일 업데이트가 갱신합니다. */\nwindow.GOV_SUPPORT_DATA = '+JSON.stringify(W.data,null,1)+';\n',
+      'gov_support_config.js':'window.GOV_SUPPORT_CONFIG = '+JSON.stringify(c,null,2)+';\n',
+      'gov_support_updates.js':'/* 업데이트 기록 — asOf(기준일)=마지막 확인일, log=변경 전 내용(n=지원명, f=항목 a/lim/w/d, old=변경 전, date=변경 확인일) */\nwindow.GOV_SUPPORT_UPDATES = '+JSON.stringify(W.upd,null,1)+';\n'
+    };
+  }
+  function commit(){ if(cur&&$('eN')&&!applyForm())return false; try{readCfg();}catch(e){msg(e.message,false);return false;} return true; }
+
+  $('bPrev').addEventListener('click',function(){
+    if(!commit())return;
+    try{sessionStorage.setItem('govPreview',JSON.stringify({data:W.data,cfg:W.cfg,upd:W.upd}));}catch(e){msg('미리보기 저장 실패(브라우저 저장소 사용 불가)',false);return;}
+    window.open('gov_support.html?preview=1','_blank');
+  });
+  $('bDraft').addEventListener('click',function(){
+    if(!commit())return;
+    try{localStorage.setItem(DRAFT,JSON.stringify(W));msg('이 브라우저에 임시저장했습니다.',true);}catch(e){msg('임시저장 실패',false);}
+  });
+  $('bLoad').addEventListener('click',function(){
+    try{var s=JSON.parse(localStorage.getItem(DRAFT)||'null');if(!s){msg('임시저장본이 없습니다.',false);return;}
+      W=s; G.items=W.data.items; cur=null; fillCfg(); renderList(); buildForm(); msg('임시저장본을 불러왔습니다.',true);}catch(e){msg('불러오기 실패',false);}
+  });
+  function dl(name,text){
+    var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'text/javascript;charset=utf-8'})); a.download=name; document.body.appendChild(a); a.click(); a.remove();
+  }
+  $('bDl').addEventListener('click',function(){
+    if(!commit())return; var f=files(); Object.keys(f).forEach(function(k){dl(k,f[k]);}); msg('3개 파일을 내려받았습니다.',true);
+  });
+
+  /* ───── GitHub ───── */
+  function loadGh(){
+    try{var t=localStorage.getItem(TOKK);if(t){$('ghTok').value=t;$('ghRem').checked=true;}var r=JSON.parse(localStorage.getItem(REPK)||'null');if(r){$('ghRepo').value=r.repo||$('ghRepo').value;$('ghBranch').value=r.br||$('ghBranch').value;$('ghDir').value=r.dir||$('ghDir').value;}}catch(e){}
+  }
+  function b64(s){var b=new TextEncoder().encode(s),bin='',i;for(i=0;i<b.length;i+=0x8000)bin+=String.fromCharCode.apply(null,b.subarray(i,i+0x8000));return btoa(bin);}
+  function ghApi(method,url,tok,body){
+    return fetch(url,{method:method,headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+tok,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+  }
+  $('bGh').addEventListener('click',async function(){
+    if(!commit())return;
+    var repo=$('ghRepo').value.trim(),br=$('ghBranch').value.trim()||'main',dir=$('ghDir').value.trim().replace(/^\/+|\/+$/g,''),tok=$('ghTok').value.trim();
+    if(!/^[\w.-]+\/[\w.-]+$/.test(repo)){msg('저장소는 owner/repo 형식이어야 합니다.',false);return;}
+    if(/\.\./.test(dir)||/[^\w\/.-]/.test(dir)){msg('폴더 경로가 올바르지 않습니다.',false);return;}
+    if(!tok){msg('토큰을 입력하세요.',false);return;}
+    try{
+      if($('ghRem').checked){localStorage.setItem(TOKK,tok);}else{localStorage.removeItem(TOKK);}
+      localStorage.setItem(REPK,JSON.stringify({repo:repo,br:br,dir:dir}));
+    }catch(e){}
+    var f=files(),names=Object.keys(f),d=new Date(),p=function(n){return ('0'+n).slice(-2);};
+    var stamp=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+    $('bGh').disabled=true; var done=[];
+    try{
+      for(var i=0;i<names.length;i++){
+        var path=(dir?dir+'/':'')+names[i], url='https://api.github.com/repos/'+repo+'/contents/'+path.split('/').map(encodeURIComponent).join('/');
+        msg('업로드 중… '+names[i]+' ('+(i+1)+'/'+names.length+')',true);
+        var sha, g=await ghApi('GET',url+'?ref='+encodeURIComponent(br),tok);
+        if(g.ok){sha=(await g.json()).sha;}else if(g.status!==404){throw new Error(names[i]+' 조회 실패 (HTTP '+g.status+')'+(g.status===401?' — 토큰 확인':'')); }
+        var body={message:'gov_support: 관리화면에서 수정 ('+stamp+')',content:b64(f[names[i]]),branch:br}; if(sha)body.sha=sha;
+        var r=await ghApi('PUT',url,tok,body);
+        if(!r.ok){var t='';try{t=(await r.json()).message||'';}catch(e){}throw new Error(names[i]+' 저장 실패 (HTTP '+r.status+') '+t);}
+        done.push(names[i]);
+      }
+      msg('GitHub 업데이트 완료: '+done.join(', ')+' — 반영까지 1~2분 걸릴 수 있습니다.',true);
+    }catch(e){msg('실패: '+e.message+(done.length?' (완료: '+done.join(', ')+')':''),false);}
+    $('bGh').disabled=false;
+  });
+
+  init();
+})();
+</script>
+</body>
+</html>
