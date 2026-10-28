@@ -61,14 +61,15 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 .sr{padding-left:14px;margin:2px 0 0;font-size:11px}
 .sr a{color:#1d4ed8}
 /* 내 회사 예시 */
-.cmp{width:100%;border-collapse:collapse;margin:0 0 8px;font-size:12.5px}
+.cmp{width:100%;border-collapse:collapse;table-layout:fixed;margin:0 0 8px;font-size:12.5px}
 .cmp th,.cmp td{border:1px solid var(--ln);padding:3px 6px}
-.cmp th{background:#eef3f9;color:var(--navy);width:11%;text-align:left;white-space:nowrap}
+.cmp th{background:#eef3f9;color:var(--navy);width:10.5%;text-align:left;white-space:normal;word-break:keep-all}
+.cmp td{width:14.5%;word-break:keep-all;overflow-wrap:anywhere}
 .h3t{margin:10px 0 4px;font-size:14px;color:var(--navy);font-weight:800}
 .mtb .tot td{background:#fffbeb!important;font-weight:700;border-top:2px solid var(--navy)}
 .mtb .tot2 td,.mtb .tot2 td .sm,.mtb .tot2 td.sm{background:#f1f5f9!important;font-weight:800}
 .mtb .tlb{font-weight:800;color:var(--navy)}
-.mtb td.a{text-align:right;white-space:nowrap}
+.mtb td.a{text-align:right;word-break:keep-all;padding-right:8px}
 .mtb td.c{text-align:center}
 .hnt{font-size:11.5px;margin-top:2px;line-height:1.35}
 .lbr{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.lbr label{margin:0}
@@ -181,7 +182,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     <h2>1. 내 회사 지원금액 예시 <span class="hint">입력하신 회사 정보로 계산한 추정 예시입니다(실제 지원액은 공고·심사·신고 결과에 따라 달라집니다).</span></h2>
     <table class="cmp" id="cmpM"></table>
     <div class="h3t">1-1. 예시 결과</div>
-    <div class="tw2"><table class="mtb" data-fz="4" data-fzw="34,50,62,112"><colgroup><col style="width:4%"><col style="width:6%"><col style="width:8%"><col style="width:16%"><col style="width:17%"><col style="width:24%"><col style="width:12%"><col style="width:13%"></colgroup>
+    <div class="tw2"><table class="mtb" data-fz="4" data-fzw="34,50,62,112"><colgroup><col style="width:3.5%"><col style="width:5%"><col style="width:7%"><col style="width:15%"><col style="width:17%"><col style="width:24%"><col style="width:16.5%"><col style="width:12%"></colgroup>
       <thead><tr><th>No</th><th>판정</th><th>구분</th><th>지원·정책명</th><th>산출항목</th><th>산출근거</th><th>예상금액</th><th>비고</th></tr></thead>
       <tbody id="tbM"></tbody></table></div>
     <ul class="warn" id="warn"></ul>
@@ -292,7 +293,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       {k:'form',l:'기업 형태',t:'s'},{k:'scale',l:'기업 규모(법적)',t:'s',h:'소상공인⊂소기업⊂중소기업'},
       {k:'ind',l:'업종 (선택 또는 직접입력)',t:'s',typed:1,w:1,ph:'표준업종명 직접입력 (예: 음식점업)',h:'※ 한국표준산업분류(KSIC) 표준업종만 인정합니다. 목록에서 고르거나 업종명을 정확히 입력하세요.'},
       {k:'region',l:'소재지 (선택 또는 직접입력)',t:'s',typed:1,w:1,ph:'시·군 직접입력 (예: 수원시)',h:'시·도 또는 시·군 이름을 입력하면 자동으로 구분합니다.'},
-      {k:'age',l:'업력(창업 후 경과)',t:'n',u:'년',h:'예: 3.5'},{k:'ceoage',l:'대표자 나이',t:'n',u:'세'}]},
+      {k:'age',l:'업력(창업 후 경과)',t:'n',u:'년',h:'예: 3.5'}]},
     {g:'매출·과세·수출·자산',note:'※ 소득세 한계세율은 공제 전 ‘대표연소득’기준이므로 공제적용시 세율이 낮아질 수 있습니다.',f:[
       {k:'sales',l:'직전연도 매출액',t:'n',u:'억원',h:'예: 1억400만원 → 1.04'},{k:'taxbase',l:'법인세 과세표준',t:'n',u:'억원'},
       {k:'ctr',l:'적용 법인세율',t:'c',tx:'c',h:'과세표준을 입력하면 자동 계산'},{k:'ctx',l:'예상 법인세',t:'c',h:'자동 계산(산출세액)'},
@@ -309,7 +310,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       {k:'unsec',l:'무담보 부실채무',t:'n',u:'억원'}]},
     {g:'가업승계 · 가업상속',note:'※ 현행법 기준 간이 판정입니다(2026 세제개편안은 국회 확정 전). 입력값이 없으면 ‘확인필요’로 표시됩니다.',f:[
       {t:'sub',l:'가업·대표자(피상속인·증여자) 요건 : 가업상속과 가업승계(증여) 공통'},
-      {k:'bizyears',l:'가업 경영연수(대표)',t:'n',u:'년'},{k:'stake',l:'대표 지분율(특수관계인 합산)',t:'n',u:'%'},
+      {k:'ceoage',l:'대표자 나이',t:'n',u:'세'},{k:'bizyears',l:'가업 경영연수(대표)',t:'n',u:'년'},{k:'stake',l:'대표 지분율(특수관계인 합산)',t:'n',u:'%'},
       {k:'stakeyrs',l:'위 지분 보유연수',t:'n',u:'년',h:'지분 40%(상장 20%) 이상 유지 기간'},{k:'ceoyrs',l:'대표이사 재직연수',t:'n',u:'년'},
       {t:'sub',l:'승계자(자녀 등) 요건'},
       {k:'succage',l:'승계자 나이',t:'n',u:'세'},{k:'succyrs',l:'승계자 가업종사 연수(근속)',t:'n',u:'년'},
@@ -437,15 +438,15 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       rows.push([lab,val]);
     });});
     var fl=FLAGS.filter(function(x){return flags[x[0]];}).map(function(x){return x[1];});
-    if(fl.length) rows.push(['선택한 상태·제한',fl.join(', ')]);
-    if(!rows.length) return '<tr><td style="padding:6px;color:#475569">회사 정보를 입력하면 이곳에 요약됩니다.</td></tr>';
+    if(!rows.length&&!fl.length) return '<tr><td style="padding:6px;color:#475569">회사 정보를 입력하면 이곳에 요약됩니다.</td></tr>';
     var out='<caption style="text-align:left;font-weight:800;color:#14365d;padding:0 0 3px">내 회사 정보 (입력값)</caption>',i;
-    for(i=0;i<rows.length;i+=3){
+    for(i=0;i<rows.length;i+=4){
       out+='<tr>';
-      var left=Math.min(3,rows.length-i);
-      for(var j=0;j<left;j++){var r=rows[i+j];out+='<th>'+esc(r[0])+'</th><td'+((j===left-1&&left<3)?' colspan="'+(1+2*(3-left))+'"':'')+'>'+esc(r[1])+'</td>';}
+      var left=Math.min(4,rows.length-i);
+      for(var j=0;j<left;j++){var r=rows[i+j];out+='<th>'+esc(r[0])+'</th><td'+((j===left-1&&left<4)?' colspan="'+(1+2*(4-left))+'"':'')+'>'+esc(r[1])+'</td>';}
       out+='</tr>';
     }
+    if(fl.length) out+='<tr><th>선택한 상태·제한</th><td colspan="7">'+esc(fl.join(', '))+'</td></tr>';
     return out;
   }
 
