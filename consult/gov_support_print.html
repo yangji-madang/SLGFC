@@ -171,9 +171,9 @@ s.oldv{color:#b91c1c}
   function render(){
     var list=G.filter(F), tb=$('tb'); tb.innerHTML='';
     var act=[];
-    if(F.q)act.push('검색어 '+F.q); if(F.lvs.length)act.push('주체 '+F.lvs.join('/')); if(F.lv)act.push('주체 '+F.lv);
-    if(F.tgs.length)act.push('대상 '+F.tgs.join('/')); if(F.tg)act.push('대상 '+F.tg);
-    if(F.lts.length)act.push('제한유형 '+F.lts.join('/')); if(F.lt)act.push('제한 '+F.lt);
+    var am=function(m){return m==='and'?'(AND)':'(OR)';}; if(F.q)act.push('검색어 '+F.q+am(F.qm)); if(F.lvs.length)act.push('주체 '+F.lvs.join('/')); if(F.lv)act.push('주체 입력 '+F.lv+am(F.lvm));
+    if(F.tgs.length)act.push('대상 '+F.tgs.join('/')); if(F.tg)act.push('대상 입력 '+F.tg+am(F.tgm));
+    if(F.lts.length)act.push('제한유형 '+F.lts.join('/')); if(F.lt)act.push('제한 입력 '+F.lt+am(F.ltm));
     if(F.cats.length)act.push('분류 '+F.cats.join('/')); if(F.pfs.length)act.push('형태 '+F.pfs.join('/')); if(F.rels.length)act.push('출처 '+F.rels.join('/'));
     if(F.chk)act.push('확인필요만'); if(F.hideEnd)act.push('마감 제외');
     var cols=['구분(지급주체·지역·소관)','지원·정책명','분류·형태','대상 기업','지원 내용','제한조건','신청·문의·시기','변경·예정','확인·출처'];

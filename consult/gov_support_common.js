@@ -101,7 +101,7 @@
   G.THEAD = '<tr><th style="min-width:200px">지원·정책명 / 주체</th><th style="min-width:110px">분류·형태</th><th style="min-width:150px">대상 기업</th><th style="min-width:330px">지원 내용</th><th style="min-width:270px">제한조건</th><th style="min-width:190px">신청·문의</th><th style="min-width:230px">확인·출처</th></tr>';
 
   /* 필터 */
-  G.F0 = function () { return { q: '', lv: '', tg: '', lt: '', lvs: [], tgs: [], lts: [], cats: [], pfs: [], rels: [], chk: false, hideEnd: false }; };
+  G.F0 = function () { return { q: '', lv: '', tg: '', lt: '', lvm: 'or', tgm: 'or', ltm: 'or', qm: 'or', lvs: [], tgs: [], lts: [], cats: [], pfs: [], rels: [], chk: false, hideEnd: false }; };
   function has(arr, s) { return (arr || []).join(' ').toLowerCase().indexOf(s) >= 0; }
   G.match = function (it, F) {
     var s;
@@ -117,18 +117,18 @@
     var tl = terms(F.lv);
     if (tl.length) {
       var h1 = (it.lv + ' ' + it.ag + ' ' + it.r + ' ' + (it.q || '')).toLowerCase();
-      if (!tl.some(function (t) { return h1.indexOf(t) >= 0; })) return false;
+      if (!(F.lvm === 'and' ? tl.every : tl.some).call(tl, function (t) { return h1.indexOf(t) >= 0; })) return false;
     }
     tl = terms(F.tg);
-    if (tl.length && !tl.some(function (t) { return has(it.tg, t) || has(it.ind, t); })) return false;
+    if (tl.length && !(F.tgm === 'and' ? tl.every : tl.some).call(tl, function (t) { return has(it.tg, t) || has(it.ind, t); })) return false;
     tl = terms(F.lt);
-    if (tl.length && !tl.some(function (t) { return has(it.lt, t) || (it.lim || '').toLowerCase().indexOf(t) >= 0; })) return false;
+    if (tl.length && !(F.ltm === 'and' ? tl.every : tl.some).call(tl, function (t) { return has(it.lt, t) || (it.lim || '').toLowerCase().indexOf(t) >= 0; })) return false;
     if (F.q) {
-      var ws = F.q.trim().toLowerCase().split(/\s+/);
+      var ws = F.q.trim().toLowerCase().split(/[\s,，、]+/).filter(Boolean);
       var hay = [it.n, it.sn, it.ag, it.lv, it.r, it.q, it.cat, (it.tg || []).join(' '), (it.ind || []).join(' '), (it.pf || []).join(' '),
         (it.lt || []).join(' '), it.a, it.lim, it.w, it.d, it.law, it.ch, it.fu, it.chk,
         (it.src || []).map(function (x) { return x[0]; }).join(' ')].join(' ').toLowerCase();
-      for (var i = 0; i < ws.length; i++) if (ws[i] && hay.indexOf(ws[i]) < 0) return false;
+      if (ws.length && !(F.qm === 'and' ? ws.every : ws.some).call(ws, function (w) { return hay.indexOf(w) >= 0; })) return false;
     }
     return true;
   };
@@ -139,6 +139,7 @@
     var p = [];
     ['q', 'lv', 'tg', 'lt'].forEach(function (k) { if (F[k]) p.push(k + '=' + encodeURIComponent(F[k])); });
     ['lvs', 'tgs', 'lts', 'cats', 'pfs', 'rels'].forEach(function (k) { if (F[k].length) p.push(k + '=' + encodeURIComponent(F[k].join('~'))); });
+    ['lvm', 'tgm', 'ltm', 'qm'].forEach(function (k) { if (F[k] === 'and') p.push(k + '=and'); });
     if (F.chk) p.push('chk=1');
     if (F.hideEnd) p.push('he=1');
     return p.join('&');
@@ -151,6 +152,7 @@
       try { v = decodeURIComponent(kv.slice(i + 1)); } catch (e) { v = ''; }
       if (['q', 'lv', 'tg', 'lt'].indexOf(k) >= 0) F[k] = v;
       else if (k === 'lvs' || k === 'tgs' || k === 'lts' || k === 'cats' || k === 'pfs' || k === 'rels') F[k] = v ? v.split('~') : [];
+      else if (k === 'lvm' || k === 'tgm' || k === 'ltm' || k === 'qm') F[k] = v === 'and' ? 'and' : 'or';
       else if (k === 'chk') F.chk = v === '1';
       else if (k === 'he') F.hideEnd = v === '1';
     });
@@ -182,6 +184,8 @@
       G.syncUI();
     };
     $('flt').addEventListener('click', function (e) {
+      var ab = e.target.closest('.ao button'); 
+      if (ab) { F[ab.parentNode.dataset.f + 'm'] = ab.dataset.m; G.syncUI(); onChange(); return; }
       var b = e.target.closest('button.chip[data-g]'); if (!b) return;
       G.toggleSel(b.dataset.g, b.dataset.v); onChange();
     });
@@ -190,6 +194,9 @@
       F.chk = $('fchk').checked; F.hideEnd = $('fend').checked;
     }
     G.syncUI = function () {
+      [['lvm', 'lv'], ['tgm', 'tg'], ['ltm', 'lt'], ['qm', 'q']].forEach(function (m) {
+        Array.prototype.forEach.call(document.querySelectorAll('.ao[data-f="' + m[1] + '"] button'), function (b) { b.classList.toggle('on', b.dataset.m === F[m[0]]); });
+      });
       $('fq').value = F.q; $('flv').value = F.lv; $('ftg').value = F.tg; $('flt2').value = F.lt;
       chips();
       $('fchk').checked = F.chk; $('fend').checked = F.hideEnd;
@@ -207,16 +214,16 @@
 
   /* 필터 영역 HTML */
   G.FILTER_HTML =
-    '<div><label for="fq">통합 검색 (키워드 입력)</label><input type="search" id="fq" placeholder="예: 고용, 법인세, 새출발, 노란우산" autocomplete="off"></div>' +
+    '<div><label for="fq">통합 검색 (키워드, 공백·쉼표 구분)</label><span class="ao" data-f="q"><button type="button" data-m="or" class="on">OR</button><button type="button" data-m="and">AND</button></span><input type="search" id="fq" placeholder="예: 고용, 법인세, 새출발, 노란우산" autocomplete="off"></div>' +
     '<div class="cg"><label>지급 주체 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="clv"></div></div>' +
     '<div class="cg"><label>대상 기업 — 규모·업종 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="ctg"></div></div>' +
     '<div class="cg"><label>제한조건 유형 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="clt"></div></div>' +
     '<div class="cg"><label>분류 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="ccat"></div></div>' +
     '<div class="cg"><label>지원 형태 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="cpf"></div></div>' +
     '<div class="cg"><label>출처 등급 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="crel"></div></div>' +
-    '<div><label for="flv">지급 주체 직접 입력 (쉼표로 여러 개)</label><input type="text" id="flv" list="dlv" placeholder="예: 서울, 화성시, 경기" autocomplete="off"><datalist id="dlv"></datalist></div>' +
-    '<div><label for="ftg">대상 기업 직접 입력 (쉼표로 여러 개)</label><input type="text" id="ftg" list="dtg" placeholder="소상공인·제조업 등" autocomplete="off"><datalist id="dtg"></datalist></div>' +
-    '<div><label for="flt2">제한조건 직접 입력 (쉼표로 여러 개)</label><input type="text" id="flt2" list="dlt" placeholder="매출·업력·지역 등" autocomplete="off"><datalist id="dlt"></datalist></div>' +
+    '<div><label for="flv">지급 주체 직접 입력 (쉼표 구분)</label><span class="ao" data-f="lv"><button type="button" data-m="or" class="on">OR</button><button type="button" data-m="and">AND</button></span><input type="text" id="flv" list="dlv" placeholder="예: 서울, 화성시, 경기" autocomplete="off"><datalist id="dlv"></datalist></div>' +
+    '<div><label for="ftg">대상 기업 직접 입력 (쉼표 구분)</label><span class="ao" data-f="tg"><button type="button" data-m="or" class="on">OR</button><button type="button" data-m="and">AND</button></span><input type="text" id="ftg" list="dtg" placeholder="소상공인·제조업 등" autocomplete="off"><datalist id="dtg"></datalist></div>' +
+    '<div><label for="flt2">제한조건 직접 입력 (쉼표 구분)</label><span class="ao" data-f="lt"><button type="button" data-m="or" class="on">OR</button><button type="button" data-m="and">AND</button></span><input type="text" id="flt2" list="dlt" placeholder="매출·업력·지역 등" autocomplete="off"><datalist id="dlt"></datalist></div>' +
     '<div class="ck"><input type="checkbox" id="fchk"><label for="fchk" style="margin:0">확인필요 항목만</label></div>' +
     '<div class="ck"><input type="checkbox" id="fend"><label for="fend" style="margin:0">마감·종료 가능 제외</label></div>' +
     '<div><button type="button" class="btn sub" id="freset">필터 초기화</button></div>';

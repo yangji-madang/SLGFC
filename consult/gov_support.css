@@ -125,3 +125,12 @@ footer .cp{font-weight:900;font-size:13.5px;color:var(--navy);letter-spacing:.2p
 #flt .cg label{margin-bottom:3px}
 .chs{display:flex;flex-wrap:wrap;gap:6px}
 .chip.all{font-weight:700;border-color:var(--navy)}
+
+/* 직접 입력 AND/OR 선택 */
+.ao{display:inline-flex;margin-left:6px;vertical-align:middle}
+.ao button{border:1px solid var(--navy);background:#fff;color:var(--navy);font-family:inherit;font-size:11px;font-weight:700;padding:0 7px;height:18px;cursor:pointer}
+.ao button:first-child{border-radius:4px 0 0 4px}
+.ao button:last-child{border-radius:0 4px 4px 0;border-left:0}
+.ao button.on{background:var(--navy);color:#fff}
+#flt label[for]{display:inline-block}
+#flt input[type=text],#flt input[type=search]{display:block}
