@@ -74,6 +74,8 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
 .pf.wide{grid-column:span 2}
 .warn{font-size:12px;color:#334155;margin:8px 0 0;padding-left:16px}
 .warn li{margin:1px 0}
+.h2b{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.h2b .h2r{display:flex;gap:6px;flex-wrap:wrap}
 .ctl{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;align-items:center}
 .sv{font-size:12px;color:var(--mut)}
 .fixh,.fixf{display:none}
@@ -142,13 +144,9 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
 <div class="fixf"><div class="cpf"><span class="ct" id="fct"></span><span class="cr" id="fcr"></span></div></div>
 <main>
   <section class="sec noprint" id="fm">
-    <h2>회사 정보 입력 <span class="hint">입력하지 않은 항목은 ‘확인필요’로 판단합니다. 입력값은 이 브라우저에만 저장되며 외부로 전송되지 않습니다.</span></h2>
+    <h2 class="h2b"><span class="h2t">회사 정보 입력 <span class="hint">입력하지 않은 항목은 ‘확인필요’로 판단합니다. 입력값은 이 브라우저에만 저장되며 외부로 전송되지 않습니다.</span></span><span class="h2r"><button type="button" class="btn gd" id="bSample">샘플용 예시 채우기</button><button type="button" class="btn sub" id="bReset">입력 초기화</button></span></h2>
+    <div class="sv" id="sv" style="margin:0 0 4px;min-height:1em"></div>
     <div id="pf"></div>
-    <div class="ctl">
-      <button type="button" class="btn gd" id="bSample">예시 회사 채우기</button>
-      <button type="button" class="btn sub" id="bReset">입력 초기화</button>
-      <span class="sv" id="sv"></span>
-    </div>
   </section>
 
   <div id="sumbar0" class="sumbar"></div>
@@ -607,7 +605,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
   $('bSample').addEventListener('click',function(){
     fill(MC.sample||{v:{form:'corp',scale:'small',ind:'mfg',region:'hwaseong',sales:25,emp:18},f:{}});
     save(); renderAll();
-    $('sv').textContent='예시 회사 값을 채웠습니다. 실제 회사 값으로 바꿔 입력하세요.';
+    $('sv').textContent='샘플용 예시 값을 채웠습니다. 실제 회사 값으로 바꿔 입력하세요.';
   });
 
   /* 초기 로드 */

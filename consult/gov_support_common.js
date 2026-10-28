@@ -101,10 +101,11 @@
   G.THEAD = '<tr><th style="min-width:200px">지원·정책명 / 주체</th><th style="min-width:110px">분류·형태</th><th style="min-width:150px">대상 기업</th><th style="min-width:330px">지원 내용</th><th style="min-width:270px">제한조건</th><th style="min-width:190px">신청·문의</th><th style="min-width:230px">확인·출처</th></tr>';
 
   /* 필터 */
-  G.F0 = function () { return { q: '', lv: '', tg: '', lt: '', lvm: 'or', tgm: 'or', ltm: 'or', qm: 'or', lvs: [], tgs: [], lts: [], cats: [], pfs: [], rels: [], chk: false, hideEnd: false }; };
+  G.F0 = function () { return { q: '', lv: '', tg: '', lt: '', lvm: 'or', tgm: 'or', ltm: 'or', qm: 'or', lvs: [], tgs: [], lts: [], cats: [], pfs: [], rels: [], chk: false, hideEnd: false, id: '' }; };
   function has(arr, s) { return (arr || []).join(' ').toLowerCase().indexOf(s) >= 0; }
   G.match = function (it, F) {
     var s;
+    if (F.id && it.id !== F.id) return false;
     if (F.cats.length && F.cats.indexOf(it.cat) < 0) return false;
     if (F.pfs.length && !F.pfs.some(function (x) { return (it.pf || []).indexOf(x) >= 0; })) return false;
     if (F.rels.length && F.rels.indexOf(it.rel) < 0) return false;
@@ -227,6 +228,41 @@
     '<div class="ck"><input type="checkbox" id="fchk"><label for="fchk" style="margin:0">확인필요 항목만</label></div>' +
     '<div class="ck"><input type="checkbox" id="fend"><label for="fend" style="margin:0">마감·종료 가능 제외</label></div>' +
     '<div><button type="button" class="btn sub" id="freset">필터 초기화</button></div>';
+
+
+  /* 개요 도식: 지원 종류(행) × 대상 기업(열) 매트릭스 — 칩 색상 = 지급 주체 */
+  G.matrix = function (list, opt) {
+    opt = opt || {};
+    var cols = G.TG.slice(), cats = G.CAT.slice();
+    list.forEach(function (i) { if (cats.indexOf(i.cat) < 0 && i.cat) cats.push(i.cat); });
+    if (list.some(function (i) { return !(i.tg || []).length; })) cols.push('공통·기타');
+    function inCol(i, c) { var t = i.tg || []; return c === '공통·기타' ? !t.length : t.indexOf(c) >= 0; }
+    var h = '<table class="mx"><thead><tr><th class="cn"><span>지원 종류</span><i>▼</i><span class="r">대상 기업 ▶</span></th>';
+    cols.forEach(function (c) {
+      h += '<th>' + esc(c) + '<span class="n">' + list.filter(function (i) { return inCol(i, c); }).length + '건</span></th>';
+    });
+    h += '<th class="tt">합계</th></tr></thead><tbody>';
+    cats.forEach(function (cat) {
+      var rows = list.filter(function (i) { return i.cat === cat; });
+      var lvc = G.LV.map(function (l, k) { var n = rows.filter(function (i) { return i.lv === l; }).length; return n ? '<b class="l' + k + '">' + esc(l.replace('공공·금융기관', '공공·금융')) + ' ' + n + '</b>' : ''; }).join('');
+      h += '<tr><th class="rh">' + esc(cat) + '<span class="n">' + rows.length + '건</span><span class="lv">' + lvc + '</span></th>';
+      cols.forEach(function (c) {
+        var xs = rows.filter(function (i) { return inCol(i, c); });
+        h += '<td>' + (xs.length ? xs.map(function (i) {
+          var k = Math.max(0, G.LV.indexOf(i.lv));
+          return '<span class="mxc l' + k + '"' + (opt.click ? ' data-id="' + esc(i.id) + '" role="button" tabindex="0"' : '') + ' title="' + esc(i.n) + ' · ' + esc(i.lv) + '">' + esc(i.sn || i.n) + '</span>';
+        }).join('') : '<span class="mxe">-</span>') + '</td>';
+      });
+      h += '<td class="tt">' + rows.length + '</td></tr>';
+    });
+    h += '</tbody></table>';
+    return h;
+  };
+  G.matrixLegend = function (list) {
+    return '<div class="mxl"><b>색상 = 지급 주체</b>' + G.LV.map(function (l, k) {
+      return '<span class="mxc l' + k + '">' + esc(l) + ' <b>' + list.filter(function (i) { return i.lv === l; }).length + '</b>건</span>';
+    }).join('') + '<span class="mxs">같은 제도가 여러 대상 기업에 해당하면 각 열에 함께 표시</span><span class="mxs"><b>총 ' + list.length + '건</b></span></div>';
+  };
 
   G.setTop = function () {
     var c = G.cfg || {};
