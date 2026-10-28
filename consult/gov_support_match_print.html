@@ -136,7 +136,7 @@ body[data-ps=me] #blkA{display:none}
   <h1 id="ttl" data-fixed="1">내 회사 찾기 — 인쇄용 (A4 가로)</h1>
   <span id="asof">기준일 : -</span>
   <button type="button" class="lk" onclick="window.print()">인쇄하기</button>
-  <a class="lk" href="gov_support_match.html">내 회사 찾기로 돌아가기</a>
+  <a class="lk" href="gov_support_match.html">내 회사 지원금?으로 돌아가기</a>
 </div>
 <div class="noprint"><div class="ctlb"><b>인쇄 범위</b>
   <label><input type="radio" name="ps" value="me"> 지원금액 예시만</label>
@@ -200,7 +200,7 @@ body[data-ps=me] #blkA{display:none}
   });
   var fl=Object.keys(FLAGS).filter(function(k){return FL[k];}).map(function(k){return FLAGS[k];});
   if(fl.length) rows.push(['상태·제한',fl.join(', ')]);
-  if(!S||!rows.length){$('msg').textContent='저장된 회사 정보가 없습니다. 먼저 ‘내 회사 찾기’에서 정보를 입력하세요.';}
+  if(!S||!rows.length){$('msg').textContent='저장된 회사 정보가 없습니다. 먼저 ‘내 회사 지원금?’에서 정보를 입력하세요.';}
 
   function won(n){
     n=Math.round(n); if(n<=0) return '0원';
