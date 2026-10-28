@@ -370,7 +370,7 @@ window.GOV_MATCH_CONFIG = {
    "ind": "mfg",
    "region": "hwaseong",
    "age": 4,
-   "ceoage": 58,
+   "ceoage": 62,
    "sales": 25,
    "taxbase": 3,
    "export": 50,
@@ -393,13 +393,20 @@ window.GOV_MATCH_CONFIG = {
    "bizyears": 12,
    "stake": 60,
    "bizval": 80,
-   "giftval": 30
+   "giftval": 30,
+   "stakeyrs": 12,
+   "ceoyrs": 10,
+   "succage": 32,
+   "succyrs": 4
   },
   "f": {
    "rnd_lab": 1,
    "bonus_agree": 1,
    "faithful": 1,
-   "edu_done": 1
+   "edu_done": 1,
+   "succ_resident": 1,
+   "succ_exec": 1,
+   "succ_ceo": 1
   }
  }
 };

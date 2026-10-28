@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>내 회사에 적합한 지원제도 찾기 (인쇄용)</title>
-<link rel="stylesheet" href="gov_support.css?v=20261028u">
+<link rel="stylesheet" href="gov_support.css?v=20261028x">
 <style>
 body{display:block;min-height:0;background:#e5e7eb}
 .noprint{max-width:1500px;margin:0 auto;padding:10px 16px 0}
@@ -159,7 +159,7 @@ body[data-ps=me] #blkA{display:none}
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js?v=20261028u"></script>
+<script src="gov_support_common.js?v=20261028x"></script>
 <script src="gov_support_match_config.js"></script>
 <script src="gov_support_rules.js?v=20261028"></script>
 <script>
@@ -180,11 +180,12 @@ body[data-ps=me] #blkA{display:none}
     ind:{mfg:'제조업',trade:'도소매업',med:'의료업',svc:'기타 서비스업·건설 등',rental:'부동산임대업',consume:'소비향락(유흥·사행) 서비스업'},
     region:{seoul:'서울',hwaseong:'경기 화성시',gyeonggi:'경기 기타 지역',incheon:'인천',other:'비수도권(기타)'}};
   var FIELDS=[['form','기업 형태','s'],['scale','기업 규모(법적)','s'],['ind','업종','s'],['region','소재지','s'],['age','업력','n','년'],['ceoage','대표자 나이','n','세'],
-    ['sales','직전연도 매출액','n','억원'],['taxbase','법인세 과세표준','n','억원'],['export','직전연도 수출액','n','만달러'],['assets','자산총액','n','억원'],['bizinc','대표 연소득','n','만원'],['mtr','소득세 한계세율','m','%'],
-    ['emp','상시근로자 수','n','명'],['prevemp','전년도 상시근로자 수','n','명'],['youth','청년 근로자 수','n','명'],['newyouth','올해 청년 신규 채용','n','명'],['senior','고령 근로자 수','n','명'],['retur','육아휴직 복귀자 수','n','명'],['pay','근로자 월평균 보수','n','만원'],
+    ['sales','직전연도 매출액','n','억원'],['taxbase','법인세 과세표준','n','억원'],['export','직전연도 수출액','n','만달러'],['assets','자산총액','n','억원'],['bizinc','대표연소득','n','만원'],['mtr','소득세 한계세율','m','%'],
+    ['emp','상시근로자수(당해년)','n','명'],['prevemp','상시근로자수(전년)','n','명'],['youth','청년 근로자 수','n','명'],['newyouth','올해 청년 신규 채용','n','명'],['senior','고령 근로자 수','n','명'],['retur','육아휴직 복귀자 수','n','명'],['pay','근로자 월평균 보수','n','만원'],
     ['invest','올해 설비투자 계획','n','억원'],['rnd','올해 연구·인력개발비','n','억원'],['rndprev','직전연도 연구·인력개발비','n','억원'],['loan','대출 이용·희망 금액','n','억원'],['bonus','경영성과급 지급 예정','n','만원'],['partner','상생결제 지급액','n','억원'],['unsec','무담보 부실채무','n','억원'],
-    ['bizyears','대표 경영연수','n','년'],['stake','대표 지분율','n','%'],['bizval','가업상속재산가액','n','억원'],['giftval','증여 예정 가업 주식가액','n','억원']];
-  var FLAGS={tax_arrears:'국세·지방세 체납',loan_overdue:'금융기관 연체·신용 제한',closed:'휴·폐업 사업장',wage_arrears:'임금체불 명단 공개',closing:'폐업(예정)',distress:'부실(우려) 채무 보유',ebi:'대표 고용보험 가입',ins_new:'최근 1년 내 4대보험 가입이력 없음',young_founder:'청년창업(대표 만 34세 이하)',overcrowd:'수도권 과밀억제권역 내 소재',rnd_lab:'기업부설연구소·연구전담부서 인증',bonus_agree:'경영성과급 사전 서면약정',edu_done:'창업경영교육 12시간 이상 이수',faithful:'성실상환 이력'};
+    ['bizyears','가업 경영연수(대표)','n','년'],['stake','대표 지분율(특수관계인 합산)','n','%'],['stakeyrs','대표 지분 보유연수','n','년'],['ceoyrs','대표이사 재직연수','n','년'],
+    ['succage','승계자 나이','n','세'],['succyrs','승계자 가업종사 연수','n','년'],['succstake','승계자 현재 지분율','n','%'],['bizval','가업상속재산가액','n','억원'],['giftval','증여 예정 가업 주식가액','n','억원']];
+  var FLAGS={succ_resident:'승계자 국내 거주자',succ_exec:'승계자 임원 취임(예정 포함)',succ_ceo:'승계자 대표이사 취임 예정',tax_arrears:'국세·지방세 체납',loan_overdue:'금융기관 연체·신용 제한',closed:'휴·폐업 사업장',wage_arrears:'임금체불 명단 공개',closing:'폐업(예정)',distress:'부실(우려) 채무 보유',ebi:'대표 고용보험 가입',ins_new:'최근 1년 내 4대보험 가입이력 없음',young_founder:'청년창업(대표 만 34세 이하)',overcrowd:'수도권 과밀억제권역 내 소재',rnd_lab:'기업부설연구소·연구전담부서 인증',bonus_agree:'경영성과급 사전 서면약정',edu_done:'창업경영교육 12시간 이상 이수',faithful:'성실상환 이력'};
 
   var S=null; try{S=JSON.parse(localStorage.getItem('govMatchProfile')||'null');}catch(e){}
   var V=(S&&S.v)||{}, FL=(S&&S.f)||{};

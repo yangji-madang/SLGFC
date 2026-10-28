@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>내 회사에 적합한 지원제도 찾기</title>
-<link rel="stylesheet" href="gov_support.css?v=20261028u">
+<link rel="stylesheet" href="gov_support.css?v=20261028x">
 <style>
 body{display:block;min-height:0}
 main{padding-bottom:70px}
@@ -72,6 +72,17 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 .mtb td.c{text-align:center}
 .hnt{font-size:11.5px;margin-top:2px;line-height:1.35}
 .lbr{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.lbr label{margin:0}
+.subh{grid-column:1/-1;margin-top:4px;padding:2px 8px;background:#eef3f9;border-left:4px solid var(--navy);border-radius:3px;font-size:12.5px;color:var(--navy)}
+.subh .tbtn{margin-left:6px}
+.flrow{grid-column:1/-1}.flrow .chip{font-size:12px}
+.rsc{grid-column:1/-1;border:1px solid var(--bd);border-radius:8px;padding:6px 10px;font-size:12.5px;line-height:1.5;background:#fff}
+.rsc.ok{border-color:#16a34a;background:#f0fdf4}.rsc.maybe{border-color:#f59e0b;background:#fffbeb}.rsc.no{border-color:#dc2626;background:#fef2f2}
+.rsc .rb{display:inline-block;color:#fff;border-radius:4px;padding:0 8px;margin-right:6px;font-weight:800}
+.rsc.ok .rb{background:#15803d}.rsc.maybe .rb{background:#b45309}.rsc.no .rb{background:#b91c1c}
+.rsc ul{margin:3px 0 0;padding-left:18px}.rsc li.f{color:#b91c1c;font-weight:700}.rsc li.u{color:#92400e}.rsc li.p{color:#166534}
+.rsc details{margin-top:2px;color:#166534}.rsc summary{cursor:pointer;font-weight:700}
+.pf input[type=number]{text-align:right;padding-right:10px}
+.calc{text-align:right;padding-right:10px!important}
 .gnote{font-size:11.5px;font-weight:700;color:#b45309;margin-left:8px}
 .pf.lnk select,.pf.lnk .calc{background:#fef3c7!important;border:1px solid #f59e0b!important;font-weight:800;color:#78350f}
 .calc{flex:1;min-width:0;border:1px solid var(--bd);background:#f1f5f9;border-radius:6px;padding:5px 8px;font-weight:800;color:var(--navy);font-size:13px}
@@ -198,7 +209,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js?v=20261028u"></script>
+<script src="gov_support_common.js?v=20261028x"></script>
 <script src="gov_support_match_config.js"></script>
 <script src="gov_support_rules.js?v=20261028"></script>
 <script>
@@ -285,10 +296,10 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     {g:'매출·과세·수출·자산',note:'※ 소득세 한계세율은 공제 전 ‘대표연소득’기준이므로 공제적용시 세율이 낮아질 수 있습니다.',f:[
       {k:'sales',l:'직전연도 매출액',t:'n',u:'억원',h:'예: 1억400만원 → 1.04'},{k:'taxbase',l:'법인세 과세표준',t:'n',u:'억원'},
       {k:'ctr',l:'적용 법인세율',t:'c',tx:'c',h:'과세표준을 입력하면 자동 계산'},{k:'ctx',l:'예상 법인세',t:'c',h:'자동 계산(산출세액)'},
-      {k:'export',l:'직전연도 수출액',t:'n',u:'만달러'},{k:'assets',l:'자산총액',t:'n',u:'억원'},
-      {k:'bizinc',l:'대표 연소득(사업소득금액·총급여)',t:'n',u:'만원'},{k:'mtr',l:'소득세 한계세율',t:'s',tx:'p',h:'연소득을 입력하면 자동 선택(직접 변경 가능)'},{k:'itx',l:'예상 소득세',t:'c',h:'자동 계산(산출세액)'}]},
+      {k:'bizinc',l:'대표연소득',t:'n',u:'만원',h:'사업소득금액·총급여'},{k:'mtr',l:'소득세 한계세율',t:'s',tx:'p',h:'연소득을 입력하면 자동 선택(직접 변경 가능)'},{k:'itx',l:'예상 소득세',t:'c',h:'자동 계산(산출세액)'},
+      {k:'export',l:'직전연도 수출액',t:'n',u:'만달러'},{k:'assets',l:'자산총액',t:'n',u:'억원'}]},
     {g:'근로자 수',f:[
-      {k:'emp',l:'상시근로자 수',t:'n',u:'명'},{k:'prevemp',l:'전년도 상시근로자 수',t:'n',u:'명'},
+      {k:'emp',l:'상시근로자수(당해년)',t:'n',u:'명'},{k:'prevemp',l:'상시근로자수(전년)',t:'n',u:'명'},
       {k:'youth',l:'청년 근로자 수(만 15~34세)',t:'n',u:'명'},{k:'newyouth',l:'올해 청년 신규 채용(정규직)',t:'n',u:'명'},
       {k:'senior',l:'고령 근로자 수(정년 도달·예정)',t:'n',u:'명'},{k:'retur',l:'육아휴직 복귀자 수',t:'n',u:'명'},
       {k:'pay',l:'근로자 월평균 보수',t:'n',u:'만원'}]},
@@ -296,9 +307,18 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       {k:'invest',l:'올해 설비투자 계획',t:'n',u:'억원'},{k:'rnd',l:'올해 연구·인력개발비',t:'n',u:'억원'},{k:'rndprev',l:'직전연도 연구·인력개발비',t:'n',u:'억원'},
       {k:'loan',l:'대출 이용·희망 금액',t:'n',u:'억원'},{k:'bonus',l:'경영성과급 지급 예정',t:'n',u:'만원'},{k:'partner',l:'상생결제 지급액',t:'n',u:'억원'},
       {k:'unsec',l:'무담보 부실채무',t:'n',u:'억원'}]},
-    {g:'가업승계',f:[
-      {k:'bizyears',l:'대표 경영연수',t:'n',u:'년'},{k:'stake',l:'대표 지분율',t:'n',u:'%'},
-      {k:'bizval',l:'가업상속재산가액',t:'n',u:'억원'},{k:'giftval',l:'증여 예정 가업 주식가액',t:'n',u:'억원'}]}
+    {g:'가업승계 · 가업상속',note:'※ 현행법 기준 간이 판정입니다(2026 세제개편안은 국회 확정 전). 입력값이 없으면 ‘확인필요’로 표시됩니다.',f:[
+      {t:'sub',l:'가업·대표자(피상속인·증여자) 요건 — 가업상속과 가업승계(증여) 공통'},
+      {k:'bizyears',l:'가업 경영연수(대표)',t:'n',u:'년'},{k:'stake',l:'대표 지분율(특수관계인 합산)',t:'n',u:'%'},
+      {k:'stakeyrs',l:'위 지분 보유연수',t:'n',u:'년',h:'지분 40%(상장 20%) 이상 유지 기간'},{k:'ceoyrs',l:'대표이사 재직연수',t:'n',u:'년'},
+      {t:'sub',l:'승계자(자녀 등) 요건'},
+      {k:'succage',l:'승계자 나이',t:'n',u:'세'},{k:'succyrs',l:'승계자 가업종사 연수(근속)',t:'n',u:'년'},
+      {k:'succstake',l:'승계자 현재 지분율',t:'n',u:'%',h:'참고용(사후관리: 상속·증여받은 지분 유지)'},
+      {t:'fls',items:[['succ_resident','승계자 국내 거주자'],['succ_exec','승계자 임원 취임(신고기한까지, 예정 포함)'],['succ_ceo','승계자 대표이사 취임 예정(상속 2년·증여 3년 내)']]},
+      {t:'sub',l:'가업상속 (피상속인 사망 시 · 상속세)',link:'inh'},
+      {k:'bizval',l:'가업상속재산가액',t:'n',u:'억원'},{t:'res',k:'inh',kind:'g27'},
+      {t:'sub',l:'가업승계 (생전 증여 · 증여세 과세특례)',link:'gift'},
+      {k:'giftval',l:'증여 예정 가업 주식가액',t:'n',u:'억원'},{t:'res',k:'gift',kind:'g28'}]}
   ];
   var FLAGS=[['tax_arrears','국세·지방세 체납'],['loan_overdue','금융기관 연체·신용 제한'],['closed','휴·폐업 사업장'],['wage_arrears','임금체불 명단 공개'],
     ['closing','폐업(예정)'],['distress','부실(우려) 채무 보유'],['ebi','대표 고용보험 가입'],['ins_new','최근 1년 내 4대보험 가입이력 없음(신규)'],
@@ -311,6 +331,9 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
   GROUPS.forEach(function(g){
     h+='<div class="pgrp"><h3>'+esc(g.g)+(g.note?' <span class="gnote">'+esc(g.note)+'</span>':'')+'</h3><div class="pg">';
     g.f.forEach(function(f){
+      if(f.t==='sub'){h+='<div class="subh"><b>'+esc(f.l)+'</b>'+(f.link?' <button type="button" class="tbtn" data-succ="'+f.link+'">요건표</button>':'')+'</div>'; return;}
+      if(f.t==='fls'){h+='<div class="chs2 flrow">'+f.items.map(function(x){return '<button type="button" class="chip" data-f="'+x[0]+'" aria-pressed="false">'+esc(x[1])+'</button>';}).join('')+'</div>'; return;}
+      if(f.t==='res'){h+='<div class="rsc" id="rs_'+f.k+'" data-kind="'+f.kind+'"></div>'; return;}
       LBL[f.k]=f;
       h+='<div class="pf'+(f.w?' wide':'')+((f.tx||f.t==='c')?' lnk':'')+'"><div class="lbr"><label for="p_'+f.k+'">'+esc(f.l)+'</label>'+(f.tx?'<button type="button" class="tbtn" data-tax="'+f.tx+'" title="세율표 보기">세율표</button>':'')+'</div><div class="in">';
       if(f.t==='c'){
@@ -353,7 +376,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     Object.keys(o.f||{}).forEach(function(k){if(o.f[k])flags[k]=true;});
     syncChips(); typedSync('region',false); typedSync('ind',false); taxSync(false);
   }
-  function syncChips(){document.querySelectorAll('#fl .chip').forEach(function(b){var on=!!flags[b.dataset.f];b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');});}
+  function syncChips(){document.querySelectorAll('#pf .chip[data-f]').forEach(function(b){var on=!!flags[b.dataset.f];b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');});}
 
   /* 직접입력 ↔ 선택 동기화 */
   function candHTML(c){return (c||[]).map(function(x){return '<button type="button" data-fill="'+esc(x)+'">'+esc(x)+'</button>';}).join('');}
@@ -563,7 +586,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
   }
 
   function renderAll(){
-    var P=readP(); evalAll(P); renderView(P); renderMe(P); G.freezeAll();
+    var P=readP(); evalAll(P); renderView(P); renderMe(P); succSync(); G.freezeAll();
   }
 
   /* 소득세·법인세율 연동 */
@@ -591,6 +614,24 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       $('n_ctx').textContent='✔ 과세표준×'+q[1]+'%−누진공제 '+(q[2]?G.fmEok(q[2]):'없음')+' · 지방소득세(10%) 포함 약 '+G.fmEok(tx*1.1);
     } else { o.textContent='-'; m.className='hnt'; m.textContent=''; $('p_ctx').textContent='-'; $('n_ctx').className='hnt'; $('n_ctx').textContent=''; }
   }
+  /* 가업상속·가업승계 판정 카드 */
+  function succSync(){
+    var P=readP();
+    [['inh','g27','가업상속'],['gift','g28','가업승계(증여)']].forEach(function(x){
+      var box=$('rs_'+x[0]); if(!box) return;
+      var ev=RU.evaluate(x[1],P), bad=[],unk=[],okk=[];
+      ev.c.forEach(function(q){(q.s==='f'?bad:(q.s==='u'?unk:okk)).push(q.t);});
+      var cls=ev.st, badge=(ev.st==='ok'?'적합':(ev.st==='no'?'부족':'확인필요'));
+      var head=ev.st==='ok'?x[2]+': 입력하신 내용 기준으로 현행법상 요건을 모두 충족합니다.':
+        (ev.st==='no'?x[2]+': 현행법상 부족한 항목이 '+bad.length+'건 있습니다.':x[2]+': 부족한 항목은 없으나 입력·확인이 필요한 항목이 '+unk.length+'건 있어 최종 판정은 보류됩니다.');
+      var h='<span class="rb">'+badge+'</span><b>'+esc(head)+'</b><ul>';
+      bad.forEach(function(t){h+='<li class="f">✘ 부족 · '+esc(t)+'</li>';});
+      unk.forEach(function(t){h+='<li class="u">? 입력·확인 필요 · '+esc(t)+'</li>';});
+      h+='</ul>';
+      if(okk.length) h+='<details><summary>충족 '+okk.length+'건 보기</summary><ul>'+okk.map(function(t){return '<li class="p">✔ '+esc(t)+'</li>';}).join('')+'</ul></details>';
+      box.className='rsc '+cls; box.innerHTML=h;
+    });
+  }
   /* 이벤트 */
   $('pf').addEventListener('input',function(e){
     var t=e.target;
@@ -608,13 +649,15 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     save();renderAll();
   });
   $('pf').addEventListener('click',function(e){
+    var sb=e.target.closest('button[data-succ]');
+    if(sb){ G.showSucc(sb.dataset.succ); return; }
     var tb=e.target.closest('button[data-tax]');
     if(tb){ G.showTax(tb.dataset.tax, parseFloat($(tb.dataset.tax==='p'?'p_bizinc':'p_taxbase').value)); return; }
     var b=e.target.closest('button[data-fill]'); if(!b) return;
     var box=b.closest('.pf'), tx=box.querySelector('input[type=text]');
     tx.value=b.dataset.fill; typedSync(tx.dataset.x.replace('Txt',''),true); save(); renderAll();
   });
-  $('fl').addEventListener('click',function(e){
+  $('pf').addEventListener('click',function(e){
     var b=e.target.closest('button[data-f]'); if(!b) return;
     var k=b.dataset.f; if(flags[k]) delete flags[k]; else flags[k]=true;
     syncChips(); save(); renderAll();

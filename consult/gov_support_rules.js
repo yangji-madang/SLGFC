@@ -305,15 +305,36 @@
     }],
     info: ['간이과세 배제 업종·지역 요건 별도, 일반과세 유지는 포기신고']
   };
+  /* 가업상속·가업승계(증여) 판정 — 입력값 근거의 간이 판정
+   * 법령: 상증세법 제18조의2·같은 법 시행령 제15조(가업상속공제), 조특법 제30조의6·같은 법 시행령 제27조의6(가업승계 증여세 과세특례) */
+  function gen(k, v, label, unit) { return function (P) {
+    if (!N(P[k])) return c('u', label + ' — 입력 필요');
+    return P[k] >= v ? c('p', label) : c('f', label + ' — 입력 ' + P[k] + (unit || '') + ' (부족)');
+  }; }
+  function flagU(k, label) { return function (P) { return P.f[k] ? c('p', label) : c('u', label + ' — 해당되면 체크'); }; }
+  function sizeAsset(P) {
+    var l = P.scale === 'mid' ? '직전 3개 사업연도 평균 매출 5,000억원 미만(중견기업)' : '자산총액 5,000억원 미만(중소기업)';
+    if (P.scale === 'mid') return N(P.sales) ? c(P.sales < 5000 ? 'p' : 'f', l) : c('u', l + ' — 매출 입력 필요');
+    return N(P.assets) ? c(P.assets < 5000 ? 'p' : 'f', l) : c('u', l + ' — 자산총액 입력 필요');
+  }
+  var SC = R.scale('mid', '중소기업 또는 중견기업');
+  var IND = R.indNot(['rental', 'consume'], '가업 업종(부동산임대업·유흥주점업 제외, 별표 업종 해당 여부는 세부업종 확인)');
+  var COMMON = [gen('bizyears', 10, '가업 10년 이상 계속 경영', '년'),
+    gen('stake', 40, '대표 및 특수관계인 합산 지분 40% 이상(상장 20%)', '%'),
+    gen('stakeyrs', 10, '위 지분을 10년 이상 계속 보유', '년')];
   RULES.g27 = {
-    req: [R.scale('mid', '중소기업 또는 중견기업'),
+    req: [SC, sizeAsset, IND].concat(COMMON, [
       function (P) {
-        var l = P.scale === 'mid' ? '직전 3개 사업연도 평균 매출 5,000억원 미만' : '자산총액 5,000억원 미만';
-        if (P.scale === 'mid') return N(P.sales) ? c(P.sales < 5000 ? 'p' : 'f', l) : c('u', l);
-        return N(P.assets) ? c(P.assets < 5000 ? 'p' : 'f', l) : c('u', l);
+        var l = '피상속인 대표이사 재직(가업영위기간의 50% 이상, 또는 상속개시 전 10년 중 5년 이상 등)';
+        if (!N(P.ceoyrs)) return c('u', l + ' — 대표이사 재직연수 입력 필요');
+        if (N(P.bizyears) && P.ceoyrs >= P.bizyears * 0.5) return c('p', l);
+        return P.ceoyrs >= 5 ? c('u', l + ' — 재직 ' + P.ceoyrs + '년: 50% 미만이나 소급 10년 중 5년 이상 충족 여부 확인') : c('f', l + ' — 재직 ' + P.ceoyrs + '년 (부족)');
       },
-      R.ge('bizyears', 10, '피상속인 10년 이상 계속 경영'), R.ge('stake', 40, '지분 40% 이상(상장 20%)')],
-    info: ['정부안 단계(국회 심의 중): 한도 경영연수 × 20억원(최대 1,000억원), 사후관리 10년'],
+      gen('succage', 18, '승계자 상속개시일 현재 만 18세 이상', '세'),
+      gen('succyrs', 2, '승계자 상속개시 전 2년 이상 가업 종사(피상속인 65세 이전 사망 등은 예외)', '년'),
+      flagU('succ_exec', '승계자 상속세 신고기한까지 임원 취임(예정 포함)'),
+      flagU('succ_ceo', '승계자 신고기한부터 2년 내 대표이사 취임(예정 포함)')]),
+    info: ['현행법 기준 판정(2026 세제개편안은 국회 확정 전). 사후관리 5년: 업종·지분·고용(정규직·총급여 평균 90%)·자산(40% 미만 처분) 유지'],
     ex: function (P) {
       if (!N(P.bizyears)) return [];
       var y = P.bizyears, cur = y >= 30 ? 600 : (y >= 20 ? 400 : (y >= 10 ? 300 : 0)), nw = Math.min(y * 20, 1000);
@@ -324,8 +345,13 @@
     }
   };
   RULES.g28 = {
-    req: [R.ge('bizyears', 10, '증여자 10년 이상 경영'), R.ge('stake', 40, '증여자 지분 40% 이상(상장 20%)')],
-    info: ['수증자 요건·사후관리 위반 시 추징, 정부안 개편 예정'],
+    req: [SC, R.form('corp', '법인 주식만 대상(개인사업자는 적용 불가)'), sizeAsset, IND].concat(COMMON, [
+      gen('ceoage', 60, '증여자(부모) 만 60세 이상', '세'),
+      gen('succage', 18, '수증자 증여일 현재 만 18세 이상', '세'),
+      flagU('succ_resident', '수증자 국내 거주자'),
+      function (P) { return N(P.succyrs) && P.succyrs > 0 ? c('p', '수증자 증여세 신고기한(증여월 말일부터 3개월)까지 가업 종사') : c('u', '수증자 증여세 신고기한까지 가업 종사 — 가업종사연수 입력 필요'); },
+      flagU('succ_ceo', '수증자 증여일부터 3년 내 대표이사 취임(예정 포함)')]),
+    info: ['수증자 요건·사후관리(5년) 위반 시 추징, 정부안 개편 예정'],
     ex: function (P) {
       if (!(N(P.giftval) && P.giftval > 0)) return [];
       var g = giftGeneral(P.giftval), s = giftSpecial(P.giftval);
