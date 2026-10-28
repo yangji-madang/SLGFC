@@ -238,6 +238,7 @@
   G.setFoot = function () {
     var c = (G.cfg && G.cfg.contact != null) ? G.cfg.contact : G.CONTACT;
     ['ctc', 'ctct'].forEach(function (i) { var e = document.getElementById(i); if (e) e.textContent = c; });
-    ['cpy', 'cpyt'].forEach(function (i) { var e = document.getElementById(i); if (e) e.textContent = G.COPY; });
+    var cp = (G.cfg && G.cfg.copy != null && G.cfg.copy !== '') ? G.cfg.copy : G.COPY;
+    ['cpy', 'cpyt'].forEach(function (i) { var e = document.getElementById(i); if (e) e.textContent = cp; });
   };
 })();

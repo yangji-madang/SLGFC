@@ -31,7 +31,14 @@
       <div><label for="cDays">변경 표시 기간(일)</label><input type="text" id="cDays"></div>
       <div><label>&nbsp;</label><label style="font-weight:400"><input type="checkbox" id="cShow"> 변경 전 값을 취소선으로 표시</label></div>
       <div class="w3"><label for="cFoot">유의사항 (하단 주석, 줄바꿈 가능)</label><textarea id="cFoot"></textarea></div>
-      <div class="w3"><label for="cCt">하단 좌측 담당자 연락처 (보기·인쇄 모든 페이지 하단)</label><input type="text" id="cCt"></div>
+      <div class="w3" style="border:1px solid var(--bd);border-radius:6px;padding:6px 8px;background:#f8fafc">
+        <label style="font-size:13px">하단 푸터 (보기·인쇄 모든 페이지 하단에 고정 표시)</label>
+        <div class="g2" style="margin-top:4px">
+          <div class="w2"><label for="cCt">좌측 — 담당자 연락처</label><input type="text" id="cCt"></div>
+          <div class="w2"><label for="cCp">우측 — Copyright (비우면 기본 문구)</label><input type="text" id="cCp"></div>
+        </div>
+        <div class="mini" style="margin-top:4px">미리보기: <b id="fpL"></b> &nbsp;|&nbsp; <b id="fpR"></b></div>
+      </div>
       <div class="w3"><label for="cDisc">면책 문구</label><textarea id="cDisc" style="min-height:48px"></textarea></div>
       <div class="w3"><label for="tlta">주요 일정 (한 줄에 하나: 날짜 | 내용 | p ← 예정·정부안은 끝에 | p)</label><textarea id="tlta"></textarea></div>
     </div>
@@ -103,10 +110,12 @@
   }
 
   /* ───── 기본 설정 ───── */
+  function fpv(){$('fpL').textContent=$('cCt').value;$('fpR').textContent=$('cCp').value.trim()||G.COPY;}
+  ['cCt','cCp'].forEach(function(i){$(i).addEventListener('input',fpv);});
   function fillCfg(){
     $('cAsOf').value=W.upd.asOf||''; $('cTitle').value=W.cfg.title||''; $('cSub').value=W.cfg.sub||'';
     $('cPrt').value=W.cfg.prtTitle||''; $('cDays').value=W.cfg.chgDays||30; $('cShow').checked=W.cfg.showChg!==false;
-    $('cFoot').value=W.cfg.foot||''; $('cDisc').value=W.cfg.disc||''; $('cCt').value=W.cfg.contact!=null?W.cfg.contact:G.CONTACT;
+    $('cFoot').value=W.cfg.foot||''; $('cDisc').value=W.cfg.disc||''; $('cCt').value=W.cfg.contact!=null?W.cfg.contact:G.CONTACT; $('cCp').value=W.cfg.copy||G.COPY; fpv();
     $('tlta').value=(W.data.timeline||[]).map(function(t){return t.join(' | ');}).join('\n');
   }
   function readCfg(){
@@ -114,7 +123,7 @@
     if($('cAsOf').value && !/^\d{4}-\d{2}-\d{2}$/.test($('cAsOf').value)) throw new Error('기준일 형식이 올바르지 않습니다.');
     W.upd.asOf=$('cAsOf').value||W.upd.asOf;
     W.cfg.title=$('cTitle').value; W.cfg.sub=$('cSub').value; W.cfg.prtTitle=$('cPrt').value;
-    W.cfg.chgDays=d; W.cfg.showChg=$('cShow').checked; W.cfg.foot=$('cFoot').value; W.cfg.disc=$('cDisc').value; W.cfg.contact=$('cCt').value;
+    W.cfg.chgDays=d; W.cfg.showChg=$('cShow').checked; W.cfg.foot=$('cFoot').value; W.cfg.disc=$('cDisc').value; W.cfg.contact=$('cCt').value; W.cfg.copy=$('cCp').value.trim()||G.COPY; G.cfg=W.cfg; G.setFoot();
     W.data.timeline=$('tlta').value.split('\n').map(function(l){return l.trim();}).filter(Boolean).map(function(l){
       var p=l.split('|').map(function(x){return x.trim();});
       return p[2]==='p'?[p[0],p[1]||'','p']:[p[0],p[1]||''];
