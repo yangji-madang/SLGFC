@@ -140,14 +140,14 @@ table.mx{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed
 .mx th.cn .r{display:block;text-align:right}.mx th.cn i{display:none}
 .mx th.tt,.mx td.tt{width:5%;text-align:center;font-weight:800;color:#14365d;background:#fef9c3;vertical-align:middle}
 .mx thead th.tt{background:#a16207;color:#fff}
-.mx tbody th.rh{background:#e8eef7;color:#14365d;text-align:left;font-size:13px;vertical-align:middle;border-left:5px solid #14365d}
+.mx tbody th.rh{background:#fde3c8;color:#14365d;text-align:left;font-size:13px;vertical-align:middle;border-left:5px solid #14365d}
 .mx .rh .n{display:block;font-size:11px;color:#475569;font-weight:600}
 .mx .rh .lv{display:block;margin-top:2px;line-height:1.5}
 .mx .rh .lv b{display:inline-block;font-size:10px;color:#fff;border-radius:3px;padding:0 4px;margin:0 2px 1px 0;font-weight:700}
 .mx .lv b.l0{background:#1d4ed8}.mx .lv b.l1{background:#15803d}.mx .lv b.l2{background:#6d28d9}
 .mx tbody tr:nth-child(even) td:not(.tt){background:#f8fafc}
 .mxc{display:inline-block;margin:1px 3px 2px 0;padding:1px 5px;border-radius:4px;border-left:3px solid;font-size:11.5px;line-height:1.35;color:#0f172a;vertical-align:top}
-.mxc.l0{background:#eff6ff;border-color:#1d4ed8}.mxc.l1{background:#f0fdf4;border-color:#15803d}.mxc.l2{background:#f5f3ff;border-color:#6d28d9}
+.mxc.l0{background:#dbeafe;border-color:#1d4ed8}.mxc.l1{background:#d5f5df;border-color:#15803d}.mxc.l2{background:#e9e3fc;border-color:#6d28d9}
 .mxc sup{color:#b91c1c;font-weight:800}
 .mxc[data-id]{cursor:pointer}.mxc[data-id]:hover{filter:brightness(.93);outline:1px solid #14365d}
 .mxe{color:#cbd5e1}
@@ -223,7 +223,7 @@ body[data-vt=tb] #paneOv{display:none}
 .mx tbody tr:not(.ll) td:not(.tt){border-bottom-color:transparent}
 .mx td.mxm .mxc{display:block;margin:1px 0}
 .mxg{border-left:3px solid;border-radius:4px;padding:2px 4px 2px 5px;margin:1px 0;line-height:1.4}
-.mxg.l0{background:#eff6ff;border-color:#1d4ed8}.mxg.l1{background:#f0fdf4;border-color:#15803d}.mxg.l2{background:#f5f3ff;border-color:#6d28d9}
+.mxg.l0{background:#dbeafe;border-color:#1d4ed8}.mxg.l1{background:#d5f5df;border-color:#15803d}.mxg.l2{background:#e9e3fc;border-color:#6d28d9}
 .mxgt{display:block;font-size:11.5px;color:#0f172a;border-bottom:1px dashed #94a3b8;margin-bottom:2px}
 .mxs2{display:inline-block;margin:0 1px 0 0;padding:0 2px;border-radius:3px;font-size:10.5px;color:#0f172a;white-space:nowrap}
 .mxs2:not(:last-child)::after{content:' ·';color:#64748b;margin-left:2px}
