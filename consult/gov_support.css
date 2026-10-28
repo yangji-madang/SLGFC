@@ -215,3 +215,17 @@ body[data-vt=tb] #paneOv{display:none}
 .defpop .dpl{margin:10px 0 2px;font-size:12.5px;color:#334155}
 .defpop .dpn{margin:2px 0 0;font-size:11.5px;color:#b45309}
 @media print{.defpop,.dfi{display:none!important}}
+
+/* 개요 도식: 병합 칸·하위 제도 */
+.mx td.mxm,.mx td.mxn{padding:2px 4px}
+.mx tbody tr.cb1 td:not(.tt){background:#f8fafc}
+.mx tbody tr.cb0 td:not(.tt){background:#fff}
+.mx tbody tr:not(.ll) td:not(.tt){border-bottom-color:transparent}
+.mx td.mxm .mxc{display:block;margin:1px 0}
+.mxg{border-left:3px solid;border-radius:4px;padding:2px 4px 2px 5px;margin:1px 0;line-height:1.4}
+.mxg.l0{background:#eff6ff;border-color:#1d4ed8}.mxg.l1{background:#f0fdf4;border-color:#15803d}.mxg.l2{background:#f5f3ff;border-color:#6d28d9}
+.mxgt{display:block;font-size:11.5px;color:#0f172a;border-bottom:1px dashed #94a3b8;margin-bottom:2px}
+.mxs2{display:inline-block;margin:0 1px 0 0;padding:0 2px;border-radius:3px;font-size:10.5px;color:#0f172a;white-space:nowrap}
+.mxs2:not(:last-child)::after{content:' ·';color:#64748b;margin-left:2px}
+.mxs2[data-id]{cursor:pointer}.mxs2[data-id]:hover{background:#dbeafe;outline:1px solid #14365d}
+@media print{.mx td.mxm,.mx td.mxn{padding:0 4px!important}.mx td.mxm .mxc{margin:1px 0;line-height:1.2}.mxgt{font-size:8px;margin-bottom:1px}.mxs2{font-size:7.4px;padding:0 1px;margin:0}.mxg{padding:1px 3px;line-height:1.3}}

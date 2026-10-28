@@ -230,6 +230,12 @@
     '<div><button type="button" class="btn sub" id="freset">필터 초기화</button></div>';
 
 
+  /* 개요 도식 전용: ‘종합’ 성격의 제도를 하위 제도로 풀어서 표시 (출처: 고용노동부 ‘2026년도 고용장려금 지원 제도’ 안내, 2026.2.18) */
+  G.SUBH = 4;
+  G.SUB = {
+    g10: [['고용촉진', '고용촉진장려금'], ['워라밸+4.5', '워라밸일자리 장려금(워라밸+4.5 프로젝트)'], ['근로시간 단축', '워라밸일자리 장려금(소정근로시간 단축)'], ['환경개선', '일·가정 양립 환경개선'], ['정규직 전환', '정규직 전환 지원'], ['출산육아기', '출산육아기 고용안정장려금'], ['고용유지', '고용유지지원금'], ['고령자 안정', '고령자 고용안정지원'], ['지역고용', '지역고용촉진지원금']]
+  };
+
   /* 개요 도식: 지원 종류(행) × 대상 기업(열) 매트릭스 — 칩 색상 = 지급 주체 */
   G.matrix = function (list, opt) {
     opt = opt || {};
@@ -242,18 +248,59 @@
       h += '<th' + (G.DEF[c] ? ' class="dfh" data-def="' + esc(c) + '" tabindex="0" role="button" title="클릭하면 ' + esc(c) + '의 정의를 볼 수 있습니다"' : '') + '>' + esc(c) + (G.DEF[c] ? '<i class="dfi">ⓘ</i>' : '') + '<span class="n">' + list.filter(function (i) { return inCol(i, c); }).length + '건</span></th>';
     });
     h += '<th class="tt">합계</th></tr></thead><tbody>';
-    cats.forEach(function (cat) {
+    cats.forEach(function (cat, ci) {
       var rows = list.filter(function (i) { return i.cat === cat; });
       var lvc = G.LV.map(function (l, k) { var n = rows.filter(function (i) { return i.lv === l; }).length; return n ? '<b class="l' + k + '">' + esc(l.replace('공공·금융기관', '공공·금융')) + ' ' + n + '</b>' : ''; }).join('');
-      h += '<tr><th class="rh">' + esc(cat) + '<span class="n">' + rows.length + '건</span><span class="lv">' + lvc + '</span></th>';
-      cols.forEach(function (c) {
-        var xs = rows.filter(function (i) { return inCol(i, c); });
-        h += '<td>' + (xs.length ? xs.map(function (i) {
-          var k = Math.max(0, G.LV.indexOf(i.lv));
-          return '<span class="mxc l' + k + '"' + (opt.click ? ' data-id="' + esc(i.id) + '" role="button" tabindex="0"' : '') + ' title="' + esc(i.n) + ' · ' + esc(i.lv) + '">' + esc(i.sn || i.n) + '</span>';
-        }).join('') : '<span class="mxe">-</span>') + '</td>';
+      /* 같은 제도가 연속한 열에 걸치면 한 칸으로 병합(colspan), 중간에 끊기면 구간마다 다시 표시 */
+      var segs = [];
+      rows.forEach(function (i, ix) {
+        var idx = [];
+        cols.forEach(function (c, k) { if (inCol(i, c)) idx.push(k); });
+        var st = null, en = null;
+        idx.forEach(function (k) {
+          if (st === null) { st = en = k; } else if (k === en + 1) { en = k; } else { segs.push({ i: i, s: st, e: en, o: ix }); st = en = k; }
+        });
+        if (st !== null) segs.push({ i: i, s: st, e: en, o: ix });
       });
-      h += '<td class="tt">' + rows.length + '</td></tr>';
+      /* 일반 제도 먼저, 하위 제도를 풀어 보여주는 제도(여러 줄 차지)는 나중에 배치 */
+      segs.forEach(function (sg) { sg.h = (G.SUB && G.SUB[sg.i.id]) ? G.SUBH : 1; });
+      segs.sort(function (x, y) { return (x.h > 1) - (y.h > 1) || x.s - y.s || (y.e - y.s) - (x.e - x.s) || x.o - y.o; });
+      var lanes = [];
+      function free(k, sg) { for (var r = k; r < k + sg.h; r++) for (var q = sg.s; q <= sg.e; q++) if (lanes[r] && lanes[r][q]) return false; return true; }
+      segs.forEach(function (sg) {
+        var k = 0, r, q;
+        while (!free(k, sg)) k++;
+        for (r = k; r < k + sg.h; r++) { if (!lanes[r]) lanes[r] = []; for (q = sg.s; q <= sg.e; q++) lanes[r][q] = 'x'; }
+        lanes[k][sg.s] = sg;
+      });
+      for (var z = 0; z < lanes.length; z++) if (!lanes[z]) lanes[z] = [];
+      if (!lanes.length) lanes.push([]);
+      var colHas = cols.map(function (c) { return rows.some(function (i) { return inCol(i, c); }); });
+      lanes.forEach(function (L, li) {
+        h += '<tr class="cb' + (ci % 2) + (li === lanes.length - 1 ? ' ll' : '') + '">';
+        if (li === 0) h += '<th class="rh" rowspan="' + lanes.length + '">' + esc(cat) + '<span class="n">' + rows.length + '건</span><span class="lv">' + lvc + '</span></th>';
+        for (var c = 0; c < cols.length; c++) {
+          var sg = L[c];
+          if (sg && sg !== 'x') {
+            var i = sg.i, k2 = Math.max(0, G.LV.indexOf(i.lv));
+            var attr = (opt.click ? ' data-id="' + esc(i.id) + '" role="button" tabindex="0"' : '');
+            var sub = G.SUB && G.SUB[i.id];
+            h += '<td colspan="' + (sg.e - sg.s + 1) + '"' + (sg.h > 1 ? ' rowspan="' + sg.h + '"' : '') + ' class="mxm">';
+            if (sub) {
+              h += '<div class="mxg l' + k2 + '"><b class="mxgt">' + esc(i.sn || i.n) + '</b>' + sub.map(function (t) {
+                return '<span class="mxs2"' + attr + ' title="' + esc(i.n) + ' ▸ ' + esc(t[1]) + '">' + esc(t[0]) + '</span>';
+              }).join('') + '</div>';
+            } else {
+              h += '<span class="mxc l' + k2 + '"' + attr + ' title="' + esc(i.n) + ' · ' + esc(i.lv) + '">' + esc(i.sn || i.n) + '</span>';
+            }
+            h += '</td>';
+            c = sg.e;
+          } else if (sg === 'x') { /* 병합 구간 안 */ }
+          else h += '<td class="mxn">' + (li === 0 && !colHas[c] ? '<span class="mxe">-</span>' : '') + '</td>';
+        }
+        if (li === 0) h += '<td class="tt" rowspan="' + lanes.length + '">' + rows.length + '</td>';
+        h += '</tr>';
+      });
     });
     h += '</tbody></table>';
     return h;
