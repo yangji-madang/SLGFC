@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>내 회사에 적합한 지원제도 찾기 (인쇄용)</title>
-<link rel="stylesheet" href="gov_support.css?v=20261028x">
+<link rel="stylesheet" href="gov_support.css?v=20261028y">
 <style>
 body{display:block;min-height:0;background:#e5e7eb}
 .noprint{max-width:1500px;margin:0 auto;padding:10px 16px 0}
@@ -96,7 +96,7 @@ s.oldv{color:#b91c1c}
 .ctlb{display:flex;gap:10px;flex-wrap:wrap;align-items:center;border:1px solid var(--bd);background:#fff;border-radius:8px;padding:6px 10px;font-size:13px}
 .ctlb label{display:flex;align-items:center;gap:4px;cursor:pointer}
 .blk .ttl{font-size:12px;font-weight:800;color:var(--navy);margin:7px 0 3px}
-.ptb td.a{text-align:right;white-space:nowrap}
+.ptb td.a{text-align:right;word-break:keep-all;padding-right:7px}
 .ptb td.c{text-align:center}
 .ptb .tot td{background:#fffbeb!important;font-weight:800;border-top:2px solid var(--navy)}
 .ptb .tot2 td,.ptb .tot2 td.sm{background:#f1f5f9!important;font-weight:800}
@@ -118,13 +118,15 @@ s.oldv{color:#b91c1c}
 .warn{margin:5px 0 0;padding-left:15px;font-size:10px;color:#334155}
 body[data-ps=view] #blkB{display:none}
 body[data-ps=me] #blkA{display:none}
+body[data-ps=both] #blkA .cmpt{display:none}
 @media print{
   .blk .ttl{font-size:9.6px;margin:4px 0 2px}
   .cmpt{font-size:8.4px}.cmpt th,.cmpt td{padding:1px 4px}
   .ptb .cl{font-size:7.6px}.kd{font-size:7.2px}
   .warn{font-size:8px}
   .ptb .spc th,.ptb .spc td{background:transparent!important}
-  body[data-ps=both] #blkA{break-before:page;page-break-before:always}
+  body[data-ps=both] #blkA .cmpt{display:none}
+  .blk .ttl{break-after:avoid;page-break-after:avoid}
   #blkA .cmpt:first-child,#blkB .cmpt:first-child{margin-top:1.5mm}
   .fixh{z-index:5}
 }
@@ -159,7 +161,7 @@ body[data-ps=me] #blkA{display:none}
 <script src="gov_support_data.js"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js?v=20261028x"></script>
+<script src="gov_support_common.js?v=20261028y"></script>
 <script src="gov_support_match_config.js"></script>
 <script src="gov_support_rules.js?v=20261028"></script>
 <script>
@@ -310,7 +312,7 @@ body[data-ps=me] #blkA{display:none}
       '‘확인필요’는 입력이 부족하거나 근거 자료가 단일·2차 출처인 항목입니다. 신청·신고 전 공고문과 국가법령정보센터(law.go.kr)에서 최종 확인하세요.',
       '정부안 단계의 제도(가업상속공제 개편 등)는 국회 확정 전 내용이므로 참고용입니다.'];
     $('blkB').innerHTML=cmpT()+'<div class="ttl">1. 지원금액 예시</div>'+
-      tbl(['No', '판정', '구분', '지원·정책명', '산출항목', '산출근거', '예상금액', '비고'],[4, 6, 8, 16, 17, 24, 12, 13],exampleHTML(res,NO),true)+
+      tbl(['No', '판정', '구분', '지원·정책명', '산출항목', '산출근거', '예상금액', '비고'],[4, 6, 8, 15, 16, 22, 16, 13],exampleHTML(res,NO),true)+
       '<ul class="warn">'+wn.map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>';
   }
   document.querySelectorAll('input[name=ps]').forEach(function(r){r.addEventListener('change',function(){document.body.dataset.ps=r.value;});});
