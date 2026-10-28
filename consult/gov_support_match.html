@@ -124,6 +124,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
   .cmp{font-size:8.6px;margin-bottom:4px}.cmp th,.cmp td{padding:1px 4px}
   .h3t{font-size:10.5px;margin:5px 0 2px}
   h2{font-size:12px!important;margin:0 0 3px}
+  h2 .hint{display:none}
   .warn{font-size:8.2px;margin-top:4px}
   .note,.disc{font-size:8px}
   a{color:#1d4ed8;text-decoration:none}
@@ -169,12 +170,12 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
     <div class="ovrow noprint" id="vflt" style="margin:0 0 8px"></div>
     <table class="cmp" id="cmpV"></table>
     <div class="h3t">2-1. 지원제도 요약표 (판정 · 지원금액 · 판정항목) 및 총액</div>
-    <div class="tw2"><table class="mtb"><colgroup><col style="width:7%"><col style="width:23%"><col style="width:38%"><col style="width:32%"></colgroup>
-      <thead><tr><th>판정</th><th>지원 정책명</th><th>지원금액 (내 회사 기준 예시)</th><th>비고 (판정 항목)</th></tr></thead>
+    <div class="tw2"><table class="mtb"><colgroup><col style="width:4%"><col style="width:7%"><col style="width:22%"><col style="width:35%"><col style="width:32%"></colgroup>
+      <thead><tr><th>No</th><th>판정</th><th>지원 정책명</th><th>지원금액 (내 회사 기준 예시)</th><th>비고 (판정 항목)</th></tr></thead>
       <tbody id="tbS"></tbody></table></div>
     <div class="h3t">2-2. 상세 — 어떤 이유로 지원되는지</div>
-    <div class="tw2"><table class="mtb"><colgroup><col style="width:6%"><col style="width:12%"><col style="width:19%"><col style="width:18%"><col style="width:18%"><col style="width:14%"><col style="width:13%"></colgroup>
-      <thead><tr><th>판정</th><th>지원·정책명</th><th>지원 내용</th><th>지원 사유 (조건별 판정)</th><th>지원금액 산출</th><th>신청·문의·시기</th><th>출처</th></tr></thead>
+    <div class="tw2"><table class="mtb"><colgroup><col style="width:3.5%"><col style="width:6%"><col style="width:11%"><col style="width:20%"><col style="width:18%"><col style="width:18%"><col style="width:14%"><col style="width:9.5%"></colgroup>
+      <thead><tr><th>No</th><th>판정</th><th>지원·정책명</th><th>지원 내용</th><th>지원 사유 (조건별 판정)</th><th>지원금액 산출</th><th>신청·문의·시기</th><th>출처</th></tr></thead>
       <tbody id="tbV"></tbody></table></div>
     <p class="note" id="foot" style="margin-top:6px"></p>
   </section>
@@ -187,8 +188,8 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
       <thead><tr><th>구분</th><th>적합 제도 기준</th><th>확인필요 포함 시</th><th>비고</th></tr></thead>
       <tbody id="tbK"></tbody></table></div>
     <div class="h3t">3-2. 제도별 산출 근거</div>
-    <div class="tw2"><table class="mtb"><colgroup><col style="width:6%"><col style="width:20%"><col style="width:10%"><col style="width:22%"><col style="width:30%"><col style="width:12%"></colgroup>
-      <thead><tr><th>판정</th><th>지원·정책명</th><th>구분</th><th>산출 항목</th><th>산식·근거</th><th>예상 금액</th></tr></thead>
+    <div class="tw2"><table class="mtb"><colgroup><col style="width:4%"><col style="width:6%"><col style="width:19%"><col style="width:9%"><col style="width:21%"><col style="width:29%"><col style="width:12%"></colgroup>
+      <thead><tr><th>No</th><th>판정</th><th>지원·정책명</th><th>구분</th><th>산출 항목</th><th>산식·근거</th><th>예상 금액</th></tr></thead>
       <tbody id="tbM"></tbody></table></div>
     <ul class="warn" id="warn"></ul>
     <p class="disc" id="disc" style="margin-top:6px"></p>
@@ -359,7 +360,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
       sel.value=r.k;
       var nm=SEL[k].filter(function(o){return o[0]===r.k;})[0][1];
       nt.className='hnt okk';
-      nt.innerHTML='✔ ‘'+esc(nm)+'’(으)로 판정합니다'+(k==='ind'&&r.std&&nz(r.std)!==nz(tx.value)?' · 표준업종 : '+esc(r.std):'')+'.';
+      nt.innerHTML='✔ '+esc(nm)+(k==='ind'&&r.std&&nz(r.std)!==nz(tx.value)?' · 표준업종 : '+esc(r.std):'');
     } else {
       sel.value='';
       nt.className='hnt bad';
@@ -400,7 +401,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
       var v=P[f.k]; if(v===null||v===''||v===undefined) return;
       var lab=f.l.replace(/ \(선택 또는 직접입력\)/,'');
       var val=(f.t==='s'?selLbl(f.k,v):(Number(v).toLocaleString('ko-KR')+' '+(f.u||'')));
-      if(f.typed){var tx=P[f.k+'Txt']; if(tx) val+=' (입력 : '+tx+')';}
+      if(f.typed&&P[f.k+'Txt']) val=P[f.k+'Txt'];
       rows.push([lab,val]);
     });});
     var fl=FLAGS.filter(function(x){return flags[x[0]];}).map(function(x){return x[1];});
@@ -409,7 +410,8 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
     var out='<caption style="text-align:left;font-weight:800;color:#14365d;padding:0 0 3px">내 회사 정보 (입력값)</caption>',i;
     for(i=0;i<rows.length;i+=3){
       out+='<tr>';
-      for(var j=0;j<3;j++){var r=rows[i+j];out+=r?'<th>'+esc(r[0])+'</th><td>'+esc(r[1])+'</td>':'<th></th><td></td>';}
+      var left=Math.min(3,rows.length-i);
+      for(var j=0;j<left;j++){var r=rows[i+j];out+='<th>'+esc(r[0])+'</th><td'+((j===left-1&&left<3)?' colspan="'+(1+2*(3-left))+'"':'')+'>'+esc(r[1])+'</td>';}
       out+='</tr>';
     }
     return out;
@@ -418,26 +420,25 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
   function condHTML(r){
     var s='';
     r.c.forEach(function(x){s+='<span class="cl '+x.s+'">'+(x.s==='p'?'✔ ':(x.s==='f'?'✖ ':'? '))+esc(x.t)+(x.s==='u'?' (미입력)':'')+'</span>';});
-    r.info.forEach(function(t){s+='<span class="cl i">ⓘ '+esc(t)+'</span>';});
     return s;
   }
   function amtLines(r){
-    if(!r.rows.length) return '<span class="sm">'+(r.hasEx?'입력 정보 보완 시 계산':'금액은 개별 공고·심사로 결정')+'</span>';
+    if(!r.rows.length) return '<span class="sm">'+(r.hasEx?'입력 보완 시 계산':'-')+'</span>';
     return r.rows.map(function(x){return '<span class="amt"><span class="kd '+x.k+'">'+KN[x.k]+'</span>'+esc(x.l)+' <b>'+esc(rng(x.lo,x.hi))+'</b></span>';}).join('');
   }
   function amtDetail(r){
-    if(!r.rows.length) return '<span class="sm">'+(r.hasEx?'입력 정보 보완 시 계산':'금액은 개별 공고·심사로 결정')+'</span>';
+    if(!r.rows.length) return '<span class="sm">-</span>';
     return r.rows.map(function(x){return '<span class="amt"><span class="kd '+x.k+'">'+KN[x.k]+'</span>'+esc(x.l)+' <b>'+esc(rng(x.lo,x.hi))+'</b><span class="cl i">'+esc(x.f)+'</span></span>';}).join('');
   }
   function noteHTML(r){
     var p=r.c.filter(function(x){return x.s==='p';}), f=r.c.filter(function(x){return x.s==='f';}), u=r.c.filter(function(x){return x.s==='u';});
-    var s='<span class="cl p">충족 '+p.length+' / 판정항목 '+r.c.length+'</span>';
+    var s='';
     f.forEach(function(x){s+='<span class="cl f">✖ '+esc(x.t)+'</span>';});
-    u.forEach(function(x){s+='<span class="cl u">? '+esc(x.t)+' (미입력)</span>';});
-    if(!f.length&&!u.length&&p.length) s+='<span class="cl p">✔ '+p.map(function(x){return esc(x.t);}).join(' · ')+'</span>';
-    if(r.it.chk) s+='<span class="cl f">※ 출처 확인필요 항목</span>';
+    u.forEach(function(x){s+='<span class="cl u">? '+esc(x.t)+'</span>';});
+    if(p.length) s+='<span class="cl p">✔ '+p.map(function(x){return esc(x.t);}).join(' · ')+'</span>';
     return s;
   }
+  var NO={};
 
   /* 합계 계산 */
   var EXCL=[['g18','g19']];
@@ -477,32 +478,31 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
 
     /* 2-1 요약표 + 총액 */
     var T=totals(), sb=$('tbS'), s='';
+    NO={}; res.slice().sort(function(x,y){return ORD[x.st]-ORD[y.st];}).forEach(function(r,i){NO[r.it.id]=i+1;});
     list.forEach(function(r){
       var it=r.it;
-      s+='<tr><td class="c" data-l="판정">'+badge(r.st)+'</td><td data-l="지원 정책명"><div class="nm">'+esc(it.n)+'</div><div class="sm">'+esc(it.lv)+' · '+esc(it.ag)+'</div></td><td data-l="지원금액">'+amtLines(r)+'</td><td data-l="비고(판정 항목)">'+noteHTML(r)+'</td></tr>';
+      s+='<tr><td class="c" data-l="No">'+NO[it.id]+'</td><td class="c" data-l="판정">'+badge(r.st)+'</td><td data-l="지원 정책명"><div class="nm">'+esc(it.n)+'</div><div class="sm">'+esc(it.ag)+'</div></td><td data-l="지원금액">'+amtLines(r)+'</td><td data-l="비고(판정 항목)">'+noteHTML(r)+'</td></tr>';
     });
-    if(!list.length) s+='<tr><td colspan="4" style="text-align:center;padding:14px;color:#475569">표시할 제도가 없습니다. 위 ‘표시’ 버튼에서 항목을 선택하거나 회사 정보를 입력하세요.</td></tr>';
-    s+='<tr class="tot"><td class="c tlb" colspan="2">총액 ① 적합 제도 합계 (연)</td><td class="tlb">'+esc(rng(T.ta[0],T.ta[1]))+'</td><td class="sm">세금 절감 '+esc(rng(T.a.tax[0],T.a.tax[1]))+' + 지원금·이자 '+esc(rng(T.a.cash[0],T.a.cash[1]))+'</td></tr>'+
-       '<tr class="tot2"><td class="c tlb" colspan="2">총액 ② 적합 + 확인필요 포함 (연)</td><td class="tlb">'+esc(rng(T.tb[0],T.tb[1]))+'</td><td class="sm">입력 보완·공고 확인 후 확정되는 금액 포함</td></tr>'+
-       '<tr class="tot2"><td class="c" colspan="2">참고 (합계 제외) — 일회성 절세 · 융자 한도</td><td>일회성 절세 '+esc(T.b.once[1]?rng(T.a.once[0],T.a.once[1])+' (확인필요 포함 '+rng(T.b.once[0],T.b.once[1])+')':'-')+'<br>융자·보증 한도(제도별 최대) '+esc(T.b.loan?won(T.b.loan):'-')+'</td><td class="sm">한도·일회성 금액은 연간 합계에 합산하지 않음'+(T.b.cost[1]?' · 세 부담 증가(법인세율 환원) '+esc(rng(T.b.cost[0],T.b.cost[1]))+' 별도':'')+'</td></tr>';
+    if(!list.length) s+='<tr><td colspan="5" style="text-align:center;padding:14px;color:#475569">표시할 제도가 없습니다. 위 ‘표시’ 버튼에서 항목을 선택하거나 회사 정보를 입력하세요.</td></tr>';
+    s+='<tr class="tot"><td class="c tlb" colspan="3">총액 ① 적합 제도 합계 (연)</td><td class="tlb">'+esc(rng(T.ta[0],T.ta[1]))+'</td><td class="sm">세금 절감 '+esc(rng(T.a.tax[0],T.a.tax[1]))+' + 지원금·이자 '+esc(rng(T.a.cash[0],T.a.cash[1]))+'</td></tr>'+
+       '<tr class="tot2"><td class="c tlb" colspan="3">총액 ② 적합 + 확인필요 포함 (연)</td><td class="tlb">'+esc(rng(T.tb[0],T.tb[1]))+'</td><td class="sm">입력 보완·공고 확인 후 확정되는 금액 포함</td></tr>'+
+       '<tr class="tot2"><td class="c" colspan="3">참고 (합계 제외) — 일회성 절세 · 융자 한도</td><td>일회성 절세 '+esc(T.b.once[1]?rng(T.a.once[0],T.a.once[1])+' (확인필요 포함 '+rng(T.b.once[0],T.b.once[1])+')':'-')+'<br>융자·보증 한도(제도별 최대) '+esc(T.b.loan?won(T.b.loan):'-')+'</td><td class="sm">한도·일회성 금액은 연간 합계에 합산하지 않음'+(T.b.cost[1]?' · 세 부담 증가(법인세율 환원) '+esc(rng(T.b.cost[0],T.b.cost[1]))+' 별도':'')+'</td></tr>';
     sb.innerHTML=s;
 
     /* 2-2 상세 */
     var tb=$('tbV'); tb.innerHTML='';
     list.forEach(function(r){
       var it=r.it, tr=document.createElement('tr');
-      var lvc='b-lv'+Math.max(0,G.LV.indexOf(it.lv));
-      var rc='b-rel'+Math.max(0,G.REL.indexOf(it.rel));
-      var c=[badge(r.st)+(it.chk?'<span class="bd b-ck">자료확인</span>':''),
-        '<div class="nm">'+esc(it.n)+'</div><span class="bd '+lvc+'">'+esc(it.lv)+'</span><div class="sm">'+esc(it.ag)+' · '+esc(it.cat)+'</div>',
+      var c=[String(NO[it.id]),badge(r.st),
+        '<div class="nm">'+esc(it.n)+'</div><div class="sm">'+esc(it.ag)+'</div>',
         G.txt(it.a),condHTML(r),amtDetail(r),
         G.txt(it.w)+(it.d?'<span class="ln"><b>시기·기한</b> '+esc(it.d)+'</span>':''),
-        '<span class="bd '+rc+'">'+esc(it.rel)+'</span><ol class="sr">'+(it.src||[]).slice(0,3).map(function(s){var u=G.safeUrl(s[1]);return '<li>'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+esc(s[0])+'</a>':esc(s[0]))+'</li>';}).join('')+'</ol>'];
-      var lb=['판정','지원·정책명','지원 내용','지원 사유(조건별 판정)','지원금액 산출','신청·문의·시기','출처'];
-      tr.innerHTML=c.map(function(x,i){return '<td data-l="'+lb[i]+'">'+x+'</td>';}).join('');
+        (it.src||[]).slice(0,1).map(function(s){var u=G.safeUrl(s[1]);return u?'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+esc(s[0])+'</a>':esc(s[0]);}).join('')];
+      var lb=['No','판정','지원·정책명','지원 내용','지원 사유(조건별 판정)','지원금액 산출','신청·문의·시기','출처'];
+      tr.innerHTML=c.map(function(x,i){return '<td'+(i<2?' class="c"':'')+' data-l="'+lb[i]+'">'+x+'</td>';}).join('');
       tb.appendChild(tr);
     });
-    if(!list.length) tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:14px;color:#475569">표시할 제도가 없습니다.</td></tr>';
+    if(!list.length) tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:14px;color:#475569">표시할 제도가 없습니다.</td></tr>';
   }
 
   function renderMe(P){
@@ -517,13 +517,13 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
     if(b.cost[1]) k+=kr('세 부담 증가(법인세율 환원)',rng(a.cost[0],a.cost[1]),rng(b.cost[0],b.cost[1]),'종전 세율 대비 추정');
     $('tbK').innerHTML=k;
 
-    var cards=res.filter(function(r){return (r.st==='ok'||r.st==='maybe')&&r.rows.length;}).sort(function(x,y){return ORD[x.st]-ORD[y.st];});
+    var cards=res.filter(function(r){return (r.st==='ok'||r.st==='maybe')&&r.rows.length;}).sort(function(x,y){return (NO[x.it.id]||999)-(NO[y.it.id]||999);});
     var out='';
-    if(!cards.length){out='<tr><td colspan="6" style="padding:10px;color:#475569">계산할 수 있는 예시가 없습니다. ① 회사 정보(규모·업종·소재지·근로자 수·투자·대출 금액 등)를 입력해 주세요.</td></tr>';}
+    if(!cards.length){out='<tr><td colspan="7" style="padding:10px;color:#475569">계산할 수 있는 예시가 없습니다. ① 회사 정보(규모·업종·소재지·근로자 수·투자·대출 금액 등)를 입력해 주세요.</td></tr>';}
     else cards.forEach(function(r){
       var it=r.it;
       r.rows.forEach(function(x,i){
-        out+='<tr>'+(i===0?'<td class="c" rowspan="'+r.rows.length+'">'+badge(r.st)+'</td><td rowspan="'+r.rows.length+'"><div class="nm">'+esc(it.sn||it.n)+'</div><div class="sm">'+esc(it.lv)+' · '+esc(it.ag)+'</div></td>':'')+
+        out+='<tr>'+(i===0?'<td class="c" rowspan="'+r.rows.length+'">'+(NO[it.id]||'')+'</td><td class="c" rowspan="'+r.rows.length+'">'+badge(r.st)+'</td><td rowspan="'+r.rows.length+'"><div class="nm">'+esc(it.sn||it.n)+'</div><div class="sm">'+esc(it.ag)+'</div></td>':'')+
           '<td class="c"><span class="kd '+x.k+'">'+KN[x.k]+'</span></td><td>'+esc(x.l)+'</td><td class="sm">'+esc(x.f)+'</td><td class="a"><b>'+esc(rng(x.lo,x.hi))+'</b></td></tr>';
       });
     });
@@ -556,7 +556,7 @@ table.mtb{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12.5p
     var t=e.target;
     if(t.dataset.k&&LBL[t.dataset.k].typed){ // 선택하면 직접입력값은 비우고 선택값을 따름
       var k=t.dataset.k; $('p_'+k+'Txt').value=''; typedSync(k,false);
-      var nt=$('n_'+k); if(t.value){nt.className='hnt okk';nt.textContent='✔ 선택한 값 : '+SEL[k].filter(function(o){return o[0]===t.value;})[0][1];}
+      var nt=$('n_'+k); if(t.value){nt.className='hnt okk';nt.textContent='✔ '+SEL[k].filter(function(o){return o[0]===t.value;})[0][1];}
     }
     save();renderAll();
   });
