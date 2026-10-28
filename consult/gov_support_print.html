@@ -65,13 +65,13 @@ s.oldv{color:#b91c1c}
 .fixf .ct{font-weight:700;color:var(--tx)}
 .fixf .cr{font-weight:900;color:var(--navy)}
 @media print{
-  @page{size:A4 landscape;margin:8mm 8mm 8mm 8mm}
+  @page{size:A4 landscape;margin:8mm 8mm 6.5mm 8mm;@bottom-center{content:"- " counter(page) " -";font:700 9px "Malgun Gothic",sans-serif;color:#111;vertical-align:bottom;padding-bottom:1.3mm;background:#fff}@bottom-left{content:"";background:#fff}@bottom-right{content:"";background:#fff}}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   body{background:#fff;font-size:8.4px}
   .noprint,#top,.scrh{display:none!important}
   .sheet{max-width:none;margin:0;padding:0;overflow:visible}
   .paper{min-width:0}
-  .fixh{display:flex;position:fixed;left:0;right:0;top:0;height:5.2mm;font-size:14px;align-items:flex-end;background:#fff}
+  .fixh{display:flex;position:fixed;left:0;right:0;top:0;z-index:1;height:5.2mm;font-size:14px;align-items:flex-end;background:#fff}
   .fixh .pa{font-size:10.5px}
   #ovbox{padding-top:6mm;margin-bottom:0;padding-bottom:3mm;break-after:page;page-break-after:always}
   .ottl{font-size:11px;margin:0 0 3px}.ottl span{font-size:8.6px}
@@ -94,8 +94,8 @@ s.oldv{color:#b91c1c}
   .ptb tfoot td{height:9mm!important}
   .ptb tbody tr{break-inside:avoid;page-break-inside:avoid}
   .notes{font-size:8px;break-inside:avoid}
-  .fixf{display:block;position:fixed;left:0;right:0;bottom:0;height:7mm;font-size:9.5px}
-  .fixf .cpf{height:100%}
+  .fixf{display:block;position:fixed;left:0;right:0;bottom:-2.4mm;height:9.4mm;font-size:9.5px;z-index:99;overflow:hidden;background:#fff}
+  .fixf .cpf{height:5mm}
   a{color:#1d4ed8}
 }
 </style>
