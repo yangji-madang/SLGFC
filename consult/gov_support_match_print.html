@@ -121,7 +121,7 @@ body[data-ps=me] #blkA{display:none}
   .ptb .cl{font-size:7.6px}.kd{font-size:7.2px}
   .warn{font-size:8px}
   .ptb .spc th,.ptb .spc td{background:transparent!important}
-  body[data-ps=both] #blkB{break-before:page;page-break-before:always}
+  body[data-ps=both] #blkA{break-before:page;page-break-before:always}
   #blkA .cmpt:first-child,#blkB .cmpt:first-child{margin-top:6mm}
   .fixh{z-index:5}
 }
@@ -136,9 +136,9 @@ body[data-ps=me] #blkA{display:none}
   <a class="lk" href="gov_support_match.html">내 회사 찾기로 돌아가기</a>
 </div>
 <div class="noprint"><div class="ctlb"><b>인쇄 범위</b>
-  <label><input type="radio" name="ps" value="view"> 검색 결과만</label>
   <label><input type="radio" name="ps" value="me"> 내 회사 예시만</label>
-  <label><input type="radio" name="ps" value="both" checked> 둘 다 (예시는 새 페이지부터)</label>
+  <label><input type="radio" name="ps" value="view"> 검색 결과만</label>
+  <label><input type="radio" name="ps" value="both" checked> 둘 다 (예시 → 검색 결과 순, 검색 결과는 새 페이지부터)</label>
   <b style="margin-left:12px">표시 판정</b>
   <label><input type="checkbox" class="vf" value="ok" checked> 적합</label>
   <label><input type="checkbox" class="vf" value="maybe" checked> 확인필요</label>
@@ -149,8 +149,8 @@ body[data-ps=me] #blkA{display:none}
 <div class="fixf"><div class="cpf"><span class="ct" id="ctct"></span><span class="cr" id="cpyt"></span></div></div>
 <div class="sheet"><div class="paper">
   <div class="scrh"><span id="sht"></span><span class="pa" id="sha"></span></div>
-  <div class="blk" id="blkA"></div>
   <div class="blk" id="blkB"></div>
+  <div class="blk" id="blkA"></div>
   <div class="notes"><p id="foot"></p><p id="disc"></p></div>
 </div></div>
 <script src="gov_support_data.js"></script>
@@ -311,7 +311,7 @@ body[data-ps=me] #blkA{display:none}
       '세액공제·감면은 최저한세, 공제 한도, 사후관리(고용 감소·자산 처분 시 추징) 등에 따라 달라지며, 소득금액이 감면 대상 소득에 모두 해당한다고 가정했습니다.',
       '‘확인필요’는 입력이 부족하거나 근거 자료가 단일·2차 출처인 항목입니다. 신청·신고 전 공고문과 국가법령정보센터(law.go.kr)에서 최종 확인하세요.',
       '정부안 단계의 제도(가업상속공제 개편 등)는 국회 확정 전 내용이므로 참고용입니다.'];
-    $('blkB').innerHTML=cmpT()+'<div class="ttl">3. 내 회사 지원금액 예시 · 3-1. 예시 결과</div>'+
+    $('blkB').innerHTML=cmpT()+'<div class="ttl">1. 내 회사 지원금액 예시 · 1-1. 예시 결과</div>'+
       tbl(['No', '판정', '구분', '지원·정책명', '산출항목', '산출근거', '예상금액', '비고'],[4, 6, 8, 16, 17, 24, 12, 13],exampleHTML(res,NO),true)+
       '<ul class="warn">'+wn.map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>';
   }
