@@ -5,7 +5,7 @@
   'use strict';
   var W = 1e8, M = 1e4;
   var ORDER = ['micro', 'small', 'sme', 'mid', 'large'];
-  var CAPITAL = ['seoul', 'hwaseong', 'gyeonggi', 'incheon'];
+  var CAPITAL = ['seoul', 'hwaseong', 'seongnam', 'gwangju', 'yongin', 'gyeonggi', 'incheon'];
   function N(v) { return v !== null && v !== undefined && !isNaN(v); }
   function c(s, t) { return { s: s, t: t }; }
 
@@ -22,7 +22,7 @@
     no: function (k, label) { return function (P) { return c(P.f[k] ? 'f' : 'p', label); }; },
     yes: function (k, label) { return function (P) { return c(P.f[k] ? 'p' : 'f', label); }; },
     form: function (v, label) { return function (P) { return P.form ? c(P.form === v ? 'p' : 'f', label) : c('u', label); }; },
-    region: function (list, label) { return function (P) { return P.region ? c(list.indexOf(P.region) >= 0 ? 'p' : 'f', label) : c('u', label); }; },
+    region: function (list, label) { return function (P) { return (P.region && P.region !== 'nation') ? c(list.indexOf(P.region) >= 0 ? 'p' : 'f', label) : c('u', label); }; },
     ind: function (list, label) { return function (P) { return P.ind ? c(list.indexOf(P.ind) >= 0 ? 'p' : 'f', label) : c('u', label); }; },
     indNot: function (list, label) { return function (P) { return P.ind ? c(list.indexOf(P.ind) < 0 ? 'p' : 'f', label) : c('u', label); }; },
     fn: function (f) { return f; }
@@ -383,7 +383,7 @@
     ex: function () { return [row('상권 공동마케팅 지원(상권 단위)', '상권 규모에 따라 2,000만~4,000만원(개별 점포 지원 아님)', 2000 * M, 4000 * M, 'info')]; }
   };
   RULES.g32 = {
-    req: [R.region(['hwaseong', 'gyeonggi'], '경기도 소재'), R.scale('micro', '소상공인'), R.yes('edu_done', '창업경영교육 12시간 이상 이수'), R.no('tax_arrears', '국세·지방세 체납 없음'), R.no('loan_overdue', '금융 연체 없음'), R.no('closed', '휴·폐업 사업장 아님')],
+    req: [R.region(['hwaseong', 'seongnam', 'gwangju', 'yongin', 'gyeonggi'], '경기도 소재'), R.scale('micro', '소상공인'), R.yes('edu_done', '창업경영교육 12시간 이상 이수'), R.no('tax_arrears', '국세·지방세 체납 없음'), R.no('loan_overdue', '금융 연체 없음'), R.no('closed', '휴·폐업 사업장 아님')],
     info: ['융자기간 5년(1년 거치), 업체당 최대 1.5억원'],
     ex: function (P) {
       if (!(N(P.loan) && P.loan > 0)) return [row('융자 한도(업체당)', '자금별 최대 1억~1.5억원', 1 * W, 1.5 * W, 'loan')];

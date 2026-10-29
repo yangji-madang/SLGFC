@@ -177,7 +177,7 @@
   /* 필터 UI 공통 구성 (보기·인쇄) : 요소 id: fq flv ftg flt fcat fpf frel fchk fend */
   G.initFilterUI = function (F, onChange) {
     var $ = function (id) { return document.getElementById(id); };
-    G.fillDL($('dlv'), G.uniq(G.LV.concat(G.items.map(function (i) { return i.ag.split('·'); }).reduce(function (a, b) { return a.concat(b); }, []), ['서울', '경기', '화성시'])));
+    G.fillDL($('dlv'), G.uniq(G.LV.concat(G.items.map(function (i) { return i.ag.split('·'); }).reduce(function (a, b) { return a.concat(b); }, []), ['서울', '경기', '경기 성남', '경기 광주', '경기 용인', '전국'])));
     G.fillDL($('dtg'), G.TG.concat(G.IND));
     G.fillDL($('dlt'), G.LT);
     var GR = [['clv', 'lvs', G.LV], ['ctg', 'tgs', G.TG.concat(G.IND)], ['clt', 'lts', G.LT], ['ccat', 'cats', G.CAT], ['cpf', 'pfs', G.PF], ['crel', 'rels', G.REL]];
@@ -230,7 +230,7 @@
     '<div class="cg"><label>분류 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="ccat"></div></div>' +
     '<div class="cg"><label>지원 형태 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="cpf"></div></div>' +
     '<div class="cg"><label>출처 등급 (중복 선택 · 다시 누르면 해제)</label><div class="chs" id="crel"></div></div>' +
-    '<div><label for="flv">지급 주체 직접 입력 (쉼표 구분)</label><span class="ao" data-f="lv"><button type="button" data-m="or" class="on">OR</button><button type="button" data-m="and">AND</button></span><input type="text" id="flv" list="dlv" placeholder="예: 서울, 화성시, 경기" autocomplete="off"><datalist id="dlv"></datalist></div>' +
+    '<div><label for="flv">지급 주체 직접 입력 (쉼표 구분)</label><span class="ao" data-f="lv"><button type="button" data-m="or" class="on">OR</button><button type="button" data-m="and">AND</button></span><input type="text" id="flv" list="dlv" placeholder="예: 서울, 경기 성남, 전국" autocomplete="off"><datalist id="dlv"></datalist></div>' +
     '<div><label for="ftg">대상 기업 직접 입력 (쉼표 구분)</label><span class="ao" data-f="tg"><button type="button" data-m="or" class="on">OR</button><button type="button" data-m="and">AND</button></span><input type="text" id="ftg" list="dtg" placeholder="소상공인·제조업 등" autocomplete="off"><datalist id="dtg"></datalist></div>' +
     '<div><label for="flt2">제한조건 직접 입력 (쉼표 구분)</label><span class="ao" data-f="lt"><button type="button" data-m="or" class="on">OR</button><button type="button" data-m="and">AND</button></span><input type="text" id="flt2" list="dlt" placeholder="매출·업력·지역 등" autocomplete="off"><datalist id="dlt"></datalist></div>' +
     '<div class="ck"><input type="checkbox" id="fchk"><label for="fchk" style="margin:0">확인필요 항목만</label></div>' +

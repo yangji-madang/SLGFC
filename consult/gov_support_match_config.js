@@ -368,7 +368,7 @@ window.GOV_MATCH_CONFIG = {
    "form": "corp",
    "scale": "small",
    "ind": "mfg",
-   "region": "hwaseong",
+   "region": "seongnam",
    "age": 4,
    "ceoage": 62,
    "sales": 25,

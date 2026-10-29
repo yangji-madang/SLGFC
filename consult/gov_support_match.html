@@ -235,7 +235,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     form:[['','선택'],['corp','법인'],['indiv','개인사업자']],
     scale:[['','선택'],['micro','소상공인'],['small','소기업(소상공인 제외)'],['sme','중기업(소기업 초과)'],['mid','중견기업'],['large','대기업']],
     ind:[['','선택'],['mfg','제조업'],['trade','도소매업'],['med','의료업'],['svc','기타 서비스업·건설 등'],['rental','부동산임대업'],['consume','소비향락(유흥·사행) 서비스업']],
-    region:[['','선택'],['seoul','서울'],['hwaseong','경기 화성시'],['gyeonggi','경기 기타 지역(화성시 제외)'],['incheon','인천'],['other','비수도권(기타)']],
+    region:[['','선택'],['seoul','서울'],['seongnam','경기 성남시'],['gwangju','경기 광주시'],['yongin','경기 용인시'],['gyeonggi','경기 기타 지역(성남·광주·용인 제외)'],['incheon','인천'],['other','비수도권(기타)'],['nation','전국(소재지 특정 안 함)']],
     mtr:[['','선택'],['6','6%'],['15','15%'],['24','24%'],['35','35%'],['38','38%'],['40','40%'],['42','42%'],['45','45%']]
   };
 
@@ -243,21 +243,24 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
   function nz(s){return String(s==null?'':s).replace(/[\s·ㆍ,()\-]/g,'');}
   var GG=new RegExp(MC.regionGG||'경기|수원|성남|의정부|안양|부천|광명|평택|동두천|안산|고양|과천|구리|남양주|오산|시흥|군포|의왕|하남|용인|파주|이천|안성|김포|양주|여주|연천|포천|가평|양평');
   var OT=new RegExp(MC.regionOT||'부산|대구|대전|울산|세종|강원|충북|충청북|충남|충청남|전북|전라북|전남|전라남|경북|경상북|경남|경상남|제주|청주|천안|전주|창원|포항|구미|춘천|원주|강릉|목포|여수|순천|진주|김해|양산|아산|익산|군산|안동|제천|충주|서산|당진|경주|거제|통영|사천|밀양|광양|나주|서귀포|속초|동해|태백|삼척|영주|영천|상주|문경|경산|김천|논산|공주|보령|계룡|홍성|남원|정읍|김제');
-  var REG_OPT=['서울특별시','인천광역시','경기도 화성시','경기도 수원시','경기도 성남시','경기도 용인시','경기도 고양시','경기도 부천시','경기도 안산시','경기도 안양시','경기도 평택시','경기도 시흥시','경기도 김포시','경기도 파주시','경기도 광주시','경기도 남양주시','경기도 오산시','부산광역시','대구광역시','대전광역시','광주광역시','울산광역시','세종특별자치시','강원특별자치도','충청북도 청주시','충청남도 천안시','전북특별자치도 전주시','전라남도','경상북도 구미시','경상남도 창원시','제주특별자치도'];
+  var REG_OPT=['서울특별시','인천광역시','경기도 성남시','경기도 광주시','경기도 용인시','경기도 수원시','경기도 고양시','경기도 부천시','경기도 안산시','경기도 안양시','경기도 평택시','경기도 시흥시','경기도 김포시','경기도 파주시','경기도 남양주시','경기도 오산시','부산광역시','대구광역시','대전광역시','광주광역시','울산광역시','세종특별자치시','강원특별자치도','충청북도 청주시','충청남도 천안시','전북특별자치도 전주시','전라남도','경상북도 구미시','경상남도 창원시','제주특별자치도'];
   function resRegion(txt){
     var t=nz(txt); if(!t) return {empty:true};
     if(/서울/.test(t)) return {k:'seoul'};
+    if(/전국/.test(t)) return {k:'nation'};
     if(/화성/.test(t)) return {k:'hwaseong'};
+    if(/성남/.test(t)) return {k:'seongnam'};
+    if(/용인/.test(t)) return {k:'yongin'};
     if(/인천/.test(t)) return {k:'incheon'};
     if(/광주/.test(t)){
-      if(/경기|광주시/.test(t)) return {k:'gyeonggi'};
+      if(/경기|광주시/.test(t)) return {k:'gwangju'};
       if(/광주광역시|전남|전라/.test(t)) return {k:'other'};
       return {bad:'‘광주’는 경기 광주시와 광주광역시가 있어 구분이 필요합니다. “경기도 광주시” 또는 “광주광역시”로 입력하세요.',cand:['경기도 광주시','광주광역시']};
     }
     if(GG.test(t)) return {k:'gyeonggi'};
     if(OT.test(t)) return {k:'other'};
     var c=REG_OPT.filter(function(o){var n=nz(o);return n.indexOf(t)>=0||t.indexOf(n.slice(0,3))>=0&&n.length>2;}).slice(0,5);
-    return {bad:'인식할 수 없는 소재지입니다. 시·도 또는 시·군 이름(예: 수원시, 화성시, 서울특별시)을 정확히 입력하거나 목록에서 선택하세요.',cand:c};
+    return {bad:'인식할 수 없는 소재지입니다. 시·도 또는 시·군 이름(예: 수원시, 성남시, 서울특별시)을 정확히 입력하거나 목록에서 선택하세요.',cand:c};
   }
 
   /* ── 업종 직접입력: 한국표준산업분류(KSIC) 표준업종만 인정 ── */
@@ -689,7 +692,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     $('sv').textContent='입력값을 초기화했습니다.'; renderAll();
   });
   $('bSample').addEventListener('click',function(){
-    fill(MC.sample||{v:{form:'corp',scale:'small',ind:'mfg',region:'hwaseong',sales:25,emp:18},f:{}});
+    fill(MC.sample||{v:{form:'corp',scale:'small',ind:'mfg',region:'seongnam',sales:25,emp:18},f:{}});
     save(); renderAll();
     $('sv').textContent='샘플용 예시 값을 채웠습니다. 실제 회사 값으로 바꿔 입력하세요.';
   });
