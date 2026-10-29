@@ -51,6 +51,7 @@ td{background:inherit}
 .wrap td{white-space:normal;word-break:break-all;padding-top:5px;padding-bottom:5px;line-height:1.35}
 th .auto{font-style:normal;font-weight:600;font-size:10.5px;background:#fff;color:var(--pri);border:1px solid var(--pri);border-radius:8px;padding:0 5px;margin-left:5px}
 th .srt{margin-left:4px;color:var(--pri)}
+th.kh{background:#ffd966;color:#3b2a00;border-bottom-color:#b8860b}
 th.dl{box-shadow:inset 4px 0 0 var(--pri)}
 th.dr{box-shadow:inset -4px 0 0 var(--pri)}
 th.fh{position:sticky;top:0;z-index:5}
@@ -297,7 +298,7 @@ const DEFAULT_COLS = [
   {key:'지정일',type:'date',w:100},
   {key:'고객명',type:'text',w:90},
   {key:'생년월일',type:'birth',w:92},
-  {key:'나이',type:'age',w:62,calc:true},
+  {key:'나이',type:'age',w:80,calc:true},
   {key:'휴대폰',type:'phone',w:122},
   {key:'가입일',type:'date',w:100},
   {key:'주소',type:'text',w:270,wide:true},
@@ -318,7 +319,7 @@ const DEFAULT_SET = { freezeCols:6, freezeRows:1, suffix:false, ageMode:'man', w
 const LS_KEY = 'luvmam.db.v1';
 
 const state = {
-  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 4,
+  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 5,
   q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: '', dragRow: ''
 };
 const sync = { cfg: null, sha: '', key: null, salt: null, timer: 0, pushing: false, again: false, applying: false, rev: 0 };
@@ -362,6 +363,10 @@ function migrate(){
       state.rows.forEach(r => { if (r[c.key]) r[c.key] = normDT(r[c.key]); });
     }
     state.sv = 4; b = true;
+  }
+  if (state.sv < 5){
+    state.cols.forEach(c => { if (c.calc && (c.w || 0) < 80) c.w = 80; });
+    state.sv = 5; b = true;
   }
   return a || b;
 }
@@ -437,6 +442,7 @@ function viewRows(){
   return list;
 }
 const ACT_W = 176;
+const KEYCOLS = new Set(['고객명', '생년월일', '나이', '휴대폰', '주소', '관심항목']);
 function render(){
   const grid = $('#grid'), S = state.set, vis = visCols();
   const fc = Math.min(S.freezeCols, vis.length), fr = S.freezeRows;
@@ -452,7 +458,7 @@ function render(){
   h += '<thead><tr>';
   h += '<th class="act' + (fr >= 1 ? ' fh' : '') + (actSticky ? ' fc' : '') + '"' + (actSticky ? ' style="left:0"' : '') + '>No.</th>';
   vis.forEach((c, i) => {
-    const cls = [(fr >= 1 ? 'fh' : ''), (i < fc ? 'fc' : ''), (i === fc - 1 ? 'fc-last' : '')].filter(Boolean).join(' ');
+    const cls = [(fr >= 1 ? 'fh' : ''), (i < fc ? 'fc' : ''), (i === fc - 1 ? 'fc-last' : ''), (KEYCOLS.has(c.label.replace(/\s/g, '')) ? 'kh' : '')].filter(Boolean).join(' ');
     const arrow = state.sortKey === c.key ? '<span class="srt">' + (state.sortDir > 0 ? '▲' : '▼') + '</span>' : '';
     h += '<th draggable="true" data-key="' + esc(c.key) + '" class="' + cls + '"' + (i < fc ? ' style="left:' + left[i] + 'px"' : '') +
          ' title="클릭: 정렬 / 끌어서 놓기: 항목 순서 변경 / 오른쪽 가장자리 끌기: 너비 조정 (더블클릭: 내용에 맞춤)">' + esc(c.label) + (c.calc ? '<i class="auto">자동</i>' : '') + arrow +
@@ -603,13 +609,13 @@ gridEl.addEventListener('pointerdown', e => {
   const c = state.cols.find(x => x.key === h.dataset.rz); if (!c) return;
   e.preventDefault(); e.stopPropagation();
   const th = h.closest('th'); th.setAttribute('draggable', 'false');
-  rzs = { key: c.key, th: th, h: h, x0: e.clientX, w0: c.w, moved: false, w: c.w };
+  rzs = { key: c.key, th: th, h: h, x0: e.clientX, w0: c.w, moved: false, w: c.w, min: c.calc ? 80 : W_MIN };
   h.classList.add('on'); document.body.classList.add('resizing');
 });
 document.addEventListener('pointermove', e => {
   if (!rzs) return;
   const dx = e.clientX - rzs.x0; if (Math.abs(dx) > 2) rzs.moved = true;
-  rzs.w = Math.max(W_MIN, Math.min(W_MAX, Math.round(rzs.w0 + dx)));
+  rzs.w = Math.max(rzs.min, Math.min(W_MAX, Math.round(rzs.w0 + dx)));
   if (!rzRaf) rzRaf = requestAnimationFrame(() => { rzRaf = 0; if (rzs) applyWidth(rzs.key, rzs.w); });
 });
 function endResize(){
@@ -630,7 +636,7 @@ function autoFit(key){
   let m = ctx.measureText(c.label).width + (c.calc ? 44 : 14);
   ctx.font = cs.fontSize + ' ' + cs.fontFamily;
   viewRows().slice(0, 1000).forEach(r => { const w = ctx.measureText(String(cellVal(r, c))).width; if (w > m) m = w; });
-  c.w = Math.max(50, Math.min(600, Math.ceil(m) + 22)); save(); render();
+  c.w = Math.max(c.calc ? 80 : 50, Math.min(600, Math.ceil(m) + 22)); save(); render();
 }
 gridEl.addEventListener('dblclick', e => { const h = e.target.closest('.rz'); if (h){ e.preventDefault(); autoFit(h.dataset.rz); } });
 
@@ -1202,7 +1208,7 @@ function syncInit(){
 window.__luvmam = { regionOf, calcAge, parseYMD, state, render, moveRowBy, sync };
 
 load();
-if (state.sv < 4){ migrate(); save(); }
+if (state.sv < 5){ migrate(); save(); }
 $('#asof').value = state.asOf;
 render();
 syncInit();
