@@ -1010,11 +1010,20 @@ function simRender(){
   b+='<tr><td>아동수당</td><td>월 '+ad+' × '+NAT.adM+'개월(만 9세 미만)</td><td>'+fm(ad*NAT.adM)+'</td></tr>';
   b+='<tr><td>임신·출산 진료비</td><td>임신 1회(단태아)</td><td>'+fm(NAT.preg)+'</td></tr>';
   b+='<tr class="tt"><td>국가 공통 소계</td><td></td><td>'+fm(natv[rk])+'</td></tr>';
-  items.forEach(function(it){b+='<tr><td>'+it[0]+'</td><td>'+RK[rk]+'</td><td>'+fm(it[1][rk])+'</td></tr>';});
-  b+='<tr><td>'+sgName+' 지원</td><td>'+RK[rk]+'</td><td>'+fm(sgv[rk])+'</td></tr>';
+  var nl=[];
+  function eun(t){var c=t.charCodeAt(t.length-1)-44032;return(c>=0&&c%28!==0)?"은":"는";}
+  function noSup(nm,arr,done){
+    if(!done&&!man){return nm+eun(nm)+" 자체 지원금이 조사되지 않았습니다(0원으로 계산).";}
+    var any=false,k;for(k=0;k<4;k++){if(arr[k]>0){any=true;}}
+    return nm+eun(nm)+(any?" "+RK[rk]+" 출생 기준 ":" ")+"자체 지원금이 없습니다.";
+  }
+  if(sdv[rk]>0){items.forEach(function(it){b+='<tr><td>'+it[0]+'</td><td>'+RK[rk]+'</td><td>'+fm(it[1][rk])+'</td></tr>';});}
+  else{nl.push(noSup(R.n,sdv,sdDone));}
+  if(sgv[rk]>0){b+='<tr><td>'+sgName+' 지원</td><td>'+RK[rk]+'</td><td>'+fm(sgv[rk])+'</td></tr>';}
+  else if(sg){nl.push(noSup(sg,sgv,sgDone));}
   b+='<tr class="tt"><td>예상 합계</td><td></td><td>'+fm(tot[rk])+'</td></tr></tbody>';
   $("#brk").innerHTML=b;
-  $("#n1").textContent=CFG.n1;
+  $("#n1").textContent=(nl.length?nl.join("\n")+"\n":"")+CFG.n1;
   /* 목돈 만들기 */
   var mon=num("#sMon"),age=Math.min(30,Math.max(1,Math.round(num("#sAge"))||18)),rate=num("#sRate");
   var n=age*12,prin=mon*n,val=fv(mon,age,rate);
