@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-28",
+ "updated": "2026-10-29",
  "sections": [
   {
    "title": "SLI GFC",
@@ -145,6 +145,16 @@
         "세제"
        ],
        "pin": true
+      },
+      {
+       "label": "출산.육아지원제도",
+       "url": "https://yangji-madang.github.io/SLGFC/luvmom/baby_child.html",
+       "tags": [
+        "출산",
+        "육아",
+        "모성보호"
+       ],
+       "pin": false
       },
       {
        "label": "내 회사에 맞는 정부지원정책 찾기",
