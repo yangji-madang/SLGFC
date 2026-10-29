@@ -9,6 +9,13 @@
 *{box-sizing:border-box}
 html,body{margin:0}
 body{font:13px/1.35 "Malgun Gothic","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;color:var(--tx);background:#fff}
+body{display:flex;flex-direction:column;min-height:100vh}
+body>.fx{flex:1 0 auto;min-width:0}
+footer{position:sticky;bottom:0;z-index:30;width:100%;background:#fff;border-top:2px solid var(--navy);padding:6px 16px 8px}
+footer .cp{display:flex;justify-content:space-between;align-items:center;gap:2px 12px;flex-wrap:wrap;text-align:left;font-weight:900;font-size:13.5px;color:var(--navy);letter-spacing:.2px}
+footer .cp .ct{font-weight:700;color:var(--tx);white-space:pre-wrap}
+footer .cp .cr{font-weight:900;margin-left:auto;white-space:pre-wrap}
+@media (max-width:760px){footer{padding:5px 8px 6px}footer .cp{font-size:11px}}
 #top{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:30;flex-wrap:wrap;background:var(--navy);color:#fff;padding:3px 8px;min-height:28px}
 #top h1{font-size:15px;margin:0;font-weight:700;white-space:nowrap}
 #top .sp{flex:1}
@@ -124,8 +131,8 @@ body{word-break:keep-all;overflow-wrap:break-word}
 #sim .btns{margin:8px 0;text-align:center}
 #sim .btns button{font:inherit;font-size:14px;font-weight:700;padding:6px 18px;border:0;border-radius:6px;background:var(--navy);color:#fff;cursor:pointer}
 #sim .sm2{display:inline-block;font:inherit;font-size:12px;height:24px;margin:2px 3px 0 0;padding:0 8px;border:1px solid var(--navy);background:#fff;color:var(--navy);border-radius:4px;cursor:pointer}
-@page sim{size:A4 landscape;margin:8mm}
-@page tbl{size:A4 landscape;margin:8mm}
+@page sim{size:A4 landscape;margin:8mm 8mm 11mm 8mm}
+@page tbl{size:A4 landscape;margin:8mm 8mm 11mm 8mm}
 @media screen and (max-width:760px){
  #top small{display:none}
  #flt{max-height:38vh;overflow:auto}
@@ -147,7 +154,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 }
 @media print{
  html,body{height:auto;overflow:visible;display:block;background:#fff}
- #top,.noprint,#flt{display:none!important}
+ #top,.noprint,#flt,footer{display:none!important}
  #pgM{break-before:page;page-break-before:always;border-top:0;margin:0}
  body.ps #pgM{break-before:auto;page-break-before:auto}
  #ov,#ext .ei,#ft{break-inside:avoid}
@@ -202,6 +209,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 </style>
 </head>
 <body>
+<div class="fx">
 <div id="top">
   <h1 id="hTitle">출산·육아 지원금 검색</h1>
   <small id="hSub">중앙정부·지자체</small>
@@ -308,6 +316,8 @@ body{word-break:keep-all;overflow-wrap:break-word}
 </div>
 </div>
 
+</div>
+<footer><div class="cp"><span class="ct" id="ctc"></span><span class="cr" id="cpy"></span></div></footer>
 <script src="baby_child_config.js"></script>
 <script src="baby_child_updates.js"></script>
 <script>
@@ -772,7 +782,8 @@ render();
 
 /* ===== 설정(관리페이지 연동) ===== */
 var DEFFOOT="※ 지자체 제도는 대표 사례만 수록(전 시·군·구 전수 아님)하며, 지급액·요건·기한은 각 지자체 공고가 우선합니다.\n※ 「확인필요」는 단일 출처·출처 간 상이·시행 전(심의 중) 항목입니다.\n※ 출처 구분: 공식(정부·지자체 게시) / 보도(언론) / 참고(2차 정리글).\n※ 아이사랑포털 childcare.go.kr, 복지로 bokjiro.go.kr에서 최종 확인하세요.";
-var CFG={regNote:"※ 지역·시·군·구 선택 목록에는 이 자료에 지원제도가 수록된 지역만 표시됩니다(대표 사례 수록, 전 지자체 전수 아님).\n목록에 없는 지역도 자체 지원이 있을 수 있으니 해당 지자체 공고를 확인하시고, 지역별 합계는 아래 시뮬레이션(전 지역 선택 가능)을 이용하세요.",n1:"※ 부모급여 2년 전액, 아동수당 만 9세 미만 기준입니다(어린이집 이용 시 부모급여는 보육료를 뺀 차액만 현금, 0세 약 41.6만원).\n※ 양육수당·육아휴직급여·산후도우미·조건부 항목(무주택 출산가구 주거비 등)은 합계에서 제외했습니다.\n※ 아동수당은 2027년부터 매년 1세씩 확대 예정이며, 2027.7.1 이후 출생아는 아이맞이지원금·아동기본수당으로 개편될 수 있습니다(국회 심의 중).\n※ 아동수당 지역구분은 보건복지부 2026.3 발표(수도권 10만·비수도권 10.5만·인구감소 우대 11만·특별 12만) 기준이며, 행정안전부 2026.10.7 인구감소지역 재지정(89→92곳, 금정구·동두천시·통영시 추가)의 아동수당 반영 시점은 확인 전입니다.\n※ 지역사랑상품권 지급 시 인구감소지역 월 1만원 추가는 지자체별 자율이라 합계에서 제외했습니다.",n2:"💰 매월 {월적립}만원씩 아이 만 {종료나이}세까지 모으면 원금 {원금}만원입니다(막대: 파랑=원금, 초록=가정 수익).\n※ 아동수당은 만 9세 미만까지 받으므로 그 이후 적립분 {미충당}만원은 가계에서 이어서 적립하는 가정입니다.\n※ 이자·수익은 상품마다 달라 수익률 0%면 원금만 표시됩니다.",src:"출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015\n복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html\n보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&act=view&list_no=1490257\n임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100\n서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980\n경기 시군별 출산장려 지원현황 data.gg.go.kr\n임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279\n경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02\n아동수당 지역구분 정책브리핑 korea.kr/news/policyNewsView.do?newsId=148961693\n인구감소지역 재지정 경향신문 2026.10.7\n인천 자치구 개편 경기일보 2026.6.30\n전남광주통합특별시 구성 위키독스",title:"출산·육아 지원금 검색",prtTitle:"출산·육아 지원금 현황",prtTitleSim:"출산·육아 지원금 예시",sub:"중앙정부·지자체",asOf:"",showChg:true,chgDays:30,simTitle:"우리 지역 출산·육아 지원금 안내",
+var DEFCT="삼성생명 개인/기업 재무 전문가 윤현철 팀장 010-9510-1088",DEFCP="ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.";
+var CFG={contact:DEFCT,copy:"",regNote:"※ 지역·시·군·구 선택 목록에는 이 자료에 지원제도가 수록된 지역만 표시됩니다(대표 사례 수록, 전 지자체 전수 아님).\n목록에 없는 지역도 자체 지원이 있을 수 있으니 해당 지자체 공고를 확인하시고, 지역별 합계는 아래 시뮬레이션(전 지역 선택 가능)을 이용하세요.",n1:"※ 부모급여 2년 전액, 아동수당 만 9세 미만 기준입니다(어린이집 이용 시 부모급여는 보육료를 뺀 차액만 현금, 0세 약 41.6만원).\n※ 양육수당·육아휴직급여·산후도우미·조건부 항목(무주택 출산가구 주거비 등)은 합계에서 제외했습니다.\n※ 아동수당은 2027년부터 매년 1세씩 확대 예정이며, 2027.7.1 이후 출생아는 아이맞이지원금·아동기본수당으로 개편될 수 있습니다(국회 심의 중).\n※ 아동수당 지역구분은 보건복지부 2026.3 발표(수도권 10만·비수도권 10.5만·인구감소 우대 11만·특별 12만) 기준이며, 행정안전부 2026.10.7 인구감소지역 재지정(89→92곳, 금정구·동두천시·통영시 추가)의 아동수당 반영 시점은 확인 전입니다.\n※ 지역사랑상품권 지급 시 인구감소지역 월 1만원 추가는 지자체별 자율이라 합계에서 제외했습니다.",n2:"💰 매월 {월적립}만원씩 아이 만 {종료나이}세까지 모으면 원금 {원금}만원입니다(막대: 파랑=원금, 초록=가정 수익).\n※ 아동수당은 만 9세 미만까지 받으므로 그 이후 적립분 {미충당}만원은 가계에서 이어서 적립하는 가정입니다.\n※ 이자·수익은 상품마다 달라 수익률 0%면 원금만 표시됩니다.",src:"출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015\n복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html\n보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&act=view&list_no=1490257\n임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100\n서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980\n경기 시군별 출산장려 지원현황 data.gg.go.kr\n임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279\n경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02\n아동수당 지역구분 정책브리핑 korea.kr/news/policyNewsView.do?newsId=148961693\n인구감소지역 재지정 경향신문 2026.10.7\n인천 자치구 개편 경기일보 2026.6.30\n전남광주통합특별시 구성 위키독스",title:"출산·육아 지원금 검색",prtTitle:"출산·육아 지원금 현황",prtTitleSim:"출산·육아 지원금 예시",sub:"중앙정부·지자체",asOf:"",showChg:true,chgDays:30,simTitle:"우리 지역 출산·육아 지원금 안내",
  simSub:"국가 · 시·도 · 시·군·구 지원을 한 장에 모았습니다.",org:"",gaName:"",phone:"",saveMonthly:10,saveAge:18,saveRate:0,foot:"※ 지자체 제도는 대표 사례만 수록(전 시·군·구 전수 아님)하며, 지급액·요건·기한은 각 지자체 공고가 우선합니다.\n※ 「확인필요」는 단일 출처·출처 간 상이·시행 전(심의 중) 항목입니다.\n※ 출처 구분: 공식(정부·지자체 게시) / 보도(언론) / 참고(2차 정리글).\n※ 아이사랑포털 childcare.go.kr, 복지로 bokjiro.go.kr에서 최종 확인하세요.",extras:[],
  disc:"※ 금액 단위는 만원입니다.\n※ 지원 조건·금액은 수시로 바뀌므로 신청 전 주민센터·구청에서 꼭 확인하세요.\n※ 이 자료는 지원금 안내용이며 특정 보험·금융상품 가입을 권유하지 않습니다.\n※ 목돈 만들기의 수익률은 가정치이며 실제 상품의 수익을 보장하지 않습니다.\n※ 금액은 아이 1명 기준 총액이며, 분할 지급은 지급 기간 동안 거주 요건을 지켜야 받을 수 있습니다.",
  consult:"육아지원금으로 목돈 만들기\n태아/어린이 보험 비교 점검\n자녀 교육 자금 / 저축 연금보험 점검"};
@@ -783,6 +794,15 @@ var CFG={regNote:"※ 지역·시·군·구 선택 목록에는 이 자료에 �
 })();
 function fmtD(x){var m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(x||"");return m?m[1]+"."+("0"+m[2]).slice(-2)+"."+("0"+m[3]).slice(-2):(x||"");}
 function aoStr(){var u=window.BABY_CHILD_UPDATES;return fmtD((typeof CFG!=="undefined"&&CFG&&CFG.asOf)||(u&&u.asOf)||"");}
+function setFoot(){
+  var c=(CFG.contact!=null)?CFG.contact:DEFCT,cp=CFG.copy?CFG.copy:DEFCP;
+  $("#ctc").textContent=c;$("#cpy").textContent=cp;
+  function q(x){return '"'+String(x).replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/\n/g," ")+'"';}
+  var st=document.getElementById("hfStyle");
+  if(!st){st=document.createElement("style");st.id="hfStyle";document.head.appendChild(st);}
+  var bx="{@bottom-left{content:"+q(c)+";font:bold 9px sans-serif;color:#14365d}@bottom-right{content:"+q(cp)+";font:900 9px sans-serif;color:#14365d}}";
+  st.textContent="@page tbl"+bx+"@page sim"+bx;
+}
 function setPT(){
   if(typeof CFG==="undefined"||!CFG){return;}
   var t=CFG.prtTitle||"출산·육아 지원금 현황",ao=aoStr(),r=ao?"(기준일 : "+ao+")":"";
@@ -801,7 +821,7 @@ function applyCfg(){
   $("#hSub").textContent=CFG.sub;
   $("#asof").textContent=ao?"기준일 "+ao:"";
   document.title=CFG.title;
-  render();setPT();
+  render();setPT();setFoot();
   $("#ft").textContent=CFG.foot||DEFFOOT;
   $("#regNote").textContent=CFG.regNote;
   var ex=$("#ext");ex.innerHTML="";
