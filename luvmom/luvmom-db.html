@@ -83,6 +83,7 @@ body.resizing,body.resizing *{cursor:col-resize !important;user-select:none}
 .ib.on{background:var(--pri);color:#fff;border-color:var(--pri)}
 td.wc{white-space:pre-line;word-break:break-all;line-height:1.35;padding-top:5px;padding-bottom:5px}
 .dt{display:flex;gap:6px}
+.note-l{font-size:12px;color:var(--warn);margin-top:2px;line-height:1.35}
 .dt input{flex:1;min-width:0}
 .form select{border:1px solid #aab7c8;border-radius:6px;padding:6px 8px;background:#fff;width:100%}
 .empty{padding:60px 20px;text-align:center;color:var(--sub);font-size:15px}
@@ -302,7 +303,7 @@ const DEFAULT_COLS = [
   {key:'진료병원',type:'text',w:140},
   {key:'가입경로',type:'text',w:96},
   {key:'관심항목',type:'text',w:280,area:true},
-  {key:'상담 희망 시간',type:'text',w:128},
+  {key:'상담 희망 시간',type:'datetime',w:150},
   {key:'상담결과',type:'select',w:110,wrap:true,opts:RESULT_OPTS},
   {key:'상담 내용',type:'text',w:260,area:true,wrap:true},
   {key:'상담일시',type:'datetime',w:150}
@@ -313,7 +314,7 @@ const DEFAULT_SET = { freezeCols:6, freezeRows:1, suffix:false, ageMode:'man', w
 const LS_KEY = 'luvmam.db.v1';
 
 const state = {
-  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 3,
+  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 4,
   q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: '', dragRow: ''
 };
 const sync = { cfg: null, sha: '', key: null, salt: null, timer: 0, pushing: false, again: false, applying: false, rev: 0 };
@@ -349,6 +350,14 @@ function migrate(){
       });
     }
     state.sv = 3; b = true;
+  }
+  if (state.sv < 4){
+    const cols = state.cols, hi = cols.findIndex(c => c.label.replace(/\s/g, '') === '상담희망시간');
+    if (hi >= 0){
+      const c = cols[hi]; c.type = 'datetime'; c.w = Math.max(c.w || 0, 150);
+      state.rows.forEach(r => { if (r[c.key]) r[c.key] = normDT(r[c.key]); });
+    }
+    state.sv = 4; b = true;
   }
   return a || b;
 }
@@ -662,7 +671,8 @@ function openForm(id, afterId){
     else if (c.type === 'datetime'){
       const m = String(rec[c.key] || '').match(/^(\d{4}-\d{2}-\d{2})(?: (\d{2}:\d{2}))?$/);
       inp = '<div class="dt"><input type="date" data-dtd="' + fields.indexOf(c) + '" value="' + (m ? m[1] : '') + '"><input type="time" data-dtt="' + fields.indexOf(c) + '" value="' + (m && m[2] ? m[2] : '') + '">' +
-        '<button type="button" class="btn sm" data-now="' + fields.indexOf(c) + '">현재</button></div>';
+        '<button type="button" class="btn sm" data-now="' + fields.indexOf(c) + '">현재</button></div>' +
+        ((!m && rec[c.key]) ? '<div class="note-l">기존 입력값 "' + esc(rec[c.key]) + '" — 날짜·시간을 선택하면 새 값으로 바뀌고, 선택하지 않으면 그대로 유지됩니다.</div>' : '');
     }
     else if (c.type === 'date') inp = '<input type="date" data-k="' + esc(c.key) + '" value="' + val + '">';
     else if (c.type === 'birth') inp = '<input type="text" inputmode="numeric" maxlength="10" data-k="' + esc(c.key) + '" value="' + val + '" placeholder="YYYYMMDD">';
@@ -687,7 +697,8 @@ function openForm(id, afterId){
     const o = {}; fields.forEach((c, i) => {
       if (c.type === 'datetime'){
         const d = ov.querySelector('[data-dtd="' + i + '"]').value, t = ov.querySelector('[data-dtt="' + i + '"]').value;
-        o[c.key] = d ? (t ? d + ' ' + t : d) : '';
+        const raw = String(rec[c.key] || ''), legacy = raw && !/^\d{4}-\d{2}-\d{2}( \d{2}:\d{2})?$/.test(raw);
+        o[c.key] = d ? (t ? d + ' ' + t : d) : (legacy ? raw : '');
       } else o[c.key] = normByType(c, ov.querySelector('[data-k="' + c.key + '"]').value);
     });
     return o;
@@ -1187,7 +1198,7 @@ function syncInit(){
 window.__luvmam = { regionOf, calcAge, parseYMD, state, render, moveRowBy, sync };
 
 load();
-if (state.sv < 3){ migrate(); save(); }
+if (state.sv < 4){ migrate(); save(); }
 $('#asof').value = state.asOf;
 render();
 syncInit();
