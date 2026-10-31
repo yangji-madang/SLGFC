@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>환급률과 적금 비교</title>
+<style>
+:root{
+  --navy:#16223F; --navy-soft:#2B3557; --gold:#C6A15B;
+  --paper:#F3F2EF; --line:#D5D9E2; --ink:#1E2433; --ink-soft:#566074;
+  --ins:#1F4E9C; --ins-bg:#E7EDF8; --sav:#B26A00; --sav-bg:#FBEFD9;
+  --calc:#EEF3FA; --ok:#13795B; --warn:#B23A2C;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Malgun Gothic",sans-serif;font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:14px 16px 10px}
+header{background:var(--navy);color:#fff;border-radius:10px;padding:14px 18px;border-bottom:4px solid var(--gold)}
+header h1{margin:0;font-size:24px;letter-spacing:-0.3px}
+header p{margin:4px 0 0;font-size:13.5px;color:#D8DDEA}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{background:var(--navy-soft);border-radius:999px;padding:3px 12px;font-size:13px}
+.chip b{color:var(--gold)}
+.chip.stale{background:var(--warn)}
+.chip.stale b{color:#fff}
+section{background:#fff;border:1px solid var(--line);border-radius:10px;margin-top:12px;padding:12px 14px}
+section h2{margin:0 0 8px;font-size:17px;color:var(--navy);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tag{font-size:12px;font-weight:600;border-radius:4px;padding:1px 8px}
+.tag.ins{background:var(--ins-bg);color:var(--ins)}
+.tag.sav{background:var(--sav-bg);color:var(--sav)}
+.tag.res{background:#E3F3EC;color:var(--ok)}
+.hint{font-size:13px;color:var(--ink-soft);margin:0 0 8px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:center;white-space:nowrap}
+th{background:#E9EDF5;font-size:13.5px;color:var(--navy)}
+#insTbl th{background:var(--ins-bg)} #savTbl th{background:var(--sav-bg)}
+td.calc{background:var(--calc);font-weight:700}
+td.num{text-align:right}
+input[type=text],select{font:inherit;border:1px solid #9AA9C2;border-radius:5px;padding:5px 7px;background:#fff;color:var(--ink);width:100%}
+input[type=text]{text-align:right;min-width:104px}
+input[readonly]{background:#F1F3F7;color:var(--ink-soft)}
+td.sm input{min-width:70px;max-width:96px}
+select{min-width:100px}
+input:focus,select:focus{outline:2px solid var(--gold);outline-offset:0}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+button{font:inherit;font-size:13.5px;border:1px solid var(--navy);background:#fff;color:var(--navy);border-radius:6px;padding:5px 12px;cursor:pointer}
+button:hover{background:var(--navy);color:#fff}
+button.pri{background:var(--navy);color:#fff}
+button.pri:hover{background:var(--navy-soft)}
+button.mini{padding:3px 8px;font-size:12.5px}
+button.del{border-color:#B8BFCC;color:#7A8499;padding:3px 8px}
+label.chk{font-size:13.5px;display:flex;align-items:center;gap:5px;cursor:pointer}
+.neg{color:var(--warn)} .pos{color:var(--ok)}
+.verdict{background:#F7F9FC;border-left:5px solid var(--gold);border-radius:6px;padding:8px 12px;margin:8px 0}
+.verdict ul{margin:4px 0 0;padding-left:20px}
+.verdict li{margin:3px 0}
+.win-ins{color:var(--ins);font-weight:700} .win-sav{color:var(--sav);font-weight:700}
+.bars{display:grid;gap:8px;margin-top:10px}
+.brow{display:grid;grid-template-columns:90px 1fr;gap:8px;align-items:center}
+.brow .lb{font-weight:700;font-size:13.5px}
+.bw{display:grid;gap:3px}
+.bl{display:flex;align-items:center;gap:6px;font-size:12.5px;white-space:nowrap}
+.bl i{display:block;height:15px;border-radius:3px;min-width:2px}
+.bl.i i{background:var(--ins)} .bl.s i{background:var(--sav)}
+.notes{font-size:12.8px;color:var(--ink-soft);margin:8px 0 0;padding-left:18px}
+.notes li{margin:2px 0}
+footer{display:flex;justify-content:flex-end;padding:8px 4px 4px}
+.copy{font-size:12px;color:var(--ink-soft)}
+.modal{position:fixed;inset:0;background:rgba(22,34,63,.55);display:none;align-items:flex-start;justify-content:center;padding:24px 12px;overflow:auto;z-index:20}
+.modal.on{display:flex}
+.mbox{background:#fff;border-radius:10px;max-width:980px;width:100%;padding:14px 16px;border-top:5px solid var(--gold)}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.mhead h3{margin:0;font-size:18px;color:var(--navy)}
+.rbase{font-size:13.5px;margin:6px 0}
+.warnbox{background:#FDF0EE;border:1px solid #E8B9B2;color:var(--warn);border-radius:6px;padding:5px 10px;font-size:13px;margin:6px 0}
+#rateTbl td.l{text-align:left}
+#rateTbl input[type=text]{min-width:60px;text-align:left}
+@media(max-width:640px){header h1{font-size:20px}.brow{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>환급률과 적금 비교</h1>
+  <p>보험 해지환급금의 환급률·연이율을 계산하고, 같은 조건의 적금과 비교하여 어느 쪽이 얼마나 유리한지 확인합니다.</p>
+  <div class="meta">
+    <span class="chip">계산일 <b id="todayTxt"></b></span>
+    <span class="chip" id="asOfChip">적금금리 기준일 <b id="asOfTxt"></b></span>
+  </div>
+</header>
+
+<section>
+  <h2><span class="tag ins">1</span> 보험 환급률 표 <span class="hint" style="margin:0">월보험료·해지시점·해지환급금(설계서 수치)을 입력하면 나머지가 자동 계산됩니다.</span></h2>
+  <div class="scroll">
+  <table id="insTbl">
+    <thead><tr><th>No</th><th>월보험료(원)</th><th>해지시점(년)</th><th>총납입보험료(원)</th><th>해지환급금(원)</th><th>환급률</th><th>연이율(연복리 환산)</th><th></th></tr></thead>
+    <tbody></tbody>
+  </table>
+  </div>
+  <div class="bar">
+    <button class="pri" id="addRow">+ 행 추가</button>
+    <button id="exampleBtn">예시 채우기(가상 수치)</button>
+    <button id="resetBtn">전체 초기화</button>
+  </div>
+  <ul class="notes">
+    <li>총납입보험료 = 월보험료 × 12 × 해지시점(년). 환급률 = 해지환급금 ÷ 총납입보험료.</li>
+    <li>연이율 = 매월 초 납입(월납) 기준, 납입금 전체가 해지환급금이 되는 월 수익률을 구해 연복리(1+월수익률)^12−1로 환산한 값입니다.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="tag sav">2</span> 적금 비교표 <span class="hint" style="margin:0">월적금액·년이율·납입기간·복리/단리를 선택하면 적립액이 자동 계산됩니다.</span></h2>
+  <div class="bar" style="margin:0 0 8px">
+    <label class="chk"><input type="checkbox" id="syncChk" checked> 보험 조건과 동일하게 연동(월적금액=월보험료, 납입기간=해지시점)</label>
+    <button class="pri" id="rateBtn">은행별 적금금리표 보기</button>
+  </div>
+  <div class="scroll">
+  <table id="savTbl">
+    <thead><tr><th>No</th><th>월적금액(원)</th><th>년이율(%)</th><th>납입기간(년)</th><th>복리/단리</th><th>적립액(원, 세전)</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  </div>
+  <ul class="notes">
+    <li>매월 초 납입 기준. 단리 = 원금 + 월납입액 × (연이율÷12) × n(n+1)÷2 (n=납입개월수). 월복리 = 월납입액 × (1+i) × ((1+i)^n−1) ÷ i (i=연이율÷12).</li>
+    <li>금액은 원 미만 절사한 예상치이며, 실제 상품의 이자 계산 방식(일할 계산·우대조건 등)에 따라 달라질 수 있습니다.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="tag res">3</span> 결론 : 어느 쪽이 얼마나 유리한가</h2>
+  <div class="bar" style="margin:0 0 6px">
+    <label class="chk">비교 기준
+      <select id="taxMode" style="width:auto">
+        <option value="pre">세전 비교 (세금 미반영)</option>
+        <option value="post1">세후 비교 : 적금 이자 15.4% 과세 / 보험 차익 비과세</option>
+        <option value="post2">세후 비교 : 적금·보험 모두 15.4% 과세</option>
+      </select>
+    </label>
+  </div>
+  <div id="verdict"></div>
+  <div class="scroll">
+  <table id="resTbl">
+    <thead><tr><th>해지시점</th><th>총 납입액</th><th>보험 환급금</th><th>적금 적립액</th><th>차액(보험−적금)</th><th>유리한 쪽</th><th>보험 연이율</th><th>적금 연이율</th><th>연이율 격차</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  </div>
+  <div class="bars" id="bars"></div>
+  <ul class="notes">
+    <li>세후 비교 시 이자소득세·지방소득세 합계 15.4%를 적용합니다(소득세법 제129조 원천징수세율 14% + 지방소득세 1.4%). 보험 비과세는 저축성보험 보험차익 비과세 요건(소득세법 시행령 제25조 제3항: 월적립식은 납입 5년 이상·계약 10년 이상 유지·월 보험료 150만원 이하 등) 충족을 전제로 하며, 보장성보험은 해당 규정과 별도로 판단해야 하므로 계약별 세무 확인이 필요합니다.</li>
+    <li>보험 해지환급금에는 사망·질병 등 보장 비용과 사업비가 포함되어 있어 순수 저축 상품인 적금과 단순 비교하면 보험의 보장 가치는 반영되지 않습니다.</li>
+    <li>보험과 적금의 월납입액·기간이 다르면 직접 비교가 왜곡될 수 있으므로 위 2번 표의 연동 체크를 권장합니다.</li>
+  </ul>
+</section>
+
+<footer><span class="copy">ⓒ2026. Yoon Hyunchul All Rights Reserved.</span></footer>
+</div>
+
+<div class="modal" id="rateModal">
+  <div class="mbox">
+    <div class="mhead">
+      <h3>시중 주요 은행 적금금리표</h3>
+      <div class="bar" style="margin:0">
+        <button id="editBtn">금리 직접 수정</button>
+        <button id="closeBtn" class="pri">닫기</button>
+      </div>
+    </div>
+    <p class="rbase"><b>기준일 : <span id="mAsOf"></span></b> · 적용 대상 : 적금비교표 <b id="mTarget"></b>행 · 계산일 <span id="mToday"></span></p>
+    <div id="staleBox"></div>
+    <div class="scroll">
+    <table id="rateTbl">
+      <thead><tr><th>은행</th><th>상품명</th><th>기본금리(%)</th><th>최고금리(%)</th><th>상품 기준일</th><th>비고</th><th>입력에 적용</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <div class="bar" id="editBar" style="display:none">
+      <label class="chk">기준일 <input type="text" id="asOfInput" style="width:120px;text-align:left" placeholder="YYYY-MM-DD"></label>
+      <button id="addRateBtn">+ 상품 추가</button>
+      <button class="pri" id="saveRateBtn">저장(이 브라우저)</button>
+      <button id="restoreBtn">초기값 복원</button>
+    </div>
+    <ul class="notes">
+      <li>출처 : <span id="mSource"></span></li>
+      <li>최고금리는 급여이체·카드 사용 등 우대조건을 모두 충족할 때의 금리이며, 상품별 가입대상·만기(대부분 1년)·월 납입한도가 있습니다. 장기(5~10년) 비교 시에는 만기 후 재가입을 가정한 참고값으로만 사용하세요.</li>
+      <li>금리는 수시로 변동되므로 이 표는 기준일 시점의 값입니다. 같은 폴더의 rates.json 파일(또는 위 '금리 직접 수정')로 갱신할 수 있으며, 웹(http/https)으로 열면 rates.json의 최신 기준일 값을 자동으로 불러옵니다.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+/*CALC_START*/
+var TAX = 0.154;
+function fvAnnuityDue(P, n, r){
+  if (Math.abs(r) < 1e-12) return P * n;
+  return P * (1 + r) * ((Math.pow(1 + r, n) - 1) / r);
+}
+function irrMonthly(P, n, V){
+  if (!(P > 0) || !(n > 0) || !(V > 0)) return null;
+  var lo = -0.05, hi = 0.08;
+  if (fvAnnuityDue(P, n, lo) > V || fvAnnuityDue(P, n, hi) < V) return null;
+  for (var k = 0; k < 200; k++){
+    var mid = (lo + hi) / 2;
+    if (fvAnnuityDue(P, n, mid) < V) lo = mid; else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+function annualFromMonthly(r){ return Math.pow(1 + r, 12) - 1; }
+function savingsFV(P, years, ratePct, type){
+  var n = Math.round(years * 12), i = ratePct / 100 / 12;
+  if (!(P > 0) || n <= 0) return 0;
+  if (type === 'simple') return P * n + P * i * n * (n + 1) / 2;
+  return fvAnnuityDue(P, n, i);
+}
+/*CALC_END*/
+
+var DEFAULT_RATES = {
+  asOf: "2026-10-30",
+  source: "금융감독원 금융상품통합비교공시 기준 정기적금 비교(vyomakesa.com, 2026-10-30 표시 기준) / KB국민은행: 2026-07-22~24 보도자료 기준",
+  items: [
+    {bank:"우리은행", product:"우리 사장님 성장 적금", base:2.00, max:6.00, date:"2026-10-30", note:""},
+    {bank:"하나은행", product:"급여하나 월복리 적금", base:2.95, max:5.25, date:"2026-10-30", note:"월복리"},
+    {bank:"카카오뱅크", product:"카카오뱅크 AI 목표적금", base:3.00, max:5.00, date:"2026-10-30", note:""},
+    {bank:"부산은행", product:"부산이라 좋다 Big적금", base:2.60, max:4.80, date:"2026-10-30", note:""},
+    {bank:"경남은행", product:"BNK 위더스WithUs 자유적금", base:2.30, max:4.80, date:"2026-10-30", note:""},
+    {bank:"광주은행", product:"전남광주통합특별시 사랑적금", base:2.70, max:4.70, date:"2026-10-30", note:""},
+    {bank:"IBK기업은행", product:"IBK중기근로자우대적금", base:2.50, max:4.70, date:"2026-10-30", note:""},
+    {bank:"신한은행", product:"신한 플랫폼 적금(병역명문가)", base:1.50, max:4.50, date:"2026-10-30", note:"가입대상 제한 상품"},
+    {bank:"제주은행", product:"탐이나요적금", base:1.65, max:4.35, date:"2026-10-30", note:""},
+    {bank:"케이뱅크", product:"주거래우대 자유적금", base:3.70, max:4.30, date:"2026-10-30", note:""},
+    {bank:"KB국민은행", product:"KB맑은하늘적금(1년)", base:null, max:3.45, date:"2026-07-24", note:"기본금리 미확인 · 기준일 상이"}
+  ]
+};
+var LS_KEY = 'slgfc_rates_v1';
+var rates = JSON.parse(JSON.stringify(DEFAULT_RATES));
+var rows = [];
+var activeSav = 0;
+var editMode = false;
+
+function $(id){ return document.getElementById(id); }
+function num(s){ var v = parseFloat(String(s == null ? '' : s).replace(/[^0-9.\-]/g, '')); return isNaN(v) ? 0 : v; }
+function won(x){ return Math.floor(x).toLocaleString('ko-KR') + '원'; }
+function signWon(x){ var f = Math.floor(Math.abs(x)); return (x < 0 ? '−' : (x > 0 ? '+' : '')) + f.toLocaleString('ko-KR') + '원'; }
+function pct(x, d){ return (x * 100).toFixed(d == null ? 2 : d) + '%'; }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function todayStr(){ var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+
+function newRow(){ return {prem:'', years:'', surr:'', sprem:'', syears:'', rate:'3.00', type:'monthly'}; }
+
+function fmtMoneyInput(el){
+  var pos = el.selectionStart, before = el.value.length;
+  var digits = el.value.replace(/[^0-9]/g, '');
+  var f = digits ? Number(digits).toLocaleString('en-US') : '';
+  el.value = f;
+  var np = Math.max(0, pos + (f.length - before));
+  try { el.setSelectionRange(np, np); } catch(e){}
+}
+function cleanDecimal(el){
+  var v = el.value.replace(/[^0-9.]/g, '');
+  var p = v.indexOf('.');
+  if (p >= 0) v = v.slice(0, p + 1) + v.slice(p + 1).replace(/\./g, '');
+  el.value = v;
+}
+
+function buildTables(){
+  var ib = document.querySelector('#insTbl tbody'), sb = document.querySelector('#savTbl tbody');
+  ib.innerHTML = ''; sb.innerHTML = '';
+  rows.forEach(function(r, i){
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + (i + 1) + '</td>' +
+      '<td><input type="text" inputmode="numeric" data-k="prem" data-i="' + i + '" value="' + esc(r.prem) + '"></td>' +
+      '<td class="sm"><input type="text" inputmode="decimal" data-k="years" data-i="' + i + '" value="' + esc(r.years) + '"></td>' +
+      '<td class="calc num" id="tot' + i + '">-</td>' +
+      '<td><input type="text" inputmode="numeric" data-k="surr" data-i="' + i + '" value="' + esc(r.surr) + '"></td>' +
+      '<td class="calc" id="rr' + i + '">-</td>' +
+      '<td class="calc" id="yy' + i + '">-</td>' +
+      '<td><button class="del" data-del="' + i + '" title="행 삭제">삭제</button></td>';
+    ib.appendChild(tr);
+    var tr2 = document.createElement('tr');
+    tr2.innerHTML =
+      '<td>' + (i + 1) + '</td>' +
+      '<td><input type="text" inputmode="numeric" data-k="sprem" data-i="' + i + '" value="' + esc(r.sprem) + '"></td>' +
+      '<td class="sm"><div style="display:flex;gap:4px;align-items:center"><input type="text" inputmode="decimal" data-k="rate" data-i="' + i + '" value="' + esc(r.rate) + '"><button class="mini" data-pick="' + i + '">금리표</button></div></td>' +
+      '<td class="sm"><input type="text" inputmode="decimal" data-k="syears" data-i="' + i + '" value="' + esc(r.syears) + '"></td>' +
+      '<td><select data-k="type" data-i="' + i + '"><option value="monthly"' + (r.type === 'monthly' ? ' selected' : '') + '>복리(월복리)</option><option value="simple"' + (r.type === 'simple' ? ' selected' : '') + '>단리</option></select></td>' +
+      '<td class="calc num" id="fv' + i + '">-</td>';
+    sb.appendChild(tr2);
+  });
+}
+
+function getVals(i){
+  var r = rows[i], sync = $('syncChk').checked;
+  var prem = num(r.prem), years = num(r.years);
+  var sprem = sync ? prem : num(r.sprem), syears = sync ? years : num(r.syears);
+  return {prem:prem, years:years, surr:num(r.surr), sprem:sprem, syears:syears, rate:num(r.rate), type:r.type};
+}
+
+function updateAll(){
+  var sync = $('syncChk').checked, mode = $('taxMode').value;
+  var res = [], mismatch = false;
+  rows.forEach(function(r, i){
+    var v = getVals(i);
+    var n = Math.round(v.years * 12);
+    var total = v.prem * 12 * v.years;
+    $('tot' + i).textContent = total > 0 ? Math.floor(total).toLocaleString('ko-KR') : '-';
+    var rr = $('rr' + i), yy = $('yy' + i);
+    if (total > 0 && v.surr > 0){
+      var ratio = v.surr / total;
+      rr.textContent = (ratio * 100).toFixed(2) + '%';
+      rr.className = 'calc ' + (ratio < 1 ? 'neg' : 'pos');
+      var m = irrMonthly(v.prem, n, v.surr);
+      if (m === null){ yy.textContent = '산출불가'; yy.className = 'calc'; }
+      else { var a = annualFromMonthly(m); yy.textContent = (a * 100).toFixed(2) + '%'; yy.className = 'calc ' + (a < 0 ? 'neg' : 'pos'); }
+    } else { rr.textContent = '-'; rr.className = 'calc'; yy.textContent = '-'; yy.className = 'calc'; }
+
+    var spInp = document.querySelector('input[data-k="sprem"][data-i="' + i + '"]');
+    var syInp = document.querySelector('input[data-k="syears"][data-i="' + i + '"]');
+    spInp.readOnly = sync; syInp.readOnly = sync;
+    if (sync){ spInp.value = v.prem ? Math.floor(v.prem).toLocaleString('en-US') : ''; syInp.value = r.years; }
+    var fv = savingsFV(v.sprem, v.syears, v.rate, v.type);
+    $('fv' + i).textContent = fv > 0 ? Math.floor(fv).toLocaleString('ko-KR') : '-';
+
+    if (!sync && (v.sprem !== v.prem || v.syears !== v.years)) mismatch = true;
+    if (total > 0 && v.surr > 0 && fv > 0){
+      var sPrin = v.sprem * Math.round(v.syears * 12);
+      var savAdj = fv, insAdj = v.surr;
+      if (mode !== 'pre') savAdj = sPrin + Math.max(0, fv - sPrin) * (1 - TAX);
+      if (mode === 'post2') insAdj = total + Math.max(0, v.surr - total) * (1 - TAX);
+      var mi = irrMonthly(v.prem, n, insAdj), ms = irrMonthly(v.sprem, Math.round(v.syears * 12), savAdj);
+      res.push({i:i, years:v.years, total:total, ins:insAdj, sav:savAdj, ai:mi === null ? null : annualFromMonthly(mi), as:ms === null ? null : annualFromMonthly(ms)});
+    }
+  });
+  renderResult(res, mode, mismatch);
+}
+
+function renderResult(res, mode, mismatch){
+  var vb = $('verdict'), tb = document.querySelector('#resTbl tbody'), bars = $('bars');
+  tb.innerHTML = ''; bars.innerHTML = '';
+  if (!res.length){
+    vb.innerHTML = '<div class="verdict">1번 표의 월보험료·해지시점·해지환급금과 2번 표의 년이율을 입력하면 결론이 자동으로 표시됩니다.</div>';
+    return;
+  }
+  var base = mode === 'pre' ? '세전' : (mode === 'post1' ? '세후(적금만 15.4% 과세)' : '세후(모두 15.4% 과세)');
+  var lis = '', max = 0;
+  res.forEach(function(x){ max = Math.max(max, x.ins, x.sav); });
+  res.forEach(function(x){
+    var d = x.ins - x.sav, ratio = x.sav > 0 ? d / x.sav : 0;
+    var who = d > 0 ? '보험' : (d < 0 ? '적금' : '동일');
+    var cls = d > 0 ? 'win-ins' : (d < 0 ? 'win-sav' : '');
+    var gap = (x.ai !== null && x.as !== null) ? (x.ai - x.as) : null;
+    lis += '<li><b>' + x.years + '년 해지</b> : ' + (d === 0 ? '두 방식의 금액이 같습니다.' :
+      '<span class="' + cls + '">' + who + '이(가) ' + won(Math.abs(d)) + ' (' + (Math.abs(ratio) * 100).toFixed(1) + '%) 더 유리</span>') +
+      ' <span style="color:var(--ink-soft)">(보험 ' + won(x.ins) + ' vs 적금 ' + won(x.sav) + ')</span></li>';
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + x.years + '년</td>' +
+      '<td class="num">' + won(x.total) + '</td>' +
+      '<td class="num">' + won(x.ins) + '</td>' +
+      '<td class="num">' + won(x.sav) + '</td>' +
+      '<td class="calc num ' + (d < 0 ? 'neg' : 'pos') + '">' + signWon(d) + '</td>' +
+      '<td class="calc ' + cls + '">' + (d === 0 ? '동일' : who + ' 유리') + '</td>' +
+      '<td>' + (x.ai === null ? '-' : pct(x.ai)) + '</td>' +
+      '<td>' + (x.as === null ? '-' : pct(x.as)) + '</td>' +
+      '<td class="' + (gap !== null && gap < 0 ? 'neg' : 'pos') + '">' + (gap === null ? '-' : (gap >= 0 ? '+' : '−') + (Math.abs(gap) * 100).toFixed(2) + '%p') + '</td>';
+    tb.appendChild(tr);
+    var w1 = max > 0 ? (x.ins / max * 72) : 0, w2 = max > 0 ? (x.sav / max * 72) : 0;
+    var b = document.createElement('div');
+    b.className = 'brow';
+    b.innerHTML = '<div class="lb">' + x.years + '년 해지</div><div class="bw">' +
+      '<div class="bl i"><i style="width:' + w1.toFixed(1) + '%"></i>보험 ' + won(x.ins) + '</div>' +
+      '<div class="bl s"><i style="width:' + w2.toFixed(1) + '%"></i>적금 ' + won(x.sav) + '</div></div>';
+    bars.appendChild(b);
+  });
+  vb.innerHTML = '<div class="verdict"><b>비교 기준 : ' + base + '</b> · 적금 금리 기준일 ' + esc(rates.asOf) + (mismatch ? '<div class="neg">※ 보험과 적금의 월납입액·기간이 서로 다른 행이 있어 직접 비교에 유의하세요.</div>' : '') + '<ul>' + lis + '</ul></div>';
+}
+
+/* ---------- 금리표 ---------- */
+function daysSince(s){
+  var p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+  if (!p) return null;
+  var d0 = new Date(+p[1], +p[2] - 1, +p[3]), t = new Date(); t.setHours(0, 0, 0, 0);
+  return Math.round((t - d0) / 86400000);
+}
+function renderHeadMeta(){
+  $('todayTxt').textContent = todayStr();
+  $('asOfTxt').textContent = rates.asOf;
+  var dd = daysSince(rates.asOf), chip = $('asOfChip');
+  chip.className = 'chip' + (dd !== null && dd > 7 ? ' stale' : '');
+  if (dd !== null && dd > 7) chip.innerHTML = '적금금리 기준일 <b>' + esc(rates.asOf) + '</b> (' + dd + '일 경과 · 갱신 필요)';
+  else chip.innerHTML = '적금금리 기준일 <b>' + esc(rates.asOf) + '</b>' + (dd !== null ? ' (' + dd + '일 전)' : '');
+}
+function renderRates(){
+  $('mAsOf').textContent = rates.asOf;
+  $('mToday').textContent = todayStr();
+  $('mTarget').textContent = (activeSav + 1);
+  $('mSource').textContent = rates.source;
+  var dd = daysSince(rates.asOf);
+  $('staleBox').innerHTML = (dd !== null && dd > 7) ? '<div class="warnbox">기준일로부터 ' + dd + '일이 지났습니다. 금리가 변동되었을 수 있으니 각 은행 공시로 확인 후 갱신해 주세요.</div>' : '';
+  var tb = document.querySelector('#rateTbl tbody'); tb.innerHTML = '';
+  rates.items.forEach(function(it, k){
+    var tr = document.createElement('tr');
+    if (editMode){
+      tr.innerHTML =
+        '<td><input type="text" data-r="bank" data-k="' + k + '" value="' + esc(it.bank) + '"></td>' +
+        '<td><input type="text" data-r="product" data-k="' + k + '" value="' + esc(it.product) + '"></td>' +
+        '<td><input type="text" data-r="base" data-k="' + k + '" value="' + (it.base == null ? '' : it.base) + '"></td>' +
+        '<td><input type="text" data-r="max" data-k="' + k + '" value="' + (it.max == null ? '' : it.max) + '"></td>' +
+        '<td><input type="text" data-r="date" data-k="' + k + '" value="' + esc(it.date) + '"></td>' +
+        '<td><input type="text" data-r="note" data-k="' + k + '" value="' + esc(it.note) + '"></td>' +
+        '<td><button class="del" data-rdel="' + k + '">삭제</button></td>';
+    } else {
+      tr.innerHTML =
+        '<td class="l"><b>' + esc(it.bank) + '</b></td><td class="l">' + esc(it.product) + '</td>' +
+        '<td>' + (it.base == null ? '-' : it.base.toFixed(2)) + '</td>' +
+        '<td><b>' + (it.max == null ? '-' : it.max.toFixed(2)) + '</b></td>' +
+        '<td>' + esc(it.date) + '</td><td class="l">' + esc(it.note) + '</td>' +
+        '<td>' + (it.base == null ? '' : '<button class="mini" data-ap="' + k + '" data-t="base">기본 적용</button> ') +
+        (it.max == null ? '' : '<button class="mini pri" data-ap="' + k + '" data-t="max">최고 적용</button>') + '</td>';
+    }
+    tb.appendChild(tr);
+  });
+  $('editBar').style.display = editMode ? 'flex' : 'none';
+  $('editBtn').textContent = editMode ? '수정 취소' : '금리 직접 수정';
+  $('asOfInput').value = rates.asOf;
+}
+function openModal(idx){
+  if (typeof idx === 'number') activeSav = idx;
+  editMode = false;
+  renderRates();
+  $('rateModal').classList.add('on');
+}
+function applyRate(k, t){
+  var it = rates.items[k], val = it[t];
+  if (val == null) return;
+  rows[activeSav].rate = Number(val).toFixed(2);
+  var inp = document.querySelector('input[data-k="rate"][data-i="' + activeSav + '"]');
+  if (inp) inp.value = rows[activeSav].rate;
+  $('rateModal').classList.remove('on');
+  updateAll();
+}
+function loadRates(){
+  var ls = null;
+  try { ls = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch(e){}
+  if (ls && ls.asOf && ls.items) rates = ls;
+  if (/^https?:/.test(location.protocol)){
+    fetch('rates.json?v=' + Date.now()).then(function(r){ return r.json(); }).then(function(j){
+      if (j && j.asOf && j.items && (!ls || j.asOf > ls.asOf)){ rates = j; renderHeadMeta(); updateAll(); }
+    }).catch(function(){});
+  }
+}
+
+/* ---------- 이벤트 ---------- */
+function handleInput(e){
+  var el = e.target, k = el.getAttribute('data-k'), i = el.getAttribute('data-i');
+  if (k === null || i === null || el.getAttribute('data-r')) return;
+  if (k === 'prem' || k === 'surr' || k === 'sprem') fmtMoneyInput(el);
+  else if (k === 'years' || k === 'syears' || k === 'rate') cleanDecimal(el);
+  rows[+i][k] = el.value;
+  updateAll();
+}
+document.addEventListener('input', handleInput);
+document.addEventListener('change', function(e){
+  var el = e.target;
+  if (el.getAttribute('data-k') === 'type' && el.getAttribute('data-i') !== null){ rows[+el.getAttribute('data-i')].type = el.value; updateAll(); }
+});
+document.addEventListener('focusin', function(e){
+  var i = e.target.getAttribute && e.target.getAttribute('data-i');
+  if (i !== null && i !== undefined && e.target.closest('#savTbl')) activeSav = +i;
+});
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (t.hasAttribute('data-del')){ if (rows.length > 1){ rows.splice(+t.getAttribute('data-del'), 1); } else { rows[0] = newRow(); } activeSav = 0; buildTables(); updateAll(); }
+  else if (t.hasAttribute('data-pick')){ openModal(+t.getAttribute('data-pick')); }
+  else if (t.hasAttribute('data-ap')){ applyRate(+t.getAttribute('data-ap'), t.getAttribute('data-t')); }
+  else if (t.hasAttribute('data-rdel')){ rates.items.splice(+t.getAttribute('data-rdel'), 1); renderRates(); }
+});
+document.addEventListener('input', function(e){
+  var el = e.target, r = el.getAttribute && el.getAttribute('data-r');
+  if (!r) return;
+  var it = rates.items[+el.getAttribute('data-k')];
+  if (r === 'base' || r === 'max'){ var v = el.value.replace(/[^0-9.]/g, ''); it[r] = v === '' ? null : parseFloat(v); }
+  else it[r] = el.value;
+});
+$('addRow').onclick = function(){ rows.push(newRow()); buildTables(); updateAll(); };
+$('resetBtn').onclick = function(){ rows = [newRow()]; activeSav = 0; buildTables(); updateAll(); };
+$('exampleBtn').onclick = function(){
+  var ex = [[5, 52800000], [10, 118000000], [20, 330000000]];
+  rows = ex.map(function(x){ var r = newRow(); r.prem = '1,000,000'; r.years = String(x[0]); r.surr = x[1].toLocaleString('en-US'); return r; });
+  activeSav = 0; buildTables(); updateAll();
+};
+$('syncChk').onchange = updateAll;
+$('taxMode').onchange = updateAll;
+$('rateBtn').onclick = function(){ openModal(activeSav); };
+$('closeBtn').onclick = function(){ $('rateModal').classList.remove('on'); };
+$('rateModal').addEventListener('click', function(e){ if (e.target === $('rateModal')) $('rateModal').classList.remove('on'); });
+var ratesSnap = null;
+$('editBtn').onclick = function(){
+  if (!editMode){ ratesSnap = JSON.stringify(rates); editMode = true; }
+  else { rates = JSON.parse(ratesSnap); editMode = false; }
+  renderRates();
+};
+$('addRateBtn').onclick = function(){ rates.items.push({bank:'', product:'', base:null, max:null, date:$('asOfInput').value || todayStr(), note:''}); renderRates(); };
+$('saveRateBtn').onclick = function(){
+  var v = $('asOfInput').value.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v)){ alert('기준일은 YYYY-MM-DD 형식으로 입력해 주세요.'); return; }
+  rates.asOf = v;
+  try { localStorage.setItem(LS_KEY, JSON.stringify(rates)); } catch(e){}
+  editMode = false; renderRates(); renderHeadMeta(); updateAll();
+};
+$('restoreBtn').onclick = function(){
+  try { localStorage.removeItem(LS_KEY); } catch(e){}
+  rates = JSON.parse(JSON.stringify(DEFAULT_RATES)); editMode = false; renderRates(); renderHeadMeta(); updateAll();
+};
+
+/* ---------- 시작 ---------- */
+(function init(){
+  var r = newRow(); r.prem = '1,000,000'; r.years = '10';
+  rows = [r];
+  loadRates();
+  renderHeadMeta();
+  buildTables();
+  updateAll();
+})();
+</script>
+</body>
+</html>
