@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-29",
+ "updated": "2026-10-31",
  "sections": [
   {
    "title": "SLI GFC",
@@ -49,6 +49,12 @@
      "title": "상품정보",
      "pin": false,
      "links": [
+      {
+       "label": "환급률 VS 적금비교",
+       "url": "https://yangji-madang.github.io/SLGFC/Refund_vs_Savings.html",
+       "tags": [],
+       "pin": true
+      },
       {
        "label": "New플러스원 고환급특약 검색",
        "url": "Prod/newplus1_surrendervalue.html",
