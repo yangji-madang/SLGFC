@@ -94,6 +94,12 @@
        "pin": true
       },
       {
+       "label": "세금계산기",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/tax_simul.html",
+       "tags": [],
+       "pin": true
+      },
+      {
        "label": "CO파트너",
        "url": "https://copartner.kr/co-report",
        "tags": [
