@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>세금 계산 시뮬레이터 (법인세 · 종합소득세 · 상속세 · 증여세)</title>
+<style>
+:root{--navy:#14284b;--navy2:#22407a;--gold:#b08d3c;--gold2:#e9d9ac;--bg:#f2f4f8;--card:#fff;--line:#d5dbe6;--txt:#1b2536;--mute:#5d6a80;--red:#b3261e;--blue:#1b5fb3;--ok:#2a7a43}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'맑은 고딕','Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--txt);font-size:15px;line-height:1.35}
+button{font-family:inherit;cursor:pointer}
+.top{background:var(--navy);color:#fff;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:3px solid var(--gold)}
+.top .ttl{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.top .ttl small{font-size:13px;font-weight:400;color:var(--gold2);margin-left:10px}
+.top .basis{font-size:12.5px;color:var(--gold2)}
+#taxTabs{display:flex;gap:4px;padding:8px 16px 0;background:#e6eaf2;border-bottom:1px solid var(--line);flex-wrap:wrap}
+#taxTabs button{border:1px solid var(--line);border-bottom:none;background:#f7f8fb;color:var(--navy);font-size:16px;font-weight:700;padding:8px 24px;border-radius:8px 8px 0 0}
+#taxTabs button.on{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:inset 0 3px 0 var(--gold)}
+#rateBand{background:#fffdf5;border-bottom:1px solid var(--gold2);padding:5px 16px;font-size:12.5px;display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
+#rateBand .rl{font-weight:700;color:var(--navy);margin-right:2px}
+#rateBand .chip{background:#fff;border:1px solid var(--gold2);border-radius:10px;padding:1px 8px;white-space:nowrap}
+#rateBand .chip b{color:var(--navy2)}
+#rateBand .more{margin-left:auto;border:1px solid var(--gold);background:#fff;color:var(--navy);border-radius:10px;font-size:12px;padding:1px 10px}
+#caseBar{display:flex;align-items:flex-end;gap:4px;padding:8px 16px 0;flex-wrap:wrap;background:var(--bg)}
+.ctab{display:flex;align-items:center;gap:4px;border:1px solid var(--line);border-bottom:none;background:#fff;border-radius:8px 8px 0 0;padding:5px 10px;font-size:14px;font-weight:700;color:var(--navy);cursor:pointer;position:relative}
+.ctab.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+.ctab .x,.ctab .ed{border:none;background:transparent;color:inherit;font-size:13px;padding:0 2px;opacity:.75}
+.ctab .x:hover,.ctab .ed:hover{opacity:1}
+.ctab input{font:inherit;width:110px;padding:1px 4px;border:1px solid var(--navy);border-radius:4px}
+.cbtn{border:1px solid var(--navy2);background:#fff;color:var(--navy2);border-radius:6px;font-size:13px;padding:5px 10px;font-weight:700}
+.cbtn:hover{background:var(--navy2);color:#fff}
+.cbtn.alt{border-color:var(--gold);color:#7a5e16}
+.cbtn.alt:hover{background:var(--gold);color:#fff}
+#viewBar{display:flex;gap:6px;padding:6px 16px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);background:#fff}
+#viewBar .seg button{border:1px solid var(--navy2);background:#fff;color:var(--navy2);padding:4px 14px;font-weight:700;font-size:13.5px}
+#viewBar .seg button:first-child{border-radius:6px 0 0 6px}
+#viewBar .seg button:last-child{border-radius:0 6px 6px 0;border-left:none}
+#viewBar .seg button.on{background:var(--navy2);color:#fff}
+#viewBar .sp{flex:1}
+#main{padding:10px 16px 16px}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:12px;align-items:start}
+@media(max-width:1050px){.wrap{grid-template-columns:1fr}}
+.form{display:flex;flex-direction:column;gap:8px}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.sec>h3{margin:0;padding:6px 12px;background:var(--navy);color:#fff;font-size:14.5px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
+.sec>h3 .tg{color:var(--gold2);font-size:12px}
+.sec.closed .grid,.sec.closed .sdesc{display:none}
+.sdesc{font-size:12.5px;color:var(--mute);padding:4px 12px 0;background:#fafbfd}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:6px 10px;padding:8px 12px 10px}
+.f{min-width:0}
+.f.hide{display:none}
+.f label{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:#2c3a54;margin-bottom:2px}
+.q{flex:none;width:17px;height:17px;border-radius:50%;border:1px solid var(--gold);background:#fff8e1;color:#7a5e16;font-size:11px;font-weight:700;line-height:14px;padding:0}
+.q:hover{background:var(--gold);color:#fff}
+.inp{display:flex;align-items:center;gap:4px}
+.inp input,.inp select{width:100%;min-width:0;height:31px;border:1px solid #b9c2d3;border-radius:5px;padding:0 7px;font:inherit;font-size:14.5px;background:#fff;color:var(--txt)}
+.inp input.num{text-align:right}
+.inp input:focus,.inp select:focus{outline:2px solid var(--gold2);border-color:var(--gold)}
+.inp .u{flex:none;font-size:12.5px;color:var(--mute);min-width:14px}
+.kr{font-size:11.5px;color:var(--navy2);min-height:14px;text-align:right}
+.f.chk .row{display:flex;align-items:center;gap:6px;height:31px}
+.f.chk input{width:17px;height:17px}
+.f.chk .lt{font-size:13px;font-weight:700;color:#2c3a54}
+.f.ro .roval{height:31px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;background:#fbf6e6;border:1px dashed var(--gold);border-radius:5px;font-weight:700;color:#5b4410;font-size:14.5px}
+.f.w2{grid-column:span 2}
+.res{position:sticky;top:6px;max-height:calc(100vh - 12px);overflow:auto;background:var(--card);border:1px solid var(--navy);border-radius:8px}
+@media(max-width:1050px){.res{position:static;max-height:none}}
+.res h2{margin:0;background:var(--navy);color:#fff;font-size:15px;padding:7px 12px;display:flex;justify-content:space-between;align-items:center}
+.res h2 small{color:var(--gold2);font-weight:400;font-size:12px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px}
+.tile{background:#f7f9fd;border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+.tile.main{background:var(--navy);border-color:var(--navy);grid-column:span 2}
+.tile .tl{font-size:12px;color:var(--mute)}
+.tile .tv{font-size:18px;font-weight:700;color:var(--navy);text-align:right}
+.tile .tk{font-size:11.5px;color:var(--navy2);text-align:right;min-height:14px}
+.tile.main .tl,.tile.main .tk{color:var(--gold2)}
+.tile.main .tv{color:#fff;font-size:22px}
+table.rt{width:100%;border-collapse:collapse;font-size:13.5px}
+table.rt td{padding:3px 8px;border-top:1px solid #e8ecf3;vertical-align:top}
+table.rt td.v{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:600}
+table.rt tr.hd td{background:#e9eef7;color:var(--navy);font-weight:700;border-top:1px solid var(--line)}
+table.rt tr.sub td{background:#f7f9fd;font-weight:700}
+table.rt tr.tot td{background:#fbf3d9;font-weight:700;color:#4a3708;border-top:2px solid var(--gold)}
+table.rt tr.note td{color:var(--mute);font-size:12px}
+table.rt .d{display:block;font-size:11.5px;color:var(--mute);font-weight:400}
+.neg{color:var(--blue)}
+.warns{padding:6px 10px;display:flex;flex-direction:column;gap:3px}
+.warn{background:#fff4e5;border:1px solid #f0c27a;color:#7a4a00;border-radius:5px;font-size:12.5px;padding:3px 8px}
+.cmpWrap{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px}
+.cmpTop{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font-size:13px}
+.tscroll{overflow:auto;max-height:calc(100vh - 230px);border:1px solid var(--line);border-radius:6px}
+table.ct{border-collapse:separate;border-spacing:0;font-size:13.5px;min-width:100%}
+table.ct th,table.ct td{padding:4px 10px;border-bottom:1px solid #e4e9f1;border-right:1px solid #eef1f6;background:#fff}
+table.ct thead th{position:sticky;top:0;z-index:3;background:var(--navy);color:#fff;text-align:center;white-space:nowrap}
+table.ct th.fc,table.ct td.fc{position:sticky;left:0;z-index:2;min-width:230px;max-width:330px;background:#f4f6fb;font-weight:600;border-right:2px solid var(--line)}
+table.ct thead th.fc{z-index:4;background:var(--navy)}
+table.ct td.v{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;min-width:140px}
+table.ct td .dl{display:block;font-size:11.5px;font-weight:700}
+table.ct td .dl.up{color:var(--red)}
+table.ct td .dl.dn{color:var(--blue)}
+table.ct tr.hd td{background:#e9eef7;color:var(--navy);font-weight:700}
+table.ct tr.sub td{font-weight:700}
+table.ct tr.tot td{background:#fbf3d9;font-weight:700}
+table.ct tr.diff td.v{background:#fff8e1}
+table.ct tr.tot td.fc,table.ct tr.hd td.fc{background:#efe6c4}
+h4.cmpH{margin:12px 0 4px;color:var(--navy);font-size:14.5px}
+.empty{padding:30px;text-align:center;color:var(--mute);background:#fff;border:1px dashed var(--line);border-radius:8px}
+footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 16px 12px;font-size:12.5px;color:#33415c;border-top:2px solid var(--gold);background:#fff}
+.disc{padding:5px 16px;font-size:12.5px;color:#5a3d00;background:#fff4e5;border-top:1px solid #f0c27a}
+#modal{position:fixed;inset:0;background:rgba(10,20,40,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:14px}
+#modal.on{display:flex}
+#modal .box{background:#fff;border-radius:10px;max-width:640px;width:100%;max-height:86vh;overflow:auto;border-top:5px solid var(--gold);box-shadow:0 10px 40px rgba(0,0,0,.35)}
+#modal .mh{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--navy);color:#fff}
+#modal .mh b{font-size:16px}
+#modal .mh button{background:transparent;border:none;color:#fff;font-size:20px;line-height:1}
+#modal .mb{padding:12px 16px;font-size:14.5px;line-height:1.5}
+#modal .mb p{margin:0 0 7px}
+#modal .law{margin-top:8px;padding:6px 10px;background:#f4f6fb;border-left:4px solid var(--gold);font-size:13px;color:#33415c}
+#modal .chk{margin-top:8px;padding:6px 10px;background:#fff4e5;border-left:4px solid #e0a040;font-size:13px;color:#6b4300}
+#modal table{border-collapse:collapse;width:100%;font-size:13.5px;margin:4px 0}
+#modal th,#modal td{border:1px solid var(--line);padding:3px 8px;text-align:right}
+#modal th{background:#e9eef7;text-align:center}
+@media print{
+ .top,#taxTabs,#caseBar,#viewBar,.form,#rateBand,.disc{display:none!important}
+ .wrap{display:block}.res{position:static;max-height:none;border:none}
+ .tscroll{max-height:none;overflow:visible}
+ body{background:#fff}
+}
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="ttl">세금 계산 시뮬레이터<small>법인세 · 종합소득세 · 상속세 · 증여세</small></div>
+ <div class="basis">적용 기준 : 2026.10.31 현재 시행 세법 (2026 세제개편안 미반영)</div>
+</header>
+<nav id="taxTabs"></nav>
+<div id="rateBand"></div>
+<div id="caseBar"></div>
+<div id="viewBar"></div>
+<div id="main"></div>
+<div class="disc">※ 본 계산 결과는 입력값에 따른 참고용 추정치입니다. 실제 신고 시에는 현행 법령·시행령과 개별 사실관계를 반드시 확인하시기 바랍니다.</div>
+<footer>
+ <div>삼성생명 개인/기업 재무 전문가 윤현철 팀장 · 010-9510-1088</div>
+ <div>ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.</div>
+</footer>
+<div id="modal" role="dialog" aria-modal="true"><div class="box"><div class="mh"><b id="mTitle"></b><button type="button" id="mClose" aria-label="닫기">✕</button></div><div class="mb" id="mBody"></div></div></div>
+<script>
+'use strict';
+/* ===== 공통 유틸 ===== */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const N=x=>{const n=Number(x);return isFinite(n)?n:0;};
+const fl=x=>Math.floor(x+1e-6),mx=Math.max,mn=Math.min;
+const fmt=n=>{n=Math.round(N(n));return (n<0?'-':'')+Math.abs(n).toLocaleString('ko-KR');};
+function krw(n){
+  n=Math.round(N(n)); if(!n) return '';
+  const s=n<0?'-':''; n=Math.abs(n);
+  const jo=fl(n/1e12), eok=fl((n%1e12)/1e8), man=fl((n%1e8)/1e4), won=n%1e4, p=[];
+  if(jo)p.push(jo.toLocaleString('ko-KR')+'조');
+  if(eok)p.push(eok.toLocaleString('ko-KR')+'억');
+  if(man)p.push(man.toLocaleString('ko-KR')+'만');
+  if(won)p.push(won.toLocaleString('ko-KR'));
+  return s+p.join(' ')+'원';
+}
+function slab(base,br){
+  let t=0,prev=0;
+  for(const b of br){
+    const u=b[0],r=b[1];
+    if(base>prev) t+=(mn(base,u)-prev)*r;
+    if(base<=u) break;
+    prev=u;
+  }
+  return t;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* ===== 도움말 / 필드 정의 ===== */
+const HELP={};
+function H(key,title,body,law,chk){HELP[key]={t:title,b:body,l:law||'',c:chk||''};}
+const MODS={};
+const ORDER=['corp','inc','inh','gift'];
+const M=(id,label,o)=>Object.assign({id,label,type:'money'},o||{});
+const P=(id,label,o)=>Object.assign({id,label,type:'pct'},o||{});
+const I=(id,label,o)=>Object.assign({id,label,type:'int'},o||{});
+const SE=(id,label,opts,o)=>Object.assign({id,label,type:'sel',opts},o||{});
+const C=(id,label,o)=>Object.assign({id,label,type:'chk'},o||{});
+const R=(id,label,o)=>Object.assign({id,label,type:'ro',fmt:'m'},o||{});
+
+/* 행 빌더 */
+function RB(){
+  const rows=[];
+  const o={rows,
+    hd(l){rows.push({t:'hd',l});return o;},
+    ln(l,v,d){rows.push({t:'ln',l,v:Math.round(v),d});return o;},
+    sub(l,v,d){rows.push({t:'sub',l,v:Math.round(v),d});return o;},
+    tot(l,v,d){rows.push({t:'tot',l,v:Math.round(v),d});return o;},
+    pct(l,v,d){rows.push({t:'pct',l,v,d});return o;},
+    txt(l,v,d){rows.push({t:'txt',l,v,d});return o;},
+    note(l){rows.push({t:'note',l});return o;}
+  };
+  return o;
+}
+
+/* 공통: 가산세 */
+function penFields(){
+  return [
+    SE('pnRate','신고불성실 가산세 유형',[['0','해당 없음'],['10','일반 과소신고 10%'],['20','일반 무신고 20%'],['40','부정 무·과소신고 40%']],{def:'0'}),
+    M('pnBase','무·과소신고 납부세액(가산세 대상)'),
+    M('pnUnpaid','납부지연 대상 미납세액'),
+    I('pnDays','납부지연 일수',{unit:'일'}),
+    M('pnOther','기타 가산세(증빙불비·지급명세서 등)')
+  ];
+}
+function penCalc(v){
+  const a=fl(N(v.pnBase)*N(v.pnRate)/100), b=fl(N(v.pnUnpaid)*N(v.pnDays)*0.00022), c=N(v.pnOther);
+  return {rep:a,late:b,oth:c,tot:a+b+c};
+}
+function penHelp(k){
+  H(k+'.pnRate','신고불성실 가산세 유형','기한 내 신고하지 않았거나(무신고) 과소하게 신고한 경우의 가산세율입니다. 일반 무신고 20%, 일반 과소신고 10%, 부정행위 무·과소신고 40%(국제거래 수반 시 60%)이며, 기한 후 신고·수정신고 시 감면이 있습니다.','국세기본법 제47조의2·제47조의3','감면(수정신고 1개월 이내 90% 등)은 반영하지 않았습니다.');
+  H(k+'.pnBase','무·과소신고 납부세액','가산세율을 곱할 기준이 되는 세액입니다. 무신고는 신고했어야 할 납부세액, 과소신고는 부족하게 신고한 세액(부정행위는 부정 과소신고세액)을 입력합니다.','국세기본법 제47조의2·제47조의3');
+  H(k+'.pnUnpaid','납부지연 대상 미납세액','납부기한까지 내지 않은(또는 적게 낸) 세액입니다. 납부지연가산세 = 미납세액 × 경과일수 × 0.022%(1일 22/100,000)로 계산합니다.','국세기본법 제47조의4, 같은 법 시행령 제27조의4','고지세액을 납부기한 후에도 내지 않으면 3% 가산이 추가로 붙을 수 있으나 반영하지 않았습니다.');
+  H(k+'.pnDays','납부지연 일수','납부기한 다음 날부터 실제 납부일(또는 고지일)까지의 일수입니다.','국세기본법 제47조의4');
+  H(k+'.pnOther','기타 가산세','증빙불비가산세(2%), 지급명세서 제출불성실, 세금계산서 불성실, 무기장가산세(20%) 등 위에서 계산하지 않은 가산세를 합산해 직접 입력합니다.','법인세법 제75조의5~제75조의9, 소득세법 제81조 등');
+}
+
+/* 공통: 비상장주식 간이평가 */
+function usFields(p){
+  const sh=v=>String(v[p+'usMode'])==='1';
+  return [
+    SE(p+'usMode','비상장주식 평가 방식',[['0','입력 안 함'],['1','1주당 가액 간이평가'],['2','평가액 직접 입력']],{def:'0'}),
+    M(p+'usDirect','비상장주식 평가액(직접 입력)',{show:v=>String(v[p+'usMode'])==='2'}),
+    I(p+'usShares','평가대상 주식수',{unit:'주',show:sh}),
+    M(p+'usE1','직전 1년 1주당 순손익',{neg:1,show:sh}),
+    M(p+'usE2','직전 2년 1주당 순손익',{neg:1,show:sh}),
+    M(p+'usE3','직전 3년 1주당 순손익',{neg:1,show:sh}),
+    M(p+'usBps','1주당 순자산가액',{show:sh}),
+    C(p+'usRealty','부동산 과다보유법인(자산의 50% 이상이 부동산 등)',{show:sh}),
+    C(p+'usPrem','최대주주 등 할증(20%) 적용',{show:sh}),
+    R(p+'usVal','비상장주식 평가액',{show:v=>String(v[p+'usMode'])!=='0'})
+  ];
+}
+function usCalc(v,p){
+  const mode=String(v[p+'usMode']);
+  if(mode==='2') return {val:N(v[p+'usDirect']),per:0,note:'직접 입력'};
+  if(mode!=='1') return {val:0,per:0,note:''};
+  const e=(N(v[p+'usE1'])*3+N(v[p+'usE2'])*2+N(v[p+'usE3']))/6;
+  const profitVal=mx(0,e/0.1), asset=mx(0,N(v[p+'usBps']));
+  const a=v[p+'usRealty']?2:3, b=v[p+'usRealty']?3:2;
+  let per=(profitVal*a+asset*b)/(a+b);
+  per=mx(per,asset*0.8);
+  if(v[p+'usPrem']) per*=1.2;
+  per=fl(per);
+  return {val:per*N(v[p+'usShares']),per,note:'순손익가치 '+fmt(profitVal)+'원, 순자산가치 '+fmt(asset)+'원'};
+}
+function usHelp(k,p){
+  H(k+'.'+p+'usMode','비상장주식 평가 방식','시가를 확인할 수 없는 비상장주식은 상증세법상 보충적 평가방법으로 평가합니다. 간이평가를 선택하면 1주당 순손익가치와 순자산가치를 가중평균해 계산하고, 이미 평가한 금액이 있으면 직접 입력을 선택합니다.\n※ 매매·감정·수용 등 시가가 있으면 시가가 우선합니다.','상속세 및 증여세법 제60조·제63조, 같은 법 시행령 제54조·제56조');
+  H(k+'.'+p+'usDirect','비상장주식 평가액(직접 입력)','세무사 평가 또는 이미 산정한 평가액 합계를 입력합니다.','상속세 및 증여세법 제63조');
+  H(k+'.'+p+'usShares','평가대상 주식수','상속·증여 대상이 되는 비상장주식의 주식수입니다.','상속세 및 증여세법 제63조');
+  H(k+'.'+p+'usE1','직전 1년 1주당 순손익','평가기준일 이전 최근 3년간 각 사업연도의 1주당 순손익액입니다. 순손익가치 계산 시 직전 연도부터 3:2:1로 가중평균하며, 결과가 음수이면 0으로 봅니다.','상속세 및 증여세법 시행령 제56조');
+  H(k+'.'+p+'usE2','직전 2년 1주당 순손익','3:2:1 가중평균에서 가중치 2가 적용되는 연도입니다.','상속세 및 증여세법 시행령 제56조');
+  H(k+'.'+p+'usE3','직전 3년 1주당 순손익','3:2:1 가중평균에서 가중치 1이 적용되는 연도입니다.','상속세 및 증여세법 시행령 제56조');
+  H(k+'.'+p+'usBps','1주당 순자산가액','평가기준일 현재 순자산가액(자산 평가액 − 부채)을 발행주식총수로 나눈 금액입니다. 순자산가치 계산 시 영업권·자산 재평가가 반영되어야 하므로 별도 평가 후 입력하세요.','상속세 및 증여세법 시행령 제55조');
+  H(k+'.'+p+'usRealty','부동산 과다보유법인','자산총액 중 부동산 및 부동산에 관한 권리 가액 비율이 50% 이상인 법인은 순손익가치 : 순자산가치를 2 : 3으로 가중하고, 일반법인은 3 : 2로 가중합니다. 순자산가치의 80%가 하한입니다.','상속세 및 증여세법 시행령 제54조 제1항·제4항');
+  H(k+'.'+p+'usPrem','최대주주 등 할증','최대주주 및 특수관계인의 보유주식 평가 시 20%를 가산합니다. 중소기업, 평가기준일 전 3년 내 계속 결손 법인 등은 제외 대상이므로 해당하면 체크하지 마세요.','상속세 및 증여세법 제63조 제3항, 같은 법 시행령 제53조 제7항','제외 대상(중소·중견기업 등)의 범위는 개별 확인이 필요합니다.');
+  H(k+'.'+p+'usVal','비상장주식 평가액','입력값으로 자동 계산된 평가액입니다. 1주당 평가액 = (순손익가치 × 가중치 + 순자산가치 × 가중치) ÷ 합계, 하한은 순자산가치의 80%입니다.','상속세 및 증여세법 시행령 제54조');
+}
+
+/* ===== 상태 ===== */
+const LS_KEY='taxsim_yoon_v1';
+let S=null;
+const collapsed={};
+function defaults(mod){
+  const d={};
+  mod.sections.forEach(sc=>sc.fields.forEach(f=>{
+    if(f.type==='ro')return;
+    d[f.id]=f.def!==undefined?f.def:(f.type==='chk'?false:f.type==='sel'?f.opts[0][0]:0);
+  }));
+  return d;
+}
+function newCase(key,name){return {name,v:defaults(MODS[key])};}
+function initState(){
+  S={tab:'corp',tabs:{}};
+  ORDER.forEach(k=>{S.tabs[k]={cases:[newCase(k,'계산 1')],active:0,view:'in',onlyDiff:false};});
+}
+function loadState(){
+  initState();
+  try{
+    const j=JSON.parse(localStorage.getItem(LS_KEY)||'null');
+    if(j&&j.tabs){
+      ORDER.forEach(k=>{
+        const t=j.tabs[k]; if(!t||!t.cases||!t.cases.length)return;
+        S.tabs[k].cases=t.cases.slice(0,6).map(c=>({name:c.name||'계산',v:Object.assign(defaults(MODS[k]),c.v||{})}));
+        S.tabs[k].active=mn(t.active||0,S.tabs[k].cases.length-1);
+      });
+      if(ORDER.includes(j.tab))S.tab=j.tab;
+    }
+  }catch(e){}
+}
+let saveT=null;
+function save(){
+  clearTimeout(saveT);
+  saveT=setTimeout(()=>{try{localStorage.setItem(LS_KEY,JSON.stringify({tab:S.tab,tabs:ORDER.reduce((o,k)=>{o[k]={cases:S.tabs[k].cases,active:S.tabs[k].active};return o;},{})}));}catch(e){}},300);
+}
+const T=()=>S.tabs[S.tab];
+const cur=()=>T().cases[T().active];
+function safeCalc(mod,v){
+  try{return mod.calc(v);}catch(e){return {sum:[],rows:[{t:'note',l:'계산 오류 : '+e.message}],aux:{},warn:[]};}
+}
+
+/* ===== 렌더 : 탭 / 세율 / 케이스 ===== */
+function renderTabs(){
+  $('#taxTabs').innerHTML=ORDER.map(k=>`<button type="button" data-tab="${k}" class="${S.tab===k?'on':''}">${MODS[k].name}</button>`).join('');
+}
+function renderRates(){
+  const m=MODS[S.tab];
+  $('#rateBand').innerHTML=m.rateHTML+`<button type="button" class="more" data-rate="1">세율·공제 상세 ⓘ</button>`;
+}
+function renderCaseBar(){
+  const t=T();
+  let h=t.cases.map((c,i)=>`<div class="ctab ${i===t.active?'on':''}" data-case="${i}"><span class="cn">${esc(c.name)}</span>${i===t.active?'<button type="button" class="ed" data-ed="'+i+'" title="이름 변경">✎</button>':''}${t.cases.length>1?'<button type="button" class="x" data-del="'+i+'" title="삭제">✕</button>':''}</div>`).join('');
+  if(t.cases.length<6){
+    h+=`<button type="button" class="cbtn" data-add="blank">＋ 새 계산 추가</button><button type="button" class="cbtn alt" data-add="copy">⧉ 현재 계산 복제</button>`;
+  }
+  $('#caseBar').innerHTML=h;
+}
+function renderViewBar(){
+  const t=T();
+  $('#viewBar').innerHTML=`<div class="seg"><button type="button" data-view="in" class="${t.view==='in'?'on':''}">입력 · 결과</button><button type="button" data-view="cmp" class="${t.view==='cmp'?'on':''}">비교 시뮬레이션 (${t.cases.length})</button></div><span class="sp"></span><button type="button" class="cbtn" data-act="fold">섹션 모두 접기/펼치기</button><button type="button" class="cbtn" data-act="reset">현재 계산 초기화</button><button type="button" class="cbtn" data-act="print">인쇄</button>`;
+}
+
+/* ===== 폼 ===== */
+function qbtn(mod,f){
+  const k=mod.id+'.'+f.id;
+  return HELP[k]?`<button type="button" class="q" data-h="${k}" title="항목 설명">?</button>`:'';
+}
+function fieldHTML(mod,f,v){
+  const q=qbtn(mod,f), w=f.w===2?' w2':'';
+  const lab=`<label for="in_${f.id}"><span>${esc(f.label)}</span>${q}</label>`;
+  if(f.type==='chk') return `<div class="f chk${w}" data-f="${f.id}"><div class="row"><input type="checkbox" id="in_${f.id}" data-id="${f.id}" ${v[f.id]?'checked':''}><span class="lt">${esc(f.label)}</span>${q}</div></div>`;
+  if(f.type==='sel') return `<div class="f${w}" data-f="${f.id}">${lab}<div class="inp"><select id="in_${f.id}" data-id="${f.id}">${f.opts.map(o=>`<option value="${esc(o[0])}" ${String(v[f.id])===String(o[0])?'selected':''}>${esc(o[1])}</option>`).join('')}</select></div></div>`;
+  if(f.type==='ro') return `<div class="f ro${w}" data-f="${f.id}">${lab}<div class="roval" data-ro="${f.id}">-</div><div class="kr" data-rokr="${f.id}"></div></div>`;
+  if(f.type==='money'){
+    const n=N(v[f.id]);
+    return `<div class="f${w}" data-f="${f.id}">${lab}<div class="inp"><input type="text" inputmode="${f.neg?'text':'numeric'}" class="num" id="in_${f.id}" data-id="${f.id}" data-k="m" ${f.neg?'data-neg="1"':''} placeholder="0" value="${n? (n<0?'-':'')+Math.abs(n).toLocaleString('ko-KR'):''}" autocomplete="off"><span class="u">원</span></div><div class="kr">${krw(n)}</div></div>`;
+  }
+  const unit=f.type==='pct'?'%':(f.unit||'');
+  const step=f.type==='pct'?'0.1':'1';
+  return `<div class="f${w}" data-f="${f.id}">${lab}<div class="inp"><input type="number" class="num" id="in_${f.id}" data-id="${f.id}" step="${step}" min="0" placeholder="0" value="${N(v[f.id])||''}"><span class="u">${unit}</span></div></div>`;
+}
+function formHTML(mod,v){
+  return mod.sections.map(sc=>{
+    const key=mod.id+'.'+sc.id, cl=collapsed[key]?' closed':'';
+    return `<section class="sec${cl}" data-sec="${key}"><h3>${esc(sc.title)}<span class="tg">${collapsed[key]?'펼치기 ▼':'접기 ▲'}</span></h3>${sc.desc?`<div class="sdesc">${sc.desc}</div>`:''}<div class="grid">${sc.fields.map(f=>fieldHTML(mod,f,v)).join('')}</div></section>`;
+  }).join('');
+}
+
+/* ===== 결과 ===== */
+function valHTML(row){
+  if(row.t==='pct') return (Math.round(row.v*100)/100).toLocaleString('ko-KR')+' %';
+  if(row.t==='txt') return esc(row.v);
+  const n=Math.round(row.v);
+  return `<span class="${n<0?'neg':''}">${fmt(n)}</span>`;
+}
+function resultHTML(res){
+  const tiles=(res.sum||[]).map((s,i)=>{
+    const val=s.k==='p'?(Math.round(s.v*100)/100).toLocaleString('ko-KR')+' %':fmt(s.v)+' 원';
+    return `<div class="tile${i===0?' main':''}"><div class="tl">${esc(s.l)}</div><div class="tv">${val}</div><div class="tk">${s.k==='p'?'':krw(s.v)}</div></div>`;
+  }).join('');
+  const warns=(res.warn||[]).map(w=>`<div class="warn">⚠ ${w}</div>`).join('');
+  const rows=res.rows.map(r=>{
+    if(r.t==='hd') return `<tr class="hd"><td colspan="2">${esc(r.l)}</td></tr>`;
+    if(r.t==='note') return `<tr class="note"><td colspan="2">${esc(r.l)}</td></tr>`;
+    return `<tr class="${r.t}"><td>${esc(r.l)}${r.d?`<span class="d">${esc(r.d)}</span>`:''}</td><td class="v">${valHTML(r)}</td></tr>`;
+  }).join('');
+  return `<h2>계산 결과<small>단위 : 원</small></h2><div class="tiles">${tiles}</div><div class="warns">${warns}</div><table class="rt"><tbody>${rows}</tbody></table>`;
+}
+function paintResult(res){
+  const el=$('#resPanel'); if(el) el.innerHTML=resultHTML(res);
+}
+function paintDyn(mod,v,res){
+  mod.sections.forEach(sc=>sc.fields.forEach(f=>{
+    const el=$('[data-f="'+f.id+'"]'); if(!el)return;
+    if(f.show) el.classList.toggle('hide',!f.show(v));
+    if(f.type==='ro'){
+      const val=res.aux?res.aux[f.id]:0, box=$('[data-ro="'+f.id+'"]',el), kr=$('[data-rokr="'+f.id+'"]',el);
+      if(f.fmt==='p'){box.textContent=(Math.round(N(val)*100)/100).toLocaleString('ko-KR')+' %';kr.textContent='';}
+      else if(f.fmt==='t'){box.textContent=val||'-';kr.textContent='';}
+      else {box.textContent=fmt(val)+' 원';kr.textContent=krw(val);}
+    }
+  }));
+}
+function refresh(){
+  const mod=MODS[S.tab], c=cur();
+  const res=safeCalc(mod,c.v);
+  paintResult(res); paintDyn(mod,c.v,res); save();
+}
+
+/* ===== 비교 ===== */
+function cellFmt(row){
+  if(!row) return '';
+  if(row.t==='pct') return (Math.round(row.v*100)/100).toLocaleString('ko-KR')+' %';
+  if(row.t==='txt') return esc(row.v);
+  return fmt(row.v);
+}
+function renderCompare(){
+  const mod=MODS[S.tab], t=T();
+  const results=t.cases.map(c=>safeCalc(mod,c.v));
+  /* 행 병합 */
+  const order=[], map={};
+  results.forEach((r,ci)=>{
+    const cnt={}; let last=-1;
+    r.rows.forEach(row=>{
+      const base=row.t+'|'+row.l; cnt[base]=(cnt[base]||0)+1;
+      const k=base+'|'+cnt[base];
+      if(!map[k]){map[k]={t:row.t,l:row.l,vals:[]}; order.splice(last+1,0,k); last=last+1;}
+      else last=order.indexOf(k);
+      map[k].vals[ci]=row;
+    });
+  });
+  const list=order.map(k=>map[k]);
+  const differs=r=>{
+    const a=r.vals.map(x=>x?(x.t==='txt'?x.v:Math.round(x.v*100)/100):null);
+    return a.some(x=>x!==a[0]);
+  };
+  let body='';
+  if(t.onlyDiff){
+    let pend=null;
+    list.forEach(r=>{
+      if(r.t==='hd'){pend=r;return;}
+      if(r.t==='note')return;
+      if(differs(r)){
+        if(pend){body+=cmpRow(pend,t.cases.length,false);pend=null;}
+        body+=cmpRow(r,t.cases.length,true);
+      }
+    });
+  } else {
+    list.forEach(r=>{ if(r.t==='note')return; body+=cmpRow(r,t.cases.length,r.t!=='hd'&&differs(r)); });
+  }
+  /* 입력 차이 */
+  const diffIn=[];
+  mod.sections.forEach(sc=>sc.fields.forEach(f=>{
+    if(f.type==='ro')return;
+    const vals=t.cases.map(c=>c.v[f.id]);
+    if(vals.some(x=>String(x)!==String(vals[0]))) diffIn.push({f,vals,sc});
+  }));
+  const disp=(f,x)=>{
+    if(f.type==='chk') return x?'예':'아니오';
+    if(f.type==='sel'){const o=f.opts.find(o=>String(o[0])===String(x));return o?o[1]:x;}
+    if(f.type==='money') return fmt(x)+' 원';
+    if(f.type==='pct') return N(x)+' %';
+    return N(x)+(f.unit?' '+f.unit:'');
+  };
+  const head=`<tr><th class="fc">항목 (단위 : 원)</th>${t.cases.map(c=>`<th>${esc(c.name)}</th>`).join('')}</tr>`;
+  const inRows=diffIn.map(d=>`<tr><td class="fc">${esc(d.f.label)}</td>${d.vals.map(x=>`<td class="v">${esc(disp(d.f,x))}</td>`).join('')}</tr>`).join('');
+  $('#main').innerHTML=`<div class="cmpWrap"><div class="cmpTop"><b style="color:var(--navy)">${MODS[S.tab].name} 비교 시뮬레이션</b><label><input type="checkbox" id="onlyDiff" ${t.onlyDiff?'checked':''}> 차이나는 항목만 보기</label><span style="color:var(--mute)">계산 1 대비 증감 : <span style="color:var(--red);font-weight:700">+ 증가</span> / <span style="color:var(--blue);font-weight:700">- 감소</span></span></div>${t.cases.length<2?'<div class="empty">비교하려면 상단의 <b>＋ 새 계산 추가</b> 또는 <b>⧉ 현재 계산 복제</b>로 계산을 2개 이상 만드세요.</div>':''}<div class="tscroll"><table class="ct"><thead>${head}</thead><tbody>${body}</tbody></table></div><h4 class="cmpH">계산 간 입력값이 다른 항목 (${diffIn.length}건)</h4><div class="tscroll" style="max-height:340px"><table class="ct"><thead>${head}</thead><tbody>${inRows||'<tr><td class="fc">차이 없음</td>'+t.cases.map(()=>'<td class="v">-</td>').join('')+'</tr>'}</tbody></table></div></div>`;
+}
+function cmpRow(r,n,isDiff){
+  if(r.t==='hd') return `<tr class="hd"><td class="fc">${esc(r.l)}</td>${'<td></td>'.repeat(n)}</tr>`;
+  let tds='';
+  for(let i=0;i<n;i++){
+    const x=r.vals[i]; let dl='';
+    if(x&&i>0&&r.vals[0]&&x.t!=='txt'){
+      const d=Math.round((x.v-r.vals[0].v)*100)/100;
+      if(d!==0) dl=`<span class="dl ${d>0?'up':'dn'}">${d>0?'+':'-'}${x.t==='pct'?Math.abs(d).toLocaleString('ko-KR')+' %p':fmt(Math.abs(d))}</span>`;
+    }
+    tds+=`<td class="v">${x?cellFmt(x):'-'}${dl}</td>`;
+  }
+  return `<tr class="${r.t}${isDiff?' diff':''}"><td class="fc">${esc(r.l)}</td>${tds}</tr>`;
+}
+
+/* ===== 메인 렌더 ===== */
+function renderMain(){
+  const mod=MODS[S.tab], t=T(), c=cur();
+  if(t.view==='cmp'){renderCompare();return;}
+  $('#main').innerHTML=`<div class="wrap"><div class="form" id="formBox">${formHTML(mod,c.v)}</div><aside class="res" id="resPanel"></aside></div>`;
+  refresh();
+}
+function renderAll(){renderTabs();renderRates();renderCaseBar();renderViewBar();renderMain();}
+
+/* ===== 모달 ===== */
+function openModal(title,html){$('#mTitle').textContent=title;$('#mBody').innerHTML=html;$('#modal').classList.add('on');}
+function closeModal(){$('#modal').classList.remove('on');}
+function openHelp(key){
+  const h=HELP[key]; if(!h)return;
+  let b=h.b.split('\n').map(p=>`<p>${p}</p>`).join('');
+  if(h.l) b+=`<div class="law"><b>근거</b> : ${h.l}</div>`;
+  if(h.c) b+=`<div class="chk"><b>확인 필요</b> : ${h.c}</div>`;
+  openModal(h.t,b);
+}
+
+/* ===== 입력 처리 ===== */
+function caretFix(el,digitsBefore){
+  const s=el.value; let cnt=0,pos=s.length;
+  if(digitsBefore<=0){pos=s.startsWith('-')?1:0;}
+  else for(let i=0;i<s.length;i++){ if(/\d/.test(s[i]))cnt++; if(cnt===digitsBefore){pos=i+1;break;} }
+  try{el.setSelectionRange(pos,pos);}catch(e){}
+}
+document.addEventListener('input',e=>{
+  const t=e.target; if(!t.dataset||!t.dataset.id||!$('#main').contains(t))return;
+  const c=cur(), id=t.dataset.id;
+  if(t.dataset.k==='m'){
+    const neg=t.dataset.neg==='1'&&t.value.trim().startsWith('-');
+    const before=t.value.slice(0,t.selectionStart||0).replace(/\D/g,'').length;
+    const raw=t.value.replace(/\D/g,'');
+    let n=raw?Number(raw):0; if(neg)n=-n;
+    c.v[id]=n;
+    t.value=raw?((neg?'-':'')+Number(raw).toLocaleString('ko-KR')):(neg?'-':'');
+    caretFix(t,before);
+    const kr=t.closest('.f').querySelector('.kr'); if(kr)kr.textContent=krw(n);
+  } else if(t.type==='number'){
+    c.v[id]=t.value===''?0:Number(t.value);
+  } else return;
+  refresh();
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='onlyDiff'){T().onlyDiff=t.checked;renderCompare();return;}
+  if(!t.dataset||!t.dataset.id||!$('#main').contains(t))return;
+  const c=cur(), id=t.dataset.id;
+  if(t.type==='checkbox') c.v[id]=t.checked;
+  else if(t.tagName==='SELECT') c.v[id]=t.value;
+  else return;
+  refresh();
+});
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button,.ctab,h3,#modal');
+  if(!t)return;
+  if(t.id==='modal'){ if(e.target.id==='modal')closeModal(); return; }
+  if(t.id==='mClose'){closeModal();return;}
+  if(t.dataset.h){openHelp(t.dataset.h);return;}
+  if(t.dataset.rate){openModal(MODS[S.tab].name+' 세율·공제 상세',MODS[S.tab].rateDetail);return;}
+  if(t.dataset.tab){S.tab=t.dataset.tab;renderAll();save();return;}
+  if(t.dataset.add){
+    const tb=T(); if(tb.cases.length>=6)return;
+    const nm='계산 '+(tb.cases.length+1);
+    const nc=t.dataset.add==='copy'?{name:nm,v:JSON.parse(JSON.stringify(cur().v))}:newCase(S.tab,nm);
+    tb.cases.push(nc); tb.active=tb.cases.length-1; renderCaseBar(); renderViewBar(); renderMain(); save(); return;
+  }
+  if(t.dataset.del!==undefined){
+    e.stopPropagation();
+    const tb=T(), i=Number(t.dataset.del);
+    if(tb.cases.length<2)return;
+    if(!window.confirm('"'+tb.cases[i].name+'" 계산을 삭제할까요?'))return;
+    tb.cases.splice(i,1); tb.active=mn(tb.active,tb.cases.length-1);
+    renderCaseBar(); renderViewBar(); renderMain(); save(); return;
+  }
+  if(t.dataset.ed!==undefined){
+    e.stopPropagation();
+    const span=t.parentElement.querySelector('.cn'), c=cur();
+    const inp=document.createElement('input'); inp.value=c.name; span.replaceWith(inp); inp.focus(); inp.select();
+    const done=()=>{c.name=(inp.value.trim()||c.name).slice(0,14);renderCaseBar();renderViewBar();if(T().view==='cmp')renderCompare();save();};
+    inp.addEventListener('blur',done); inp.addEventListener('keydown',ev=>{if(ev.key==='Enter')inp.blur();});
+    return;
+  }
+  if(t.classList&&t.classList.contains('ctab')){
+    if(e.target.closest('input'))return;
+    const i=Number(t.dataset.case); if(i!==T().active){T().active=i;renderCaseBar();renderMain();save();} return;
+  }
+  if(t.dataset.view){T().view=t.dataset.view;renderViewBar();renderMain();return;}
+  if(t.dataset.act==='print'){window.print();return;}
+  if(t.dataset.act==='reset'){ if(!window.confirm('현재 계산의 입력값을 모두 초기화할까요?'))return; cur().v=defaults(MODS[S.tab]); renderMain(); save(); return;}
+  if(t.dataset.act==='fold'){
+    const mod=MODS[S.tab]; const anyOpen=mod.sections.some(sc=>!collapsed[mod.id+'.'+sc.id]);
+    mod.sections.forEach(sc=>{collapsed[mod.id+'.'+sc.id]=anyOpen;});
+    if(T().view==='in')renderMain(); return;
+  }
+  if(t.tagName==='H3'){
+    const sec=t.closest('.sec'); const k=sec.dataset.sec; collapsed[k]=!collapsed[k];
+    sec.classList.toggle('closed',collapsed[k]); $('.tg',t).textContent=collapsed[k]?'펼치기 ▼':'접기 ▲'; return;
+  }
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+/* ===== 법인세 ===== */
+(function(){
+const ID='corp';
+const CORP=[[2e8,.10],[2e10,.20],[3e11,.22],[Infinity,.25]];
+const CORP_R=[[2e10,.20],[3e11,.22],[Infinity,.25]];
+const sbrOpts=[['0','해당 없음'],['30','30% (소기업 · 수도권 외 · 제조업 등)'],['20','20% (소기업 · 수도권 · 제조업 등)'],['15','15% (중기업 · 수도권 외 · 제조업 등)'],['10','10% (소기업 도소매·의료업 / 중기업 수도권 지식기반·출판)'],['5','5% (중기업 · 수도권 외 · 도소매·의료업)']];
+
+const sections=[
+{id:'a',title:'1. 법인 기본정보',fields:[
+  SE('corpType','기업 규모',[['sme','중소기업'],['mid','중견기업'],['large','일반기업(대기업)']],{def:'sme'}),
+  I('bizMonths','사업연도 월수',{def:12,unit:'개월'}),
+  C('rentCorp','부동산임대업 등 주업 소규모법인(2억 이하 구간 없음)',{w:2}),
+  M('revenue','수입금액(기업회계상 매출액)')
+]},
+{id:'b',title:'2. 당기순이익 및 익금산입·손금불산입(가산 세무조정)',desc:'손익계산서상 당기순이익에서 출발해 세법상 소득으로 조정합니다.',fields:[
+  M('netIncome','당기순이익',{neg:1}),
+  M('corpTaxExp','법인세비용(법인세·지방소득세 계상액)'),
+  M('entExp','기업업무추진비 지출액(문화비 포함)'),
+  M('entCulture','그중 문화기업업무추진비'),
+  M('entUnq','그중 적격증빙 미수취액(건당 3만원 초과)'),
+  M('entRelRev','특수관계인과의 거래 수입금액'),
+  C('ent50','기업업무추진비 한도 50% 적용 대상',{w:2}),
+  R('entLimit','기업업무추진비 한도액(자동)'),
+  R('entAddR','기업업무추진비 손금불산입액(자동)'),
+  M('depExcess','감가상각비 한도초과액'),
+  M('badDebt','대손충당금·대손금 한도초과(부인)액'),
+  M('retire','퇴직급여충당금·퇴직연금 한도초과액'),
+  M('execExcess','임원 상여금·퇴직금 한도초과액'),
+  M('vehicle','업무용승용차 관련비용 손금불산입액'),
+  M('nonBizExp','업무무관비용·사적사용 경비'),
+  M('penaltyExp','벌금·과태료·가산세 등 손금불산입'),
+  M('loanAvg','업무무관 가지급금 평균잔액'),
+  P('loanRate','인정이자율(당좌대출이자율)',{def:4.6}),
+  M('loanRecv','가지급금 약정 수령이자'),
+  R('impInt','가지급금 인정이자 익금산입액(자동)'),
+  M('intPaid','지급이자 총액(손금계상분)'),
+  M('borrowAvg','차입금 평균잔액'),
+  R('intDis','가지급금 관련 지급이자 손금불산입액(자동)'),
+  M('otherIntExcess','기타 지급이자 손금불산입(사채이자·건설자금이자 등)'),
+  M('nonDesig','비지정기부금(전액 손금불산입)'),
+  M('addOther','기타 익금산입·손금불산입')
+]},
+{id:'c',title:'3. 손금산입·익금불산입(차감 세무조정)',fields:[
+  M('divRecv','수입배당금(내국법인 배당)'),
+  SE('divRatio','출자비율별 익금불산입률',[['100','출자비율 50% 이상 : 100%'],['80','20% 이상 50% 미만 : 80%'],['30','20% 미만 : 30%']],{def:'100'}),
+  M('divDebt','주식 관련 차입금 이자 상당액'),
+  R('divEx','수입배당금 익금불산입액(자동)'),
+  M('prevAdd','전기 부인액 추인 등 손금산입'),
+  M('subOther','기타 손금산입·익금불산입')
+]},
+{id:'d',title:'4. 기부금 한도 계산',desc:'지출한 기부금은 이미 당기순이익에서 비용 처리된 금액을 입력합니다.',fields:[
+  M('donSpecial','특례기부금(법정기부금) 지출액'),
+  M('donEsop','우리사주조합 기부금 지출액'),
+  M('donGeneral','일반기부금(지정기부금) 지출액'),
+  C('donSocial','사회적기업 등 일반기부금 한도 20% 적용'),
+  R('donLS','특례기부금 한도액'),
+  R('donLE','우리사주조합 기부금 한도액'),
+  R('donLG','일반기부금 한도액'),
+  R('donEx','기부금 한도초과액(자동)')
+]},
+{id:'e',title:'5. 과세표준 계산',fields:[
+  M('carryDef','이월결손금 잔액(15년 이내 발생분)'),
+  C('defFull','이월결손금 100% 공제 대상(회생계획 이행 등)'),
+  R('defRateR','이월결손금 공제한도율',{fmt:'p'}),
+  M('exempt','비과세소득'),
+  M('incDed','소득공제(유동화전문회사 등)')
+]},
+{id:'f',title:'6. 토지 등 양도소득에 대한 법인세(추가 과세)',fields:[
+  M('landGain','비사업용 토지 양도소득(추가 10%)'),
+  M('houseGain','주택·별장·조합원입주권·분양권 양도소득(추가 20%)'),
+  M('unreg','미등기 토지·건물 양도소득(추가 40%)')
+]},
+{id:'g',title:'7. 세액감면 · 세액공제 · 최저한세',fields:[
+  SE('sbrRate','중소기업 특별세액감면율',sbrOpts,{def:'0'}),
+  P('sbrRatio','감면대상 업종 소득 비율',{def:100}),
+  R('sbrR','특별세액감면액(한도 1억원 적용, 자동)'),
+  I('hireYM','통합고용 : 청년등 증가 인원(수도권)',{unit:'명'}),
+  I('hireYN','통합고용 : 청년등 증가 인원(수도권 밖)',{unit:'명'}),
+  I('hireGM','통합고용 : 일반 증가 인원(수도권)',{unit:'명'}),
+  I('hireGN','통합고용 : 일반 증가 인원(수도권 밖)',{unit:'명'}),
+  R('hireCred','통합고용세액공제액(자동)'),
+  C('hireMin','통합고용 : 최저한세 적용 대상',{def:true}),
+  M('invBase','통합투자세액공제 대상 투자금액'),
+  P('invRate','통합투자세액공제율',{def:10}),
+  C('invMin','통합투자 : 최저한세 적용 대상',{def:true}),
+  M('rndBase','연구·인력개발비 세액공제 대상 지출'),
+  P('rndRate','연구·인력개발비 세액공제율',{def:25}),
+  C('rndMin','연구·인력개발비 : 최저한세 적용 대상',{def:false}),
+  M('socCred','사회보험료 세액공제액'),
+  C('socMin','사회보험료 : 최저한세 적용 대상',{def:true}),
+  M('otherCred','기타 조특법 세액공제액'),
+  C('otherMin','기타 세액공제 : 최저한세 적용 대상',{def:true}),
+  M('otherCredNo','기타 세액공제액(최저한세 비적용)'),
+  M('foreignTax','외국납부세액공제'),
+  SE('minRateSel','최저한세율',[['auto','자동(기업 규모 기준)'],['7','중소기업 7%'],['8','중소 졸업 1~3년차 · 중견기업 8%'],['9','중소 졸업 4~5년차 9%'],['gen','일반기업 10% / 12% / 17%']],{def:'auto'}),
+  M('minAdd','최저한세 계산 시 가산할 손금산입·소득공제'),
+  R('minTaxR','최저한세액(자동)'),
+  M('nongteuk','농어촌특별세 과세대상 감면·공제세액')
+]},
+{id:'h',title:'8. 가산세 · 기납부세액',fields:penFields().concat([
+  M('preInterim','중간예납세액'),
+  M('preWithheld','원천징수·수시부과세액'),
+  M('prepaidLocal','기납부 법인지방소득세')
+])}
+];
+
+/* ----- 도움말 ----- */
+H('corp.corpType','기업 규모','중소기업·중견기업·일반기업 구분에 따라 이월결손금 공제한도(중소 100%, 그 외 80%), 기업업무추진비 기본한도(중소 3,600만원, 그 외 1,200만원), 통합고용세액공제 금액, 최저한세율이 달라집니다.','조세특례제한법 제6조, 같은 법 시행령 제2조·제6조의4, 법인세법 제13조·제25조','중소기업 해당 여부(업종별 매출 기준, 자산총액 5천억원 미만, 독립성 요건)는 별도 확인이 필요합니다.');
+H('corp.bizMonths','사업연도 월수','사업연도가 12개월 미만이면 과세표준을 12개월로 환산해 세율을 적용한 뒤 다시 월수 비율로 안분합니다. 기업업무추진비 기본한도도 월수 비율로 계산합니다.','법인세법 제55조 제2항, 제25조 제4항');
+H('corp.rentCorp','부동산임대업 등 주업 소규모법인','부동산임대업이 주된 사업이거나 임대·이자·배당소득이 매출액의 50% 이상이고, 지배주주 지분율이 50%를 초과하며 상시근로자가 5명 미만인 법인(성실신고확인대상 소규모법인)은 과세표준 2억원 이하 구간의 낮은 세율이 없고 200억원 이하 20%, 200억원 초과 3천억원 이하 22%, 3천억원 초과 25%를 적용합니다.','법인세법 제55조 제1항 단서, 2026.1.1 이후 개시 사업연도');
+H('corp.revenue','수입금액(매출액)','기업업무추진비 수입금액별 한도 계산에 사용합니다. 기업회계기준상 매출액(영업수익)을 입력합니다. 특수관계인과의 거래분은 아래 별도 칸에 입력합니다.','법인세법 제25조 제4항, 같은 법 시행령 제42조');
+H('corp.netIncome','당기순이익','손익계산서상 법인세비용 차감 후 당기순이익입니다. 결손이면 음수(-)로 입력할 수 있습니다.','법인세법 제14조, 제43조');
+H('corp.corpTaxExp','법인세비용','손익계산서에 비용으로 계상한 법인세와 법인지방소득세는 세법상 손금이 아니므로 익금산입(손금불산입)합니다.','법인세법 제21조 제1호');
+H('corp.entExp','기업업무추진비 지출액','접대비에서 명칭이 바뀐 항목입니다. 거래처 접대·경조사비·선물 등 업무관련 지출 합계(손익계산서 계상액)를 입력합니다. 한도는 기본한도 + 수입금액별 한도(+ 문화기업업무추진비 추가한도)로 자동 계산합니다.','법인세법 제25조');
+H('corp.entCulture','문화기업업무추진비','문화예술 관련 지출 등은 일반 한도의 20% 범위 안에서 추가 한도가 인정됩니다. 해당 지출액이 있으면 입력합니다.','법인세법 제25조 제6항');
+H('corp.entUnq','적격증빙 미수취액','건당 3만원(경조사비는 20만원)을 초과하는 접대비를 신용카드·현금영수증·세금계산서 등 적격증빙 없이 지출한 금액은 한도와 무관하게 전액 손금불산입(귀속자 상여 등)합니다. 2026 세제개편안의 기준금액 상향(3만원 → 5만원 등)은 아직 시행되지 않았습니다.','법인세법 제25조 제2항, 같은 법 시행령 제41조');
+H('corp.entRelRev','특수관계인과의 거래 수입금액','수입금액별 한도 적용 시 특수관계인과의 거래에서 발생한 수입금액은 일반 적용률의 10%만 반영합니다.','법인세법 시행령 제42조 제3항');
+H('corp.ent50','한도 50% 적용 대상','부동산임대업 등 주업 소규모법인 등은 기업업무추진비 한도를 50%로 축소합니다. 해당 여부를 확인한 뒤 체크하세요.','법인세법 제25조 제5항 및 시행령 제42조','해당 법인의 범위는 법령에서 직접 확인하시기 바랍니다.');
+H('corp.entLimit','기업업무추진비 한도액','기본한도(중소 3,600만원, 일반 1,200만원 × 월수/12) + 수입금액 한도(100억 이하 0.3%, 100억 초과 500억 이하 3천만원 + 초과분 0.2%, 500억 초과 1.1억원 + 초과분 0.03%) + 문화기업업무추진비 추가한도입니다.','법인세법 제25조 제4항');
+H('corp.entAddR','기업업무추진비 손금불산입액','증빙 미수취액 + 한도초과액이며, 위 가산 세무조정 합계에 자동 포함됩니다.','법인세법 제25조');
+H('corp.depExcess','감가상각비 한도초과액','회사가 계상한 감가상각비가 세법상 상각범위액을 초과하면 그 초과액을 손금불산입합니다.','법인세법 제23조, 같은 법 시행령 제26조');
+H('corp.badDebt','대손충당금·대손금 한도초과액','대손충당금 설정 한도(채권 잔액 × 1% 또는 대손실적률 중 큰 비율) 초과액과 대손요건 미충족 대손금을 손금불산입합니다.','법인세법 제34조, 제19조의2');
+H('corp.retire','퇴직급여충당금·퇴직연금 한도초과액','퇴직급여충당금 손금산입은 2016년 이후 폐지되었고, 퇴직연금부담금은 한도 내에서만 손금산입합니다. 한도 초과액을 입력합니다.','법인세법 제33조, 제35조');
+H('corp.execExcess','임원 상여금·퇴직금 한도초과액','정관·주총 결의 등에 정한 금액을 초과하는 임원 상여금·퇴직금과 지배주주 임원 보수 중 부당하게 높은 부분을 손금불산입합니다.','법인세법 제26조, 같은 법 시행령 제43조·제44조');
+H('corp.vehicle','업무용승용차 관련비용 손금불산입액','운행기록 미작성 시 연 1,500만원 초과분, 감가상각비 연 800만원 초과분(정액법 5년) 등을 손금불산입합니다.','법인세법 제27조의2');
+H('corp.nonBizExp','업무무관비용·사적사용 경비','대표자 가족의 개인 경비, 업무와 무관한 자산 유지비 등은 손금불산입(귀속자 상여 등 소득처분)합니다.','법인세법 제27조, 같은 법 시행령 제49조');
+H('corp.penaltyExp','벌금·과태료·가산세 등','벌금, 과료, 과태료, 가산금, 국세 가산세, 법령상 의무 불이행 제재금은 손금불산입합니다.','법인세법 제21조');
+H('corp.loanAvg','업무무관 가지급금 평균잔액','대표이사 등 특수관계인에게 업무와 무관하게 빌려준 자금의 평균잔액입니다. 정확하게는 적수(일수 × 잔액) ÷ 사업연도 일수로 구합니다. 가지급금은 인정이자 익금산입과 지급이자 손금불산입의 두 가지 불이익을 줍니다.','법인세법 제52조, 같은 법 시행령 제88조 제1항 제6호·제89조');
+H('corp.loanRate','인정이자율','원칙은 가중평균차입이자율이며, 적용이 곤란하거나 법인이 선택한 경우 당좌대출이자율(2026년 연 4.6%)을 시가로 봅니다. 당좌대출이자율을 선택하면 3년간 변경할 수 없습니다.','법인세법 시행령 제89조, 같은 법 시행규칙 제43조','연 4.6%는 현행 고시율이며 변경 가능성이 있으므로 신고 시점에 확인하세요.');
+H('corp.loanRecv','가지급금 약정 수령이자','법인이 실제로 받았거나 받기로 약정한 가지급금 이자입니다. 인정이자와의 차액이 시가의 5% 이상이거나 3억원 이상일 때 부당행위계산 부인 대상이 됩니다.','법인세법 시행령 제88조 제1항 제6호, 제89조 제1항');
+H('corp.impInt','가지급금 인정이자','가지급금 평균잔액 × 인정이자율 × 월수/12 − 수령이자의 차액을 익금산입(대표자 상여 소득처분)합니다. 차액이 시가의 5% 미만이고 3억원 미만이면 부인하지 않습니다.','법인세법 제52조, 같은 법 시행령 제88조·제89조','대표자 상여로 소득처분되면 종합소득세(근로소득)가 늘어납니다.');
+H('corp.intPaid','지급이자 총액','손익계산서에 비용으로 계상한 이자비용 합계입니다. 업무무관 가지급금이 있으면 해당 비율만큼의 지급이자가 손금불산입됩니다.','법인세법 제28조 제1항 제4호');
+H('corp.borrowAvg','차입금 평균잔액','지급이자가 발생하는 차입금의 평균잔액(적수 ÷ 일수)입니다.','법인세법 시행령 제53조');
+H('corp.intDis','가지급금 관련 지급이자 손금불산입액','지급이자 × (업무무관 가지급금 적수 ÷ 차입금 적수)로 계산합니다. 가수금과의 상계, 수령이자와의 관계 등은 단순화했습니다.','법인세법 제28조 제1항 제4호 나목, 같은 법 시행령 제53조','실무에서는 적수 계산과 가수금 상계 여부에 따라 달라집니다.');
+H('corp.otherIntExcess','기타 지급이자 손금불산입','채권자 불분명 사채이자, 지급받은 자 불분명 이자, 건설자금이자, 과소자본세제 적용 이자 등 위에서 계산하지 않은 지급이자 손금불산입 합계입니다.','법인세법 제28조 제1항 제1호~제3호');
+H('corp.nonDesig','비지정기부금','법정·지정기부금 단체가 아닌 곳에 낸 기부금은 전액 손금불산입합니다.','법인세법 제24조');
+H('corp.addOther','기타 익금산입·손금불산입','위 항목에 없는 가산 세무조정 합계(재고자산 평가 조정, 합병·분할 관련, 업무무관 자산 감가상각비 등)를 직접 입력합니다.','법인세법 제15조~제67조');
+H('corp.divRecv','수입배당금','내국법인으로부터 받은 배당금입니다. 출자비율에 따라 일정 비율을 익금불산입합니다.','법인세법 제18조의2');
+H('corp.divRatio','출자비율별 익금불산입률','피출자법인에 대한 출자비율이 50% 이상이면 100%, 20% 이상 50% 미만이면 80%, 20% 미만이면 30%를 익금불산입합니다. 지주회사 특례는 반영하지 않았습니다.','법인세법 제18조의2 제1항, 같은 법 시행령 제17조의2');
+H('corp.divDebt','주식 관련 차입금 이자 상당액','배당 수입금액에서 해당 주식 취득에 쓰인 차입금 이자를 뺀 금액에 익금불산입률을 곱합니다. 해당 이자 상당액을 입력합니다.','법인세법 제18조의2 제1항 제3호, 같은 법 시행령 제17조의3');
+H('corp.divEx','수입배당금 익금불산입액','(수입배당금 − 차입금 이자 상당액) × 익금불산입률로 자동 계산합니다.','법인세법 제18조의2');
+H('corp.prevAdd','전기 부인액 추인 등 손금산입','전기에 손금불산입(유보)했던 금액이 당기에 손금으로 인정되는 경우 손금산입합니다.','법인세법 제15조~제19조(익금·손금 총칙)');
+H('corp.subOther','기타 손금산입·익금불산입','국세 환급금 이자, 일시상각충당금, 준비금 설정액 등 위에서 다루지 않은 차감 세무조정 합계입니다.','법인세법 제18조, 조세특례제한법');
+H('corp.donSpecial','특례기부금','국가·지자체 기부금, 국방헌금, 이재민 구호금품, 사립학교 시설비 등입니다. 한도는 (기준소득금액 − 이월결손금)의 50%입니다.','법인세법 제24조 제2항, 같은 법 시행령 제39조');
+H('corp.donEsop','우리사주조합 기부금','우리사주조합에 출연한 금액입니다. 특례기부금 공제 후 소득금액 기준 30% 한도입니다.','법인세법 제24조 제4항');
+H('corp.donGeneral','일반기부금','공익성 기부금(지정기부금)입니다. 특례기부금과 우리사주 기부금 공제 후 소득금액의 10%(사회적기업 등은 20%) 한도입니다.','법인세법 제24조 제3항');
+H('corp.donSocial','사회적기업 등 한도 20%','사회적기업, 협동조합 등 일정한 단체에 출연하는 일반기부금은 한도율이 20%입니다.','법인세법 제24조 제3항 제1호');
+H('corp.donLS','특례기부금 한도액','(기준소득금액 − 이월결손금) × 50%입니다. 기준소득금액은 기부금 손금산입 전 소득금액입니다.','법인세법 제24조 제2항 제1호');
+H('corp.donLE','우리사주조합 기부금 한도액','(기준소득금액 − 이월결손금 − 특례기부금 손금산입액) × 30%입니다.','법인세법 제24조 제4항');
+H('corp.donLG','일반기부금 한도액','(기준소득금액 − 이월결손금 − 특례기부금 − 우리사주 기부금 손금산입액) × 10%(20%)입니다.','법인세법 제24조 제3항 제1호·제2호');
+H('corp.donEx','기부금 한도초과액','기부금 지출액 중 한도를 넘는 금액으로 손금불산입합니다. 이월(10년) 손금산입은 반영하지 않았습니다.','법인세법 제24조');
+H('corp.carryDef','이월결손금 잔액','과거 사업연도 결손금 중 아직 공제하지 않은 잔액입니다. 2020.1.1 이후 개시 사업연도 발생분은 15년간 이월공제됩니다.','법인세법 제13조 제1항 제1호');
+H('corp.defFull','이월결손금 100% 공제 대상','중소기업과 회생계획·경영정상화계획 이행 중인 법인 등은 소득금액의 100%까지 공제하고, 그 외 법인은 80%까지 공제합니다.','법인세법 제13조 제1항 제1호 단서');
+H('corp.defRateR','이월결손금 공제한도율','중소기업 또는 100% 공제 대상은 100%, 그 외는 80%입니다.','법인세법 제13조');
+H('corp.exempt','비과세소득','공익신탁 신탁재산 소득 등 법인세가 과세되지 않는 소득입니다.','법인세법 제13조 제1항 제2호');
+H('corp.incDed','소득공제','유동화전문회사 등의 배당 소득공제 등 법인세법상 소득공제 합계입니다.','법인세법 제51조의2');
+H('corp.landGain','비사업용 토지 양도소득','비사업용 토지 양도소득에 대해 각 사업연도 소득 법인세 외에 추가로 10%를 과세합니다. 2026 세제개편안의 10%p 상향은 아직 시행되지 않았습니다.','법인세법 제55조의2');
+H('corp.houseGain','주택·별장·입주권·분양권 양도소득','주택, 별장, 조합원입주권, 분양권 양도소득에 추가로 20%를 과세합니다. 분양권은 보유기간에 따라 다른 세율이 적용될 수 있습니다.','법인세법 제55조의2');
+H('corp.unreg','미등기 토지·건물 양도소득','미등기 토지·건물의 양도소득에 추가로 40%를 과세합니다.','법인세법 제55조의2');
+H('corp.sbrRate','중소기업 특별세액감면율','제조업 등 감면업종을 영위하는 중소기업의 법인세를 규모·소재지·업종별로 감면합니다. 소기업 : 도소매·의료업 10%, 그 외 수도권 20% · 수도권 밖 30%. 중기업 : 수도권 밖 제조업 등 15%, 수도권 밖 도소매·의료업 5%, 수도권 내 지식기반산업·출판업 10%. 2028.12.31까지 적용되며 감면한도는 1억원(상시근로자 감소 시 감액)입니다.','조세특례제한법 제7조');
+H('corp.sbrRatio','감면대상 업종 소득 비율','감면 업종과 비감면 업종을 겸영하는 경우 감면 업종 소득이 전체 과세표준에서 차지하는 비율(매출액 안분 등)입니다. 전액 감면업종이면 100%를 입력합니다.','조세특례제한법 제7조 제1항, 같은 법 시행령 제6조');
+H('corp.sbrR','특별세액감면액','산출세액 × 감면대상소득 비율 × 감면율로 계산하고 1억원을 한도로 합니다. 최저한세에 걸리면 줄어듭니다.','조세특례제한법 제7조');
+H('corp.hireYM','통합고용 : 청년등 증가 인원(수도권)','직전 사업연도 대비 늘어난 상시근로자 중 청년(15~34세), 장애인, 60세 이상, 경력단절여성 인원입니다. 2026년 기준 1인당 중소기업 수도권 1,450만원, 수도권 밖 1,550만원, 중견기업 450만원(최초 1년 공제 후 계속고용 시 2차·3차 연도 공제)입니다.','조세특례제한법 제29조의8','첫 해 금액 기준입니다. 2·3차 연도 공제와 사후관리 방식은 별도로 반영하세요.');
+H('corp.hireYN','통합고용 : 청년등 증가 인원(수도권 밖)','수도권 밖 사업장에서 늘어난 청년등 상시근로자 수입니다. 중소기업 1인당 1,550만원입니다.','조세특례제한법 제29조의8');
+H('corp.hireGM','통합고용 : 일반 증가 인원(수도권)','청년등이 아닌 상시근로자 증가 인원입니다. 중소기업 수도권 1인당 850만원입니다. 중견기업은 일반 근로자 공제가 없습니다.','조세특례제한법 제29조의8');
+H('corp.hireGN','통합고용 : 일반 증가 인원(수도권 밖)','중소기업 수도권 밖 일반 상시근로자 증가 인원입니다. 1인당 950만원입니다.','조세특례제한법 제29조의8');
+H('corp.hireCred','통합고용세액공제액','입력한 인원 × 기업 규모별 1인당 공제금액의 합계입니다. 대기업은 공제 대상이 아닙니다.','조세특례제한법 제29조의8');
+H('corp.hireMin','통합고용 : 최저한세 적용 대상','최저한세 적용 여부에 따라 공제액이 일부 배제될 수 있습니다. 적용 대상이면 체크합니다.','조세특례제한법 제132조','공제 항목별 최저한세 적용 여부는 조특법 제132조에서 확인하세요.');
+H('corp.invBase','통합투자세액공제 대상 투자금액','사업용 유형자산 등에 투자한 금액입니다. 기본공제율은 중소기업 10%, 중견기업 5%, 대기업 1% 수준이며 신성장·원천기술, 국가전략기술은 더 높습니다. 직전 3년 평균 초과 투자분에는 추가공제가 있습니다.','조세특례제한법 제24조','공제율은 투자 연도와 기술 구분에 따라 다르므로 아래 공제율 칸에 직접 입력하세요.');
+H('corp.invRate','통합투자세액공제율','투자 구분별 공제율을 직접 입력합니다. 예 : 중소기업 일반 10%, 신성장·원천기술 12%, 국가전략기술 25%.','조세특례제한법 제24조 제1항','2025~2026 투자분의 임시투자세액공제 가산율은 별도 확인이 필요합니다.');
+H('corp.invMin','통합투자 : 최저한세 적용 대상','통합투자세액공제의 최저한세 적용 여부입니다.','조세특례제한법 제132조');
+H('corp.rndBase','연구·인력개발비 세액공제 대상 지출','연구소·전담부서 인건비, 재료비, 위탁연구비 등 공제 대상 지출입니다. 중소기업 일반 연구·인력개발비는 25%, 신성장·원천기술 30%, 국가전략기술 40%입니다.','조세특례제한법 제10조','대기업·중견기업은 공제율이 낮고 증가분 방식 선택이 가능하므로 공제율을 직접 입력하세요.');
+H('corp.rndRate','연구·인력개발비 세액공제율','지출 구분별 공제율을 직접 입력합니다.','조세특례제한법 제10조');
+H('corp.rndMin','연구·인력개발비 : 최저한세 적용 대상','중소기업의 연구·인력개발비 세액공제는 최저한세 적용에서 제외되는 것으로 알려져 있으나 규모별로 다르므로 확인 후 체크하세요.','조세특례제한법 제132조','중소기업은 적용 제외, 그 외는 적용 대상으로 처리하는 것이 일반적입니다.');
+H('corp.socCred','사회보험료 세액공제액','청년 등 고용증가 인원의 사회보험료 사용자 부담분에 대한 세액공제액을 직접 입력합니다.','조세특례제한법 제30조의4');
+H('corp.socMin','사회보험료 : 최저한세 적용 대상','사회보험료 세액공제의 최저한세 적용 여부입니다.','조세특례제한법 제132조');
+H('corp.otherCred','기타 조특법 세액공제액','상생결제, 성과공유, 근로소득 증대, 전자신고 등 위에서 다루지 않은 세액공제 합계입니다.','조세특례제한법');
+H('corp.otherMin','기타 세액공제 : 최저한세 적용 대상','위 기타 세액공제의 최저한세 적용 여부입니다.','조세특례제한법 제132조');
+H('corp.otherCredNo','기타 세액공제액(최저한세 비적용)','최저한세가 적용되지 않는 세액공제(성실신고확인비용 등)를 직접 입력합니다.','조세특례제한법 제132조 제1항');
+H('corp.foreignTax','외국납부세액공제','국외원천소득에 대해 외국에 납부한 세액으로, 공제한도(국외원천소득 비율)를 적용한 금액을 입력합니다.','법인세법 제57조');
+H('corp.minRateSel','최저한세율','세액감면·공제를 적용한 후의 세액이 (감면 전 과세표준 × 최저한세율)에 미달하면 그 차액만큼 감면·공제를 배제합니다. 중소기업 7%(졸업 유예 1~3년차 8%, 4~5년차 9%), 중견기업 8%, 일반기업은 과세표준 100억원 이하 10%, 100억원 초과 1천억원 이하 12%, 1천억원 초과 17%(누진)입니다.','조세특례제한법 제132조');
+H('corp.minAdd','최저한세 계산 시 가산할 손금산입·소득공제','준비금 등 최저한세 적용대상 손금산입·소득공제가 있으면 감면 전 과세표준에 더해 최저한세를 계산합니다.','조세특례제한법 제132조 제1항');
+H('corp.minTaxR','최저한세액','감면 전 과세표준(과세표준 + 가산액)에 최저한세율을 적용한 금액입니다. 감면·공제 후 세액이 이 금액에 미달하면 미달분만큼 공제·감면을 배제합니다(배제 순서 : 세액공제 → 세액감면).','조세특례제한법 제132조, 같은 법 시행령 제126조 제5항');
+H('corp.nongteuk','농어촌특별세 과세대상 감면·공제세액','농어촌특별세는 법인세 감면세액의 20%입니다. 중소기업 특별세액감면 등 비과세 항목이 많으므로 과세 대상으로 확인된 감면세액만 입력합니다.','농어촌특별세법 제3조·제4조·제5조','항목별 과세 여부는 농특세법 시행령 제3조·제4조에서 확인하세요.');
+penHelp('corp');
+H('corp.preInterim','중간예납세액','사업연도 개시일부터 6개월간의 중간예납으로 낸 법인세입니다.','법인세법 제63조');
+H('corp.preWithheld','원천징수·수시부과세액','이자소득 등에 대해 원천징수당한 법인세와 수시부과로 낸 세액입니다.','법인세법 제73조·제69조');
+H('corp.prepaidLocal','기납부 법인지방소득세','중간예납분 및 특별징수된 법인지방소득세입니다.','지방세법 법인지방소득세 관련 규정');
+
+/* ----- 세율 띠 ----- */
+const rateHTML=`<span class="rl">법인세율</span><span class="chip">2억 이하 <b>10%</b></span><span class="chip">2억~200억 <b>20%</b></span><span class="chip">200억~3,000억 <b>22%</b></span><span class="chip">3,000억 초과 <b>25%</b></span><span class="chip">지방소득세 <b>법인세의 10%</b></span><span class="rl" style="margin-left:6px">참고</span><span class="chip">최저한세 중소 <b>7%</b> / 일반 <b>10~17%</b></span><span class="chip">토지 양도 추가 <b>10·20·40%</b></span><span class="chip">2026.1.1 이후 개시 사업연도</span>`;
+const rateDetail=`<p><b>법인세율(2026.1.1 이후 개시 사업연도, 법인세법 제55조)</b></p><table><tr><th>과세표준</th><th>세율</th><th>누진공제</th></tr><tr><td>2억원 이하</td><td>10%</td><td>0</td></tr><tr><td>2억원 초과 200억원 이하</td><td>20%</td><td>2천만원</td></tr><tr><td>200억원 초과 3,000억원 이하</td><td>22%</td><td>4억 2천만원</td></tr><tr><td>3,000억원 초과</td><td>25%</td><td>94억 2천만원</td></tr></table><p>부동산임대업 등 주업 소규모법인(성실신고확인대상)은 200억원 이하 20%부터 적용합니다. 12월 결산법인은 2026사업연도분(2027.3월 신고)부터 인상 세율이 적용됩니다.</p><p><b>법인지방소득세</b> : 법인세 과세표준에 대한 세율이 법인세율의 10%(1.0% / 2.0% / 2.2% / 2.5%)이므로 법인세의 약 10%입니다.</p><p><b>이월결손금 공제</b> : 중소기업 100%, 그 외 80%, 15년 이월.</p><p><b>최저한세율</b> : 중소기업 7%, 중견기업 8%, 일반기업 100억 이하 10% / 100억 초과 1천억 이하 12% / 1천억 초과 17%(누진).</p><p><b>중소기업 특별세액감면(조특법 제7조)</b> : 소기업 도소매·의료업 10%, 소기업 그 외 수도권 20% · 수도권 밖 30%, 중기업 수도권 밖 15%(도소매·의료업 5%), 한도 1억원.</p><p><b>토지 등 양도소득 추가과세</b> : 비사업용 토지 10%, 주택·별장·입주권·분양권 20%, 미등기 40%.</p><div class="law"><b>근거</b> : 법인세법 제55조, 조세특례제한법 제7조·제132조, 지방세법 제103조의20</div>`;
+
+/* ----- 계산 ----- */
+function calc(v){
+  const n=k=>N(v[k]);
+  const months=mx(1,mn(12,n('bizMonths')||12));
+  const sme=v.corpType==='sme', mid=v.corpType==='mid';
+  const rb=RB(), warn=[], aux={};
+  /* 기업업무추진비 */
+  const baseEnt=(sme?36e6:12e6)*months/12;
+  const L=x=>x<=1e10?x*0.003:(x<=5e10?3e7+(x-1e10)*0.002:1.1e8+(x-5e10)*0.0003);
+  const rev=n('revenue'), rel=mn(n('entRelRev'),rev);
+  const limRev=rev>0?L(rev)*((rev-rel)/rev+0.1*rel/rev):0;
+  const gen=(baseEnt+limRev)*(v.ent50?0.5:1);
+  const cult=mn(n('entCulture'),gen*0.2);
+  const entLimit=fl(gen+cult);
+  const cand=mx(0,n('entExp')-n('entUnq'));
+  const entEx=mx(0,cand-entLimit);
+  const entAdd=n('entUnq')+entEx;
+  /* 가지급금 */
+  const imp=fl(n('loanAvg')*n('loanRate')/100*months/12);
+  const diff=mx(0,imp-n('loanRecv'));
+  const impAdd=(imp>0&&(diff>=imp*0.05||diff>=3e8))?diff:0;
+  const intDis=n('borrowAvg')>0?fl(n('intPaid')*mn(1,n('loanAvg')/n('borrowAvg'))):0;
+  /* 수입배당금 */
+  const divEx=fl(mx(0,n('divRecv')-n('divDebt'))*N(v.divRatio)/100);
+  const adds=n('corpTaxExp')+entAdd+n('depExcess')+n('badDebt')+n('retire')+n('execExcess')+n('vehicle')+n('nonBizExp')+n('penaltyExp')+impAdd+intDis+n('otherIntExcess')+n('nonDesig')+n('addOther');
+  const subs=divEx+n('prevAdd')+n('subOther');
+  const A=n('netIncome')+adds-subs;
+  /* 기부금 */
+  const defRate=(sme||v.defFull)?1:0.8;
+  const S_=n('donSpecial'),E_=n('donEsop'),G_=n('donGeneral');
+  const stdBase=A+S_+E_+G_;
+  const defDon=mn(n('carryDef'),mx(0,stdBase)*defRate);
+  const LS=mx(0,(stdBase-defDon)*0.5), uS=mn(S_,LS);
+  const LE=mx(0,(stdBase-defDon-uS)*0.3), uE=mn(E_,LE);
+  const LG=mx(0,(stdBase-defDon-uS-uE)*(v.donSocial?0.2:0.1)), uG=mn(G_,LG);
+  const donEx=(S_-uS)+(E_-uE)+(G_-uG);
+  const income=A+donEx;
+  const lossUse=mn(n('carryDef'),mx(0,income)*defRate);
+  const tb=mx(0,income-lossUse-n('exempt')-n('incDed'));
+  /* 산출세액 */
+  const br=v.rentCorp?CORP_R:CORP;
+  const tax0=fl(slab(tb*12/months,br)*months/12);
+  const landTax=fl(n('landGain')*0.1+n('houseGain')*0.2+n('unreg')*0.4);
+  /* 감면·공제 */
+  const sRate=N(v.sbrRate);
+  let sbr0=0; if(sRate>0&&tax0>0) sbr0=mn(1e8,fl(tax0*mn(1,mx(0,n('sbrRatio'))/100)*sRate/100));
+  const u=sme?[1450e4,1550e4,850e4,950e4]:(mid?[450e4,450e4,0,0]:[0,0,0,0]);
+  const hire=n('hireYM')*u[0]+n('hireYN')*u[1]+n('hireGM')*u[2]+n('hireGN')*u[3];
+  const inv=fl(n('invBase')*n('invRate')/100), rnd=fl(n('rndBase')*n('rndRate')/100);
+  let credMin=0,credNo=n('otherCredNo');
+  [[hire,v.hireMin],[inv,v.invMin],[rnd,v.rndMin],[n('socCred'),v.socMin],[n('otherCred'),v.otherMin]].forEach(a=>{ if(a[1])credMin+=a[0]; else credNo+=a[0]; });
+  const sbr=mn(sbr0,tax0);
+  const cMin=mn(credMin,tax0-sbr);
+  /* 최저한세 */
+  const minBase=tb+n('minAdd');
+  let ms=String(v.minRateSel); if(ms==='auto') ms=sme?'7':(mid?'8':'gen');
+  let minTax;
+  if(ms==='gen') minTax=minBase<=1e10?minBase*0.10:(minBase<=1e11?1e9+(minBase-1e10)*0.12:1.18e10+(minBase-1e11)*0.17);
+  else minTax=minBase*N(ms)/100;
+  minTax=fl(minTax);
+  let exclC=0,exclS=0;
+  if(sbr+cMin>0){
+    const after=tax0-sbr-cMin;
+    if(after<minTax){const sf=mn(minTax-after,sbr+cMin); exclC=mn(cMin,sf); exclS=sf-exclC;}
+  }
+  const sbrF=sbr-exclS, cMinF=cMin-exclC;
+  const cNoF=mn(credNo,tax0-sbrF-cMinF);
+  const ftc=mn(n('foreignTax'),tax0-sbrF-cMinF-cNoF);
+  const decided=tax0-sbrF-cMinF-cNoF-ftc;
+  const pen=penCalc(v);
+  const total=decided+landTax+pen.tot;
+  const prepaid=n('preInterim')+n('preWithheld');
+  const pay=total-prepaid;
+  const lt=fl((decided+landTax)*0.1);
+  const payLocal=lt-n('prepaidLocal');
+  const nt=fl(n('nongteuk')*0.2);
+  const burden=decided+landTax+lt+nt+pen.tot;
+  const inst=pay>1e7?(pay<=2e7?pay-1e7:fl(pay/2)):0;
+  /* aux */
+  aux.entLimit=entLimit; aux.entAddR=entAdd; aux.impInt=impAdd; aux.intDis=intDis; aux.divEx=divEx;
+  aux.donLS=fl(LS); aux.donLE=fl(LE); aux.donLG=fl(LG); aux.donEx=fl(donEx);
+  aux.defRateR=defRate*100; aux.sbrR=sbr0; aux.hireCred=hire; aux.minTaxR=minTax;
+  /* rows */
+  rb.hd('1. 소득금액');
+  rb.ln('당기순이익',n('netIncome'));
+  rb.ln('(+) 익금산입·손금불산입',adds,'기업업무추진비 '+fmt(entAdd)+' / 인정이자 '+fmt(impAdd)+' / 지급이자 '+fmt(intDis));
+  rb.ln('(-) 손금산입·익금불산입',subs);
+  rb.sub('차가감소득금액',A);
+  rb.ln('(+) 기부금 한도초과액',donEx);
+  rb.sub('각 사업연도 소득금액',income);
+  rb.hd('2. 과세표준');
+  rb.ln('(-) 이월결손금 공제',lossUse,'공제한도율 '+(defRate*100)+'%');
+  rb.ln('(-) 비과세소득',n('exempt'));
+  rb.ln('(-) 소득공제',n('incDed'));
+  rb.sub('과세표준',tb);
+  rb.hd('3. 산출세액');
+  rb.ln('산출세액',tax0,(months<12?months+'개월 연환산 적용 / ':'')+(v.rentCorp?'주업 소규모법인 세율':'일반 세율'));
+  rb.hd('4. 감면 · 공제');
+  rb.ln('(-) 중소기업 특별세액감면',sbrF);
+  rb.ln('(-) 세액공제(최저한세 적용분)',cMinF);
+  rb.ln('(-) 세액공제(최저한세 비적용분)',cNoF);
+  rb.ln('(-) 외국납부세액공제',ftc);
+  rb.ln('(참고) 최저한세액',minTax,'최저한세율 '+(ms==='gen'?'10/12/17%':ms+'%'));
+  rb.ln('(참고) 최저한세로 배제된 감면·공제',exclC+exclS);
+  rb.sub('결정세액(감면·공제 후)',decided);
+  rb.ln('(+) 토지 등 양도소득 법인세',landTax);
+  rb.ln('(+) 가산세',pen.tot,'신고불성실 '+fmt(pen.rep)+' / 납부지연 '+fmt(pen.late)+' / 기타 '+fmt(pen.oth));
+  rb.tot('총부담세액(법인세)',total);
+  rb.ln('(-) 기납부세액',prepaid);
+  rb.tot('차감 납부(환급)할 법인세',pay);
+  if(inst>0) rb.ln('(참고) 분납 가능 금액',inst,'납부세액 1천만원 초과 시 신고기한 후 1개월(중소 2개월) 내 분납');
+  rb.hd('5. 지방소득세 · 농어촌특별세');
+  rb.ln('법인지방소득세',lt,'결정세액 + 토지양도 법인세의 10%');
+  rb.ln('(-) 기납부 지방소득세',n('prepaidLocal'));
+  rb.ln('납부할 지방소득세',payLocal);
+  rb.ln('농어촌특별세',nt);
+  rb.tot('총 세부담(법인세+지방소득세+농특세)',burden);
+  rb.pct('실효세율(법인세+지방소득세 / 과세표준)',tb>0?(decided+lt)/tb*100:0);
+  rb.pct('실효세율(법인세+지방소득세 / 당기순이익)',n('netIncome')>0?(decided+lt)/n('netIncome')*100:0);
+  if(exclC+exclS>0) warn.push('최저한세로 감면·공제 '+fmt(exclC+exclS)+'원이 배제되었습니다.');
+  if(income<0) warn.push('각 사업연도 소득금액이 결손입니다. 결손금은 다음 사업연도 이월결손금으로 관리하세요.');
+  if(impAdd>0) warn.push('가지급금 인정이자 '+fmt(impAdd)+'원은 대표자 상여로 소득처분되어 종합소득세(근로소득)가 증가합니다.');
+  if(sbr0>0&&v.corpType==='large') warn.push('대기업은 중소기업 특별세액감면 대상이 아닙니다.');
+  const sum=[{l:'차감 납부(환급)할 법인세',v:pay},{l:'과세표준',v:tb},{l:'결정세액(감면·공제 후)',v:decided},{l:'총 세부담(지방세·농특세 포함)',v:burden},{l:'실효세율(과세표준 대비)',v:tb>0?(decided+lt)/tb*100:0,k:'p'}];
+  return {sum,rows:rb.rows,aux,warn};
+}
+MODS[ID]={id:ID,name:'법인세',sections,calc,rateHTML,rateDetail};
+})();
+/* ===== 종합소득세 ===== */
+(function(){
+const ID='inc';
+const INC=[[14e6,.06],[5e7,.15],[8.8e7,.24],[1.5e8,.35],[3e8,.38],[5e8,.40],[1e9,.42],[Infinity,.45]];
+const SEP=[[2e7,.14],[3e8,.20],[5e9,.25],[Infinity,.30]];
+const T=b=>slab(b,INC);
+const sbrOpts=[['0','해당 없음'],['30','30% (소기업 · 수도권 외 · 제조업 등)'],['20','20% (소기업 · 수도권 · 제조업 등)'],['15','15% (중기업 · 수도권 외 · 제조업 등)'],['10','10% (소기업 도소매·의료업 / 중기업 수도권 지식기반·출판)'],['5','5% (중기업 · 수도권 외 · 도소매·의료업)']];
+const bm=v=>v.bizMethod;
+
+const sections=[
+{id:'a',title:'1. 신고 유형 · 인적공제 대상',desc:'※ 퇴직소득과 양도소득은 분류과세 대상이므로 이 계산기에 포함하지 않습니다.',fields:[
+  C('faith','성실신고확인대상 사업자'),
+  C('spouse','배우자 기본공제(소득요건 충족)'),
+  I('parentsN','직계존속(만 60세 이상) 기본공제 인원',{unit:'명'}),
+  I('childrenN','직계비속·입양자(만 20세 이하) 기본공제 인원',{unit:'명'}),
+  I('siblingN','형제자매 기본공제 인원',{unit:'명'}),
+  I('seniorN','경로우대(만 70세 이상) 인원(본인 포함)',{unit:'명'}),
+  I('disabledN','장애인 인원(본인 포함)',{unit:'명'}),
+  C('womanDed','부녀자공제(종합소득금액 3천만원 이하)'),
+  C('singleParent','한부모공제')
+]},
+{id:'b',title:'2. 사업소득 · 부동산임대소득',fields:[
+  SE('bizMethod','소득금액 계산 방법',[['book','장부(복식·간편장부) 기준'],['std','기준경비율 추계'],['smp','단순경비율 추계']],{def:'book'}),
+  M('bizRev','사업 총수입금액'),
+  M('bizExp','필요경비(장부 기준)',{show:v=>bm(v)==='book'}),
+  M('bizMain','주요경비(매입·임차료·인건비)',{show:v=>bm(v)==='std'}),
+  P('stdRatio','기준경비율',{show:v=>bm(v)==='std'}),
+  P('smpRatio','단순경비율',{show:v=>bm(v)!=='book'}),
+  C('dblEntry','복식부기의무자(배율 3.4, 아니면 2.8)',{show:v=>bm(v)==='std'}),
+  R('bizInc','사업소득금액(자동)'),
+  M('rentRev','부동산임대 수입금액'),
+  M('rentExp','부동산임대 필요경비'),
+  R('rentInc','부동산임대소득금액(자동)'),
+  M('carryLoss','이월결손금(공제 가능 잔액)')
+]},
+{id:'c',title:'3. 근로소득(법인 대표 급여 포함)',fields:[
+  M('wage','총급여액(비과세 제외, 인정상여 포함)'),
+  R('wageDed','근로소득공제(자동)'),
+  R('wageInc','근로소득금액(자동)')
+]},
+{id:'d',title:'4. 금융소득(이자 · 배당)',fields:[
+  M('intInc','이자소득 총수입'),
+  M('divGross','배당소득 : 내국법인 배당(Gross-up 대상)'),
+  M('divOther','배당소득 : 그 외(Gross-up 비대상)'),
+  M('divSep','고배당 상장법인 배당 중 분리과세 신청분'),
+  R('finTotalR','금융소득 합계(종합과세 판정액)'),
+  M('finWithheldOv','금융소득 원천징수 소득세(직접 입력, 0이면 자동)')
+]},
+{id:'e',title:'5. 연금소득 · 기타소득',fields:[
+  M('pension','공적연금 총연금액'),
+  R('pensionInc','연금소득금액(자동)'),
+  M('otherRev','기타소득 수입금액'),
+  SE('otherRate','필요경비율(의제)',[['60','60% (일시 강연료 · 인세 등)'],['80','80% (공익법인 상금 등)'],['0','실제 필요경비 입력']],{def:'60'}),
+  M('otherExp','실제 필요경비',{show:v=>String(v.otherRate)==='0'}),
+  C('otherComp','기타소득금액 300만원 이하라도 종합과세 선택'),
+  R('otherInc','기타소득금액(자동)')
+]},
+{id:'f',title:'6. 소득공제',desc:'주택자금·주택마련저축·신용카드·소기업공제부금·우리사주 등은 합계 2,500만원 종합한도가 적용됩니다.',fields:[
+  M('natPension','국민연금보험료(본인 납부분)'),
+  M('socIns','건강·고용·노인장기요양보험료(근로자 특별소득공제)'),
+  M('rentLoan','주택임차차입금 원리금상환액'),
+  M('housingInt','장기주택저당차입금 이자상환액'),
+  SE('housingCap','이자상환액 공제한도',[['2000','2,000만원 (15년 이상 · 고정금리 · 비거치)'],['1800','1,800만원 (15년 이상 · 고정금리 또는 비거치)'],['800','800만원 (15년 이상 · 그 밖)'],['600','600만원 (10년 이상 · 고정금리 또는 비거치)']],{def:'600'}),
+  M('houseSave','주택마련저축 납입액'),
+  M('card','신용카드 등 사용금액 소득공제액'),
+  M('yellow','소기업·소상공인공제부금(노란우산) 납입액'),
+  M('ownerStock','우리사주조합 출연금 소득공제액'),
+  M('invFund','투자조합 출자 등 소득공제액'),
+  M('otherDed','기타 소득공제(장기집합투자증권저축 등)'),
+  R('dedRaw','인적공제 합계(자동)'),
+  R('dedCapR','소득공제 합계(종합한도 적용 후, 자동)')
+]},
+{id:'g',title:'7. 세액감면 · 세액공제',fields:[
+  SE('sbrRate','중소기업 특별세액감면율(개인사업자)',sbrOpts,{def:'0'}),
+  P('sbrRatio','감면대상 업종 소득 비율',{def:100}),
+  R('sbrR','특별세액감면액(한도 1억원, 자동)'),
+  M('hireCred','통합고용세액공제액'),
+  M('invCred','통합투자세액공제액'),
+  M('otherCredMin','기타 세액공제액(최저한세 적용)'),
+  M('rndCred','연구·인력개발비 세액공제액(최저한세 비적용)'),
+  M('otherCredNo','기타 세액공제액(최저한세 비적용)'),
+  C('bookCredit','기장세액공제(간편장부대상자 복식부기 기장)'),
+  I('childCredN','자녀세액공제 대상 자녀(만 8세 이상 20세 이하)',{unit:'명'}),
+  SE('birthN','출산·입양 세액공제(해당 연도)',[['0','해당 없음'],['1','첫째 30만원'],['2','둘째 50만원'],['3','셋째 이상 70만원']],{def:'0'}),
+  M('pensionSave','연금저축 납입액'),
+  M('irp','퇴직연금(IRP) 납입액'),
+  M('insGeneral','보장성보험료(일반)'),
+  M('insDisabled','장애인전용 보장성보험료'),
+  M('medSelf','의료비 : 본인·65세 이상·장애인·6세 이하'),
+  M('medOther','의료비 : 그 밖의 부양가족'),
+  M('medInfert','의료비 : 난임시술비'),
+  M('medPrem','의료비 : 미숙아·선천성이상아'),
+  M('eduSelf','교육비 : 본인(대학원 포함)'),
+  M('eduPre','교육비 : 취학 전 아동'),
+  I('eduPreN','취학 전 아동 수',{unit:'명'}),
+  M('eduSch','교육비 : 초·중·고'),
+  I('eduSchN','초·중·고 자녀 수',{unit:'명'}),
+  M('eduUniv','교육비 : 대학생'),
+  I('eduUnivN','대학생 수',{unit:'명'}),
+  M('eduDis','교육비 : 장애인 특수교육비'),
+  M('donPolitic','정치자금 기부금'),
+  M('donHome','고향사랑 기부금'),
+  M('donLegal','특례(법정) 기부금'),
+  M('donEsop2','우리사주조합 기부금'),
+  M('donDesig','지정기부금(종교단체 외)'),
+  M('donRel','지정기부금(종교단체)'),
+  C('rentOk','월세 세액공제 요건 충족(무주택 세대주 등)'),
+  M('rentPay','월세 지급액'),
+  M('faithFee','성실신고확인 비용'),
+  C('efile','전자신고세액공제(2만원)'),
+  M('foreignTax','외국납부세액공제'),
+  M('disaster','재해손실세액공제'),
+  M('nongteuk','농어촌특별세 과세대상 감면세액'),
+  R('minTaxR','최저한세액(사업소득분, 자동)')
+]},
+{id:'h',title:'8. 가산세 · 기납부세액',fields:penFields().concat([
+  M('preInterim','중간예납세액'),
+  M('preBiz','사업소득 원천징수세액(3.3% 등)'),
+  M('preWage','근로소득 기납부 소득세(연말정산 결정세액)'),
+  M('prepaidLocal','기납부 개인지방소득세')
+])}
+];
+
+/* ----- 도움말 ----- */
+H('inc.faith','성실신고확인대상 사업자','업종별 수입금액이 일정 기준(도소매 15억원, 제조·음식·건설 7.5억원, 서비스·임대 5억원 이상 등) 이상인 사업자는 세무사의 성실신고확인서를 제출하고 신고기한이 6월 30일까지 연장됩니다. 의료비·교육비 세액공제와 성실신고확인비용 세액공제를 받을 수 있고, 표준세액공제는 12만원입니다.','소득세법 제70조의2, 제59조의4','수입금액 기준은 업종별로 다르므로 확인이 필요합니다.');
+H('inc.spouse','배우자 기본공제','배우자의 연간 소득금액 합계가 100만원(근로소득만 있으면 총급여 500만원) 이하이면 150만원을 공제합니다. 2026 세제개편안의 요건 상향은 아직 시행되지 않았습니다.','소득세법 제50조');
+H('inc.parentsN','직계존속 기본공제 인원','만 60세 이상 직계존속(계부·계모 포함)으로 소득금액 100만원 이하(총급여 500만원 이하)인 경우 1명당 150만원을 공제합니다.','소득세법 제50조 제1항 제3호');
+H('inc.childrenN','직계비속·입양자 기본공제 인원','만 20세 이하 자녀로 소득금액 100만원 이하인 경우 1명당 150만원을 공제합니다. 만 8세 이상은 자녀세액공제 대상이 됩니다.','소득세법 제50조');
+H('inc.siblingN','형제자매 기본공제 인원','만 20세 이하 또는 만 60세 이상 형제자매로 소득요건을 충족하는 경우 150만원을 공제합니다.','소득세법 제50조');
+H('inc.seniorN','경로우대(만 70세 이상) 인원','기본공제 대상자 중 만 70세 이상이면 1명당 100만원을 추가 공제합니다. 본인이 70세 이상이면 본인도 포함합니다.','소득세법 제51조 제1항 제1호');
+H('inc.disabledN','장애인 인원','기본공제 대상자 중 장애인이면 1명당 200만원을 추가 공제합니다. 본인이 장애인이면 포함합니다.','소득세법 제51조 제1항 제2호');
+H('inc.womanDed','부녀자공제','종합소득금액 3천만원 이하인 거주자 중 배우자가 있는 여성이거나(세대주 아닌 경우), 배우자 없이 부양가족이 있는 세대주인 여성은 50만원을 공제합니다. 한부모공제와 중복 적용되지 않습니다.','소득세법 제51조 제1항 제3호');
+H('inc.singleParent','한부모공제','배우자가 없고 기본공제 대상 직계비속·입양자가 있는 거주자에게 100만원을 공제합니다. 부녀자공제와 중복되면 한부모공제만 적용합니다.','소득세법 제51조 제1항 제4호');
+H('inc.bizMethod','소득금액 계산 방법','장부 기준은 수입금액에서 실제 필요경비를 빼서 계산합니다. 장부가 없는 경우 기준경비율(주요경비는 증빙으로 인정, 기타 경비는 기준경비율) 또는 단순경비율(수입금액 × 단순경비율)로 추계합니다. 직전연도 수입금액이 일정 기준 미만인 소규모 사업자만 단순경비율 대상입니다.','소득세법 제80조 제3항, 같은 법 시행령 제143조');
+H('inc.bizRev','사업 총수입금액','부가가치세 제외 사업 매출액(총수입금액)입니다. 임대 수입은 아래 별도 칸에 입력합니다.','소득세법 제24조·제19조');
+H('inc.bizExp','필요경비','사업과 관련하여 실제 지출한 비용입니다. 가사 관련 경비, 대표자 인건비 등은 제외합니다.','소득세법 제27조·제33조');
+H('inc.bizMain','주요경비','기준경비율 추계 시 증빙으로 인정되는 매입비용, 임차료, 인건비입니다.','소득세법 시행령 제143조 제3항');
+H('inc.stdRatio','기준경비율','국세청이 업종별로 고시하는 기준경비율(%)입니다. 소득금액 = 수입금액 − 주요경비 − 수입금액 × 기준경비율, 단 단순경비율 소득금액 × 배율을 초과하지 못합니다.','소득세법 시행령 제143조 제3항 제1호');
+H('inc.smpRatio','단순경비율','국세청이 업종별로 고시하는 단순경비율(%)입니다. 기준경비율 방식의 배율 한도 계산에도 사용됩니다.','소득세법 시행령 제143조 제3항 제2호');
+H('inc.dblEntry','복식부기의무자','복식부기의무자는 배율 3.4배, 간편장부대상자는 2.8배를 적용합니다.','소득세법 시행령 제143조 제4항');
+H('inc.bizInc','사업소득금액','선택한 방법에 따라 자동 계산됩니다. 결손이면 근로소득 등 다른 소득에서 먼저 공제(결손금 통산)합니다.','소득세법 제45조');
+H('inc.rentRev','부동산임대 수입금액','주택·상가 임대수입입니다. 주택임대소득 연 2천만원 이하는 분리과세를 선택할 수 있으나 이 계산기는 종합과세로 계산합니다.','소득세법 제19조 제1항 제12호, 제64조의2');
+H('inc.rentExp','부동산임대 필요경비','임대 관련 감가상각비, 수선비, 이자, 재산세 등입니다. 임대소득 결손금은 다른 소득과 통산하지 않고 이월됩니다.','소득세법 제45조 제2항');
+H('inc.rentInc','부동산임대소득금액','수입금액 − 필요경비이며 결손이면 0으로 처리합니다(타 소득과 통산 불가).','소득세법 제45조 제2항');
+H('inc.carryLoss','이월결손금','과거 10년(2020년 이후 발생분 15년) 이내에 발생한 사업소득 결손금 중 공제하지 않은 잔액입니다. 사업소득 → 근로 → 연금 → 기타 → 이자 → 배당 순으로 공제합니다.','소득세법 제45조 제3항');
+H('inc.wage','총급여액','비과세 소득을 제외한 급여, 상여, 수당, 인정상여를 합한 금액입니다. 법인 대표자의 급여와 가지급금 인정이자 상여를 포함합니다.','소득세법 제20조');
+H('inc.wageDed','근로소득공제','총급여 500만원 이하 70%, 500만~1,500만원 350만원 + 초과분 40%, 1,500만~4,500만원 750만원 + 초과분 15%, 4,500만~1억원 1,200만원 + 초과분 5%, 1억원 초과 1,475만원 + 초과분 2%이며 한도는 2천만원입니다.','소득세법 제47조');
+H('inc.wageInc','근로소득금액','총급여 − 근로소득공제입니다.','소득세법 제20조의3');
+H('inc.intInc','이자소득 총수입','예금이자, 채권이자 등입니다. 이자·배당 합계가 2천만원을 넘으면 초과분을 종합과세합니다.','소득세법 제16조, 제14조 제3항 제6호');
+H('inc.divGross','배당소득 : 내국법인 배당(Gross-up 대상)','내국법인에서 받은 배당 중 이중과세 조정 대상입니다. 종합과세되는 금액(2천만원 초과분)에 한해 10%를 가산(Gross-up)하고, 가산액만큼 배당세액공제를 적용합니다.','소득세법 제17조 제3항, 제56조');
+H('inc.divOther','배당소득 : 그 외(Gross-up 비대상)','집합투자기구 배당, 외국법인 배당 등 Gross-up 대상이 아닌 배당소득입니다.','소득세법 제17조');
+H('inc.divSep','고배당 상장법인 배당 분리과세 신청분','배당성향 40% 이상(또는 25% 이상이면서 배당 10% 이상 증가)인 상장법인에서 받은 현금배당은 종합과세에서 제외하고 2천만원 이하 14%, 3억원 이하 20%, 50억원 이하 25%, 50억원 초과 30%로 분리과세를 신청할 수 있습니다. 2026~2028 사업연도 귀속 배당에 적용되며 비상장 법인 배당은 대상이 아닙니다.','조세특례제한법(2025.12 개정, 고배당기업 배당소득 분리과세 특례)','신청 절차와 금융소득 2천만원 판정에서의 제외 여부는 신고 시점에 국세청 안내로 확인하세요.');
+H('inc.finTotalR','금융소득 합계','이자소득 + 배당소득(분리과세 신청분 제외)입니다. 2천만원 이하이면 14% 원천징수로 분리과세 종결되고, 초과하면 종합과세 대상이 됩니다.','소득세법 제14조 제3항 제6호');
+H('inc.finWithheldOv','금융소득 원천징수 소득세','이자·배당 지급 시 원천징수된 소득세(14%, 지방소득세 제외)입니다. 0이면 금융소득 × 14%로 자동 추정합니다.','소득세법 제129조');
+H('inc.pension','공적연금 총연금액','국민연금, 공무원연금 등 공적연금 수령액입니다. 2002년 이후 납입분에서 나온 연금 기준으로 단순화했으며 사적연금 분리과세(1,500만원 이하 3~5%)는 반영하지 않았습니다.','소득세법 제20조의3 제1항 제2호');
+H('inc.pensionInc','연금소득금액','총연금액 − 연금소득공제입니다. 공제는 350만원 이하 전액, 350만~700만원 350만원 + 초과분 40%, 700만~1,400만원 490만원 + 초과분 20%, 1,400만원 초과 630만원 + 초과분 10%이며 한도는 900만원입니다.','소득세법 제47조의2');
+H('inc.otherRev','기타소득 수입금액','강연료, 원고료, 인세, 일시적 용역 대가 등입니다.','소득세법 제21조');
+H('inc.otherRate','필요경비율(의제)','일시 강연료·인세 등은 60%, 공익법인 상금 등 일부는 80%를 의제 필요경비로 인정하며, 실제 경비가 더 크면 실제 경비를 선택할 수 있습니다.','소득세법 시행령 제87조');
+H('inc.otherExp','실제 필요경비','의제경비율 대신 실제 지출 경비를 입력합니다.','소득세법 제37조');
+H('inc.otherComp','300만원 이하 종합과세 선택','기타소득금액이 연 300만원 이하이면 원천징수(22%)로 분리과세 종결 또는 종합과세 중 선택할 수 있습니다. 체크하면 종합소득에 합산합니다.','소득세법 제14조 제3항 제8호, 제129조');
+H('inc.otherInc','기타소득금액','수입금액 − 필요경비입니다. 300만원 이하이고 종합과세를 선택하지 않으면 합산하지 않습니다.','소득세법 제21조');
+H('inc.natPension','국민연금보험료','본인이 납부한 국민연금보험료(공적연금 보험료)는 전액 연금보험료공제를 받습니다. 사업자도 해당합니다.','소득세법 제51조의3');
+H('inc.socIns','건강·고용·노인장기요양보험료','근로자가 부담한 건강보험료·고용보험료·노인장기요양보험료는 전액 특별소득공제입니다. 근로소득이 없는 사업자는 필요경비로 처리하므로 여기에 입력해도 공제되지 않습니다.','소득세법 제52조 제1항');
+H('inc.rentLoan','주택임차차입금 원리금상환액','총급여 5천만원 이하 무주택 세대주 근로자가 국민주택규모 주택을 임차하기 위한 차입금 원리금 상환액의 40%를 공제합니다(한도 400만원).','소득세법 제52조 제4항 제1호');
+H('inc.housingInt','장기주택저당차입금 이자상환액','무주택 또는 1주택 세대주가 기준시가 6억원 이하 주택을 취득하기 위한 15년 이상 장기주택저당차입금의 이자상환액입니다. 상환기간과 금리 방식에 따라 공제한도가 다릅니다.','소득세법 제52조 제5항');
+H('inc.housingCap','이자상환액 공제한도','상환기간 15년 이상 : 고정금리이면서 비거치식 2,000만원, 고정금리 또는 비거치식 1,800만원, 그 밖 800만원. 10년 이상 : 고정금리 또는 비거치식 600만원.','소득세법 제52조 제5항 제2호');
+H('inc.houseSave','주택마련저축 납입액','무주택 세대주(총급여 7천만원 이하) 근로자의 주택청약종합저축 등 납입액의 40%를 공제합니다(연 납입 한도 300만원).','조세특례제한법 제87조');
+H('inc.card','신용카드 등 사용금액 소득공제액','총급여의 25%를 초과하는 신용카드(15%), 체크카드·현금영수증(30%), 전통시장·대중교통(40%), 도서공연 등(30%) 사용액의 공제액입니다. 공제한도 : 총급여 7천만원 이하 300만원, 초과 250만원(1.2억 초과 200만원) + 전통시장·대중교통 등 추가한도. 홈택스 연말정산 간소화에서 산출된 공제액을 입력하세요.','조세특례제한법 제126조의2','추가한도 요건이 매년 바뀌므로 홈택스 산출액을 권장합니다.');
+H('inc.yellow','소기업·소상공인공제부금(노란우산) 납입액','소기업·소상공인 대표자가 납입한 공제부금은 사업(근로)소득금액 4천만원 이하 600만원, 4천만~6천만원 500만원, 6천만~1억원 400만원, 1억원 초과 200만원 한도로 소득공제합니다(2025년 납입분부터).','조세특례제한법 제86조의3','한도 구간은 최근 개정되었으므로 신고 시점에 재확인하세요.');
+H('inc.ownerStock','우리사주조합 출연금 소득공제액','우리사주조합원이 출연한 금액에 대한 소득공제액(한도 400만원, 벤처 등 1,800만원)을 직접 입력합니다.','조세특례제한법 제88조의4');
+H('inc.invFund','투자조합 출자 등 소득공제액','벤처투자조합 출자 등에 대한 소득공제액을 직접 입력합니다. 출자금액의 10~100%(투자 시기·대상별)가 공제됩니다.','조세특례제한법 제16조');
+H('inc.otherDed','기타 소득공제','장기집합투자증권저축, 고용유지 중소기업 근로자 소득공제 등 위에서 다루지 않은 소득공제 합계입니다.','조세특례제한법 제91조의16 등');
+H('inc.dedRaw','인적공제 합계','기본공제(1인 150만원) + 경로우대(100만원) + 장애인(200만원) + 부녀자(50만원) 또는 한부모(100만원)입니다.','소득세법 제50조·제51조');
+H('inc.dedCapR','소득공제 합계(종합한도 적용 후)','인적공제 + 연금보험료 + 건강보험료 등 + 종합한도(2,500만원) 적용 대상 소득공제의 합계입니다.','조세특례제한법 제132조의2');
+H('inc.sbrRate','중소기업 특별세액감면율(개인사업자)','개인사업자도 법인과 동일하게 중소기업 특별세액감면(소기업 10~30%, 중기업 5~15%, 한도 1억원)을 받을 수 있습니다. 사업소득에 대한 산출세액에 적용합니다.','조세특례제한법 제7조');
+H('inc.sbrRatio','감면대상 업종 소득 비율','감면 업종과 비감면 업종을 겸영하는 경우 감면 업종 소득의 비율입니다.','조세특례제한법 제7조');
+H('inc.sbrR','특별세액감면액','사업소득 산출세액 × 감면대상 소득 비율 × 감면율(한도 1억원)입니다.','조세특례제한법 제7조');
+H('inc.hireCred','통합고용세액공제액','상시근로자 증가 인원 × 1인당 공제금액(중소기업 청년등 수도권 1,450만원 / 수도권 밖 1,550만원, 일반 850만원 / 950만원)을 직접 입력합니다.','조세특례제한법 제29조의8');
+H('inc.invCred','통합투자세액공제액','투자금액 × 공제율(중소 10% 등) 산출액을 직접 입력합니다.','조세특례제한법 제24조');
+H('inc.otherCredMin','기타 세액공제액(최저한세 적용)','최저한세 적용 대상인 기타 조특법 세액공제 합계입니다.','조세특례제한법 제132조');
+H('inc.rndCred','연구·인력개발비 세액공제액','연구·인력개발비 세액공제액(중소기업 25% 등)을 직접 입력합니다. 최저한세 적용 대상에서 제외되는 것으로 처리합니다.','조세특례제한법 제10조');
+H('inc.otherCredNo','기타 세액공제액(최저한세 비적용)','성실신고확인비용 이외에 최저한세가 적용되지 않는 세액공제를 입력합니다.','조세특례제한법 제132조');
+H('inc.bookCredit','기장세액공제','간편장부대상자가 복식부기로 기장하여 신고하는 경우 (산출세액 × 사업소득금액 비율) × 20%를 공제합니다(한도 100만원).','소득세법 제56조의2');
+H('inc.childCredN','자녀세액공제 대상 자녀','기본공제 대상 자녀(손자녀 포함) 중 만 8세 이상 20세 이하 인원입니다. 1명 25만원, 2명 55만원, 3명부터 1명당 40만원을 추가합니다.','소득세법 제59조의2');
+H('inc.birthN','출산·입양 세액공제','해당 과세기간에 출산·입양 신고한 공제대상 자녀가 첫째이면 30만원, 둘째 50만원, 셋째 이상 70만원을 공제합니다.','소득세법 제59조의2 제3항');
+H('inc.pensionSave','연금저축 납입액','연금저축계좌 납입액입니다. 연금저축은 연 600만원까지 세액공제 대상입니다.','소득세법 제59조의3');
+H('inc.irp','퇴직연금(IRP) 납입액','IRP 및 퇴직연금 추가 납입액입니다. 연금저축과 합산해 연 900만원까지 세액공제 대상이며, 종합소득금액 4,500만원(총급여 5,500만원) 이하이면 15%, 초과하면 12%를 공제합니다.','소득세법 제59조의3','종합소득금액 1억원 초과(총급여 1.2억 초과) 시 한도 축소 여부는 확인이 필요합니다.');
+H('inc.insGeneral','보장성보험료(일반)','근로자가 낸 보장성보험료는 연 100만원 한도로 12%를 세액공제합니다.','소득세법 제59조의4 제1항');
+H('inc.insDisabled','장애인전용 보장성보험료','장애인 전용 보장성보험료는 연 100만원 한도로 15%를 세액공제합니다.','소득세법 제59조의4 제1항 제2호');
+H('inc.medSelf','의료비 : 본인·65세 이상·장애인·6세 이하','한도 없이 공제됩니다. 총급여(성실신고사업자는 종합소득금액)의 3%를 초과하는 금액의 15%를 세액공제합니다. 본 계산기는 3% 문턱을 본인 등 → 그 밖의 부양가족 → 미숙아 → 난임 순서로 차감하는 것으로 가정합니다.','소득세법 제59조의4 제2항','3% 문턱 차감 순서는 계산 가정이므로 신고 시 홈택스 결과와 대조하세요.');
+H('inc.medOther','의료비 : 그 밖의 부양가족','연 700만원 한도로 3% 초과분의 15%를 세액공제합니다.','소득세법 제59조의4 제2항');
+H('inc.medInfert','의료비 : 난임시술비','난임시술비는 30%를 세액공제합니다.','소득세법 제59조의4 제2항 제3호');
+H('inc.medPrem','의료비 : 미숙아·선천성이상아','미숙아·선천성이상아 의료비는 20%를 세액공제합니다.','소득세법 제59조의4 제2항 제2호');
+H('inc.eduSelf','교육비 : 본인','본인의 대학원·대학·직업능력개발훈련 교육비는 한도 없이 15%를 세액공제합니다.','소득세법 제59조의4 제3항');
+H('inc.eduPre','교육비 : 취학 전 아동','유치원·어린이집 등 교육비는 1인당 연 300만원 한도입니다.','소득세법 제59조의4 제3항');
+H('inc.eduPreN','취학 전 아동 수','1인당 300만원 한도 계산에 사용합니다.','소득세법 제59조의4 제3항');
+H('inc.eduSch','교육비 : 초·중·고','초·중·고 자녀 교육비는 1인당 연 300만원 한도입니다.','소득세법 제59조의4 제3항');
+H('inc.eduSchN','초·중·고 자녀 수','1인당 300만원 한도 계산에 사용합니다.','소득세법 제59조의4 제3항');
+H('inc.eduUniv','교육비 : 대학생','대학생 교육비는 1인당 연 900만원 한도입니다.','소득세법 제59조의4 제3항');
+H('inc.eduUnivN','대학생 수','1인당 900만원 한도 계산에 사용합니다.','소득세법 제59조의4 제3항');
+H('inc.eduDis','교육비 : 장애인 특수교육비','장애인 특수교육비는 한도 없이 15%를 세액공제합니다.','소득세법 제59조의4 제3항 제3호');
+H('inc.donPolitic','정치자금 기부금','10만원 이하분은 100/110, 10만원 초과분은 15%(3천만원 초과분은 25%)를 세액공제합니다.','조세특례제한법 제76조');
+H('inc.donHome','고향사랑 기부금','연 500만원 한도 안에서 10만원 이하분 100/110, 초과분 15%를 세액공제합니다.','고향사랑 기부금에 관한 법률, 조세특례제한법 제58조');
+H('inc.donLegal','특례(법정) 기부금','소득금액 100% 한도로 1천만원 이하분 15%, 초과분 30%를 공제합니다. 사업소득에서 필요경비로 처리한 기부금은 제외하고 입력하세요.','소득세법 제59조의4 제4항');
+H('inc.donEsop2','우리사주조합 기부금','소득금액의 30% 한도입니다.','소득세법 제59조의4 제4항');
+H('inc.donDesig','지정기부금(종교단체 외)','소득금액의 30% 한도로 1천만원 이하분 15%, 초과분 30%를 공제합니다.','소득세법 제59조의4 제4항');
+H('inc.donRel','지정기부금(종교단체)','소득금액의 10% 한도로 공제합니다.','소득세법 제59조의4 제4항');
+H('inc.rentOk','월세 세액공제 요건','무주택 세대주로서 총급여 8천만원 이하(종합소득금액 7천만원 이하) 국민주택규모 또는 기준시가 4억원 이하 주택 임차인에 한합니다.','조세특례제한법 제95조의2');
+H('inc.rentPay','월세 지급액','연 1,000만원 한도입니다. 총급여 5,500만원(종합소득금액 4,500만원) 이하 17%, 8,000만원(7,000만원) 이하 15%를 세액공제합니다.','조세특례제한법 제95조의2');
+H('inc.faithFee','성실신고확인 비용','성실신고확인서 작성에 쓴 비용의 60%(한도 120만원)를 세액공제합니다(최저한세 비적용).','조세특례제한법 제126조의6');
+H('inc.efile','전자신고세액공제','납세자 본인이 홈택스로 전자신고하면 2만원을 세액공제합니다.','조세특례제한법 제104조의8');
+H('inc.foreignTax','외국납부세액공제','국외소득에 대해 외국에 납부한 세액으로 공제한도를 적용한 금액입니다.','소득세법 제57조');
+H('inc.disaster','재해손실세액공제','재해로 상실한 자산가액이 총자산의 20% 이상인 사업자가 신고기한 내 받을 수 있는 세액공제액입니다.','소득세법 제58조');
+H('inc.nongteuk','농어촌특별세 과세대상 감면세액','농어촌특별세는 감면세액의 20%입니다. 과세 대상으로 확인된 감면세액만 입력합니다.','농어촌특별세법 제5조');
+H('inc.minTaxR','최저한세액(사업소득분)','감면 전 사업소득 산출세액의 35%(3천만원 초과분은 45%)입니다. 감면·공제 후 세액이 이에 미달하면 미달분만큼 감면·공제를 배제합니다.','조세특례제한법 제132조 제1항 제2호','소득세 최저한세율(35%/45%)은 일반 안내 기준으로 계산했으며 신고 전 확인이 필요합니다.');
+penHelp('inc');
+H('inc.preInterim','중간예납세액','11월에 납부한 종합소득세 중간예납세액입니다.','소득세법 제65조');
+H('inc.preBiz','사업소득 원천징수세액','프리랜서·인적용역 소득 3.3% 원천징수 등으로 이미 낸 소득세입니다.','소득세법 제127조');
+H('inc.preWage','근로소득 기납부 소득세','연말정산으로 확정된 근로소득 결정세액(원천징수 완료분)입니다.','소득세법 제134조');
+H('inc.prepaidLocal','기납부 개인지방소득세','원천징수·중간예납 시 낸 개인지방소득세입니다.','지방세법 개인지방소득세 관련 규정');
+
+/* ----- 세율 띠 ----- */
+const rateHTML=`<span class="rl">종합소득세율</span><span class="chip">1,400만↓ <b>6%</b></span><span class="chip">~5천만 <b>15%</b></span><span class="chip">~8,800만 <b>24%</b></span><span class="chip">~1.5억 <b>35%</b></span><span class="chip">~3억 <b>38%</b></span><span class="chip">~5억 <b>40%</b></span><span class="chip">~10억 <b>42%</b></span><span class="chip">10억↑ <b>45%</b></span><span class="chip">지방소득세 <b>+10%</b></span><span class="rl" style="margin-left:6px">참고</span><span class="chip">금융소득 종합과세 기준 <b>2천만원</b>(14%)</span><span class="chip">고배당 분리 <b>14/20/25/30%</b></span>`;
+const rateDetail=`<p><b>종합소득 기본세율(2023년 귀속 이후, 소득세법 제55조)</b></p><table><tr><th>과세표준</th><th>세율</th><th>누진공제</th></tr><tr><td>1,400만원 이하</td><td>6%</td><td>0</td></tr><tr><td>1,400만원 초과 5,000만원 이하</td><td>15%</td><td>126만원</td></tr><tr><td>5,000만원 초과 8,800만원 이하</td><td>24%</td><td>576만원</td></tr><tr><td>8,800만원 초과 1억 5천만원 이하</td><td>35%</td><td>1,544만원</td></tr><tr><td>1억 5천만원 초과 3억원 이하</td><td>38%</td><td>1,994만원</td></tr><tr><td>3억원 초과 5억원 이하</td><td>40%</td><td>2,594만원</td></tr><tr><td>5억원 초과 10억원 이하</td><td>42%</td><td>3,594만원</td></tr><tr><td>10억원 초과</td><td>45%</td><td>6,594만원</td></tr></table><p><b>개인지방소득세</b> : 종합소득세 결정세액의 10%(세율 0.6%~4.5%).</p><p><b>금융소득 종합과세</b> : 이자·배당 합계 2천만원 초과 시 ① (과세표준 − 2천만원) × 기본세율 + 2천만원 × 14%, ② (과세표준 − 금융소득) × 기본세율 + 금융소득 × 14% 중 큰 금액.</p><p><b>고배당기업 배당 분리과세(2026~2028 귀속)</b> : 2천만원 이하 14%, 3억원 이하 20%, 50억원 이하 25%, 50억원 초과 30%.</p><p><b>최저한세</b> : 감면 전 사업소득 산출세액의 35%(3천만원 초과분 45%).</p><div class="law"><b>근거</b> : 소득세법 제55조·제62조, 조세특례제한법 제132조</div>`;
+
+/* ----- 계산 ----- */
+function wageDeduct(w){
+  let d; if(w<=5e6)d=w*0.7; else if(w<=15e6)d=3.5e6+(w-5e6)*0.4; else if(w<=45e6)d=7.5e6+(w-15e6)*0.15; else if(w<=1e8)d=12e6+(w-45e6)*0.05; else d=14.75e6+(w-1e8)*0.02;
+  return fl(mn(d,2e7));
+}
+function wageCreditCap(w){
+  if(w<=3.3e7)return 740000;
+  if(w<=7e7)return mx(660000,740000-(w-3.3e7)*0.008);
+  if(w<=1.2e8)return mx(500000,660000-(w-7e7)*0.5);
+  return mx(200000,500000-(w-1.2e8)*0.5);
+}
+function pensionDeduct(p){
+  let d; if(p<=3.5e6)d=p; else if(p<=7e6)d=3.5e6+(p-3.5e6)*0.4; else if(p<=14e6)d=4.9e6+(p-7e6)*0.2; else d=6.3e6+(p-14e6)*0.1;
+  return fl(mn(d,9e6));
+}
+function pairTax(P,F2,G2){ // 금융소득 2천만원 초과 시 비교산출세액 max(①,②) : F2 금융소득(가산 전), G2 가산액
+  const a=T(mx(0,P-2e7))+2e7*0.14;
+  const b=T(mx(0,P-F2-G2))+F2*0.14;
+  return mx(a,b);
+}
+function calc(v){
+  const n=k=>N(v[k]);
+  const rb=RB(), warn=[], aux={};
+  /* 사업·임대 */
+  let bizInc=0;
+  const rev=n('bizRev'), sm=n('smpRatio'), st=n('stdRatio');
+  if(v.bizMethod==='book') bizInc=rev-n('bizExp');
+  else if(v.bizMethod==='smp') bizInc=rev-rev*sm/100;
+  else { const a=rev-n('bizMain')-rev*st/100, b=(rev-rev*sm/100)*(v.dblEntry?3.4:2.8); bizInc=mn(a,b); }
+  bizInc=fl(bizInc);
+  const rentRaw=n('rentRev')-n('rentExp'), rentInc=mx(0,rentRaw);
+  /* 근로·연금·기타 */
+  const wage=n('wage'), wDed=wageDeduct(wage), wageInc=mx(0,wage-wDed);
+  const pDed=pensionDeduct(n('pension')), pensInc=mx(0,n('pension')-pDed);
+  let othRaw=0; if(n('otherRev')>0){ othRaw=String(v.otherRate)==='0'?n('otherRev')-n('otherExp'):n('otherRev')-mx(n('otherExp'),n('otherRev')*N(v.otherRate)/100); }
+  othRaw=mx(0,fl(othRaw));
+  const othComp=(othRaw>3e6||v.otherComp)?othRaw:0;
+  /* 금융소득 */
+  const F=n('intInc')+n('divGross')+n('divOther');
+  const over=F>2e7;
+  const G=over?fl(mn(n('divGross'),F-2e7)*0.1):0;
+  const Fcomp=over?F+G:0;
+  /* 결손금 통산 */
+  let pool=mx(0,-bizInc)+n('carryLoss');
+  const use=x=>{const u=mn(x,pool);pool-=u;return x-u;};
+  const bizPos=mx(0,bizInc);
+  const c1=use(bizPos+rentInc), c2=use(wageInc), c3=use(pensInc), c4=use(othComp), c5=use(Fcomp);
+  const totalInc=c1+c2+c3+c4+c5;
+  const bizShareNum=mn(bizPos,c1);
+  /* 소득공제 */
+  const basicN=1+(v.spouse?1:0)+n('parentsN')+n('childrenN')+n('siblingN');
+  let personal=basicN*1.5e6+n('seniorN')*1e6+n('disabledN')*2e6;
+  let womanOk=false;
+  if(v.singleParent) personal+=1e6;
+  else if(v.womanDed){ if(totalInc<=3e7){personal+=5e5;womanOk=true;} else warn.push('부녀자공제는 종합소득금액 3천만원 이하만 적용되어 제외했습니다.'); }
+  const hasWage=wage>0;
+  const socIns=hasWage?n('socIns'):0;
+  const houseFund=hasWage?(mn(n('rentLoan')*0.4,4e6)+mn(n('housingInt'),N(v.housingCap)*1e4)):0;
+  const houseSave=hasWage?mn(n('houseSave')*0.4,3e6):0;
+  const yBase=bizPos>0?bizPos:wageInc;
+  const yLimit=yBase<=4e7?6e6:(yBase<=6e7?5e6:(yBase<=1e8?4e6:2e6));
+  const yellow=mn(n('yellow'),yLimit,mx(0,yBase));
+  const capGroup=houseFund+houseSave+n('card')+yellow+n('ownerStock')+n('invFund')+n('otherDed');
+  const capApplied=mn(capGroup,2.5e7);
+  const totalDed=personal+n('natPension')+socIns+capApplied;
+  const P=mx(0,totalInc-totalDed);
+  /* 산출세액 */
+  let tax,divCredit=0;
+  if(over){
+    const prelim=pairTax(P,F,G);
+    if(G>0){ const base2=pairTax(mx(0,P-G),F,0); divCredit=mn(G,mx(0,prelim-base2)); }
+    tax=prelim;
+  } else tax=T(P);
+  tax=fl(tax);
+  const marg=(()=>{for(const b of INC){ if(P<=b[0])return b[1]; } return .45;})();
+  /* 분리과세 배당 */
+  const sepTax=fl(slab(n('divSep'),SEP));
+  /* 감면 · 공제 */
+  const bizShare=totalInc>0?bizShareNum/totalInc:0;
+  const bizTaxPart=tax*bizShare;
+  const sRate=N(v.sbrRate);
+  let sbr0=0; if(sRate>0&&tax>0) sbr0=mn(1e8,fl(bizTaxPart*mn(1,mx(0,n('sbrRatio'))/100)*sRate/100));
+  const sbr=mn(sbr0,tax);
+  const cMin=mn(n('hireCred')+n('invCred')+n('otherCredMin'),tax-sbr);
+  /* 최저한세(사업소득분) */
+  const minTax=fl(bizTaxPart<=3e7?bizTaxPart*0.35:3e7*0.35+(bizTaxPart-3e7)*0.45);
+  let exclC=0,exclS=0;
+  if(sbr+cMin>0){
+    const after=bizTaxPart-sbr-cMin;
+    if(after<minTax){const sf=mn(minTax-after,sbr+cMin); exclC=mn(cMin,sf); exclS=sf-exclC;}
+  }
+  const sbrF=sbr-exclS, cMinF=cMin-exclC;
+  let room=tax-sbrF-cMinF;
+  /* 비적용 공제들 */
+  const bookCr=v.bookCredit?mn(1e6,fl(tax*bizShare*0.2)):0;
+  const wTaxShare=totalInc>0?tax*c2/totalInc:0;
+  let wCr=wTaxShare<=1.3e6?wTaxShare*0.55:715000+(wTaxShare-1.3e6)*0.3;
+  wCr=fl(mn(wCr,wageCreditCap(wage)));
+  if(!hasWage)wCr=0;
+  const cc=n('childCredN'); let childCr=cc<=0?0:(cc===1?250000:(cc===2?550000:550000+(cc-2)*400000));
+  childCr+=[0,300000,500000,700000][N(v.birthN)]||0;
+  const pensBase=mn(mn(n('pensionSave'),6e6)+n('irp'),9e6);
+  const onlyWage=hasWage&&(bizPos+rentInc+pensInc+othComp+Fcomp===0);
+  const lowInc=onlyWage?wage<=5.5e7:totalInc<=4.5e7;
+  const pensCr=fl(pensBase*(lowInc?0.15:0.12));
+  const specAllowed=hasWage||v.faith;
+  const insCr=hasWage?fl(mn(n('insGeneral'),1e6)*0.12+mn(n('insDisabled'),1e6)*0.15):0;
+  /* 의료비 */
+  let medCr=0;
+  if(specAllowed){
+    let t=(hasWage?wage:totalInc)*0.03, a=n('medSelf'), b=n('medOther'), y=n('medPrem'), x=n('medInfert');
+    let u=mn(a,t); a-=u; t-=u; u=mn(b,t); b-=u; t-=u; u=mn(y,t); y-=u; t-=u; u=mn(x,t); x-=u; t-=u;
+    b=mn(b,7e6);
+    medCr=fl((a+b)*0.15+y*0.20+x*0.30);
+  }
+  const eduBase=n('eduSelf')+mn(n('eduPre'),n('eduPreN')*3e6)+mn(n('eduSch'),n('eduSchN')*3e6)+mn(n('eduUniv'),n('eduUnivN')*9e6)+n('eduDis');
+  const eduCr=specAllowed?fl(eduBase*0.15):0;
+  /* 월세 */
+  let rentCr=0;
+  if(v.rentOk&&n('rentPay')>0){
+    const ref=hasWage?wage:totalInc; const lim1=hasWage?5.5e7:4.5e7, lim2=hasWage?8e7:7e7;
+    const r=ref<=lim1?0.17:(ref<=lim2?0.15:0); rentCr=fl(mn(n('rentPay'),1e7)*r);
+  }
+  const itemized=insCr+medCr+eduCr+rentCr;
+  const stdCr=hasWage?130000:(v.faith?120000:70000);
+  let specialCr; if(specAllowed||rentCr>0) specialCr=mx(itemized,stdCr); else specialCr=stdCr;
+  /* 기부금 */
+  const dBase=mx(0,totalInc);
+  const pol=n('donPolitic'), pCr=mn(pol,1e5)*100/110+mx(0,mn(pol,3e7)-1e5)*0.15+mx(0,pol-3e7)*0.25;
+  const hm=mn(n('donHome'),5e6), hCr=mn(hm,1e5)*100/110+mx(0,hm-1e5)*0.15;
+  const legal=mn(n('donLegal'),dBase), esop=mn(n('donEsop2'),dBase*0.3), desig=mn(n('donDesig'),dBase*0.3), rel=mn(n('donRel'),dBase*0.1);
+  const sd=legal+esop+desig+rel;
+  const dCr=fl(pCr+hCr+mn(sd,1e7)*0.15+mx(0,sd-1e7)*0.30);
+  const faithCr=v.faith?mn(n('faithFee')*0.6,1.2e6):0;
+  const efileCr=v.efile?20000:0;
+  const nonMin=bookCr+wCr+childCr+pensCr+specialCr+dCr+faithCr+efileCr+n('foreignTax')+n('disaster')+n('rndCred')+n('otherCredNo')+divCredit;
+  const nonMinF=mn(nonMin,mx(0,room));
+  const decided=mx(0,room-nonMinF);
+  const pen=penCalc(v);
+  const total=decided+sepTax+pen.tot;
+  const finWh=n('finWithheldOv')>0?n('finWithheldOv'):(over?fl(F*0.14):0);
+  const sepWh=fl(n('divSep')*0.14);
+  const prepaid=n('preInterim')+n('preBiz')+n('preWage')+finWh+sepWh;
+  const pay=total-prepaid;
+  const lt=fl((decided+sepTax)*0.1);
+  const nt=fl(n('nongteuk')*0.2);
+  const burden=decided+sepTax+lt+nt+pen.tot;
+  const inst=pay>1e7?(pay<=2e7?pay-1e7:fl(pay/2)):0;
+  /* aux */
+  aux.bizInc=bizInc; aux.rentInc=rentInc; aux.wageDed=wDed; aux.wageInc=wageInc; aux.finTotalR=F;
+  aux.pensionInc=pensInc; aux.otherInc=othRaw; aux.dedRaw=personal; aux.dedCapR=totalDed; aux.sbrR=sbr0; aux.minTaxR=minTax;
+  /* rows */
+  rb.hd('1. 소득금액');
+  rb.ln('사업소득금액',bizPos); rb.ln('부동산임대소득금액',rentInc);
+  rb.ln('근로소득금액',wageInc,'총급여 '+fmt(wage)+' − 근로소득공제 '+fmt(wDed));
+  rb.ln('연금소득금액',pensInc);
+  rb.ln('기타소득금액(종합과세분)',othComp,othRaw>0&&!othComp?'300만원 이하 분리과세(원천징수 종결)':'');
+  rb.ln('금융소득금액(종합과세분, Gross-up 포함)',Fcomp,over?'금융소득 '+fmt(F)+' + 가산 '+fmt(G):(F>0?'금융소득 '+fmt(F)+'원은 2천만원 이하로 분리과세 종결':''));
+  rb.ln('(-) 결손금·이월결손금 통산',(bizPos+rentInc+wageInc+pensInc+othComp+Fcomp)-totalInc);
+  rb.sub('종합소득금액',totalInc);
+  rb.hd('2. 소득공제 · 과세표준');
+  rb.ln('(-) 인적공제',personal,'기본공제 '+basicN+'명');
+  rb.ln('(-) 국민연금보험료',n('natPension'));
+  rb.ln('(-) 건강·고용·장기요양보험료',socIns);
+  rb.ln('(-) 종합한도 대상 소득공제',capApplied,'합계 '+fmt(capGroup)+' / 한도 2,500만원');
+  rb.sub('종합소득 과세표준',P);
+  rb.hd('3. 산출세액');
+  rb.ln('종합소득 산출세액',tax,over?'금융소득 비교과세 적용':'기본세율 적용');
+  rb.pct('적용 한계세율(소득세)',marg*100);
+  rb.pct('적용 한계세율(지방소득세 포함)',marg*110);
+  rb.hd('4. 세액감면 · 세액공제');
+  rb.ln('(-) 중소기업 특별세액감면',sbrF);
+  rb.ln('(-) 세액공제(최저한세 적용분)',cMinF);
+  rb.ln('(-) 배당세액공제',divCredit);
+  rb.ln('(-) 기장세액공제',bookCr);
+  rb.ln('(-) 근로소득세액공제',wCr);
+  rb.ln('(-) 자녀·출산입양 세액공제',childCr);
+  rb.ln('(-) 연금계좌 세액공제',pensCr);
+  rb.ln('(-) 특별세액공제(표준 또는 항목별)',specialCr,'표준 '+fmt(stdCr)+' / 항목별 '+fmt(itemized));
+  rb.ln('(-) 기부금 세액공제',dCr);
+  rb.ln('(-) 성실신고확인비용·전자신고',faithCr+efileCr);
+  rb.ln('(-) 외국납부·재해손실·연구인력·기타(비적용)',n('foreignTax')+n('disaster')+n('rndCred')+n('otherCredNo'));
+  rb.ln('(참고) 공제 한도 적용으로 줄어든 세액공제',nonMin-nonMinF);
+  rb.ln('(참고) 최저한세로 배제된 감면·공제',exclC+exclS,'최저한세액(사업소득분) '+fmt(minTax));
+  rb.sub('결정세액',decided);
+  rb.ln('(+) 고배당 분리과세 배당 소득세',sepTax);
+  rb.ln('(+) 가산세',pen.tot,'신고불성실 '+fmt(pen.rep)+' / 납부지연 '+fmt(pen.late)+' / 기타 '+fmt(pen.oth));
+  rb.tot('총결정세액',total);
+  rb.ln('(-) 기납부세액',prepaid,'중간예납·원천징수 '+fmt(n('preInterim')+n('preBiz')+n('preWage'))+' / 금융소득 원천 '+fmt(finWh+sepWh));
+  rb.tot('차감 납부(환급)할 소득세',pay);
+  if(inst>0) rb.ln('(참고) 분납 가능 금액',inst,'납부세액 1천만원 초과 시 납부기한 후 2개월 내');
+  rb.hd('5. 지방소득세 · 농어촌특별세');
+  rb.ln('개인지방소득세',lt,'결정세액의 10%');
+  rb.ln('(-) 기납부 지방소득세',n('prepaidLocal'));
+  rb.ln('납부할 지방소득세',lt-n('prepaidLocal'));
+  rb.ln('농어촌특별세',nt);
+  rb.tot('총 세부담(소득세+지방소득세+농특세)',burden);
+  rb.pct('실효세율(소득세+지방소득세 / 종합소득금액)',totalInc>0?(decided+sepTax+lt)/totalInc*100:0);
+  if(F>0&&!over) warn.push('금융소득 '+fmt(F)+'원은 2천만원 이하여서 원천징수(14%)로 분리과세 종결되며 종합소득세에 합산되지 않습니다.');
+  if(over) warn.push('금융소득이 2천만원을 초과하여 종합과세(비교과세) 대상입니다.');
+  if(exclC+exclS>0) warn.push('최저한세로 감면·공제 '+fmt(exclC+exclS)+'원이 배제되었습니다.');
+  if(nonMin>nonMinF&&tax>0) warn.push('세액공제 합계가 산출세액을 초과하여 일부가 공제되지 않았습니다.');
+  if(rentRaw<0) warn.push('부동산임대업 결손금은 다른 소득과 통산되지 않아 0으로 처리했습니다.');
+  if(n('divSep')>0) warn.push('고배당 분리과세는 고배당 상장법인 배당만 해당하며 신청이 필요합니다.');
+  if(!hasWage&&(n('socIns')>0||n('rentLoan')>0||n('housingInt')>0||n('houseSave')>0)) warn.push('근로소득이 없으면 특별소득공제·주택자금·주택마련저축 공제는 적용되지 않습니다.');
+  const sum=[{l:'차감 납부(환급)할 소득세',v:pay},{l:'종합소득 과세표준',v:P},{l:'결정세액',v:decided},{l:'총 세부담(지방세·농특세 포함)',v:burden},{l:'한계세율(지방세 포함)',v:marg*110,k:'p'}];
+  return {sum,rows:rb.rows,aux,warn};
+}
+MODS[ID]={id:ID,name:'종합소득세',sections,calc,rateHTML,rateDetail};
+})();
+/* ===== 상속세 ===== */
+(function(){
+const ID='inh';
+const INH=[[1e8,.10],[5e8,.20],[1e9,.30],[3e9,.40],[Infinity,.50]];
+
+const sections=[
+{id:'a',title:'1. 피상속인 · 상속인 구성',fields:[
+  C('nonRes','피상속인이 비거주자(기초공제 2억원만 적용)'),
+  C('hasSpouse','배우자 생존(상속인)'),
+  C('spouseSole','배우자가 단독 상속인(일괄공제 선택 불가)',{show:v=>v.hasSpouse}),
+  I('childrenN','자녀 수(상속인 · 태아 포함)',{unit:'명'}),
+  I('parentsN','직계존속 수(자녀가 없을 때 공동상속인)',{unit:'명'}),
+  I('minorYears','미성년자 공제 : Σ(19세 − 나이) 연수 합계',{unit:'년'}),
+  I('seniorN','연로자(만 65세 이상, 배우자 제외) 수',{unit:'명'}),
+  I('disabYears','장애인 공제 : Σ 기대여명 연수 합계',{unit:'년'})
+]},
+{id:'b',title:'2. 상속재산(시가 또는 보충적 평가액)',fields:[
+  M('estRE','부동산(토지 · 건물 · 부동산에 관한 권리)'),
+  M('estListed','상장주식 · 채권 · 펀드 등 유가증권'),
+].concat(usFields('')).concat([
+  M('estBank','예금 · 적금 · 현금 등 금융재산'),
+  M('estInsurance','사망보험금(피상속인이 보험료를 낸 경우)'),
+  M('estRetire','퇴직금 · 퇴직수당 · 공로금 등'),
+  M('estTrust','신탁재산(피상속인에게 귀속된 신탁)'),
+  M('estBiz','사업용 자산 · 회원권 · 차량 · 채권 등 기타')
+])},
+{id:'c',title:'3. 사전증여 · 추정상속재산',fields:[
+  M('gift10','상속인에게 10년 내 증여한 재산가액'),
+  M('gift5','상속인이 아닌 자에게 5년 내 증여한 재산가액'),
+  M('giftBase','위 증여재산에 대한 증여세 과세표준(합계)'),
+  M('giftTax','위 증여재산에 대해 기납부한 증여세 산출세액'),
+  M('spouseGiftBase','배우자에게 사전증여한 재산의 증여세 과세표준'),
+  M('dispo1','상속개시 전 1년 내 처분 · 인출 · 채무부담액'),
+  M('dispo2','상속개시 전 2년 내 처분 · 인출 · 채무부담액'),
+  M('unexplained','그중 사용처 불분명(입증 못한) 금액')
+]},
+{id:'d',title:'4. 차감 항목(공과금 · 장례비 · 채무) 및 비과세',fields:[
+  M('publicDue','공과금(사망일 현재 납부할 조세 등)'),
+  M('funeral','장례비용(봉안시설 제외)'),
+  M('funeralSacred','봉안시설 · 자연장지 비용'),
+  M('debts','채무(금융채무 · 임대보증금 · 미지급금 등)'),
+  M('finDebts','그중 금융회사 채무'),
+  M('nonTax','비과세 재산(금양임야 · 문화재 등)'),
+  M('donated','공익법인 출연재산(과세가액 불산입)')
+]},
+{id:'e',title:'5. 상속공제',desc:'기초 · 인적공제와 일괄공제 5억원 중 큰 금액이 자동 적용됩니다(수동 선택 가능).',fields:[
+  SE('dedMode','기초 · 인적공제 / 일괄공제 선택',[['auto','유리한 쪽 자동'],['lump','일괄공제 5억원'],['item','기초 + 인적공제']],{def:'auto'}),
+  M('bequestNonHeir','상속인 아닌 자 유증 · 사인증여 및 상속포기자 상속분'),
+  M('spouseActual','배우자가 실제 상속받는 재산가액'),
+  R('spouseLegalR','배우자 법정상속분 한도액(자동)'),
+  R('spouseDedR','배우자 상속공제액(자동)'),
+  R('itemR','기초 + 인적공제 합계(자동)'),
+  M('finExcl','금융재산 중 공제 제외분(최대주주 주식 등)'),
+  R('finDedR','금융재산 상속공제액(자동)'),
+  C('cohabOn','동거주택상속공제 요건 충족'),
+  M('cohabVal','동거주택 가액(담보채무 차감)',{show:v=>v.cohabOn}),
+  C('bizOn','가업상속공제 요건 충족'),
+  M('bizVal','가업상속재산가액',{show:v=>v.bizOn}),
+  SE('bizYears','피상속인 가업 경영기간',[['10','10년 이상 20년 미만 (한도 300억원)'],['20','20년 이상 30년 미만 (한도 400억원)'],['30','30년 이상 (한도 600억원)']],{def:'10',show:v=>v.bizOn}),
+  M('farmVal','영농상속재산가액'),
+  M('disasterLoss','재해손실공제액'),
+  M('appFeeRE','감정평가수수료(부동산)'),
+  M('appFeeSt','비상장주식 평가수수료'),
+  R('capR','상속공제 종합한도(자동)')
+]},
+{id:'f',title:'6. 세액 계산 옵션',fields:[
+  M('skipAmt','세대를 건너뛴 상속(손자녀 등) 재산가액'),
+  C('skipMinor','수유자가 미성년자이고 20억원 초과(할증 40%)'),
+  M('foreignTax','외국납부세액공제'),
+  M('reInhTax','단기재상속 : 전 상속세 중 재상속재산 해당 세액'),
+  I('reInhYears','단기재상속 : 경과연수',{unit:'년'}),
+  C('fileOn','기한 내 신고(신고세액공제 3%)',{def:true}),
+  SE('annYears','연부연납 기간(참고)',[['0','일시납부'],['5','5년'],['10','10년'],['20','20년(가업상속)']],{def:'0'})
+]},
+{id:'g',title:'7. 가산세',fields:penFields()}
+];
+
+/* ----- 도움말 ----- */
+H('inh.nonRes','비거주자 피상속인','피상속인이 비거주자이면 국내에 있는 재산만 과세되고, 상속공제는 기초공제 2억원과 감정평가수수료 공제만 적용됩니다.','상속세 및 증여세법 제3조, 제18조, 제24조');
+H('inh.hasSpouse','배우자 생존','배우자는 법정상속인(1.5 가중)이며 배우자 상속공제(최소 5억원 ~ 최대 30억원)를 받을 수 있습니다.','상속세 및 증여세법 제19조, 민법 제1009조');
+H('inh.spouseSole','배우자 단독 상속','피상속인의 배우자가 단독으로 상속받는 경우에는 일괄공제 5억원을 선택할 수 없고 기초공제 + 인적공제만 적용합니다.','상속세 및 증여세법 제21조 제2항');
+H('inh.childrenN','자녀 수','자녀 1명당 5천만원을 공제합니다(인적공제). 태아를 포함하며 자녀가 미성년자이면 미성년자 공제가 추가됩니다. 법정상속분 계산에도 쓰입니다.','상속세 및 증여세법 제20조 제1항 제1호');
+H('inh.parentsN','직계존속 수','자녀가 없으면 직계존속이 배우자와 공동상속인이 됩니다. 배우자 법정상속분 한도 계산에 사용합니다.','민법 제1000조·제1009조');
+H('inh.minorYears','미성년자 공제 연수','상속인 및 동거가족 중 미성년자 1명당 1천만원 × 19세가 될 때까지의 연수(1년 미만은 1년)입니다. 여러 명이면 연수를 합산해 입력합니다.','상속세 및 증여세법 제20조 제1항 제2호');
+H('inh.seniorN','연로자 수','상속인 및 동거가족 중 만 65세 이상(배우자 제외)은 1명당 5천만원을 공제합니다.','상속세 및 증여세법 제20조 제1항 제3호');
+H('inh.disabYears','장애인 공제 기대여명 연수','상속인 및 동거가족 중 장애인 1명당 1천만원 × 통계청 기대여명 연수입니다. 여러 명이면 연수를 합산합니다.','상속세 및 증여세법 제20조 제1항 제4호');
+H('inh.estRE','부동산','시가(매매·감정·수용가액 등)가 있으면 시가, 없으면 보충적 평가(토지 개별공시지가, 주택 공시가격, 상가 기준시가 또는 임대료 환산가액 등)로 평가합니다. 평가기준일은 상속개시일입니다.','상속세 및 증여세법 제60조·제61조','상속개시일 전후 6개월 이내 매매·감정가액이 있으면 시가로 보므로 확인이 필요합니다.');
+H('inh.estListed','상장주식 등 유가증권','상속개시일 전후 각 2개월(총 4개월) 종가 평균액으로 평가합니다.','상속세 및 증여세법 제63조 제1항 제1호');
+H('inh.estBank','예금 · 적금 · 현금 등 금융재산','예금은 상속개시일 현재 잔액 + 미수이자입니다. 금융재산 상속공제의 대상이 되는 순금융재산에 포함됩니다.','상속세 및 증여세법 제22조, 같은 법 시행령 제19조');
+H('inh.estInsurance','사망보험금','피상속인이 보험계약자이거나 보험료를 실질 부담하고 피상속인의 사망으로 받는 보험금은 간주상속재산으로 과세합니다. 상속인이 직접 보험료를 낸 보험금은 제외합니다. 금융재산에 포함됩니다.','상속세 및 증여세법 제8조','종신보험 계약자·수익자 구조에 따라 과세 여부가 달라지므로 보험계약 구조를 확인하세요.');
+H('inh.estRetire','퇴직금 · 퇴직수당 · 공로금','피상속인의 사망으로 지급받는 퇴직금 등은 간주상속재산이나, 국민연금법 등에 따른 유족급여는 제외됩니다.','상속세 및 증여세법 제10조');
+H('inh.estTrust','신탁재산','피상속인이 신탁한 재산은 수익자가 상속인이면 상속재산으로 보며 금융회사 신탁은 금융재산에 포함됩니다.','상속세 및 증여세법 제9조');
+H('inh.estBiz','사업용 자산 · 기타 재산','영업권, 비품, 회원권, 차량, 대여금 채권 등 위에 열거되지 않은 상속재산입니다.','상속세 및 증여세법 제7조, 제60조~제66조');
+usHelp('inh','');
+H('inh.gift10','10년 내 상속인 증여','상속개시일 전 10년 이내에 상속인에게 증여한 재산은 상속세 과세가액에 합산합니다(증여일 현재 평가액). 합산한 증여재산의 기납부 증여세는 세액공제됩니다.','상속세 및 증여세법 제13조 제1항 제1호');
+H('inh.gift5','5년 내 비상속인 증여','상속인이 아닌 자(손자녀 등)에게 5년 이내 증여한 재산은 합산 대상입니다. 이 금액은 상속공제 종합한도 계산에서 차감됩니다.','상속세 및 증여세법 제13조 제1항 제2호');
+H('inh.giftBase','합산 증여재산의 증여세 과세표준','증여세액공제 한도 계산에 사용합니다. 공제한도 = 상속세 산출세액 × (합산 증여재산의 과세표준 ÷ 상속세 과세표준)입니다.','상속세 및 증여세법 제28조 제1항');
+H('inh.giftTax','기납부 증여세 산출세액','합산 대상 증여재산에 대해 이미 부과된 증여세 산출세액입니다. 상속세 산출세액에서 공제합니다.','상속세 및 증여세법 제28조');
+H('inh.spouseGiftBase','배우자 사전증여 과세표준','배우자에게 사전증여한 재산 중 증여세 과세표준에 해당하는 금액은 배우자 상속공제 한도에서 차감됩니다.','상속세 및 증여세법 제19조 제2항 제1호');
+H('inh.dispo1','1년 내 처분 · 인출액','재산 종류별(현금·예금·유가증권, 부동산, 기타)로 상속개시 전 1년 이내 2억원 이상 처분·인출한 경우 사용처를 입증해야 합니다. 계산기는 종류 구분 없이 합계로 단순화했습니다.','상속세 및 증여세법 제15조 제1항');
+H('inh.dispo2','2년 내 처분 · 인출액','상속개시 전 2년 이내 5억원 이상 처분·인출한 경우도 같습니다.','상속세 및 증여세법 제15조 제1항 제2호');
+H('inh.unexplained','사용처 불분명 금액','상속인이 사용처를 소명하지 못한 금액입니다. 추정상속재산 = 불분명 금액 − Min(처분액 × 20%, 2억원)이며, 20%와 2억원의 차감은 소명 못한 금액 전체에 대해 적용됩니다.','상속세 및 증여세법 제15조 제1항·제2항');
+H('inh.publicDue','공과금','사망일 현재 피상속인이 납부할 의무가 있는 조세, 공공요금 등입니다. 상속재산에 대한 상속세 자체는 제외합니다.','상속세 및 증여세법 제14조 제1항 제1호');
+H('inh.funeral','장례비용','장례비용은 최소 500만원(증빙 없어도 공제)에서 1,000만원 한도로 공제합니다. 초과분이 있으면 증빙이 필요합니다.','상속세 및 증여세법 제14조 제1항 제2호, 같은 법 시행령 제9조');
+H('inh.funeralSacred','봉안시설 · 자연장지 비용','봉안시설(납골당)·자연장지 사용 비용은 500만원 한도로 추가 공제합니다. 장례비 포함 최대 1,500만원입니다.','상속세 및 증여세법 시행령 제9조 제1항');
+H('inh.debts','채무','사망일 현재 피상속인의 채무입니다. 금융회사 대출, 임대보증금, 미지급금 등이며 채무 존재 및 부담은 입증해야 합니다. 상속인 채무와 입증 안 된 사채는 제외합니다.','상속세 및 증여세법 제14조 제1항 제3호');
+H('inh.finDebts','금융회사 채무','금융재산상속공제 계산 시 순금융재산(금융재산 − 금융채무)을 구하는 데 쓰입니다. 위 채무 중 금융회사 채무분만 입력합니다.','상속세 및 증여세법 시행령 제19조 제2항');
+H('inh.nonTax','비과세 재산','국가·지자체 유증재산, 금양임야(2억원 한도, 시가 20% 범위 내 가액 중 작은 금액), 문화재, 제사용 족보·제구(1천만원 한도) 등입니다.','상속세 및 증여세법 제12조');
+H('inh.donated','공익법인 출연재산','상속세 신고기한 내에 공익법인에 출연한 재산은 상속세 과세가액에 산입하지 않습니다.','상속세 및 증여세법 제16조');
+H('inh.dedMode','기초 · 인적공제 / 일괄공제 선택','기초공제 2억원 + 인적공제(자녀 5천만원, 미성년 1천만원 × 연수, 연로자 5천만원, 장애인 1천만원 × 연수)의 합계와 일괄공제 5억원 중 큰 금액을 선택할 수 있습니다. 배우자 단독 상속이면 일괄공제를 선택할 수 없습니다.','상속세 및 증여세법 제18조·제20조·제21조');
+H('inh.bequestNonHeir','비상속인 유증 · 상속포기자 상속분','상속인이 아닌 자에게 유증·사인증여한 재산과 상속포기로 후순위 상속인이 받게 된 재산입니다. 상속공제 종합한도와 배우자 법정상속분 한도 계산에서 차감합니다.','상속세 및 증여세법 제24조, 제19조');
+H('inh.spouseActual','배우자가 실제 상속받는 재산가액','배우자 상속공제는 배우자가 실제 상속받은 금액을 기준으로 하며, 법정상속분 한도와 30억원 중 작은 금액까지 인정됩니다. 실제 상속액이 5억원 미만이거나 없으면 5억원을 공제합니다(상속세 신고기한 다음 날부터 9개월까지 분할 신고 필요).','상속세 및 증여세법 제19조','실제 상속액을 공제받으려면 상속재산을 분할(등기·명의개서)하여 신고해야 합니다.');
+H('inh.spouseLegalR','배우자 법정상속분 한도액','(상속세 과세가액 − 비상속인 유증 등 − 비상속인 5년 내 증여) × 배우자 법정상속분 − 배우자 사전증여 과세표준입니다. 법정상속분은 배우자 1.5 : 자녀 1(자녀가 없으면 직계존속 1)입니다.','상속세 및 증여세법 제19조 제2항');
+H('inh.spouseDedR','배우자 상속공제액','Max(5억원, Min(실제 상속액, 법정상속분 한도액, 30억원))로 계산합니다.','상속세 및 증여세법 제19조 제1항·제4항');
+H('inh.itemR','기초 + 인적공제 합계','기초공제 2억원 + 자녀공제 + 미성년자공제 + 연로자공제 + 장애인공제입니다. 일괄공제 5억원보다 큰 경우에만 유리합니다(자녀 다수, 미성년·장애인 상속인 등).','상속세 및 증여세법 제18조·제20조');
+H('inh.finExcl','금융재산 중 공제 제외분','최대주주 또는 최대출자자가 보유한 주식, 신고기한까지 신고하지 않은 타인 명의 금융재산, 가업·영농상속공제를 받은 금융재산 등은 금융재산 상속공제에서 제외됩니다.','상속세 및 증여세법 시행령 제19조 제1항');
+H('inh.finDedR','금융재산 상속공제액','순금융재산이 2천만원 이하이면 전액, 2천만원 초과 1억원 이하이면 2천만원, 1억원 초과이면 순금융재산의 20%(한도 2억원)입니다. 순금융재산 = 금융재산 − 금융채무입니다.','상속세 및 증여세법 제22조');
+H('inh.cohabOn','동거주택상속공제 요건','피상속인과 상속인이 상속개시일부터 소급해 10년 이상 계속 동거한 1세대 1주택으로, 상속인은 무주택자이면서 피상속인과 동거한 직계비속이어야 합니다.','상속세 및 증여세법 제23조의2');
+H('inh.cohabVal','동거주택 가액','주택가액에서 담보된 채무를 뺀 금액의 100%를 공제하며 한도는 6억원입니다.','상속세 및 증여세법 제23조의2 제1항');
+H('inh.bizOn','가업상속공제 요건','피상속인이 10년 이상 영위한 중소기업·일정 중견기업(매출 5천억원 미만)을 거주자 상속인이 승계하는 경우입니다. 피상속인(최대주주, 지분 40%·상장 20% 이상)과 상속인(18세 이상, 2년 이상 가업종사 등) 요건을 충족해야 하고 상속 후 5년간 사후관리 요건이 적용됩니다. 2026 세제개편안(경영연수 × 20억원, 최대 1,000억원, 경영 30년 요건·10년 사후관리)은 국회 심의 전이라 현행 기준으로 계산합니다.','상속세 및 증여세법 제18조의2','개편안이 입법되면 한도와 요건이 달라지므로 신고 시점의 법령을 반드시 확인하세요.');
+H('inh.bizVal','가업상속재산가액','가업에 해당하는 법인의 주식 또는 개인사업 자산의 상속재산가액(사업무관자산 제외)입니다. 가업상속재산가액 전액을 한도 내에서 공제합니다.','상속세 및 증여세법 제18조의2 제1항');
+H('inh.bizYears','가업 경영기간','피상속인의 가업 영위기간에 따른 공제한도입니다. 10년 이상 300억원, 20년 이상 400억원, 30년 이상 600억원입니다.','상속세 및 증여세법 제18조의2 제1항');
+H('inh.farmVal','영농상속재산가액','영농(농지·초지·산림지·축사·농업용 시설 등)상속재산 가액입니다. 영농상속공제는 최대 30억원 한도입니다. 영농 요건(2년 이상 영농, 후계자 요건)은 별도 확인이 필요합니다.','상속세 및 증여세법 제18조의3');
+H('inh.disasterLoss','재해손실공제','상속세 신고기한 이내에 화재·붕괴·폭발·환경오염 사고 등 재난으로 상속재산이 멸실·훼손된 경우 보험금 등을 뺀 손실가액을 공제합니다.','상속세 및 증여세법 제23조');
+H('inh.appFeeRE','감정평가수수료(부동산)','상속재산 평가를 위해 감정평가법인에 지급한 수수료로 500만원 한도입니다(비상장주식 평가수수료는 별도). 상속공제 종합한도와 무관하게 공제됩니다.','상속세 및 증여세법 제25조, 같은 법 시행령 제22조');
+H('inh.appFeeSt','비상장주식 평가수수료','비상장주식 평가심의위원회 평가 수수료 등으로 1,000만원 한도입니다.','상속세 및 증여세법 시행령 제22조 제1항');
+H('inh.capR','상속공제 종합한도','상속세 과세가액 − 비상속인 유증 등 − 상속포기자 상속분 − 비상속인 5년 내 증여가액입니다. 공제 합계가 이 한도를 넘으면 한도까지만 공제됩니다. 감정평가수수료는 한도 밖입니다.','상속세 및 증여세법 제24조');
+H('inh.skipAmt','세대생략 상속재산','자녀를 건너뛰고 손자녀 등에게 상속(유증)되는 재산가액입니다. 상속세 산출세액 × (해당 재산가액 ÷ 상속재산 가액) × 30%를 할증합니다. 대습상속은 제외합니다.','상속세 및 증여세법 제27조');
+H('inh.skipMinor','미성년 수유자 20억원 초과','세대를 건너뛴 상속에서 수유자가 미성년자이고 상속재산이 20억원을 초과하면 할증률이 40%입니다.','상속세 및 증여세법 제27조');
+H('inh.foreignTax','외국납부세액공제','외국에 있는 상속재산에 대해 외국에서 납부한 상속세액으로, 공제한도(산출세액 × 국외재산 비율)를 적용한 금액을 입력합니다.','상속세 및 증여세법 제29조');
+H('inh.reInhTax','단기재상속 전 상속세','상속개시 후 10년 이내에 상속인이 사망해 재상속이 개시된 경우, 전 상속 때 낸 상속세 중 재상속재산에 해당하는 세액입니다. 1년 경과마다 10%씩 줄여 공제합니다.','상속세 및 증여세법 제30조');
+H('inh.reInhYears','단기재상속 경과연수','전 상속개시일로부터 재상속개시일까지의 경과연수(1년 미만 0)입니다. 공제액 = 세액 × (10년 − 경과연수) ÷ 10년입니다.','상속세 및 증여세법 제30조');
+H('inh.fileOn','신고세액공제 3%','상속개시일이 속하는 달의 말일부터 6개월(해외 거주 9개월) 이내에 신고하면 산출세액에서 증여세액공제 등을 뺀 금액의 3%를 공제합니다.','상속세 및 증여세법 제69조');
+H('inh.annYears','연부연납 기간(참고)','납부세액이 2천만원을 초과하면 허가를 받아 분할 납부할 수 있습니다. 일반 상속은 10년, 가업상속은 20년(또는 10년 거치 후 20년)까지 가능하며 가산금 이자가 붙습니다. 참고용으로 원금 기준 회차당 금액을 보여줍니다.','국세기본법 제70조, 상속세 및 증여세법 제71조');
+penHelp('inh');
+
+/* ----- 세율 띠 ----- */
+const rateHTML=`<span class="rl">상속세율</span><span class="chip">1억↓ <b>10%</b></span><span class="chip">~5억 <b>20%</b></span><span class="chip">~10억 <b>30%</b></span><span class="chip">~30억 <b>40%</b></span><span class="chip">30억↑ <b>50%</b></span><span class="rl" style="margin-left:6px">공제</span><span class="chip">일괄 <b>5억</b> / 기초 <b>2억</b> + 자녀 <b>5천만/인</b></span><span class="chip">배우자 <b>5억~30억</b></span><span class="chip">금융재산 <b>20%(한도 2억)</b></span><span class="chip">동거주택 <b>6억</b></span><span class="chip">신고세액공제 <b>3%</b></span>`;
+const rateDetail=`<p><b>상속세율(상속세 및 증여세법 제26조)</b></p><table><tr><th>과세표준</th><th>세율</th><th>누진공제</th></tr><tr><td>1억원 이하</td><td>10%</td><td>0</td></tr><tr><td>1억원 초과 5억원 이하</td><td>20%</td><td>1천만원</td></tr><tr><td>5억원 초과 10억원 이하</td><td>30%</td><td>6천만원</td></tr><tr><td>10억원 초과 30억원 이하</td><td>40%</td><td>1억 6천만원</td></tr><tr><td>30억원 초과</td><td>50%</td><td>4억 6천만원</td></tr></table><p><b>주요 공제</b></p><table><tr><th>항목</th><th>금액</th></tr><tr><td>기초공제 + 인적공제</td><td>2억원 + 자녀 5천만원/인, 미성년 1천만원 × 연수, 연로자 5천만원, 장애인 1천만원 × 연수</td></tr><tr><td>일괄공제</td><td>5억원 (기초 + 인적공제와 비교해 큰 금액)</td></tr><tr><td>배우자공제</td><td>최소 5억원 ~ 최대 30억원 (법정상속분 한도)</td></tr><tr><td>금융재산공제</td><td>순금융재산 20% (한도 2억원)</td></tr><tr><td>동거주택공제</td><td>주택가액 100% (한도 6억원)</td></tr><tr><td>가업상속공제</td><td>경영 10년 300억 / 20년 400억 / 30년 600억</td></tr><tr><td>영농상속공제</td><td>최대 30억원</td></tr></table><p>상속세 과세표준 신고기한은 상속개시일이 속하는 달의 말일부터 6개월(해외 9개월)입니다. 과세표준이 50만원 미만이면 상속세를 부과하지 않습니다.</p><p>※ 2026 세제개편안(가업상속공제 한도 1,000억원 등)과 자녀공제 5억원 상향안은 아직 시행되지 않아 반영하지 않았습니다.</p><div class="law"><b>근거</b> : 상속세 및 증여세법 제18조~제26조, 제69조</div>`;
+
+/* ----- 계산 ----- */
+function calc(v){
+  const n=k=>N(v[k]);
+  const rb=RB(), warn=[], aux={};
+  const us=usCalc(v,'');
+  const estate=n('estRE')+n('estListed')+us.val+n('estBank')+n('estBiz');
+  const deemed=n('estInsurance')+n('estRetire')+n('estTrust');
+  const dsp=mx(n('dispo1')>=2e8?n('dispo1'):0,n('dispo2')>=5e8?n('dispo2'):0);
+  const presumed=dsp>0?mx(0,n('unexplained')-mn(dsp*0.2,2e8)):0;
+  const gross=estate+deemed+presumed;
+  const exempt=n('nonTax')+n('donated');
+  const funeral=mn(mx(n('funeral'),5e6),1e7)+mn(n('funeralSacred'),5e6);
+  const deductItems=n('publicDue')+funeral+n('debts');
+  const giftAdd=n('gift10')+n('gift5');
+  const tv=mx(0,gross-exempt-deductItems+giftAdd); /* 상속세 과세가액 */
+  /* 공제 */
+  const nonRes=!!v.nonRes;
+  const itemRaw=nonRes?2e8:(2e8+n('childrenN')*5e7+n('minorYears')*1e7+n('seniorN')*5e7+n('disabYears')*1e7);
+  const lumpOk=!nonRes&&!(v.hasSpouse&&v.spouseSole);
+  let basis,basisNote;
+  if(!lumpOk){basis=itemRaw;basisNote='기초 + 인적공제(일괄공제 불가)';}
+  else if(v.dedMode==='lump'){basis=5e8;basisNote='일괄공제 5억원';}
+  else if(v.dedMode==='item'){basis=itemRaw;basisNote='기초 + 인적공제';}
+  else {basis=mx(itemRaw,5e8);basisNote=itemRaw>5e8?'기초 + 인적공제(일괄공제보다 유리)':'일괄공제 5억원';}
+  /* 배우자 */
+  let spouseDed=0,legalLimit=0;
+  if(v.hasSpouse&&!nonRes){
+    const others=n('childrenN')>0?n('childrenN'):n('parentsN');
+    const ratio=others>0?1.5/(1.5+others):1;
+    legalLimit=mx(0,(tv-n('bequestNonHeir')-n('gift5'))*ratio-n('spouseGiftBase'));
+    spouseDed=mx(5e8,mn(n('spouseActual'),legalLimit,3e9));
+  }
+  /* 금융재산 */
+  const finAssets=mx(0,n('estBank')+n('estListed')+n('estInsurance')+n('estTrust')-n('finExcl'));
+  const netFin=mx(0,finAssets-n('finDebts'));
+  const finDed=nonRes?0:(netFin<=2e7?netFin:mn(mx(2e7,netFin*0.2),2e8));
+  const cohab=(!nonRes&&v.cohabOn)?mn(n('cohabVal'),6e8):0;
+  const biz=(!nonRes&&v.bizOn)?mn(n('bizVal'),{10:3e10,20:4e10,30:6e10}[String(v.bizYears)]||3e10):0;
+  const farm=nonRes?0:mn(n('farmVal'),3e9);
+  const disaster=n('disasterLoss');
+  const dedSum=basis+spouseDed+finDed+cohab+biz+farm+disaster;
+  const capLimit=mx(0,tv-n('bequestNonHeir')-n('gift5'));
+  const dedApplied=mn(dedSum,capLimit);
+  const fee=mn(n('appFeeRE'),5e6)+mn(n('appFeeSt'),1e7);
+  const tb=mx(0,tv-dedApplied-fee);
+  let tax=tb<5e5?0:fl(slab(tb,INH));
+  const skipRatio=tv>0?mn(1,n('skipAmt')/tv):0;
+  const skipRate=(v.skipMinor&&n('skipAmt')>2e9)?0.4:0.3;
+  const sur=fl(tax*skipRatio*skipRate);
+  const giftCr=(n('giftTax')>0&&tb>0)?mn(n('giftTax'),fl(tax*mn(1,n('giftBase')/tb))):0;
+  const foreign=mn(n('foreignTax'),mx(0,tax+sur-giftCr));
+  const yrs=mn(9,mx(0,n('reInhYears')));
+  const reInh=n('reInhTax')>0?mn(fl(n('reInhTax')*(10-yrs)/10),mx(0,tax+sur-giftCr-foreign)):0;
+  const base4=mx(0,tax+sur-giftCr-foreign-reInh);
+  const fileCr=v.fileOn?fl(base4*0.03):0;
+  const pen=penCalc(v);
+  const total=base4-fileCr+pen.tot;
+  const ann=N(v.annYears);
+  /* aux */
+  aux.usVal=us.val; aux.spouseLegalR=legalLimit; aux.spouseDedR=spouseDed; aux.itemR=itemRaw; aux.finDedR=finDed; aux.capR=capLimit;
+  /* rows */
+  rb.hd('1. 상속세 과세가액');
+  rb.ln('부동산',n('estRE')); rb.ln('상장주식 등 유가증권',n('estListed')); rb.ln('비상장주식',us.val,us.note);
+  rb.ln('예금 등 금융재산',n('estBank')); rb.ln('사업용·기타 재산',n('estBiz'));
+  rb.sub('본래의 상속재산',estate);
+  rb.ln('(+) 간주상속재산(보험금·퇴직금·신탁)',deemed);
+  rb.ln('(+) 추정상속재산',presumed);
+  rb.ln('(-) 비과세·과세가액 불산입',exempt);
+  rb.ln('(-) 공과금·장례비·채무',deductItems,'장례비 인정액 '+fmt(funeral));
+  rb.ln('(+) 사전증여재산 합산',giftAdd,'상속인 10년 '+fmt(n('gift10'))+' / 비상속인 5년 '+fmt(n('gift5')));
+  rb.sub('상속세 과세가액',tv);
+  rb.hd('2. 상속공제');
+  rb.ln('(-) 기초·인적 또는 일괄공제',basis,basisNote);
+  rb.ln('(-) 배우자 상속공제',spouseDed,v.hasSpouse?'법정상속분 한도 '+fmt(legalLimit):'');
+  rb.ln('(-) 금융재산 상속공제',finDed,'순금융재산 '+fmt(netFin));
+  rb.ln('(-) 동거주택 상속공제',cohab);
+  rb.ln('(-) 가업상속공제',biz);
+  rb.ln('(-) 영농상속공제',farm);
+  rb.ln('(-) 재해손실공제',disaster);
+  rb.ln('(참고) 공제 합계 / 종합한도',dedApplied,'합계 '+fmt(dedSum)+' / 한도 '+fmt(capLimit));
+  rb.ln('(-) 감정평가수수료 공제',fee);
+  rb.sub('상속세 과세표준',tb);
+  rb.hd('3. 세액 계산');
+  rb.ln('산출세액',tax,tb<5e5&&tb>0?'과세표준 50만원 미만 부과 제외':'');
+  rb.ln('(+) 세대생략 할증',sur,skipRatio>0?'가산율 '+(skipRate*100)+'% × 대상 비율 '+(Math.round(skipRatio*1000)/10)+'%':'');
+  rb.ln('(-) 증여세액공제',giftCr);
+  rb.ln('(-) 외국납부세액공제',foreign);
+  rb.ln('(-) 단기재상속세액공제',reInh);
+  rb.ln('(-) 신고세액공제 3%',fileCr);
+  rb.ln('(+) 가산세',pen.tot,'신고불성실 '+fmt(pen.rep)+' / 납부지연 '+fmt(pen.late)+' / 기타 '+fmt(pen.oth));
+  rb.tot('납부할 상속세',total);
+  if(ann>0){
+    if(total>2e7) rb.ln('(참고) 연부연납 회차당 원금('+ann+'년, '+(ann+1)+'회)',fl(total/(ann+1)),'가산금 이자 별도');
+    else rb.note('연부연납은 납부세액 2천만원 초과 시 가능합니다.');
+  }
+  rb.pct('실효세율(납부 상속세 / 상속세 과세가액)',tv>0?total/tv*100:0);
+  rb.pct('실효세율(납부 상속세 / 상속재산 총액)',gross>0?total/gross*100:0);
+  if(tb>0&&tb<5e5) warn.push('과세표준이 50만원 미만이어서 상속세가 부과되지 않습니다.');
+  if(dedSum>capLimit) warn.push('상속공제 합계가 종합한도를 초과하여 '+fmt(dedSum-capLimit)+'원이 공제되지 않았습니다.');
+  if(v.hasSpouse&&n('spouseActual')<5e8) warn.push('배우자 상속공제는 실제 상속액이 5억원 미만이어도 5억원이 적용됩니다(분할 신고 요건 확인).');
+  if(v.hasSpouse&&v.spouseSole&&n('childrenN')>0) warn.push('자녀가 있는데 배우자 단독 상속으로 체크되어 있습니다. 확인하세요.');
+  if(presumed>0) warn.push('처분·인출 사용처 불분명 금액 중 '+fmt(presumed)+'원이 추정상속재산으로 가산되었습니다.');
+  if(v.bizOn) warn.push('가업상속공제는 현행 요건(경영 10년·사후관리 5년) 기준입니다. 2026 세제개편안 미반영.');
+  const sum=[{l:'납부할 상속세',v:total},{l:'상속세 과세가액',v:tv},{l:'상속세 과세표준',v:tb},{l:'산출세액',v:tax},{l:'실효세율(과세가액 대비)',v:tv>0?total/tv*100:0,k:'p'}];
+  return {sum,rows:rb.rows,aux,warn};
+}
+MODS[ID]={id:ID,name:'상속세',sections,calc,rateHTML,rateDetail};
+})();
+/* ===== 증여세 ===== */
+(function(){
+const ID='gift';
+const GIFT=[[1e8,.10],[5e8,.20],[1e9,.30],[3e9,.40],[Infinity,.50]];
+const relOpts=[['asc','직계존속으로부터 (수증자 : 자녀 · 손자녀 등)'],['spouse','배우자로부터'],['desc','직계비속으로부터 (수증자 : 부모 · 조부모)'],['other','기타 친족 (6촌 이내 혈족 · 4촌 이내 인척)'],['none','타인(공제 없음)']];
+
+const sections=[
+{id:'a',title:'1. 증여자 · 수증자 관계',fields:[
+  SE('relation','증여자와 수증자의 관계',relOpts,{def:'asc',w:2}),
+  C('minor','수증자가 미성년자(만 19세 미만)',{show:v=>v.relation==='asc'}),
+  C('marriage','혼인 · 출산 증여재산공제 적용(+1억원)',{show:v=>v.relation==='asc'}),
+  M('marriageUsed','이미 공제받은 혼인 · 출산 공제액(평생 누적)',{show:v=>v.relation==='asc'&&v.marriage}),
+  C('skipGen','세대를 건너뛴 증여(수증자가 증여자의 자녀가 아닌 직계비속)'),
+  C('skipExempt','부모 사망으로 인한 대습 증여(할증 제외)',{show:v=>v.skipGen}),
+  C('skipMinor20','수증자 미성년이고 증여가액 20억원 초과(할증 40%)',{show:v=>v.skipGen}),
+  R('relCapR','관계별 증여재산공제 한도(10년)'),
+  R('remainR','공제 잔여한도(기사용분 차감, 자동)')
+]},
+{id:'b',title:'2. 증여재산',fields:[
+  M('gCash','현금 · 예금'),
+  M('gRE','부동산(시가 또는 보충적 평가액)'),
+  M('gListed','상장주식 · 유가증권')
+].concat(usFields('')).concat([
+  M('gOther','기타 재산(보험금 증여 · 채권 · 차량 · 회원권 등)'),
+  M('gDebt','부담부증여 : 수증자가 인수하는 채무'),
+  C('taxByDonor','증여세를 증여자가 대신 납부(대납액을 증여가액에 가산)',{w:2})
+])},
+{id:'c',title:'3. 10년 내 합산 증여 · 기사용 공제',desc:'동일인(직계존속은 부모 · 조부모 등 합산)으로부터 10년 내 받은 증여는 합산하여 과세합니다.',fields:[
+  M('priorGift','10년 내 동일인으로부터 받은 증여재산가액'),
+  M('priorDedRel','그 증여에서 이미 공제받은 관계별 증여재산공제액'),
+  M('priorDedMar','그 증여에서 이미 공제받은 혼인 · 출산 공제액'),
+  M('priorTax','그 증여에 대한 증여세 산출세액')
+]},
+{id:'d',title:'4. 증여세 과세특례(창업자금 · 가업승계)',desc:'특례 증여는 일반 증여와 합산하지 않고 별도 계산하며 신고세액공제가 없습니다. 상속 시에는 상속세 과세가액에 가산됩니다.',fields:[
+  SE('specialMode','과세특례 선택',[['none','적용 안 함'],['startup','창업자금 증여 과세특례'],['succ','가업승계 증여 과세특례']],{def:'none'}),
+  M('startupAmt','창업자금 증여가액',{show:v=>v.specialMode==='startup'}),
+  C('hire10','창업으로 10명 이상 신규 고용(한도 100억원)',{show:v=>v.specialMode==='startup'}),
+  M('succAmt','가업 주식 등 증여가액',{show:v=>v.specialMode==='succ'}),
+  SE('succYears','증여자 가업 경영기간',[['10','10년 이상 20년 미만 (한도 300억원)'],['20','20년 이상 30년 미만 (한도 400억원)'],['30','30년 이상 (한도 600억원)']],{def:'10',show:v=>v.specialMode==='succ'})
+]},
+{id:'e',title:'5. 감정평가수수료 · 신고 옵션',fields:[
+  M('appFeeRE','감정평가수수료(부동산)'),
+  M('appFeeSt','비상장주식 평가수수료'),
+  C('fileOn','기한 내 신고(신고세액공제 3%)',{def:true}),
+  SE('annYears','연부연납 기간(참고)',[['0','일시납부'],['5','5년']],{def:'0'})
+]},
+{id:'f',title:'6. 가산세',fields:penFields()}
+];
+
+/* ----- 도움말 ----- */
+H('gift.relation','증여자와 수증자의 관계','증여재산공제 한도는 수증자 기준 10년간 합산하여 배우자 6억원, 직계존속으로부터 5천만원(수증자 미성년 2천만원), 직계비속으로부터 5천만원, 기타 친족 1천만원입니다. 직계존속에는 부모뿐 아니라 조부모, 계부·계모가 포함되어 합산됩니다.','상속세 및 증여세법 제53조·제53조의2');
+H('gift.minor','수증자 미성년자','직계존속으로부터 증여받는 수증자가 미성년자(만 19세 미만)이면 공제한도가 2천만원입니다.','상속세 및 증여세법 제53조 제2호');
+H('gift.marriage','혼인 · 출산 증여재산공제','직계존속으로부터 혼인신고일 전후 2년 이내(또는 자녀 출생일부터 2년 이내) 증여받는 경우 기본 공제 5천만원과 별도로 최대 1억원을 추가 공제합니다. 혼인·출산 공제를 합산해 평생 1억원 한도입니다.','상속세 및 증여세법 제53조의2');
+H('gift.marriageUsed','혼인 · 출산 공제 기사용액','과거에 혼인 또는 출산을 이유로 이미 공제받은 금액입니다. 합산 한도 1억원에서 차감해 잔여 공제액을 구합니다.','상속세 및 증여세법 제53조의2');
+H('gift.skipGen','세대를 건너뛴 증여','증여자의 자녀가 아닌 직계비속(손자녀 등)에게 증여하면 산출세액의 30%를 할증합니다. 증여자 사망으로 수증자의 부모가 없는 경우(대습)는 할증하지 않습니다.','상속세 및 증여세법 제57조');
+H('gift.skipExempt','대습 증여','수증자의 부모가 사망하여 직계비속인 수증자가 직접 증여를 받는 경우 세대생략 할증을 하지 않습니다.','상속세 및 증여세법 제57조 제1항 단서');
+H('gift.skipMinor20','미성년 수증자 20억원 초과','세대를 건너뛴 증여로 수증자가 미성년자이고 증여재산가액이 20억원을 초과하면 할증률이 40%입니다.','상속세 및 증여세법 제57조 제1항');
+H('gift.relCapR','관계별 증여재산공제 한도','선택한 관계의 10년 합산 공제 한도입니다.','상속세 및 증여세법 제53조');
+H('gift.remainR','공제 잔여한도','관계별 한도에서 10년 내 이미 공제받은 금액을 뺀 잔여 공제액(혼인·출산 공제 잔여분 포함)입니다.','상속세 및 증여세법 제53조');
+H('gift.gCash','현금 · 예금','증여일 현재 금액 그대로 증여재산가액이 됩니다.','상속세 및 증여세법 제31조·제60조');
+H('gift.gRE','부동산','시가(증여일 전후 6개월 이내 매매·감정·수용가액 등)가 있으면 시가, 없으면 공시가격 등 보충적 평가액으로 평가합니다. 아파트는 같은 단지 유사 매매사례가액이 시가로 인정될 수 있습니다.','상속세 및 증여세법 제60조·제61조','유사 매매사례가액 적용 여부는 증여 시점 사례를 확인해야 합니다.');
+H('gift.gListed','상장주식 · 유가증권','증여일 전후 각 2개월(총 4개월) 종가 평균액으로 평가합니다.','상속세 및 증여세법 제63조 제1항 제1호');
+usHelp('gift','');
+H('gift.gOther','기타 재산','보험금 증여(보험료 납부자와 수익자가 다른 경우), 채권, 차량, 회원권 등 위 항목 외의 증여재산입니다.','상속세 및 증여세법 제34조, 제60조~제66조');
+H('gift.gDebt','부담부증여 채무인수액','수증자가 증여재산에 담보된 채무(전세보증금, 대출금 등)를 인수하면 그 금액은 증여가액에서 빼고, 증여자는 채무 상당액을 양도한 것으로 보아 양도소득세를 부담합니다(별도 계산 필요).','상속세 및 증여세법 제47조 제3항','증여자의 양도소득세는 이 계산기에 포함되지 않습니다.');
+H('gift.taxByDonor','증여세 대납','수증자가 내야 할 증여세를 증여자가 대신 내주면 그 세액도 증여로 보아 증여재산가액에 가산하여 다시 과세합니다. 체크하면 대납액을 포함해 반복 계산합니다.','상속세 및 증여세법 제4조의2 및 관련 예규(증여세 대납액의 증여재산가액 가산)','대납세액을 증여로 보는 구체적 처리는 국세청 예규와 사안별 확인이 필요합니다.');
+H('gift.priorGift','10년 내 동일인 증여','같은 증여자(직계존속은 합산)로부터 10년 내 받은 증여는 합산하여 증여세를 계산합니다. 합산 대상 증여재산가액(증여일 현재 평가액)을 입력합니다.','상속세 및 증여세법 제47조 제2항');
+H('gift.priorDedRel','기사용 관계별 공제액','합산 대상 증여 당시 공제받은 증여재산공제액입니다. 10년 한도 안에서 잔여분만 이번 증여에 적용됩니다.','상속세 및 증여세법 제53조');
+H('gift.priorDedMar','기사용 혼인 · 출산 공제액','합산 대상 증여에서 이미 공제받은 혼인·출산 증여재산공제액입니다.','상속세 및 증여세법 제53조의2');
+H('gift.priorTax','기납부 증여세 산출세액','합산 대상 증여에 대해 이미 계산된 증여세 산출세액입니다. 이번 합산 산출세액에서 공제합니다.','상속세 및 증여세법 제58조');
+H('gift.specialMode','과세특례 선택','창업자금 증여 과세특례(조특법 제30조의5)와 가업승계 증여 과세특례(조특법 제30조의6)는 동시에 적용할 수 없고, 적용 시 일반 증여세 방식과 별도로 계산합니다. 특례 적용 증여재산은 상속 시 상속세 과세가액에 가산되어 정산됩니다.','조세특례제한법 제30조의5·제30조의6');
+H('gift.startupAmt','창업자금 증여가액','60세 이상 부모가 18세 이상 자녀에게 중소기업 창업 목적으로 증여하는 재산(현금·소액주주 상장주식·토지 등)입니다. 증여세 과세가액에서 5억원을 공제하고 10% 단일세율을 적용합니다.','조세특례제한법 제30조의5','증여일부터 2년 내 창업, 4년 내 창업자금 모두 사용 등 요건과 사후관리 확인이 필요합니다.');
+H('gift.hire10','10명 이상 신규 고용','창업으로 10명 이상을 신규 고용하면 증여세 과세가액 한도가 50억원에서 100억원으로 확대됩니다. 한도 초과분은 일반 증여세율이 적용됩니다.','조세특례제한법 제30조의5 제1항');
+H('gift.succAmt','가업 주식 등 증여가액','60세 이상 부모가 18세 이상 자녀에게 10년 이상 영위한 중소·중견기업의 주식(또는 개인사업 자산)을 증여하는 경우입니다. 10억원을 공제하고 과세표준 120억원까지 10%, 초과분 20%를 적용합니다. 연부연납 최장 20년 등 혜택이 있습니다.','조세특례제한법 제30조의6','2026 세제개편안(경영 30년·사후관리 강화 등)은 입법 전이라 현행 기준입니다.');
+H('gift.succYears','가업 경영기간','증여자의 경영기간별 과세특례 한도입니다. 10년 이상 300억원, 20년 이상 400억원, 30년 이상 600억원이며 한도 초과분은 일반 증여세율로 과세합니다.','조세특례제한법 제30조의6 제1항');
+H('gift.appFeeRE','감정평가수수료(부동산)','증여재산 평가를 위한 감정평가법인 수수료로 500만원 한도 내에서 과세표준에서 공제합니다.','상속세 및 증여세법 제55조 제1항 제2호, 같은 법 시행령 제46조');
+H('gift.appFeeSt','비상장주식 평가수수료','비상장주식 평가 수수료로 1,000만원 한도 내에서 공제합니다.','상속세 및 증여세법 시행령 제46조');
+H('gift.fileOn','신고세액공제 3%','증여일이 속하는 달의 말일부터 3개월 이내에 신고하면 산출세액(할증 포함)에서 세액공제를 뺀 금액의 3%를 공제합니다. 과세특례 적용 증여세에는 적용하지 않습니다.','상속세 및 증여세법 제69조');
+H('gift.annYears','연부연납 기간(참고)','증여세 납부세액이 2천만원을 초과하면 5년 분할 납부(연부연납)를 신청할 수 있습니다. 가산금 이자가 붙으며 참고용으로 회차당 원금만 보여줍니다.','상속세 및 증여세법 제71조');
+penHelp('gift');
+
+/* ----- 세율 띠 ----- */
+const rateHTML=`<span class="rl">증여세율</span><span class="chip">1억↓ <b>10%</b></span><span class="chip">~5억 <b>20%</b></span><span class="chip">~10억 <b>30%</b></span><span class="chip">~30억 <b>40%</b></span><span class="chip">30억↑ <b>50%</b></span><span class="rl" style="margin-left:6px">공제(10년)</span><span class="chip">배우자 <b>6억</b></span><span class="chip">직계존속 <b>5천만</b>(미성년 2천만)</span><span class="chip">직계비속 <b>5천만</b></span><span class="chip">기타친족 <b>1천만</b></span><span class="chip">혼인·출산 <b>+1억</b></span><span class="chip">신고세액공제 <b>3%</b></span><span class="chip">세대생략 할증 <b>30%/40%</b></span>`;
+const rateDetail=`<p><b>증여세율(상속세 및 증여세법 제56조, 상속세율과 동일)</b></p><table><tr><th>과세표준</th><th>세율</th><th>누진공제</th></tr><tr><td>1억원 이하</td><td>10%</td><td>0</td></tr><tr><td>1억원 초과 5억원 이하</td><td>20%</td><td>1천만원</td></tr><tr><td>5억원 초과 10억원 이하</td><td>30%</td><td>6천만원</td></tr><tr><td>10억원 초과 30억원 이하</td><td>40%</td><td>1억 6천만원</td></tr><tr><td>30억원 초과</td><td>50%</td><td>4억 6천만원</td></tr></table><p><b>증여재산공제(10년 합산)</b></p><table><tr><th>증여자</th><th>한도</th></tr><tr><td>배우자</td><td>6억원</td></tr><tr><td>직계존속(수증자 성년)</td><td>5천만원</td></tr><tr><td>직계존속(수증자 미성년)</td><td>2천만원</td></tr><tr><td>직계비속</td><td>5천만원</td></tr><tr><td>기타 친족</td><td>1천만원</td></tr><tr><td>혼인 · 출산(직계존속 증여)</td><td>추가 1억원(평생 한도)</td></tr></table><p><b>과세특례</b> : 창업자금 5억원 공제 후 10%(한도 50억원, 10명 이상 고용 100억원) / 가업승계 10억원 공제 후 120억원까지 10%, 초과 20%(한도 300억 · 400억 · 600억원).</p><p><b>세대생략 할증</b> : 산출세액의 30%(미성년 수증자로 증여재산 20억원 초과 시 40%).</p><p>신고기한은 증여일이 속하는 달의 말일부터 3개월입니다.</p><div class="law"><b>근거</b> : 상속세 및 증여세법 제53조~제58조·제69조, 조세특례제한법 제30조의5·제30조의6</div>`;
+
+/* ----- 계산 ----- */
+function calc(v){
+  const n=k=>N(v[k]);
+  const rb=RB(), warn=[], aux={};
+  const rel=v.relation;
+  const relCap={asc:v.minor?2e7:5e7,spouse:6e8,desc:5e7,other:1e7,none:0}[rel]||0;
+  const mCap=(rel==='asc'&&v.marriage)?1e8:0;
+  const availM=mCap>0?mx(0,1e8-n('marriageUsed')):0;
+  const remainRel=mx(0,relCap-n('priorDedRel'));
+  const us=usCalc(v,'');
+  /* 과세특례 */
+  let spElig=0,spDed=0,spTb=0,spTax=0,spExcess=0;
+  if(v.specialMode==='startup'){
+    const lim=v.hire10?1e10:5e9; spElig=mn(n('startupAmt'),lim); spExcess=n('startupAmt')-spElig;
+    spDed=mn(spElig,5e8); spTb=spElig-spDed; spTax=fl(spTb*0.10);
+  } else if(v.specialMode==='succ'){
+    const lim={10:3e10,20:4e10,30:6e10}[String(v.succYears)]||3e10; spElig=mn(n('succAmt'),lim); spExcess=n('succAmt')-spElig;
+    spDed=mn(spElig,1e9); spTb=spElig-spDed; spTax=fl(spTb<=1.2e10?spTb*0.10:1.2e9+(spTb-1.2e10)*0.20);
+  }
+  const gross0=n('gCash')+n('gRE')+n('gListed')+us.val+n('gOther')+spExcess;
+  const fee=mn(n('appFeeRE'),5e6)+mn(n('appFeeSt'),1e7);
+  const priorBase=mx(0,n('priorGift')-n('priorDedRel')-n('priorDedMar'));
+  function norm(gv){
+    const cur=mx(0,gv-n('gDebt'));
+    const usedRel=mn(cur,remainRel), r1=cur-usedRel;
+    const usedM=mn(r1,availM), r2=r1-usedM;
+    const bcur=mx(0,r2-fee);
+    const btot=priorBase+bcur;
+    const taxTotal=btot<5e5?0:fl(slab(btot,GIFT));
+    const pc=(n('priorTax')>0&&btot>0)?mn(n('priorTax'),fl(taxTotal*priorBase/btot)):0;
+    const taxCur=mx(0,taxTotal-pc);
+    const sr=(v.skipGen&&!v.skipExempt)?((v.skipMinor20&&cur>2e9)?0.4:0.3):0;
+    const sur=fl(taxCur*sr);
+    return {cur,usedRel,usedM,bcur,btot,taxTotal,pc,taxCur,sr,sur};
+  }
+  let gv=gross0, r=norm(gv), added=0;
+  if(v.taxByDonor){
+    for(let i=0;i<60;i++){
+      const g2=gross0+(r.taxCur+r.sur);
+      const r2=norm(g2);
+      if(Math.abs(g2-gv)<1){gv=g2;r=r2;break;}
+      gv=g2;r=r2;
+    }
+    added=gv-gross0;
+  }
+  const normalTotal=r.taxCur+r.sur;
+  const fileCr=v.fileOn?fl(normalTotal*0.03):0;
+  const pen=penCalc(v);
+  const total=normalTotal-fileCr+spTax+pen.tot;
+  const ann=N(v.annYears);
+  aux.usVal=us.val; aux.relCapR=relCap+mCap; aux.remainR=remainRel+availM;
+  /* rows */
+  rb.hd('1. 증여재산가액 · 과세가액');
+  rb.ln('현금 · 예금',n('gCash')); rb.ln('부동산',n('gRE')); rb.ln('상장주식 등',n('gListed')); rb.ln('비상장주식',us.val,us.note); rb.ln('기타 재산',n('gOther'));
+  if(spExcess>0) rb.ln('(+) 과세특례 한도 초과분(일반과세 전환)',spExcess);
+  if(v.taxByDonor) rb.ln('(+) 증여세 대납액(증여 간주)',added);
+  rb.sub('증여재산가액(일반)',gv);
+  rb.ln('(-) 부담부증여 채무인수액',n('gDebt'));
+  rb.sub('증여세 과세가액(이번 증여)',r.cur);
+  rb.hd('2. 증여재산공제 · 과세표준');
+  rb.ln('(-) 관계별 증여재산공제',r.usedRel,'한도 '+fmt(relCap)+' − 기사용 '+fmt(n('priorDedRel'))+' = 잔여 '+fmt(remainRel));
+  rb.ln('(-) 혼인 · 출산 증여재산공제',r.usedM,mCap>0?'잔여 한도 '+fmt(availM):'');
+  rb.ln('(-) 감정평가수수료',fee);
+  rb.ln('(+) 10년 내 합산 증여분 과세표준',priorBase);
+  rb.sub('증여세 과세표준(합산)',r.btot);
+  rb.hd('3. 세액 계산');
+  rb.ln('산출세액(합산)',r.taxTotal,r.btot>0&&r.btot<5e5?'과세표준 50만원 미만 부과 제외':'');
+  rb.ln('(-) 합산 증여분 기납부 세액공제',r.pc);
+  rb.ln('(+) 세대생략 할증',r.sur,r.sr>0?'가산율 '+(r.sr*100)+'%':'');
+  rb.ln('(-) 신고세액공제 3%',fileCr);
+  if(v.specialMode!=='none'){
+    rb.ln('과세특례 대상 증여가액(한도 내)',spElig);
+    rb.ln('과세특례 공제',spDed);
+    rb.ln('과세특례 과세표준',spTb);
+    rb.ln('(+) 과세특례 증여세',spTax,v.specialMode==='startup'?'10% 단일세율':'120억 이하 10%, 초과 20%');
+  }
+  rb.ln('(+) 가산세',pen.tot,'신고불성실 '+fmt(pen.rep)+' / 납부지연 '+fmt(pen.late)+' / 기타 '+fmt(pen.oth));
+  rb.tot('납부할 증여세',total);
+  if(ann>0){
+    if(total>2e7) rb.ln('(참고) 연부연납 회차당 원금('+ann+'년, '+(ann+1)+'회)',fl(total/(ann+1)),'가산금 이자 별도');
+    else rb.note('연부연납은 납부세액 2천만원 초과 시 가능합니다.');
+  }
+  const totalGift=gv+spElig+n('priorGift');
+  rb.pct('실효세율(납부 증여세 / 이번 증여재산가액)',(gv+spElig)>0?total/(gv+spElig)*100:0);
+  if(rel==='none') warn.push('타인으로부터의 증여는 증여재산공제가 없습니다.');
+  if(r.sr>0) warn.push('세대생략 증여는 산출세액의 '+(r.sr*100)+'%가 할증됩니다.');
+  if(v.specialMode!=='none') warn.push('과세특례는 증여자(60세 이상)·수증자(18세 이상) 요건과 사후관리를 충족해야 하며 신고세액공제는 적용되지 않습니다.');
+  if(v.taxByDonor) warn.push('증여세 대납액 '+fmt(added)+'원이 추가 증여로 가산되어 반복 계산되었습니다.');
+  if(n('priorGift')>0&&n('priorDedRel')===0&&remainRel>0) warn.push('10년 내 합산 증여가 있으나 기사용 공제액이 0입니다. 공제 잔여한도가 과대 계산되었는지 확인하세요.');
+  const sum=[{l:'납부할 증여세',v:total},{l:'증여세 과세가액(이번 증여)',v:r.cur},{l:'증여세 과세표준(합산)',v:r.btot},{l:'산출세액(합산)',v:r.taxTotal},{l:'실효세율(증여재산가액 대비)',v:(gv+spElig)>0?total/(gv+spElig)*100:0,k:'p'}];
+  return {sum,rows:rb.rows,aux,warn};
+}
+MODS[ID]={id:ID,name:'증여세',sections,calc,rateHTML,rateDetail};
+})();
+
+loadState();
+renderAll();
+</script>
+</body>
+</html>
