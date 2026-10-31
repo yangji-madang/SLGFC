@@ -90,6 +90,13 @@ td.wc{white-space:pre-line;word-break:break-all;line-height:1.35;padding-top:5px
 .note-l{font-size:12px;color:var(--warn);margin-top:2px;line-height:1.35}
 .dt input{flex:1;min-width:0}
 .form select{border:1px solid #aab7c8;border-radius:6px;padding:6px 8px;background:#fff;width:100%}
+.pv{overflow:auto;max-height:280px;border:1px solid var(--line);border-radius:6px;margin-top:8px}
+.pv table{table-layout:auto;width:max-content;min-width:100%;font-size:12.5px}
+.pv th,.pv td{height:auto;padding:3px 6px;max-width:210px;cursor:default;position:static}
+.pv th{background:#eef3fa;font-weight:600}
+.pv select{max-width:170px;font-size:12px;padding:2px 3px;border:1px solid #aab7c8;border-radius:4px;background:#fff}
+.pv td.ig{color:#94a3b8}
+.pastebox{width:100%;border:1px solid #aab7c8;border-radius:6px;padding:6px 8px;font-size:13px;min-height:90px;resize:vertical;white-space:pre;overflow:auto}
 .empty{padding:60px 20px;text-align:center;color:var(--sub);font-size:15px}
 .empty .btn{margin:10px 4px 0}
 
@@ -222,7 +229,9 @@ function normDT(v){
     const y = v.getUTCFullYear(), mo = v.getUTCMonth() + 1, d = v.getUTCDate(), h = v.getUTCHours(), mi = v.getUTCMinutes();
     return ymd(y, mo, d) + ((h || mi) ? ' ' + pad(h) + ':' + pad(mi) : '');
   }
-  const s = String(v).trim();
+  let s = String(v).trim();
+  s = s.replace(/(오전|오후)\s*(\d{1,2}):(\d{2})/, (m, ap, h, mi) => pad((+h % 12) + (ap === '오후' ? 12 : 0)) + ':' + mi)
+       .replace(/(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)/i, (m, h, mi, ap) => pad((+h % 12) + (/pm/i.test(ap) ? 12 : 0)) + ':' + mi);
   const k = s.match(/^(\d{4})[-./]\s*(\d{1,2})[-./]\s*(\d{1,2})\.?(?:[\sT]+(\d{1,2}):(\d{2})(?::\d{2})?)?$/);
   if (k){
     const y = +k[1], mo = +k[2], d = +k[3];
@@ -693,7 +702,7 @@ function openForm(id, afterId){
   const ov = openModal('<h2>' + (editing ? '고객 정보 수정' : afterId ? '고객 추가 (선택한 행 아래에 삽입)' : '고객 추가') + '</h2><div class="bd"><div class="form">' + f +
     '<div class="calcbox" id="calc"></div><div class="err" id="err"></div></div></div>' +
     '<div class="ft"><button class="btn" data-a="cancel">취소</button>' +
-    (editing ? '' : '<button class="btn" data-a="more">저장 후 계속 추가</button>') +
+    (editing ? '' : '<button class="btn" data-a="paste" style="margin-right:auto" title="엑셀에서 복사한 여러 명을 한 번에 추가">엑셀에서 붙여넣기</button><button class="btn" data-a="more">저장 후 계속 추가</button>') +
     '<button class="btn pri" data-a="save">저장</button></div>');
   const q = k => ov.querySelector('[data-k="' + k + '"]');
   const upd = () => {
@@ -723,6 +732,7 @@ function openForm(id, afterId){
     if (nw){ const i = nw.dataset.now, d = new Date(); ov.querySelector('[data-dtd="' + i + '"]').value = ymd(d.getFullYear(), d.getMonth() + 1, d.getDate()); ov.querySelector('[data-dtt="' + i + '"]').value = pad(d.getHours()) + ':' + pad(d.getMinutes()); return; }
     const b = e.target.closest('[data-a]'); if (!b) return;
     if (b.dataset.a === 'cancel'){ closeModal(); return; }
+    if (b.dataset.a === 'paste'){ closeModal(); openPaste(''); return; }
     const o = collect(), msg = validate(o); let added = null;
     if (msg){ $('#err').textContent = msg; return; }
     if (editing){
@@ -789,6 +799,24 @@ async function readXlsx(file){
     showImport(file.name, recs, newCols, ignored);
   } catch (err) { console.error(err); toast('엑셀 파일을 읽지 못했습니다. .xlsx 형식인지 확인해 주세요.', 4000); }
 }
+function applyImport(recs, mode, newCols){
+  newCols.forEach(c => { if (!state.cols.some(x => x.key === c.key)) state.cols.push(c); });
+  let add = 0, upd = 0, skip = 0;
+  if (mode === 'replace'){
+    state.rows = recs.map(r => Object.assign({ id: uid() }, r)); add = recs.length;
+  } else {
+    const map = new Map(state.rows.map(r => [dupKey(r), r])), fresh = [];
+    recs.forEach(r => {
+      const k = dupKey(r), ex = map.get(k);
+      if (ex){
+        if (mode === 'merge'){ Object.keys(r).forEach(kk => { if (r[kk] !== '') ex[kk] = r[kk]; }); upd++; } else skip++;
+      } else { const nr = Object.assign({ id: uid() }, r); map.set(k, nr); fresh.push(nr); add++; }
+    });
+    state.rows = fresh.concat(state.rows);
+  }
+  save(); render();
+  toast('신규 ' + add + '명 추가' + (upd ? ', ' + upd + '명 갱신' : '') + (skip ? ', 중복 ' + skip + '명 건너뜀' : '') + ' 완료', 3800);
+}
 function showImport(name, recs, newCols, ignored){
   const seen = new Set(state.rows.map(dupKey));
   let nNew = 0, nDup = 0;
@@ -807,24 +835,126 @@ function showImport(name, recs, newCols, ignored){
     if (b.dataset.a === 'cancel'){ closeModal(); return; }
     const mode = ov.querySelector('input[name=md]:checked').value;
     if (mode === 'replace' && !(await askConfirm('현재 ' + state.rows.length + '명의 고객 정보가 모두 삭제되고 파일 내용으로 교체됩니다.<br>계속하시겠습니까?', '전체 교체', true))) return;
-    newCols.forEach(c => { if (!state.cols.some(x => x.key === c.key)) state.cols.push(c); });
-    let add = 0, upd = 0, skip = 0;
-    if (mode === 'replace'){
-      state.rows = recs.map(r => Object.assign({ id: uid() }, r)); add = recs.length;
-    } else {
-      const map = new Map(state.rows.map(r => [dupKey(r), r])), fresh = [];
-      recs.forEach(r => {
-        const k = dupKey(r), ex = map.get(k);
-        if (ex){
-          if (mode === 'merge'){ Object.keys(r).forEach(kk => { if (r[kk] !== '') ex[kk] = r[kk]; }); upd++; } else skip++;
-        } else { const nr = Object.assign({ id: uid() }, r); map.set(k, nr); fresh.push(nr); add++; }
-      });
-      state.rows = fresh.concat(state.rows);
-    }
-    save(); render(); closeModal();
-    toast('신규 ' + add + '명 추가' + (upd ? ', ' + upd + '명 갱신' : '') + (skip ? ', 중복 ' + skip + '명 건너뜀' : '') + ' 완료', 3800);
+    applyImport(recs, mode, newCols); closeModal();
   });
 }
+
+
+/* ───────── 엑셀에서 복사·붙여넣기로 추가 ───────── */
+function parseTSV(t){
+  const rows = []; let row = [], f = '', q = false;
+  t = String(t).replace(/\r\n?/g, '\n');
+  for (let i = 0; i < t.length; i++){
+    const ch = t[i];
+    if (q){ if (ch === '"'){ if (t[i + 1] === '"'){ f += '"'; i++; } else q = false; } else f += ch; }
+    else if (ch === '"' && f === '') q = true;
+    else if (ch === '\t'){ row.push(f); f = ''; }
+    else if (ch === '\n'){ row.push(f); rows.push(row); row = []; f = ''; }
+    else f += ch;
+  }
+  if (f !== '' || row.length){ row.push(f); rows.push(row); }
+  return rows.filter(r => r.some(c => String(c).trim() !== ''));
+}
+function openPaste(initial){
+  const sq = x => String(x).replace(/\s/g, '');
+  const ov = openModal('<h2>엑셀에서 복사한 내용으로 고객 추가</h2><div class="bd">' +
+    '<div class="note" style="margin:0 0 6px">엑셀에서 추가할 행(항목명 줄 포함 가능)을 드래그해 복사(Ctrl+C)한 뒤, 아래 칸을 클릭하고 붙여넣기(Ctrl+V)하세요.</div>' +
+    '<textarea class="pastebox" id="pbTxt" placeholder="여기에 붙여넣기 (Ctrl+V)" spellcheck="false"></textarea>' +
+    '<div id="pbInfo" style="margin-top:6px"></div><div id="pbPv"></div>' +
+    '<div id="pbOpt" style="display:none"><div style="margin-top:8px;font-weight:700">반영 방식</div>' +
+    '<label class="opt"><input type="radio" name="pm" value="add" checked><span><b>신규만 추가</b><small>이름·연락처가 같은 고객은 건너뜁니다. (기본)</small></span></label>' +
+    '<label class="opt"><input type="radio" name="pm" value="merge"><span><b>신규 추가 + 중복 고객 갱신</b><small>붙여넣은 값이 있는 칸만 덮어씁니다.</small></span></label></div>' +
+    '</div><div class="ft"><button class="btn" data-a="cancel">취소</button><button class="btn pri" data-a="ok" disabled>추가</button></div>', false);
+  const ta = ov.querySelector('#pbTxt'), info = ov.querySelector('#pbInfo'), pv = ov.querySelector('#pbPv'), okb = ov.querySelector('[data-a=ok]');
+  let rows = [], maxc = 0;
+  const fields = () => state.cols.filter(c => !c.calc);
+  function mapped(){ return Array.prototype.map.call(pv.querySelectorAll('select[data-j]'), s => s.value); }
+  function build(){
+    const hasH = ov.querySelector('#pbHdr') ? ov.querySelector('#pbHdr').checked : false;
+    const map = mapped(), hdr = hasH ? rows[0] : [], body = hasH ? rows.slice(1) : rows;
+    const newCols = [], recs = []; let noName = 0;
+    const nameCol = state.cols.some(c => c.key === '고객명');
+    body.forEach(r => {
+      const o = {}; let any = false;
+      map.forEach((m, j) => {
+        if (!m) return;
+        let c;
+        if (m === '__new__'){
+          const nm = String(hdr[j] || '').trim(); if (!nm) return;
+          c = state.cols.find(x => sq(x.label) === sq(nm)) || newCols.find(x => sq(x.label) === sq(nm));
+          if (!c){ c = { key: nm === 'id' ? 'id_' : nm, label: nm, type: 'text', w: 140, visible: true }; newCols.push(c); }
+        } else c = state.cols.find(x => x.key === m);
+        if (!c) return;
+        const v = normByType(c, r[j] == null ? '' : r[j]); o[c.key] = v; if (v !== '') any = true;
+      });
+      if (!any) return;
+      if (nameCol && !o['고객명']){ noName++; return; }
+      recs.push(o);
+    });
+    return { recs, newCols, noName };
+  }
+  function summary(){
+    const nameMapped = !state.cols.some(c => c.key === '고객명') || mapped().indexOf('고객명') >= 0;
+    const { recs, newCols, noName } = build();
+    const seen = new Set(state.rows.map(dupKey)); let nNew = 0, nDup = 0;
+    recs.forEach(r => { const k = dupKey(r); if (seen.has(k)) nDup++; else { nNew++; seen.add(k); } });
+    info.innerHTML = nameMapped
+      ? '추가 대상 <b>' + recs.length + '</b>명 → 신규 <b>' + nNew + '</b>명 · 중복 <b>' + nDup + '</b>명' + (noName ? ' · 고객명 없는 행 ' + noName + '건 제외' : '') +
+        (newCols.length ? '<br>새 항목 자동 추가: <b>' + newCols.map(c => esc(c.label)).join(', ') + '</b>' : '')
+      : '<span style="color:var(--warn);font-weight:700">고객명에 해당하는 열을 지정해 주세요. (아래 항목 선택에서 지정)</span>';
+    okb.disabled = !(nameMapped && recs.length);
+  }
+  function parse(){
+    rows = parseTSV(ta.value); pv.innerHTML = ''; ov.querySelector('#pbOpt').style.display = 'none';
+    if (!rows.length){ info.textContent = ''; okb.disabled = true; return; }
+    maxc = Math.max.apply(null, rows.map(r => r.length));
+    const labels = new Map(state.cols.map(c => [sq(c.label), c]));
+    const hits = rows[0].filter(x => labels.has(sq(x))).length;
+    const hasH = hits >= Math.min(2, rows[0].length);
+    const vis = visCols(), fl = fields();
+    const defMap = [];
+    for (let j = 0; j < maxc; j++){
+      let m = '';
+      if (hasH){
+        const nm = String(rows[0][j] || '').trim(), c = labels.get(sq(nm));
+        m = c ? (c.calc ? '' : c.key) : (nm ? '__new__' : '');
+      } else { const c = vis[j]; m = (c && !c.calc) ? c.key : ''; }
+      defMap.push(m);
+    }
+    let h = '<div style="margin-top:6px"><label style="font-size:13px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="pbHdr"' + (hasH ? ' checked' : '') + '>첫 줄은 항목명(제목)입니다</label></div>';
+    h += '<div class="pv"><table><thead><tr>';
+    for (let j = 0; j < maxc; j++){
+      const nm = hasH ? String(rows[0][j] || '').trim() : '';
+      h += '<th><select data-j="' + j + '"><option value="">(사용 안 함)</option>' +
+        fl.map(c => '<option value="' + esc(c.key) + '"' + (defMap[j] === c.key ? ' selected' : '') + '>' + esc(c.label) + '</option>').join('') +
+        (hasH && nm && !labels.has(sq(nm)) ? '<option value="__new__"' + (defMap[j] === '__new__' ? ' selected' : '') + '>새 항목: ' + esc(nm) + '</option>' : '') +
+        '</select></th>';
+    }
+    h += '</tr></thead><tbody>';
+    rows.slice(0, 6).forEach((r, i) => { h += '<tr' + (hasH && i === 0 ? ' style="background:#f4f7fb;font-weight:600"' : '') + '>'; for (let j = 0; j < maxc; j++) h += '<td>' + esc(r[j] == null ? '' : r[j]) + '</td>'; h += '</tr>'; });
+    h += '</tbody></table></div>' + (rows.length > 6 ? '<div class="note">미리보기는 6줄까지만 표시됩니다. (전체 ' + rows.length + '줄)</div>' : '');
+    pv.innerHTML = h; ov.querySelector('#pbOpt').style.display = 'block'; summary();
+    pv.querySelector('#pbHdr').addEventListener('change', () => { const cur = pv.querySelector('#pbHdr').checked; ta.dataset.h = cur ? '1' : '0'; summary(); });
+  }
+  ta.addEventListener('input', parse);
+  pv.addEventListener('change', e => { if (e.target.matches('select[data-j]')) summary(); });
+  ta.value = initial || ''; if (initial) parse(); else ta.focus();
+  ov.addEventListener('click', e => {
+    const b = e.target.closest('[data-a]'); if (!b) return;
+    if (b.dataset.a === 'cancel'){ closeModal(); return; }
+    if (b.dataset.a === 'ok'){
+      const { recs, newCols } = build(); if (!recs.length) return;
+      applyImport(recs, ov.querySelector('input[name=pm]:checked').value, newCols); closeModal();
+    }
+  });
+}
+document.addEventListener('paste', e => {
+  if ($('#ov') || document.querySelector('body > .ov')) return;
+  const t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+  const txt = (e.clipboardData || window.clipboardData).getData('text');
+  if (!txt || !/[\t\n]/.test(txt.trim())) return;
+  e.preventDefault(); openPaste(txt);
+});
 
 /* ───────── 엑셀 다운로드 ───────── */
 async function exportXlsx(){
