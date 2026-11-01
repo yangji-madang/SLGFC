@@ -171,6 +171,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
  #sim .note,#sim #disc,#sim .src{break-inside:avoid;overflow-wrap:anywhere}
  #ext{border-top:1px solid #94a3b8}
  body.ps #pgS{display:none!important}
+ body.pt #pgM{display:none!important}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  .pg{display:block;overflow:visible}
  #pgS{page:tbl}
@@ -224,7 +225,8 @@ body{word-break:keep-all;overflow-wrap:break-word}
   <span class="sp"></span>
   <span id="asof"></span>
   <button id="goSim" type="button">목돈 만들기 ↓</button>
-  <button id="prtT" type="button">인쇄</button>
+  <button id="prtT" type="button" title="지원제도 표 + 지원금 시뮬레이션 전체 인쇄">전체 인쇄</button>
+  <button id="prtL" type="button" title="지원제도 표만 인쇄(현재 선택한 지역·조건)">제도만 인쇄</button>
   <button id="tgl" type="button">개요 접기</button>
 </div>
 
@@ -384,7 +386,9 @@ var U={
  seoulWel:["서울시 산후조리경비·임산부 교통비 순위별 차등","https://news.seoul.go.kr/welfare/archives/577980"],
  mediaHub:["내 손안에 서울 무주택 출산가구 주거비","https://mediahub.seoul.go.kr/archives/2018691"],
  ggdata:["경기데이터드림 시군별 출산장려 현황","https://data.gg.go.kr"],
- mohwPreg:["보건복지부 임신·출산 지원","https://www.mohw.go.kr/menu.es?mid=a10711020100"]
+ mohwPreg:["보건복지부 임신·출산 지원","https://www.mohw.go.kr/menu.es?mid=a10711020100"],
+ snGov:["정부24 성남시 출산장려금(다자녀)","https://www.gov.kr/portal/rcvfvrSvc/dtlEx/378000000143"],
+ snPp:["파이낸셜뉴스 성남시 산후조리비 추가 지원(2024.1.3)","https://www.fnnews.com/news/202401031011296978"]
 };
 function S(){var a=[];for(var i=0;i<arguments.length;i++){a.push(U[arguments[i]]);}return a;}
 
@@ -542,6 +546,14 @@ var DATA=[
  d:"출생일 기준 6개월(180일) 이상 거주",x:"시 공고 확인",
  ch:"경기도 산후조리비 종료분(2026.10~12월 출생)에 대한 시 자체 소급 지원을 검토 중(시의회 의결 필요)",fu:"경기도 산후조리비 종료분 시 자체 소급 지원 — 시의회 의결 후 확정",fd:"미정",
  src:S("ggdata","childcare","gg"),rel:"공식",chk:true},
+{r:"경기",q:"성남시",n:"성남시 출산장려금·다자녀 지원",c:"수당·장려금(현금)",g:["임신·출산","유아·아동(2세~)"],
+ a:"출산장려금: 셋째 100만원, 넷째 200만원, 다섯째 이상 300만원(정부24 게시 기준, 첫째·둘째 금액은 자료 간 상이해 확인 필요)\n다자녀 양육수당: 셋째 이상 취학 전(7세 이하) 월 10만원\n저소득 산후조리비 추가: 기준중위소득 80% 이하 최대 50만원(2024.1 보도, 현행 여부 확인 필요)",
+ p:"현금 지급(산후조리비는 본인부담 90% 환급, 한도 50만원)",pf:["일시금","월 정기","현금"],
+ w:"거주지 읍·면·동 행정복지센터(출산장려금). 산후조리비는 산모 주소지 관할 보건소. 문의 성남시 여성가족과 031-729-2916",
+ d:"정부24 표기는 상시신청이나 출산 후 6개월 이내 신청 문구도 함께 있어 상충 — 확인 필요. 산후조리비는 출생 후 6개월 이내",
+ x:"출생신고서 또는 출산증명서, 가족관계증명서, 주민등록등본 등(성남시 공고 확인)",
+ ch:"",fu:"",fd:"",
+ src:S("snGov","snPp","ggdata"),rel:"참고",chk:true},
 {r:"서울",q:"서울시 전역",n:"서울형 산후조리경비",c:"산후조리·의료",g:["임신·출산"],
  a:"출생아 1인당\n첫째 100만원\n둘째 120만원\n셋째 이상 150만원(바우처)\n다태아는 순차 합산(예: 첫째 쌍둥이 220만원)\n소득 무관",
  p:"산모 명의 신용·체크카드에 바우처 포인트 지급.\n사용처: 산모신생아 건강관리서비스, 산후 운동, 의약품·한약, 건강식품 등",pf:["바우처"],
@@ -865,8 +877,9 @@ function applyCfg(){
 
 /* ===== 이동·인쇄 ===== */
 $("#goSim").addEventListener("click",function(){$("#pgM").scrollIntoView({behavior:"smooth",block:"start"});});
-window.addEventListener("afterprint",function(){document.body.classList.remove("ps");});
-$("#prtT").addEventListener("click",function(){document.body.classList.remove("ps");setPT();window.print();});
+window.addEventListener("afterprint",function(){document.body.classList.remove("ps");document.body.classList.remove("pt");});
+$("#prtT").addEventListener("click",function(){document.body.classList.remove("ps");document.body.classList.remove("pt");setPT();window.print();});
+$("#prtL").addEventListener("click",function(){document.body.classList.remove("ps");document.body.classList.add("pt");setPT();window.print();});
 
 /* ===== 목돈 만들기 시뮬레이션 ===== */
 var RK=["첫째","둘째","셋째","넷째 이상"];
@@ -1150,7 +1163,7 @@ $("#rq").addEventListener("keydown",function(e){
 document.addEventListener("click",function(e){if(!e.target.closest(".rs")){$("#rqL").hidden=true;}});
 $("#pAd").addEventListener("click",function(){$("#sMon").value=$("#sAd").value;simRender();});
 $("#pP").addEventListener("click",function(){$("#sRate").value=0;simRender();});
-$("#prt").addEventListener("click",function(){document.body.classList.add("ps");setPT();window.print();});
+$("#prt").addEventListener("click",function(){document.body.classList.remove("pt");document.body.classList.add("ps");setPT();window.print();});
 applyCfg();
 simInit();
 simRender();
