@@ -43,6 +43,14 @@ s.oldv{color:#9ca3af;text-decoration:line-through;text-decoration-color:#9ca3af}
 #flt input[type=text]{width:190px}
 #regNote{flex:0 0 100%;font-size:11px;color:#334155;white-space:pre-wrap;line-height:1.3}
 #regNote:empty{display:none}
+#flt [hidden]{display:none!important}
+#sup{flex:0 0 100%;font-size:12px;line-height:1.4;border:1px solid #94a3b8;border-left:4px solid #64748b;border-radius:4px;padding:4px 8px;background:#fff;white-space:pre-wrap}
+#sup:empty{display:none}
+#sup.y{border-left-color:#15803d;background:#f0fdf4}
+#sup.n{border-left-color:#b45309;background:#fffbeb}
+#sup.u{border-left-color:#b91c1c;background:#fef2f2}
+#sup b.t{margin-right:4px}
+#sup .s{font-size:11px;color:#334155}
 #flt button{font:inherit;font-size:12px;height:24px;padding:0 10px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
 #cnt{font-weight:700;color:var(--navy);margin-left:auto;font-size:12.5px}
 #res{height:62vh;min-height:300px;overflow:auto;position:relative}
@@ -225,10 +233,12 @@ body{word-break:keep-all;overflow-wrap:break-word}
 <div id="ov"></div>
 
 <div id="flt">
-  <label>지역 <select id="reg"></select></label>
-  <label>시·군·구 <select id="sub"></select></label>
+  <label>구분 <select id="mode"><option value="">전체</option><option value="nat">전국 공통</option><option value="loc">지자체</option></select></label>
+  <label id="lrg" hidden>시·도 <select id="reg"></select></label>
+  <label id="lsg" hidden>시·군·구 <select id="sub"></select></label>
+  <label id="linc" hidden><input type="checkbox" id="inc" checked>전국 공통 포함</label>
   <div id="regNote"></div>
-  <label><input type="checkbox" id="inc" checked>전국 공통 포함</label>
+  <div id="sup"></div>
   <label>유형 <select id="cat"></select></label>
   <label>시기 <select id="stg"></select></label>
   <label>지급방식 <select id="pay"></select></label>
@@ -692,7 +702,6 @@ function build(){
   TL.forEach(function(x){t+='<span class="'+(x[2]||"")+'"><b>'+x[0]+'</b> '+x[1]+'</span>';});
   t+='</div>';
   $("#ov").innerHTML='<div class="ovg">'+h+'</div>'+t;
-  fill("#reg",["","전국 공통만"].concat(uniq(DATA.filter(function(d){return d.r!=="전국";}).map(function(d){return d.r;}))),["전체 지역","전국 공통만"]);
   fill("#cat",[""].concat(uniq(DATA.map(function(d){return d.c;}))),["전체 유형"]);
   fill("#stg",[""].concat(["임신·출산","영아(0~1세)","유아·아동(2세~)","부모 근로"]),["전체 시기"]);
   var pays=[];DATA.forEach(function(d){d.pf.forEach(function(p){if(pays.indexOf(p)<0)pays.push(p);});});
@@ -711,21 +720,28 @@ function fill(sel,vals,first){
 }
 function subFill(){
   var reg=$("#reg").value,s=$("#sub"),h='<option value="">전체</option>';
-  if(reg&&reg!=="전국"){
-    uniq(DATA.filter(function(d){return d.r===reg;}).map(function(d){return d.q;})).forEach(function(q){h+='<option value="'+q+'">'+q+'</option>';});
+  if(reg&&REGM[reg]){
+    REGM[reg].g.forEach(function(q){h+='<option value="'+q+'">'+q+'</option>';});
     s.disabled=false;
   }else{s.disabled=true;}
   s.innerHTML=h;
+}
+function rk(d){return d.r==="전남"?"전남광주":d.r;}
+function isSpec(d){var r=REGM[rk(d)];return !!(r&&r.g.indexOf(d.q)>=0);}
+function modeUi(){
+  var m=$("#mode").value;
+  $("#lrg").hidden=$("#lsg").hidden=$("#linc").hidden=(m!=="loc");
+  if(m!=="loc"){$("#reg").value="";subFill();}
 }
 function txt(d){
   return [d.r,d.q,d.n,d.c,d.g.join(" "),d.a,d.p,d.w,d.d,d.x,d.ch,d.fu,d.fd,d.rel,d.pf.join(" ")].join(" ").toLowerCase();
 }
 function ok(d){
-  var reg=$("#reg").value,sub=$("#sub").value,inc=$("#inc").checked;
-  if(reg==="전국"){if(d.r!=="전국")return false;}
-  else if(reg){
+  var m=$("#mode").value,reg=$("#reg").value,sub=$("#sub").value,inc=$("#inc").checked;
+  if(m==="nat"){if(d.r!=="전국")return false;}
+  else if(m==="loc"){
     if(d.r==="전국"){if(!inc)return false;}
-    else{if(d.r!==reg)return false;if(sub&&d.q!==sub)return false;}
+    else if(reg){if(rk(d)!==reg)return false;if(sub&&isSpec(d)&&d.q!==sub)return false;}
   }
   var c=$("#cat").value;if(c&&d.c!==c)return false;
   var g=$("#stg").value;if(g&&d.g.indexOf(g)<0)return false;
@@ -766,15 +782,16 @@ function render(){
   $("#cnt").textContent=rows.length+"건 / 전체 "+DATA.length+"건";
   $("#empty").hidden=rows.length>0;
   $("#res").scrollTop=0;
-  setPT();
+  setPT();supInfo();
 }
 function reset(){
-  $("#reg").value="";subFill();$("#inc").checked=true;$("#cat").value="";$("#stg").value="";$("#pay").value="";
+  $("#mode").value="";modeUi();$("#inc").checked=true;$("#cat").value="";$("#stg").value="";$("#pay").value="";
   $("#kw").value="";$("#onlyCh").checked=false;$("#onlyFu").checked=false;render();
 }
 build();
 ["#sub","#inc","#cat","#stg","#pay","#onlyCh","#onlyFu"].forEach(function(s){$(s).addEventListener("change",render);});
 $("#reg").addEventListener("change",function(){subFill();render();});
+$("#mode").addEventListener("change",function(){modeUi();render();});
 $("#kw").addEventListener("input",render);
 $("#rst").addEventListener("click",reset);
 $("#ov").addEventListener("click",function(e){
@@ -791,7 +808,7 @@ render();
 /* ===== 설정(관리페이지 연동) ===== */
 var DEFFOOT="※ 지자체 제도는 대표 사례만 수록(전 시·군·구 전수 아님)하며, 지급액·요건·기한은 각 지자체 공고가 우선합니다.\n※ 「확인필요」는 단일 출처·출처 간 상이·시행 전(심의 중) 항목입니다.\n※ 출처 구분: 공식(정부·지자체 게시) / 보도(언론) / 참고(2차 정리글).\n※ 아이사랑포털 childcare.go.kr, 복지로 bokjiro.go.kr에서 최종 확인하세요.";
 var DEFCT="삼성생명 개인/기업 재무 전문가 윤현철 팀장 010-9510-1088",DEFCP="ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.";
-var CFG={contact:DEFCT,copy:"",regNote:"※ 지역·시·군·구 선택 목록에는 이 자료에 지원제도가 수록된 지역만 표시됩니다(대표 사례 수록, 전 지자체 전수 아님).\n목록에 없는 지역도 자체 지원이 있을 수 있으니 해당 지자체 공고를 확인하시고, 지역별 합계는 아래 시뮬레이션(전 지역 선택 가능)을 이용하세요.",n1:"※ 부모급여 2년 전액, 아동수당 만 9세 미만 기준입니다(어린이집 이용 시 부모급여는 보육료를 뺀 차액만 현금, 0세 약 41.6만원).\n※ 양육수당·육아휴직급여·산후도우미·조건부 항목(무주택 출산가구 주거비 등)은 합계에서 제외했습니다.\n※ 아동수당은 2027년부터 매년 1세씩 확대 예정이며, 2027.7.1 이후 출생아는 아이맞이지원금·아동기본수당으로 개편될 수 있습니다(국회 심의 중).\n※ 아동수당 지역구분은 보건복지부 2026.3 발표(수도권 10만·비수도권 10.5만·인구감소 우대 11만·특별 12만) 기준이며, 행정안전부 2026.10.7 인구감소지역 재지정(89→92곳, 금정구·동두천시·통영시 추가)의 아동수당 반영 시점은 확인 전입니다.\n※ 지역사랑상품권 지급 시 인구감소지역 월 1만원 추가는 지자체별 자율이라 합계에서 제외했습니다.",n2:"💰 매월 {월적립}만원씩 아이 만 {종료나이}세까지 모으면 원금 {원금}만원입니다(막대: 파랑=원금, 초록=가정 수익).\n※ 아동수당은 만 9세 미만까지 받으므로 그 이후 적립분 {미충당}만원은 가계에서 이어서 적립하는 가정입니다.\n※ 이자·수익은 상품마다 달라 수익률 0%면 원금만 표시됩니다.",src:"출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015\n복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html\n보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&act=view&list_no=1490257\n임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100\n서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980\n경기 시군별 출산장려 지원현황 data.gg.go.kr\n임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279\n경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02\n아동수당 지역구분 정책브리핑 korea.kr/news/policyNewsView.do?newsId=148961693\n인구감소지역 재지정 경향신문 2026.10.7\n인천 자치구 개편 경기일보 2026.6.30\n전남광주통합특별시 구성 위키독스",title:"출산·육아 지원금 검색",prtTitle:"출산·육아 지원금 현황",prtTitleSim:"출산·육아 지원금 예시",sub:"중앙정부·지자체",asOf:"",showChg:true,chgDays:30,simTitle:"우리 지역 출산·육아 지원금 안내",
+var CFG={contact:DEFCT,copy:"",regNote:"※ 「지자체」를 선택하면 시·도·시·군·구별 제도 유무를 안내합니다. 확인된 자료가 있는 곳만 「있음」으로 표시하고, 확인하지 못한 곳은 「미확인」으로 두어 없다고 단정하지 않습니다(경기도 31개 시·군은 전수 자료 기준).\n미확인 지역은 복지로·아이사랑 또는 해당 지자체에 확인하세요.",n1:"※ 부모급여 2년 전액, 아동수당 만 9세 미만 기준입니다(어린이집 이용 시 부모급여는 보육료를 뺀 차액만 현금, 0세 약 41.6만원).\n※ 양육수당·육아휴직급여·산후도우미·조건부 항목(무주택 출산가구 주거비 등)은 합계에서 제외했습니다.\n※ 아동수당은 2027년부터 매년 1세씩 확대 예정이며, 2027.7.1 이후 출생아는 아이맞이지원금·아동기본수당으로 개편될 수 있습니다(국회 심의 중).\n※ 아동수당 지역구분은 보건복지부 2026.3 발표(수도권 10만·비수도권 10.5만·인구감소 우대 11만·특별 12만) 기준이며, 행정안전부 2026.10.7 인구감소지역 재지정(89→92곳, 금정구·동두천시·통영시 추가)의 아동수당 반영 시점은 확인 전입니다.\n※ 지역사랑상품권 지급 시 인구감소지역 월 1만원 추가는 지자체별 자율이라 합계에서 제외했습니다.",n2:"💰 매월 {월적립}만원씩 아이 만 {종료나이}세까지 모으면 원금 {원금}만원입니다(막대: 파랑=원금, 초록=가정 수익).\n※ 아동수당은 만 9세 미만까지 받으므로 그 이후 적립분 {미충당}만원은 가계에서 이어서 적립하는 가정입니다.\n※ 이자·수익은 상품마다 달라 수익률 0%면 원금만 표시됩니다.",src:"출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015\n복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html\n보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&act=view&list_no=1490257\n임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100\n서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980\n경기 시군별 출산장려 지원현황 data.gg.go.kr\n임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279\n경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02\n아동수당 지역구분 정책브리핑 korea.kr/news/policyNewsView.do?newsId=148961693\n인구감소지역 재지정 경향신문 2026.10.7\n인천 자치구 개편 경기일보 2026.6.30\n전남광주통합특별시 구성 위키독스",title:"출산·육아 지원금 검색",prtTitle:"출산·육아 지원금 현황",prtTitleSim:"출산·육아 지원금 예시",sub:"중앙정부·지자체",asOf:"",showChg:true,chgDays:30,simTitle:"우리 지역 출산·육아 지원금 안내",
  simSub:"국가 · 시·도 · 시·군·구 지원을 한 장에 모았습니다.",org:"",gaName:"",phone:"",saveMonthly:10,saveAge:18,saveRate:0,foot:"※ 지자체 제도는 대표 사례만 수록(전 시·군·구 전수 아님)하며, 지급액·요건·기한은 각 지자체 공고가 우선합니다.\n※ 「확인필요」는 단일 출처·출처 간 상이·시행 전(심의 중) 항목입니다.\n※ 출처 구분: 공식(정부·지자체 게시) / 보도(언론) / 참고(2차 정리글).\n※ 아이사랑포털 childcare.go.kr, 복지로 bokjiro.go.kr에서 최종 확인하세요.",extras:[],
  disc:"※ 금액 단위는 만원입니다.\n※ 지원 조건·금액은 수시로 바뀌므로 신청 전 주민센터·구청에서 꼭 확인하세요.\n※ 이 자료는 지원금 안내용이며 특정 보험·금융상품 가입을 권유하지 않습니다.\n※ 목돈 만들기의 수익률은 가정치이며 실제 상품의 수익을 보장하지 않습니다.\n※ 금액은 아이 1명 기준 총액이며, 분할 지급은 지급 기간 동안 거주 요건을 지켜야 받을 수 있습니다.",
  consult:"육아지원금으로 목돈 만들기\n태아/어린이 보험 비교 점검\n자녀 교육 자금 / 저축 연금보험 점검"};
@@ -814,8 +831,8 @@ function setFoot(){
 function setPT(){
   if(typeof CFG==="undefined"||!CFG){return;}
   var t=CFG.prtTitle||"출산·육아 지원금 현황",ao=aoStr(),r=ao?"(기준일 : "+ao+")":"";
-  var reg=$("#reg")?$("#reg").value:"",sub=$("#sub")?$("#sub").value:"";
-  var n1=reg===""?"전체 지역":(reg==="전국"?"전국":reg+(sub?" "+sub:""));
+  var m=$("#mode")?$("#mode").value:"",reg=$("#reg")?$("#reg").value:"",sub=$("#sub")?$("#sub").value:"";
+  var n1=m==="nat"?"전국 공통":(m==="loc"?(reg&&REGM[reg]?REGM[reg].n+(sub?" "+sub:""):"지자체 전체"):"전체 지역");
   var si=$("#sSido")&&$("#sSido").value,sg=$("#sSgg")&&$("#sSgg").value,n2="";
   if(si&&REGM[si]){n2=REGM[si].n+(sg?" "+sg:"");}
   $("#ptL").textContent=t+" | "+n1;$("#ptR").textContent=r;
@@ -883,6 +900,63 @@ REG.forEach(function(r){
 });
 function mkSet(src,dst){Object.keys(src).forEach(function(k){src[k].split(" ").forEach(function(g){dst[k+"|"+g]=1;});});}
 mkSet(UDL,UD);mkSet(TKL,TK);
+
+/* 지자체별 제도 여부 안내. 확인된 자료만 「있음」「없음」으로 표시하고 나머지는 「미확인」으로 둔다(단정 금지). */
+var GGN="경기데이터드림 「경기도_시군별 출산장려 및 양육비 지원현황」 오픈API(오마이베이비 정리본, 2026.10.31 갱신본, 확인일 2026.11.2)";
+var GGU="https://www.ohmybaby.kr/gyeonggi-birth-support";
+var GG={
+ "가평군":"100|400(2회)|1,000(5회)|2,000(10회)|2,000(10회)","고양시":"100|200|300|500(분할)|1,000(분할)","과천시":"100|150|300(2회)|500(4회)|500(4회)",
+ "광명시":"70|70|70|70|70","광주시":"100|100|100|100|100","구리시":"50|100|200|300|300","군포시":"100|300|500|700|700",
+ "김포시":"없음|100|100|100|100","남양주시":"100|100|100|100|100","동두천시":"100|150|250|500(2회)|500(2회)",
+ "부천시":"없음|없음|없음|700(10회)|700(10회)|※ 지원집(jiwonzip.kr)은 첫째 100만원으로 기재해 출처 간 불일치 — 부천시 확인 필요",
+ "성남시":"30|50|100|200|300","수원시":"50|100|200|500|1,000(분할)","시흥시":"50|100|200|800(4회 분할)|800(4회 분할)",
+ "안산시":"100|300|500|500|500","안성시":"없음|100|100|100|100","안양시":"200(2회)|400(2회)|1,000(4회)|1,000(4회)|1,000(4회)",
+ "양주시":"없음|없음|없음|200(2회)|700(4회)","양평군":"500(4회)|500(4회)|1,000(4회)|2,000(5회)|2,000(5회)","여주시":"100|500|1,000(5회)|1,000(5회)|1,000(5회)",
+ "연천군":"100(2회)|200(2회)|500(5회)|1,000(5회)|1,000(5회)","오산시":"20|50|300(3년)|600(3년)|600(3년)","용인시":"30|50|100|200|300",
+ "의왕시":"100|200|300|500|500","의정부시":"30|100|100|100|100|※ 지급기준 문구(둘째 이상)와 표의 첫째 30만원이 맞지 않음 — 의정부시 확인 필요",
+ "이천시":"100|200|300|500|500","파주시":"100|200|300|300|300|※ 분할 금액의 합이 표와 맞지 않음 — 파주시 확인 필요",
+ "평택시":"50|120|300|500|500","포천시":"100|300|500(2회)|1,000(4회)|1,000(4회)","하남시":"50|100|200|1,000(4회)|2,000(4회)","화성시":"100|200|200|300(2회)|300(2회)"
+};
+function regInit(){
+  $("#reg").innerHTML='<option value="">전체 시·도</option>'+REG.map(function(r){return '<option value="'+r.k+'">'+r.n+'</option>';}).join("");
+  subFill();window.__rr=1;supInfo();
+}
+function jo(t){var c=t.charCodeAt(t.length-1)-44032;return(c>=0&&c%28!==0)?"은":"는";}
+function supInfo(){
+  var el=$("#sup");if(!el||!window.__rr){return;}
+  var m=$("#mode").value,reg=$("#reg").value,sub=$("#sub").value;
+  if(m!=="loc"||!reg){el.className="";el.textContent="";return;}
+  var R=REGM[reg],nm=R.n+(sub?" "+sub:""),cls="u",tt="미확인",body="",src="";
+  var rows=DATA.filter(function(d){return d.r!=="전국"&&rk(d)===reg;});
+  var spec=sub?rows.filter(function(d){return d.q===sub;}):rows;
+  var wide=rows.filter(function(d){return !isSpec(d);});
+  var names=function(a){return a.map(function(d){return "「"+d.n+"」";}).join(", ");};
+  if(reg==="경기"&&sub&&GG[sub]){
+    var v=GG[sub].split("|"),lab=["첫째","둘째","셋째","넷째","다섯째 이상"],t=[];
+    for(var i=0;i<5;i++){t.push(lab[i]+" "+(v[i]==="없음"?"지원 없음":v[i].replace(/^([\d,]+)/,"$1만원")));}
+    cls="y";tt="제도 있음";
+    body=R.n+" "+sub+jo(sub)+" 자체 출산지원금 제도가 있습니다.\n"+t.join(" / ")+(v[5]?"\n"+v[5]:"");
+    src="출처: "+GGN+" · 민간 정리본 경유이므로 「확인필요」, 신청 전 시·군 확인";
+  }else if(reg==="경기"&&!sub){
+    cls="y";tt="제도 있음";body="경기도 31개 시·군 모두 자체 출산 지원 프로그램이 있는 것으로 확인됩니다(시·군별로 금액·조건이 다르며, 첫째 자녀 일반 출산지원금이 없는 곳: 김포·안성·부천·양주). 시·군을 선택하면 금액을 보여 드립니다.";
+    src="출처: "+GGN+" · 민간 정리본 경유이므로 「확인필요」";
+  }else if(spec.length&&sub){
+    cls="y";tt="제도 있음";body=nm+"의 단독 수록 제도 "+spec.length+"건: "+names(spec)+" (아래 표 참조)";
+    src="출처: 아래 표의 각 출처 참조";
+  }else if(!sub&&rows.length){
+    cls="y";tt="수록 제도 있음";body=R.n+" 단위 수록 제도 "+rows.length+"건이 있습니다. 시·군·구별 자체 제도 유무는 시·군·구를 선택해 확인하세요(확인 자료가 없는 곳은 「미확인」으로 표시하며 없다고 단정하지 않습니다).";
+    src="출처: 아래 표의 각 출처 참조";
+  }else{
+    body=nm+jo(sub||R.n)+" 아직 제도 유무를 확인한 자료가 없어 「있다/없다」를 단정하지 않습니다.";
+    if(sub&&rows.length){body+=" (이 시·군·구 단독으로 수록된 제도는 없음)";}
+    src="확인처: 복지로 지자체복지서비스(bokjiro.go.kr) · 아이사랑 출산장려금(childcare.go.kr) · 해당 "+(sub||R.n)+" 담당 부서";
+  }
+  if(wide.length&&sub){body+="\n"+R.n+" 공통(시·도 단위) 수록 제도 "+wide.length+"건: "+names(wide);}
+  else if(wide.length&&reg==="경기"){body+="\n경기도 공통 수록 제도 "+wide.length+"건: "+names(wide);}
+  el.className=cls;
+  el.innerHTML='<b class="t">['+esc(tt)+']</b>'+esc(body).replace(/\n/g,"<br>")+(src?'<div class="s">'+esc(src)+(reg==="경기"&&GG[sub||""]||reg==="경기"?' <a href="'+GGU+'" target="_blank" rel="noopener noreferrer">원문 보기</a>':'')+'</div>':'');
+}
+regInit();
 /* 조사 반영분: 시·도 지원(SD), 시·군·구 지원(SG). 없는 지역은 조사 전이므로 0원으로 계산하고 직접 입력으로 보정 */
 var SD={
  "서울":{items:[["서울형 산후조리경비",[100,120,150,150]],["임산부 교통비",[70,80,100,100]]]},
