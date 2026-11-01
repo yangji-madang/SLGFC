@@ -85,6 +85,10 @@ table.rt tr.tot td{background:#fbf3d9;font-weight:700;color:#4a3708;border-top:2
 table.rt tr.note td{color:var(--mute);font-size:12px}
 table.rt .d{display:block;font-size:11.5px;color:var(--mute);font-weight:400}
 .neg{color:var(--blue)}
+.hx{font-weight:600;font-size:12px;color:#7a5e16;margin-left:8px}
+.sec>h3 .hr{display:flex;align-items:center;gap:12px}
+.sec>h3 .stot{color:#fff;background:rgba(255,255,255,.14);border-radius:10px;padding:0 10px;font-size:13px;font-weight:700}
+.sec>h3 .stot:empty{display:none}
 .warns{padding:6px 10px;display:flex;flex-direction:column;gap:3px}
 .warn{background:#fff4e5;border:1px solid #f0c27a;color:#7a4a00;border-radius:5px;font-size:12.5px;padding:3px 8px}
 .cmpWrap{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px}
@@ -191,7 +195,7 @@ const R=(id,label,o)=>Object.assign({id,label,type:'ro',fmt:'m'},o||{});
 function RB(){
   const rows=[];
   const o={rows,
-    hd(l){rows.push({t:'hd',l});return o;},
+    hd(l,v,x){rows.push({t:'hd',l,v:v===undefined?undefined:Math.round(v),x});return o;},
     ln(l,v,d){rows.push({t:'ln',l,v:Math.round(v),d});return o;},
     sub(l,v,d){rows.push({t:'sub',l,v:Math.round(v),d});return o;},
     tot(l,v,d){rows.push({t:'tot',l,v:Math.round(v),d});return o;},
@@ -351,7 +355,7 @@ function fieldHTML(mod,f,v){
 function formHTML(mod,v){
   return mod.sections.map(sc=>{
     const key=mod.id+'.'+sc.id, cl=collapsed[key]?' closed':'';
-    return `<section class="sec${cl}" data-sec="${key}"><h3>${esc(sc.title)}<span class="tg">${collapsed[key]?'펼치기 ▼':'접기 ▲'}</span></h3>${sc.desc?`<div class="sdesc">${sc.desc}</div>`:''}<div class="grid">${sc.fields.map(f=>fieldHTML(mod,f,v)).join('')}</div></section>`;
+    return `<section class="sec${cl}" data-sec="${key}"><h3><span>${esc(sc.title)}</span><span class="hr"><span class="stot" data-stot="${key}"></span><span class="tg">${collapsed[key]?'펼치기 ▼':'접기 ▲'}</span></span></h3>${sc.desc?`<div class="sdesc">${sc.desc}</div>`:''}<div class="grid">${sc.fields.map(f=>fieldHTML(mod,f,v)).join('')}</div></section>`;
   }).join('');
 }
 
@@ -369,7 +373,7 @@ function resultHTML(res){
   }).join('');
   const warns=(res.warn||[]).map(w=>`<div class="warn">⚠ ${w}</div>`).join('');
   const rows=res.rows.map(r=>{
-    if(r.t==='hd') return `<tr class="hd"><td colspan="2">${esc(r.l)}</td></tr>`;
+    if(r.t==='hd') return `<tr class="hd"><td>${esc(r.l)}${r.x?`<span class="hx">${esc(r.x)}</span>`:''}</td><td class="v">${r.v===undefined?'':fmt(r.v)}</td></tr>`;
     if(r.t==='note') return `<tr class="note"><td colspan="2">${esc(r.l)}</td></tr>`;
     return `<tr class="${r.t}"><td>${esc(r.l)}${r.d?`<span class="d">${esc(r.d)}</span>`:''}</td><td class="v">${valHTML(r)}</td></tr>`;
   }).join('');
@@ -390,10 +394,23 @@ function paintDyn(mod,v,res){
     }
   }));
 }
+function paintSecTot(mod,v,res){
+  if(!mod.sectot)return;
+  mod.sections.forEach(sc=>{
+    let t=0;
+    sc.fields.forEach(f=>{
+      if(f.show&&!f.show(v))return;
+      if(f.type==='money'){ if(!(mod.nosum||[]).includes(f.id)) t+=N(v[f.id]); }
+      else if(f.id==='usVal') t+=N(res.aux&&res.aux.usVal);
+    });
+    const el=$('[data-stot="'+mod.id+'.'+sc.id+'"]');
+    if(el) el.textContent=t?'입력 합계 '+fmt(t)+' 원':'';
+  });
+}
 function refresh(){
   const mod=MODS[S.tab], c=cur();
   const res=safeCalc(mod,c.v);
-  paintResult(res); paintDyn(mod,c.v,res); save();
+  paintResult(res); paintDyn(mod,c.v,res); paintSecTot(mod,c.v,res); save();
 }
 
 /* ===== 비교 ===== */
@@ -456,7 +473,15 @@ function renderCompare(){
   $('#main').innerHTML=`<div class="cmpWrap"><div class="cmpTop"><b style="color:var(--navy)">${MODS[S.tab].name} 비교 시뮬레이션</b><label><input type="checkbox" id="onlyDiff" ${t.onlyDiff?'checked':''}> 차이나는 항목만 보기</label><span style="color:var(--mute)">계산 1 대비 증감 : <span style="color:var(--red);font-weight:700">+ 증가</span> / <span style="color:var(--blue);font-weight:700">- 감소</span></span></div>${t.cases.length<2?'<div class="empty">비교하려면 상단의 <b>＋ 새 계산 추가</b> 또는 <b>⧉ 현재 계산 복제</b>로 계산을 2개 이상 만드세요.</div>':''}<div class="tscroll"><table class="ct"><thead>${head}</thead><tbody>${body}</tbody></table></div><h4 class="cmpH">계산 간 입력값이 다른 항목 (${diffIn.length}건)</h4><div class="tscroll" style="max-height:340px"><table class="ct"><thead>${head}</thead><tbody>${inRows||'<tr><td class="fc">차이 없음</td>'+t.cases.map(()=>'<td class="v">-</td>').join('')+'</tr>'}</tbody></table></div></div>`;
 }
 function cmpRow(r,n,isDiff){
-  if(r.t==='hd') return `<tr class="hd"><td class="fc">${esc(r.l)}</td>${'<td></td>'.repeat(n)}</tr>`;
+  if(r.t==='hd'){
+    let h='';
+    for(let i=0;i<n;i++){
+      const x=r.vals[i]; let dl='';
+      if(x&&x.v!==undefined&&i>0&&r.vals[0]&&r.vals[0].v!==undefined){const d=x.v-r.vals[0].v; if(d!==0)dl=`<span class="dl ${d>0?'up':'dn'}">${d>0?'+':'-'}${fmt(Math.abs(d))}</span>`;}
+      h+=`<td class="v">${x&&x.v!==undefined?fmt(x.v):''}${dl}</td>`;
+    }
+    return `<tr class="hd"><td class="fc">${esc(r.l)}${r.vals[0]&&r.vals[0].x?` <span class="hx">${esc(r.vals[0].x)}</span>`:''}</td>${h}</tr>`;
+  }
   let tds='';
   for(let i=0;i<n;i++){
     const x=r.vals[i]; let dl='';
@@ -567,7 +592,7 @@ document.addEventListener('click',e=>{
   }
   if(t.tagName==='H3'){
     const sec=t.closest('.sec'); const k=sec.dataset.sec; collapsed[k]=!collapsed[k];
-    sec.classList.toggle('closed',collapsed[k]); $('.tg',t).textContent=collapsed[k]?'펼치기 ▼':'접기 ▲'; return;
+    sec.classList.toggle('closed',collapsed[k]); $('.tg',sec).textContent=collapsed[k]?'펼치기 ▼':'접기 ▲'; return;
   }
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
@@ -1331,6 +1356,7 @@ MODS[ID]={id:ID,name:'종합소득세',sections,calc,rateHTML,rateDetail};
 (function(){
 const ID='inh';
 const INH=[[1e8,.10],[5e8,.20],[1e9,.30],[3e9,.40],[Infinity,.50]];
+function brkTxt(tb){if(!(tb>0))return '';const t=[[1e8,10,0],[5e8,20,1e7],[1e9,30,6e7],[3e9,40,1.6e8],[Infinity,50,4.6e8]].find(b=>tb<=b[0]);return '적용세율 '+t[1]+'% (누진공제 '+(t[2]?krw(t[2]):'없음')+')';}
 
 const sections=[
 {id:'a',title:'1. 피상속인 · 상속인 구성',fields:[
@@ -1528,7 +1554,7 @@ function calc(v){
   /* aux */
   aux.usVal=us.val; aux.spouseLegalR=legalLimit; aux.spouseDedR=spouseDed; aux.itemR=itemRaw; aux.finDedR=finDed; aux.capR=capLimit;
   /* rows */
-  rb.hd('1. 상속세 과세가액');
+  rb.hd('1. 상속세 과세가액',tv);
   rb.ln('부동산',n('estRE')); rb.ln('상장주식 등 유가증권',n('estListed')); rb.ln('비상장주식',us.val,us.note);
   rb.ln('예금 등 금융재산',n('estBank')); rb.ln('사업용·기타 재산',n('estBiz'));
   rb.sub('본래의 상속재산',estate);
@@ -1538,7 +1564,7 @@ function calc(v){
   rb.ln('(-) 공과금·장례비·채무',deductItems,'장례비 인정액 '+fmt(funeral));
   rb.ln('(+) 사전증여재산 합산',giftAdd,'상속인 10년 '+fmt(n('gift10'))+' / 비상속인 5년 '+fmt(n('gift5')));
   rb.sub('상속세 과세가액',tv);
-  rb.hd('2. 상속공제');
+  rb.hd('2. 상속공제',dedApplied+fee,'공제 합계 + 감정평가수수료');
   rb.ln('(-) 기초·인적 또는 일괄공제',basis,basisNote);
   rb.ln('(-) 배우자 상속공제',spouseDed,v.hasSpouse?'법정상속분 한도 '+fmt(legalLimit):'');
   rb.ln('(-) 금융재산 상속공제',finDed,'순금융재산 '+fmt(netFin));
@@ -1549,13 +1575,16 @@ function calc(v){
   rb.ln('(참고) 공제 합계 / 종합한도',dedApplied,'합계 '+fmt(dedSum)+' / 한도 '+fmt(capLimit));
   rb.ln('(-) 감정평가수수료 공제',fee);
   rb.sub('상속세 과세표준',tb);
-  rb.hd('3. 세액 계산');
+  rb.hd('3. 세액 계산',total);
+  rb.hd('가. 산출세액',tax+sur,brkTxt(tb));
   rb.ln('산출세액',tax,tb<5e5&&tb>0?'과세표준 50만원 미만 부과 제외':'');
   rb.ln('(+) 세대생략 할증',sur,skipRatio>0?'가산율 '+(skipRate*100)+'% × 대상 비율 '+(Math.round(skipRatio*1000)/10)+'%':'');
+  rb.hd('나. 세액공제',-(giftCr+foreign+reInh+fileCr));
   rb.ln('(-) 증여세액공제',giftCr);
   rb.ln('(-) 외국납부세액공제',foreign);
   rb.ln('(-) 단기재상속세액공제',reInh);
   rb.ln('(-) 신고세액공제 3%',fileCr);
+  rb.hd('다. 가산세 및 납부세액',total);
   rb.ln('(+) 가산세',pen.tot,'신고불성실 '+fmt(pen.rep)+' / 납부지연 '+fmt(pen.late)+' / 기타 '+fmt(pen.oth));
   rb.tot('납부할 상속세',total);
   if(ann>0){
@@ -1579,6 +1608,7 @@ MODS[ID]={id:ID,name:'상속세',sections,calc,rateHTML,rateDetail};
 (function(){
 const ID='gift';
 const GIFT=[[1e8,.10],[5e8,.20],[1e9,.30],[3e9,.40],[Infinity,.50]];
+function brkTxt(tb){if(!(tb>0))return '';const t=[[1e8,10,0],[5e8,20,1e7],[1e9,30,6e7],[3e9,40,1.6e8],[Infinity,50,4.6e8]].find(b=>tb<=b[0]);return '적용세율 '+t[1]+'% (누진공제 '+(t[2]?krw(t[2]):'없음')+')';}
 const relOpts=[['asc','직계존속으로부터 (수증자 : 자녀 · 손자녀 등)'],['spouse','배우자로부터'],['desc','직계비속으로부터 (수증자 : 부모 · 조부모)'],['other','기타 친족 (6촌 이내 혈족 · 4촌 이내 인척)'],['none','타인(공제 없음)']];
 
 const sections=[
@@ -1712,30 +1742,33 @@ function calc(v){
   const ann=N(v.annYears);
   aux.usVal=us.val; aux.relCapR=relCap+mCap; aux.remainR=remainRel+availM;
   /* rows */
-  rb.hd('1. 증여재산가액 · 과세가액');
+  rb.hd('1. 증여재산가액 · 과세가액',r.cur);
   rb.ln('현금 · 예금',n('gCash')); rb.ln('부동산',n('gRE')); rb.ln('상장주식 등',n('gListed')); rb.ln('비상장주식',us.val,us.note); rb.ln('기타 재산',n('gOther'));
   if(spExcess>0) rb.ln('(+) 과세특례 한도 초과분(일반과세 전환)',spExcess);
   if(v.taxByDonor) rb.ln('(+) 증여세 대납액(증여 간주)',added);
   rb.sub('증여재산가액(일반)',gv);
   rb.ln('(-) 부담부증여 채무인수액',n('gDebt'));
   rb.sub('증여세 과세가액(이번 증여)',r.cur);
-  rb.hd('2. 증여재산공제 · 과세표준');
+  rb.hd('2. 증여재산공제 · 과세표준',r.usedRel+r.usedM+fee,'공제 + 감정평가수수료');
   rb.ln('(-) 관계별 증여재산공제',r.usedRel,'한도 '+fmt(relCap)+' − 기사용 '+fmt(n('priorDedRel'))+' = 잔여 '+fmt(remainRel));
   rb.ln('(-) 혼인 · 출산 증여재산공제',r.usedM,mCap>0?'잔여 한도 '+fmt(availM):'');
   rb.ln('(-) 감정평가수수료',fee);
   rb.ln('(+) 10년 내 합산 증여분 과세표준',priorBase);
   rb.sub('증여세 과세표준(합산)',r.btot);
-  rb.hd('3. 세액 계산');
+  rb.hd('3. 세액 계산',total);
+  rb.hd('가. 일반 증여세 산출',normalTotal,brkTxt(r.btot));
   rb.ln('산출세액(합산)',r.taxTotal,r.btot>0&&r.btot<5e5?'과세표준 50만원 미만 부과 제외':'');
   rb.ln('(-) 합산 증여분 기납부 세액공제',r.pc);
   rb.ln('(+) 세대생략 할증',r.sur,r.sr>0?'가산율 '+(r.sr*100)+'%':'');
+  rb.hd('나. 세액공제 · 과세특례',spTax-fileCr,v.specialMode==='startup'?'특례 10% 단일세율':(v.specialMode==='succ'?'특례 120억 이하 10%, 초과 20%':''));
   rb.ln('(-) 신고세액공제 3%',fileCr);
   if(v.specialMode!=='none'){
     rb.ln('과세특례 대상 증여가액(한도 내)',spElig);
     rb.ln('과세특례 공제',spDed);
     rb.ln('과세특례 과세표준',spTb);
-    rb.ln('(+) 과세특례 증여세',spTax,v.specialMode==='startup'?'10% 단일세율':'120억 이하 10%, 초과 20%');
+    rb.ln('(+) 과세특례 증여세',spTax);
   }
+  rb.hd('다. 가산세 및 납부세액',total);
   rb.ln('(+) 가산세',pen.tot,'신고불성실 '+fmt(pen.rep)+' / 납부지연 '+fmt(pen.late)+' / 기타 '+fmt(pen.oth));
   rb.tot('납부할 증여세',total);
   if(ann>0){
@@ -1755,6 +1788,9 @@ function calc(v){
 MODS[ID]={id:ID,name:'증여세',sections,calc,rateHTML,rateDetail};
 })();
 
+MODS.inh.sectot=1; MODS.gift.sectot=1;
+MODS.inh.nosum=['finDebts','dispo1','dispo2','giftBase','giftTax','spouseGiftBase','usE1','usE2','usE3','usBps','usDirect','skipAmt'];
+MODS.gift.nosum=['priorDedRel','priorDedMar','priorTax','marriageUsed','usE1','usE2','usE3','usBps','usDirect'];
 loadState();
 renderAll();
 </script>
