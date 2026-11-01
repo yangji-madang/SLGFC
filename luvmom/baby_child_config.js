@@ -1,7 +1,7 @@
 window.BABY_CHILD_CONFIG = {
   "title": "출산·육아 지원금 검색",
-  "prtTitle": "출산·육아 지원금 현황",
-  "prtTitleSim": "출산·육아 지원금 예시",
+  "prtTitle": "출산·육아 지원제도 현황",
+  "prtTitleSim": "우리 지역 출산·육아 지원금 예시",
   "sub": "중앙정부·지자체 | 기준일 2026.10.27",
   "asOf": "",
   "showChg": true,
