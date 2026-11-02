@@ -124,6 +124,11 @@ body{word-break:keep-all;overflow-wrap:break-word}
 #sim tr.tt td{background:#e8f0fe;font-weight:800}
 #sim .note{font-size:11.5px;color:#334155;margin-top:3px;line-height:1.4}
 #sMon,#sAge,#sRate{text-align:right}
+#xl .xr{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin:3px 0}
+#xl .xr input{font:inherit;font-size:12.5px;padding:2px 4px;border:1px solid #94a3b8;border-radius:4px;height:24px;text-align:right}
+#xl .xr input.xn{width:110px;text-align:left}#xl .xr input.xm{width:70px}
+#xl .xr button{font:inherit;font-size:12px;height:24px;padding:0 8px;border:1px solid #94a3b8;background:#fff;border-radius:4px;cursor:pointer}
+#xt tr.tt td{font-weight:800;background:#eef3fa}
 #sim #sv .cd{text-align:right}
 #sim .sv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
 #sim .br{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12px}
@@ -322,6 +327,10 @@ body{word-break:keep-all;overflow-wrap:break-word}
   </div>
   <div class="noprint"><button type="button" class="sm2" id="pAd">아동수당 전액 적립</button><button type="button" class="sm2" id="pP">원금만 보기(수익률 0)</button></div>
   <div class="sv" id="sv"></div>
+  <div class="sec">➕ 적립 항목 추가 (기간이 다른 항목 합산)</div>
+  <div class="noprint"><button type="button" class="sm2" id="xAd">+ 아동수당(9년)</button><button type="button" class="sm2" id="xP0">+ 부모급여 0세(12개월)</button><button type="button" class="sm2" id="xP1">+ 부모급여 1세(12개월)</button><button type="button" class="sm2" id="xNew">+ 빈 항목</button><button type="button" class="sm2" id="xClr">추가 항목 모두 삭제</button></div>
+  <div id="xl" class="noprint"></div>
+  <div class="tw" id="xw" hidden><table id="xt"></table></div>
   <div id="bars"></div>
   <div class="note" id="n2"></div>
   <div class="note" id="disc"></div>
@@ -1132,6 +1141,13 @@ function simRender(){
     '<div class="cd t">연 '+rate+'% 가정 시<b>'+fm(val)+'만원</b></div>'+
     '<div class="cd">수익(가정)<b>'+fm(val-prin)+'만원</b></div>'+
     '<div class="cd">아동수당으로 충당<b>'+fm(covered)+'만원</b></div>';
+  var xr=[{nm:"기본(월 "+fm(mon)+"만원, 만 "+age+"세까지)",mon:mon,n:n}].concat(EX.map(function(x,i){return{nm:x.nm||("항목"+(i+1)),mon:x.mon,n:x.n};}));
+  if(EX.length){
+    var tp=0,tv=0,h='<thead><tr><th>적립 항목</th><th>월 적립(만원)</th><th>기간(개월)</th><th>적립 원금</th><th>종료 시 평가액(가정)</th><th>수익(가정)</th></tr></thead><tbody>';
+    xr.forEach(function(x,j){if(j===0&&!x.mon){return;}var pr=x.mon*x.n,vv=fvM(x.mon,x.n,rate);tp+=pr;tv+=vv;h+='<tr><td>'+esc(x.nm)+'</td><td>'+fm(x.mon)+'</td><td>'+x.n+'</td><td>'+fm(pr)+'</td><td>'+fm(vv)+'</td><td>'+fm(vv-pr)+'</td></tr>';});
+    h+='<tr class="tt"><td>합계</td><td></td><td></td><td>'+fm(tp)+'</td><td>'+fm(tv)+'</td><td>'+fm(tv-tp)+'</td></tr></tbody>';
+    $("#xt").innerHTML=h;$("#xw").hidden=false;
+  }else{$("#xw").hidden=true;$("#xt").innerHTML="";}
   var ages=[],a;
   for(a=3;a<age;a+=3){ages.push(a);}
   ages.push(age);
@@ -1143,6 +1159,25 @@ function simRender(){
   $("#bars").innerHTML=bars;
   $("#n2").textContent=String(CFG.n2).replace(/\{월적립\}/g,fm(mon)).replace(/\{종료나이\}/g,age).replace(/\{원금\}/g,fm(prin)).replace(/\{미충당\}/g,fm(Math.max(prin-covered,0)));
 }
+var EX=[];
+function fvM(m,n,rate){if(!rate){return m*n;}var r=Math.pow(1+rate/100,1/12)-1;return m*(Math.pow(1+r,n)-1)/r;}
+function xList(){
+  $("#xl").innerHTML=EX.map(function(x,i){
+    return '<div class="xr"><input class="xn" data-i="'+i+'" data-k="nm" type="text" placeholder="항목명" value="'+esc(x.nm).replace(/"/g,"&quot;")+'">월<input class="xm" data-i="'+i+'" data-k="mon" type="number" min="0" step="1" value="'+x.mon+'">만원 ×<input class="xm" data-i="'+i+'" data-k="n" type="number" min="1" max="360" step="1" value="'+x.n+'">개월<button type="button" data-del="'+i+'">삭제</button></div>';
+  }).join("");
+}
+function xAdd(nm,mon,n){EX.push({nm:nm,mon:mon,n:n});xList();simRender();}
+$("#xl").addEventListener("input",function(e){
+  var t=e.target,i=t.getAttribute("data-i");if(i===null||!EX[i]){return;}
+  var k=t.getAttribute("data-k");
+  if(k==="nm"){EX[i].nm=t.value;}else{var v=parseFloat(t.value);v=(isNaN(v)||v<0)?0:v;EX[i][k]=(k==="n")?Math.min(360,Math.round(v)):v;}
+});
+$("#xl").addEventListener("click",function(e){var d=e.target.getAttribute("data-del");if(d!==null){EX.splice(+d,1);xList();simRender();}});
+$("#xAd").addEventListener("click",function(){xAdd("아동수당",parseFloat($("#sAd").value)||10,NAT.adM);});
+$("#xP0").addEventListener("click",function(){xAdd("부모급여 0세",NAT.p0/12,12);});
+$("#xP1").addEventListener("click",function(){xAdd("부모급여 1세",NAT.p1/12,12);});
+$("#xNew").addEventListener("click",function(){xAdd("",10,12);});
+$("#xClr").addEventListener("click",function(){EX=[];xList();simRender();});
 function simEv(e){
   var id=e.target.id;
   if(id==="rq"){if(e.type==="input"){rqRun();}return;}
