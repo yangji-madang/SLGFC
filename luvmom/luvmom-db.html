@@ -66,6 +66,8 @@ td.act .no{display:inline-block;min-width:22px;color:var(--sub);font-size:12px}
 .ib:hover{background:#e3edf9}
 .ib.del:hover{background:var(--warnbg);color:var(--warn);border-color:var(--warn)}
 td.bad{background:var(--warnbg) !important;color:#8a1c12}
+td.rs-r{background:#ffd5d5 !important}
+td.rs-b{background:#d6e6ff !important}
 td.num{text-align:center}
 .ib+.ib,td.act .no+.ib{margin-left:2px}
 td.act .no{cursor:grab}
@@ -300,6 +302,8 @@ function regionOf(addr, keepSfx){
 }
 
 /* ───────── 상태 ───────── */
+const RESULT_RED = ['면담거부', '고객교체'], RESULT_BLUE = ['면담완료', '면담약속'];
+const resTone = (c, v) => (c.type === 'select' && c.label.replace(/\s/g, '') === '상담결과') ? (RESULT_RED.indexOf(v) >= 0 ? 'r' : (RESULT_BLUE.indexOf(v) >= 0 ? 'b' : '')) : '';
 const RESULT_OPTS = ['면담완료', '면담약속', '면담거부', '연락대기', '부재중', '고객교체'];
 const DEFAULT_COLS = [
   {key:'입수일',type:'date',w:100},
@@ -491,7 +495,7 @@ function render(){
          '<button class="ib" data-act="ins" title="이 행 아래에 새 고객 삽입">＋</button><button class="ib del" data-act="del" title="삭제">✕</button></td>';
     vis.forEach((c, k) => {
       const v = cellVal(r, c);
-      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), (c.type === 'age' ? 'num' : ''), (c.wrap ? 'wc' : '')].filter(Boolean).join(' ');
+      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), (c.type === 'age' ? 'num' : ''), (c.wrap ? 'wc' : ''), (resTone(c, v) ? 'rs-' + resTone(c, v) : '')].filter(Boolean).join(' ');
       h += '<td class="' + cls + '"' + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(v) + '">' + esc(v) + '</td>';
     });
     h += '</tr>';
@@ -993,6 +997,7 @@ async function exportXlsx(){
       const c = vis[n - 1];
       cell.font = { name: '맑은 고딕', size: 10 }; cell.border = bd;
       cell.alignment = { vertical: 'middle', horizontal: (c.type === 'age' ? 'center' : 'left'), wrapText: !!(c.area || c.wrap) };
+      { const tn = resTone(c, String(cellVal(r, c))); if (tn) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: tn === 'r' ? 'FFFFD5D5' : 'FFD6E6FF' } }; }
       if (c.type === 'date') cell.numFmt = 'yyyy-mm-dd';
       if (c.type === 'datetime') cell.numFmt = / \d{2}:\d{2}$/.test(String(cellVal(r, c))) ? 'yyyy-mm-dd hh:mm' : 'yyyy-mm-dd';
       if (c.type === 'birth' || c.type === 'phone') cell.numFmt = '@';
