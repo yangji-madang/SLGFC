@@ -300,7 +300,7 @@ function regionOf(addr, keepSfx){
 }
 
 /* ───────── 상태 ───────── */
-const RESULT_OPTS = ['면담완료', '면담약속', '면담거부', '연락대기', '부재중'];
+const RESULT_OPTS = ['면담완료', '면담약속', '면담거부', '연락대기', '부재중', '고객교체'];
 const DEFAULT_COLS = [
   {key:'입수일',type:'date',w:100},
   {key:'고객 메모',type:'text',w:210,area:true,wrap:true},
@@ -328,7 +328,7 @@ const DEFAULT_SET = { freezeCols:6, freezeRows:1, suffix:false, ageMode:'man', w
 const LS_KEY = 'luvmam.db.v1';
 
 const state = {
-  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 6,
+  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 7,
   q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: '', dragRow: ''
 };
 const sync = { cfg: null, sha: '', key: null, salt: null, timer: 0, pushing: false, again: false, applying: false, rev: 0 };
@@ -380,6 +380,10 @@ function migrate(){
   if (state.sv < 6){
     state.cols.forEach(c => { if (c.type === 'text' && !c.calc){ c.area = true; c.wrap = true; } });
     state.sv = 6; b = true;
+  }
+  if (state.sv < 7){
+    state.cols.forEach(c => { if (c.type === 'select' && c.label.replace(/\s/g, '') === '상담결과'){ c.opts = c.opts || []; if (c.opts.indexOf('고객교체') < 0) c.opts.push('고객교체'); } });
+    state.sv = 7; b = true;
   }
   return a || b;
 }
@@ -1343,7 +1347,7 @@ function syncInit(){
 window.__luvmam = { regionOf, calcAge, parseYMD, state, render, moveRowBy, sync };
 
 load();
-if (state.sv < 6){ migrate(); save(); }
+if (state.sv < 7){ migrate(); save(); }
 $('#asof').value = state.asOf;
 render();
 syncInit();
