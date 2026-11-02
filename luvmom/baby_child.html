@@ -1025,7 +1025,9 @@ function manFill(){
 function autoAd(){
   var f=adInfo($("#sSido").value,$("#sSgg").value);
   $("#sAd").value=String(f[0]);
+  if(MONAUTO){$("#sMon").value=String(f[0]);}
 }
+var MONAUTO=true;
 function regionChanged(){
   autoAd();
   if($("#sMan").checked){manFill();}
@@ -1065,7 +1067,7 @@ function simInit(){
   $("#sSido").innerHTML=h;
   RK.forEach(function(t,i){r+='<option value="'+i+'">'+t+'</option>';});
   $("#sRank").innerHTML=r;
-  $("#sMon").value=CFG.saveMonthly;$("#sAge").value=CFG.saveAge;$("#sRate").value=CFG.saveRate;
+  MONAUTO=(CFG.saveMonthlyAuto!==false);$("#sMon").value=CFG.saveMonthly;$("#sAge").value=CFG.saveAge;$("#sRate").value=CFG.saveRate;
   $("#sSido").value="서울";sggFill();$("#sSgg").value="종로구";
   autoAd();
 }
@@ -1181,6 +1183,7 @@ $("#xNew").addEventListener("click",function(){xAdd("",10,12);});
 $("#xClr").addEventListener("click",function(){EX=[];xList();simRender();});
 function simEv(e){
   var id=e.target.id;
+  if(id==="sMon"){MONAUTO=false;}
   if(id==="rq"){if(e.type==="input"){rqRun();}return;}
   if(id==="sSido"){sggFill();regionChanged();}
   else if(id==="sSgg"){regionChanged();}
@@ -1201,7 +1204,7 @@ $("#rq").addEventListener("keydown",function(e){
   }else if(e.key==="Escape"){$("#rqL").hidden=true;}
 });
 document.addEventListener("click",function(e){if(!e.target.closest(".rs")){$("#rqL").hidden=true;}});
-$("#pAd").addEventListener("click",function(){$("#sMon").value=$("#sAd").value;simRender();});
+$("#pAd").addEventListener("click",function(){MONAUTO=true;$("#sMon").value=$("#sAd").value;simRender();});
 $("#pP").addEventListener("click",function(){$("#sRate").value=0;simRender();});
 $("#prt").addEventListener("click",function(){document.body.classList.remove("pt");document.body.classList.add("ps");setPT();window.print();});
 applyCfg();
