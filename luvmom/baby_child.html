@@ -1067,7 +1067,7 @@ function simInit(){
   $("#sSido").innerHTML=h;
   RK.forEach(function(t,i){r+='<option value="'+i+'">'+t+'</option>';});
   $("#sRank").innerHTML=r;
-  MONAUTO=(CFG.saveMonthlyAuto!==false);$("#sMon").value=CFG.saveMonthly;$("#sAge").value=CFG.saveAge;$("#sRate").value=CFG.saveRate;
+  MONAUTO=(CFG.saveMonthlyAuto!==false);$("#sMon").value=CFG.saveMonthly;$("#sAge").value=MONAUTO?9:CFG.saveAge;$("#sRate").value=CFG.saveRate;
   $("#sSido").value="서울";sggFill();$("#sSgg").value="종로구";
   autoAd();
 }
@@ -1143,7 +1143,7 @@ function simRender(){
     '<div class="cd t">연 '+rate+'% 가정 시<b>'+fm(val)+'만원</b></div>'+
     '<div class="cd">수익(가정)<b>'+fm(val-prin)+'만원</b></div>'+
     '<div class="cd">아동수당으로 충당<b>'+fm(covered)+'만원</b></div>';
-  var xr=[{nm:"기본(월 "+fm(mon)+"만원, 만 "+age+"세까지)",mon:mon,n:n}].concat(EX.map(function(x,i){return{nm:x.nm||("항목"+(i+1)),mon:x.mon,n:x.n};}));
+  var xr=[{nm:(MONAUTO?"아동수당":"직접 입력")+"("+age+"년)",mon:mon,n:n}].concat(EX.map(function(x,i){return{nm:x.nm||("항목"+(i+1)),mon:x.mon,n:x.n};}));
   if(EX.length){
     var tp=0,tv=0,h='<thead><tr><th>적립 항목</th><th>월 적립(만원)</th><th>기간(개월)</th><th>적립 원금</th><th>종료 시 평가액(가정)</th><th>수익(가정)</th></tr></thead><tbody>';
     xr.forEach(function(x,j){if(j===0&&!x.mon){return;}var pr=x.mon*x.n,vv=fvM(x.mon,x.n,rate);tp+=pr;tv+=vv;h+='<tr><td>'+esc(x.nm)+'</td><td>'+fm(x.mon)+'</td><td>'+x.n+'</td><td>'+fm(pr)+'</td><td>'+fm(vv)+'</td><td>'+fm(vv-pr)+'</td></tr>';});
@@ -1204,7 +1204,7 @@ $("#rq").addEventListener("keydown",function(e){
   }else if(e.key==="Escape"){$("#rqL").hidden=true;}
 });
 document.addEventListener("click",function(e){if(!e.target.closest(".rs")){$("#rqL").hidden=true;}});
-$("#pAd").addEventListener("click",function(){MONAUTO=true;$("#sMon").value=$("#sAd").value;simRender();});
+$("#pAd").addEventListener("click",function(){MONAUTO=true;$("#sMon").value=$("#sAd").value;$("#sAge").value=9;simRender();});
 $("#pP").addEventListener("click",function(){$("#sRate").value=0;simRender();});
 $("#prt").addEventListener("click",function(){document.body.classList.remove("pt");document.body.classList.add("ps");setPT();window.print();});
 applyCfg();
