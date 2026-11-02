@@ -840,7 +840,7 @@ function setFoot(){
   function q(x){return '"'+String(x).replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/\n/g," ")+'"';}
   var st=document.getElementById("hfStyle");
   if(!st){st=document.createElement("style");st.id="hfStyle";document.head.appendChild(st);}
-  var bx="{@bottom-left{content:"+q(c)+";font:bold 9px sans-serif;color:#14365d}@bottom-right{content:"+q(cp)+";font:900 9px sans-serif;color:#14365d}}";
+  var bx="{@top-left{content:\"\"}@top-center{content:\"\"}@top-right{content:\"\"}@bottom-center{content:\"\"}@bottom-left{content:"+q(c)+";font:bold 9px sans-serif;color:#14365d}@bottom-right{content:"+q(cp)+";font:900 9px sans-serif;color:#14365d}}";
   st.textContent="@page tbl"+bx+"@page sim"+bx;
 }
 function setPT(){
@@ -854,7 +854,8 @@ function setPT(){
   $("#sDue").setAttribute("data-e",$("#sDue").value?"":"1");
   $("#ptL2").innerHTML='<b class="ptt">'+esc(CFG.prtTitleSim||"우리 지역 출산·육아 지원금 예시")+'</b>'+(n2?'<span class="pta">('+esc(n2)+')</span>':'');$("#ptR2").textContent=r;
 }
-window.addEventListener("beforeprint",setPT);
+var T0=document.title;
+window.addEventListener("beforeprint",function(){setPT();T0=document.title||T0;document.title=" ";});
 function applyCfg(){
   var u=window.BABY_CHILD_UPDATES,ao=fmtD(CFG.asOf||(u&&u.asOf)||"");
   $("#hTitle").textContent=CFG.title;
@@ -880,7 +881,7 @@ function applyCfg(){
 
 /* ===== 이동·인쇄 ===== */
 $("#goSim").addEventListener("click",function(){$("#pgM").scrollIntoView({behavior:"smooth",block:"start"});});
-window.addEventListener("afterprint",function(){document.body.classList.remove("ps");document.body.classList.remove("pt");});
+window.addEventListener("afterprint",function(){document.title=T0;document.body.classList.remove("ps");document.body.classList.remove("pt");});
 $("#prtT").addEventListener("click",function(){document.body.classList.remove("ps");document.body.classList.remove("pt");setPT();window.print();});
 $("#prtL").addEventListener("click",function(){document.body.classList.remove("ps");document.body.classList.add("pt");setPT();window.print();});
 
