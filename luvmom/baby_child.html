@@ -87,7 +87,7 @@ td a{color:#1d4ed8;word-break:break-all}
 #pgM{scroll-margin-top:34px;padding:8px;background:#fff;border-top:4px solid var(--navy);margin-top:6px}
 #sim{max-width:880px;margin:0 auto;font-size:13px}
 body{word-break:keep-all;overflow-wrap:break-word}
-#n1,#n2,#sim .src{white-space:pre-wrap}
+#n1,#n2,#bn,#sim .src{white-space:pre-wrap}
 #sim .src{overflow-wrap:anywhere}
 #sim .sh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;border-bottom:3px solid var(--navy);padding-bottom:4px;margin-bottom:6px}
 #sim .st{font-size:18px;font-weight:800;color:var(--navy);line-height:1.25}
@@ -128,6 +128,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 #xl .xr input{font:inherit;font-size:12.5px;padding:2px 4px;border:1px solid #94a3b8;border-radius:4px;height:24px;text-align:right}
 #xl .xr input.xn{width:110px;text-align:left}#xl .xr input.xm{width:70px}
 #xl .xr button{font:inherit;font-size:12px;height:24px;padding:0 8px;border:1px solid #94a3b8;background:#fff;border-radius:4px;cursor:pointer}
+#xw .xu{text-align:right;font-size:11px;color:#334155;margin:2px 0}
 #xt tr.tt td{font-weight:800;background:#eef3fa}
 #sim #sv .cd{text-align:right}
 #sim .sv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
@@ -330,8 +331,9 @@ body{word-break:keep-all;overflow-wrap:break-word}
   <div class="sec">➕ 적립 항목 추가 (기간이 다른 항목 합산)</div>
   <div class="noprint"><button type="button" class="sm2" id="xAd">+ 아동수당(9년)</button><button type="button" class="sm2" id="xP0">+ 부모급여 0세(12개월)</button><button type="button" class="sm2" id="xP1">+ 부모급여 1세(12개월)</button><button type="button" class="sm2" id="xNew">+ 빈 항목</button><button type="button" class="sm2" id="xClr">추가 항목 모두 삭제</button></div>
   <div id="xl" class="noprint"></div>
-  <div class="tw" id="xw" hidden><table id="xt"></table></div>
+  <div class="tw" id="xw" hidden><div class="xu">※ 예상 수치임, (단위 : 만원, 개월, %)</div><table id="xt"></table></div>
   <div id="bars"></div>
+  <div class="note" id="bn"></div>
   <div class="note" id="n2"></div>
   <div class="note" id="disc"></div>
   <div class="src">출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015<br>복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html<br>보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&amp;bid=0027&amp;act=view&amp;list_no=1490257<br>임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100<br>서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980<br>경기 시군별 출산장려 지원현황 data.gg.go.kr<br>임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279<br>경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02<br>아동수당 지역구분 정책브리핑 korea.kr/news/policyNewsView.do?newsId=148961693<br>인구감소지역 재지정 경향신문 2026.10.7<br>인천 자치구 개편 경기일보 2026.6.30<br>전남광주통합특별시 구성 위키독스</div>
@@ -1145,9 +1147,9 @@ function simRender(){
     '<div class="cd">아동수당으로 충당<b>'+fm(covered)+'만원</b></div>';
   var xr=[{nm:(MONAUTO?"아동수당":"직접 입력")+"("+age+"년)",mon:mon,n:n}].concat(EX.map(function(x,i){return{nm:x.nm||("항목"+(i+1)),mon:x.mon,n:x.n};}));
   if(EX.length){
-    var tp=0,tv=0,h='<thead><tr><th>적립 항목</th><th>월 적립(만원)</th><th>기간(개월)</th><th>적립 원금</th><th>종료 시 평가액(가정)</th><th>수익(가정)</th></tr></thead><tbody>';
-    xr.forEach(function(x,j){if(j===0&&!x.mon){return;}var pr=x.mon*x.n,vv=fvM(x.mon,x.n,rate);tp+=pr;tv+=vv;h+='<tr><td>'+esc(x.nm)+'</td><td>'+fm(x.mon)+'</td><td>'+x.n+'</td><td>'+fm(pr)+'</td><td>'+fm(vv)+'</td><td>'+fm(vv-pr)+'</td></tr>';});
-    h+='<tr class="tt"><td>합계</td><td></td><td></td><td>'+fm(tp)+'</td><td>'+fm(tv)+'</td><td>'+fm(tv-tp)+'</td></tr></tbody>';
+    var tp=0,tv=0,h='<thead><tr><th>적립 항목</th><th>월 적립</th><th>기간</th><th>적립 원금</th><th>종료 시 평가액</th><th>수익률</th></tr></thead><tbody>';
+    xr.forEach(function(x,j){if(j===0&&!x.mon){return;}var pr=x.mon*x.n,vv=fvM(x.mon,x.n,rate);tp+=pr;tv+=vv;h+='<tr><td>'+esc(x.nm)+'</td><td>'+fm(x.mon)+'</td><td>'+x.n+'</td><td>'+fm(pr)+'</td><td>'+fm(vv)+'</td><td>'+pc(vv,pr)+'</td></tr>';});
+    h+='<tr class="tt"><td>합계</td><td></td><td></td><td>'+fm(tp)+'</td><td>'+fm(tv)+'</td><td>'+pc(tv,tp)+'</td></tr></tbody>';
     $("#xt").innerHTML=h;$("#xw").hidden=false;
   }else{$("#xw").hidden=true;$("#xt").innerHTML="";}
   $("#sv").style.display=EX.length>0?"none":"";
@@ -1160,10 +1162,13 @@ function simRender(){
     bars+='<div class="br"><span>만 '+x+'세</span><div class="bw"><i class="b1" style="width:'+(p/mx*100)+'%"></i><i class="b2" style="width:'+(Math.max(v-p,0)/mx*100)+'%"></i></div><em>'+fm(v)+'만원</em></div>';
   });
   $("#bars").innerHTML=(EX.length&&!mon)?"":bars;
+  var show=!(EX.length&&!mon),a3=Math.min(3,age),p3=mon*a3*12,v3=fv(mon,a3,rate);
+  $("#bn").textContent=show?("▶ 막대(만 3·6·9세…)의 금액 계산 방법\n- 위 기본 입력(월 "+fm(mon)+"만원)을 출생 후 매월 말 한 번씩 적립한다고 보고, 해당 나이까지의 합계를 보여줍니다. (추가 항목은 포함하지 않음)\n- 적립 원금 = 월 적립액 × (나이 × 12개월). 예) 만 "+a3+"세 = "+fm(mon)+" × "+(a3*12)+"개월 = "+fm(p3)+"만원\n- 수익률이 0%이면 원금이 곧 금액입니다. 수익률이 있으면 월 단위 복리로 계산합니다: 월 수익률 = (1 + 연 수익률)^(1/12) − 1, 금액 = 월 적립액 × [(1 + 월 수익률)^개월수 − 1] ÷ 월 수익률.\n- 현재 연 "+rate+"% 가정 시 만 "+a3+"세 금액은 "+fm(v3)+"만원이며, 파란 막대는 원금, 초록 막대는 수익(가정)입니다."):"";
   $("#n2").textContent=String(CFG.n2).replace(/\{월적립\}/g,fm(mon)).replace(/\{종료나이\}/g,age).replace(/\{원금\}/g,fm(prin)).replace(/\{미충당\}/g,fm(Math.max(prin-covered,0)));
 }
 var EX=[];
 function fvM(m,n,rate){if(!rate){return m*n;}var r=Math.pow(1+rate/100,1/12)-1;return m*(Math.pow(1+r,n)-1)/r;}
+function pc(v,p){return p>0?fm((v-p)/p*100):"0";}
 function xList(){
   $("#xl").innerHTML=EX.map(function(x,i){
     return '<div class="xr"><input class="xn" data-i="'+i+'" data-k="nm" type="text" placeholder="항목명" value="'+esc(x.nm).replace(/"/g,"&quot;")+'">월<input class="xm" data-i="'+i+'" data-k="mon" type="number" min="0" step="1" value="'+x.mon+'">만원 ×<input class="xm" data-i="'+i+'" data-k="n" type="number" min="1" max="360" step="1" value="'+x.n+'">개월<button type="button" data-del="'+i+'">삭제</button></div>';
