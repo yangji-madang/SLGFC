@@ -238,6 +238,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
   <span id="asof"></span>
   <button id="goSim" type="button">목돈 만들기 ↓</button>
   <button id="prtT" type="button" title="지원제도 표 + 지원금 시뮬레이션 전체 인쇄">전체 인쇄</button>
+  <button id="prt" type="button" title="지원금(목돈 만들기 예시) 페이지만 인쇄">지원금만 인쇄</button>
   <button id="prtL" type="button" title="지원제도 표만 인쇄(현재 선택한 지역·조건)">제도만 인쇄</button>
   <button id="tgl" type="button">개요 접기</button>
 </div>
@@ -298,7 +299,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
       <option value="12">인구감소 특별 월 12만원</option>
     </select></label>
   </div>
-  <div class="rh" id="rH"></div>
+  <div class="noprint rh" id="rH"></div>
   <label class="mchk noprint"><input type="checkbox" id="sMan">지원금 직접 입력 (시·도/시·군·구 금액을 직접 고쳐서 계산)</label>
   <div id="manB" class="noprint" hidden>
     <div class="mcap">시·도 지원금 (만원)</div>
@@ -342,7 +343,6 @@ body{word-break:keep-all;overflow-wrap:break-word}
   <div class="note" id="disc"></div>
   <div class="src">출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015<br>복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html<br>보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&amp;bid=0027&amp;act=view&amp;list_no=1490257<br>임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100<br>서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980<br>경기 시군별 출산장려 지원현황 data.gg.go.kr<br>임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279<br>경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02<br>아동수당 지역구분 정책브리핑 korea.kr/news/policyNewsView.do?newsId=148961693<br>인구감소지역 재지정 경향신문 2026.10.7<br>인천 자치구 개편 경기일보 2026.6.30<br>전남광주통합특별시 구성 위키독스</div>
   </div></div>
-  <div class="noprint btns"><button type="button" id="prt">시뮬레이션만 인쇄</button></div>
 </div>
 </div>
 
