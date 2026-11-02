@@ -1153,17 +1153,20 @@ function simRender(){
     $("#xt").innerHTML=h;$("#xw").hidden=false;
   }else{$("#xw").hidden=true;$("#xt").innerHTML="";}
   $("#sv").style.display=EX.length>0?"none":"";
-  var ages=[],a;
-  for(a=3;a<age;a+=3){ages.push(a);}
-  ages.push(age);
-  var mx=Math.max(val,prin,1),bars="";
-  ages.forEach(function(x){
-    var p=mon*x*12,v=fv(mon,x,rate);
+  var its=xr.filter(function(x,j2){return x.mon>0&&x.n>0&&!(j2===0&&!mon);});
+  function atAge(x,y){var m=Math.min(x.n,y*12),pr=x.mon*m,r=Math.pow(1+rate/100,1/12)-1,v=rate?x.mon*(Math.pow(1+r,m)-1)/r*Math.pow(1+r,y*12-m):pr;return[pr,v];}
+  function sumAt(y){var P=0,V=0;its.forEach(function(x){var t=atAge(x,y);P+=t[0];V+=t[1];});return[P,V];}
+  var yrs=Math.max(1,Math.ceil(Math.max.apply(null,its.map(function(x){return x.n;}).concat([0]))/12)),ages=[],a;
+  for(a=3;a<yrs;a+=3){ages.push(a);}
+  ages.push(yrs);
+  var mx=Math.max(sumAt(yrs)[0],sumAt(yrs)[1],1),bars="";
+  if(its.length){ages.forEach(function(x){
+    var t=sumAt(x),p=t[0],v=t[1];
     bars+='<div class="br"><span>만 '+x+'세</span><div class="bw"><i class="b1" style="width:'+(p/mx*100)+'%"></i><i class="b2" style="width:'+(Math.max(v-p,0)/mx*100)+'%"></i></div><em>'+fm(v)+'만원</em></div>';
-  });
-  $("#bars").innerHTML=(EX.length&&!mon)?"":bars;
-  var show=!(EX.length&&!mon),a3=Math.min(3,age),p3=mon*a3*12,v3=fv(mon,a3,rate);
-  $("#bn").textContent=show?("▶ 막대(만 3·6·9세…)의 금액 계산 방법\n- 위 기본 입력(월 "+fm(mon)+"만원)을 출생 후 매월 말 한 번씩 적립한다고 보고, 해당 나이까지의 합계를 보여줍니다. (추가 항목은 포함하지 않음)\n- 적립 원금 = 월 적립액 × (나이 × 12개월). 예) 만 "+a3+"세 = "+fm(mon)+" × "+(a3*12)+"개월 = "+fm(p3)+"만원\n- 수익률이 0%이면 원금이 곧 금액입니다. 수익률이 있으면 월 단위 복리로 계산합니다: 월 수익률 = (1 + 연 수익률)^(1/12) − 1, 금액 = 월 적립액 × [(1 + 월 수익률)^개월수 − 1] ÷ 월 수익률.\n- 현재 연 "+rate+"% 가정 시 만 "+a3+"세 금액은 "+fm(v3)+"만원이며, 파란 막대는 원금, 초록 막대는 수익(가정)입니다."):"";
+  });}
+  $("#bars").innerHTML=bars;
+  var a3=Math.min(3,yrs),t3=sumAt(a3);
+  $("#bn").textContent=its.length?("▶ 막대(만 3·6·9세…)의 금액 계산 방법\n- 위 표의 적립 항목 전체("+its.map(function(x){return x.nm;}).join(", ")+")를 합산한 값입니다. 항목마다 출생 후 매월 말 적립하고, 각자의 적립 기간까지만 납입합니다.\n- 적립 원금 = Σ 항목별 [월 적립액 × min(적립 개월수, 나이×12)]. 예) 만 "+a3+"세 시점 원금 = "+its.map(function(x){return fm(x.mon)+"×"+Math.min(x.n,a3*12);}).join(" + ")+" = "+fm(t3[0])+"만원\n- 평가액(수익률 반영) = 항목별 적립금을 월 복리로 불린 값의 합. 월 수익률 = (1 + 연 수익률)^(1/12) − 1이며, 적립이 끝난 항목도 그 나이까지 같은 수익률로 계속 불어납니다. 수익률 0%이면 평가액 = 원금입니다.\n- 연 "+rate+"% 가정 시 만 "+a3+"세 평가액은 "+fm(t3[1])+"만원입니다. 파란 막대는 원금, 초록 막대는 수익(가정)입니다. (표의 '종료 시 평가액'은 각 항목이 끝나는 시점 값이라 이 막대와 시점이 다릅니다.)"):"";
   $("#n2").textContent=String(CFG.n2).replace(/\{월적립\}/g,fm(mon)).replace(/\{종료나이\}/g,age).replace(/\{원금\}/g,fm(prin)).replace(/\{미충당\}/g,fm(Math.max(prin-covered,0)));
 }
 var EX=[];
