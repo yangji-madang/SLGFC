@@ -325,6 +325,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
     <label>월 적립액(만원)<input id="sMon" type="number" inputmode="decimal" min="0" step="1"></label>
     <label>적립 종료 나이(만 세)<input id="sAge" type="number" inputmode="numeric" min="1" max="30" step="1"></label>
     <label>가정 연 수익률(%)<input id="sRate" type="number" inputmode="decimal" min="0" max="20" step="0.5"></label>
+    <label>이자 계산<select id="sMode"><option value="c">복리(월 단위)</option><option value="s">단리</option></select></label>
   </div>
   <div class="noprint"><button type="button" class="sm2" id="pAd">아동수당 전액 적립</button><button type="button" class="sm2" id="pP">원금만 보기(수익률 0)</button></div>
   <div class="sv" id="sv"></div>
@@ -998,12 +999,8 @@ var SG={
 function num(id){var v=parseFloat($(id).value);return(isNaN(v)||v<0)?0:v;}
 function fm(n){return(Math.round(n*10)/10).toLocaleString("ko-KR");}
 function today(){var d=new Date(),m=d.getMonth()+1,dd=d.getDate();return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(dd<10?"0":"")+dd;}
-function fv(m,age,rate){
-  var n=age*12;
-  if(!rate){return m*n;}
-  var r=Math.pow(1+rate/100,1/12)-1;
-  return m*(Math.pow(1+r,n)-1)/r;
-}
+function fv(m,age,rate){return fvM(m,age*12,rate);}
+
 function adInfo(si,sg){
   if(sg&&TK[si+"|"+sg]){return[12,"인구감소 특별"];}
   if(sg&&UD[si+"|"+sg]){return[11,"인구감소 우대"];}
@@ -1142,7 +1139,7 @@ function simRender(){
   var covered=Math.min(mon,ad)*Math.min(n,NAT.adM);
   $("#sv").innerHTML=
     '<div class="cd">월 적립 '+fm(mon)+'만원 × '+n+'개월<b>원금 '+fm(prin)+'만원</b></div>'+
-    '<div class="cd t">연 '+rate+'% 가정 시<b>'+fm(val)+'만원</b></div>'+
+    '<div class="cd t">연 '+rate+'%('+(isSimple()?'단리':'복리')+') 가정 시<b>'+fm(val)+'만원</b></div>'+
     '<div class="cd">수익(가정)<b>'+fm(val-prin)+'만원</b></div>'+
     '<div class="cd">아동수당으로 충당<b>'+fm(covered)+'만원</b></div>';
   var xr=[{nm:(MONAUTO?"아동수당":"직접 입력")+"("+age+"년)",mon:mon,n:n}].concat(EX.map(function(x,i){return{nm:x.nm||("항목"+(i+1)),mon:x.mon,n:x.n};}));
@@ -1154,7 +1151,7 @@ function simRender(){
   }else{$("#xw").hidden=true;$("#xt").innerHTML="";}
   $("#sv").style.display=EX.length>0?"none":"";
   var its=xr.filter(function(x,j2){return x.mon>0&&x.n>0&&!(j2===0&&!mon);});
-  function atAge(x,y){var m=Math.min(x.n,y*12),pr=x.mon*m,r=Math.pow(1+rate/100,1/12)-1,v=rate?x.mon*(Math.pow(1+r,m)-1)/r*Math.pow(1+r,y*12-m):pr;return[pr,v];}
+  function atAge(x,y){var m=Math.min(x.n,y*12);return[x.mon*m,fvAt(x.mon,m,y*12,rate)];}
   function sumAt(y){var P=0,V=0;its.forEach(function(x){var t=atAge(x,y);P+=t[0];V+=t[1];});return[P,V];}
   var yrs=Math.max(1,Math.ceil(Math.max.apply(null,its.map(function(x){return x.n;}).concat([0]))/12)),ages=[],a;
   for(a=3;a<yrs;a+=3){ages.push(a);}
@@ -1166,11 +1163,18 @@ function simRender(){
   });}
   $("#bars").innerHTML=bars;
   var a3=Math.min(3,yrs),t3=sumAt(a3);
-  $("#bn").textContent=its.length?("▶ 막대(만 3·6·9세…)의 금액 계산 방법\n- 위 표의 적립 항목 전체("+its.map(function(x){return x.nm;}).join(", ")+")를 합산한 값입니다. 항목마다 출생 후 매월 말 적립하고, 각자의 적립 기간까지만 납입합니다.\n- 적립 원금 = Σ 항목별 [월 적립액 × min(적립 개월수, 나이×12)]. 예) 만 "+a3+"세 시점 원금 = "+its.map(function(x){return fm(x.mon)+"×"+Math.min(x.n,a3*12);}).join(" + ")+" = "+fm(t3[0])+"만원\n- 평가액(수익률 반영) = 항목별 적립금을 월 복리로 불린 값의 합. 월 수익률 = (1 + 연 수익률)^(1/12) − 1이며, 적립이 끝난 항목도 그 나이까지 같은 수익률로 계속 불어납니다. 수익률 0%이면 평가액 = 원금입니다.\n- 연 "+rate+"% 가정 시 만 "+a3+"세 평가액은 "+fm(t3[1])+"만원입니다. 파란 막대는 원금, 초록 막대는 수익(가정)입니다. (표의 '종료 시 평가액'은 각 항목이 끝나는 시점 값이라 이 막대와 시점이 다릅니다.)"):"";
+  $("#bn").textContent=its.length?("▶ 막대(만 3·6·9세…)의 금액 계산 방법\n- 위 표의 적립 항목 전체("+its.map(function(x){return x.nm;}).join(", ")+")를 합산한 값입니다. 항목마다 출생 후 매월 말 적립하고, 각자의 적립 기간까지만 납입합니다.\n- 적립 원금 = Σ 항목별 [월 적립액 × min(적립 개월수, 나이×12)]. 예) 만 "+a3+"세 시점 원금 = "+its.map(function(x){return fm(x.mon)+"×"+Math.min(x.n,a3*12);}).join(" + ")+" = "+fm(t3[0])+"만원\n- 평가액(수익률 반영) = 항목별 평가액의 합. "+(isSimple()?"단리: 납입금 1회마다 월 적립액 × 연 수익률 × 보유기간(년)만큼만 이자가 붙고 이자에는 이자가 붙지 않습니다.":"복리: 월 수익률 = (1 + 연 수익률)^(1/12) − 1로 환산해 월마다 이자에 이자가 붙습니다.")+" 적립이 끝난 항목도 그 나이까지 같은 방식으로 계속 불어납니다. 수익률 0%이면 평가액 = 원금입니다.\n- 연 "+rate+"% 가정 시 만 "+a3+"세 평가액은 "+fm(t3[1])+"만원입니다. 파란 막대는 원금, 초록 막대는 수익(가정)입니다. (표의 '종료 시 평가액'은 각 항목이 끝나는 시점 값이라 이 막대와 시점이 다릅니다.)"):"";
   $("#n2").textContent=String(CFG.n2).replace(/\{월적립\}/g,fm(mon)).replace(/\{종료나이\}/g,age).replace(/\{원금\}/g,fm(prin)).replace(/\{미충당\}/g,fm(Math.max(prin-covered,0)));
 }
 var EX=[];
-function fvM(m,n,rate){if(!rate){return m*n;}var r=Math.pow(1+rate/100,1/12)-1;return m*(Math.pow(1+r,n)-1)/r;}
+function isSimple(){var e=$("#sMode");return !!e&&e.value==="s";}
+/* 월 말 적립, 납입 n개월 후 Y개월 시점 가치. 복리: 연 수익률을 월 수익률로 환산한 월복리 / 단리: 각 납입금에 연 수익률×보유기간(년)만큼만 이자 */
+function fvAt(m,n,Y,rate){
+  if(!rate){return m*n;}
+  if(isSimple()){return m*n+m*(rate/100)/12*(n*Y-n*(n+1)/2);}
+  var r=Math.pow(1+rate/100,1/12)-1;return m*(Math.pow(1+r,n)-1)/r*Math.pow(1+r,Y-n);
+}
+function fvM(m,n,rate){return fvAt(m,n,n,rate);}
 function pc(v,p){return p>0?fm((v-p)/p*100):"0";}
 function xList(){
   $("#xl").innerHTML=EX.map(function(x,i){
