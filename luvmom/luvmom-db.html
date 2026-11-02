@@ -303,20 +303,20 @@ function regionOf(addr, keepSfx){
 const RESULT_OPTS = ['면담완료', '면담약속', '면담거부', '연락대기', '부재중'];
 const DEFAULT_COLS = [
   {key:'입수일',type:'date',w:100},
-  {key:'고객 메모',type:'text',w:210,area:true},
+  {key:'고객 메모',type:'text',w:210,area:true,wrap:true},
   {key:'지정일',type:'date',w:100},
-  {key:'고객명',type:'text',w:90},
+  {key:'고객명',type:'text',w:90,area:true,wrap:true},
   {key:'생년월일',type:'birth',w:92},
   {key:'나이',type:'age',w:80,calc:true},
   {key:'휴대폰',type:'phone',w:122},
   {key:'가입일',type:'date',w:100},
-  {key:'주소',type:'text',w:270,wide:true},
+  {key:'주소',type:'text',w:270,area:true,wrap:true},
   {key:'지역',type:'region',w:96,calc:true},
   {key:'출산예정일',type:'date',w:104},
-  {key:'임신주수',type:'text',w:76},
-  {key:'진료병원',type:'text',w:140},
-  {key:'가입경로',type:'text',w:96},
-  {key:'관심항목',type:'text',w:280,area:true},
+  {key:'임신주수',type:'text',w:76,area:true,wrap:true},
+  {key:'진료병원',type:'text',w:140,area:true,wrap:true},
+  {key:'가입경로',type:'text',w:96,area:true,wrap:true},
+  {key:'관심항목',type:'text',w:280,area:true,wrap:true},
   {key:'상담 희망 시간',type:'datetime',w:150},
   {key:'상담결과',type:'select',w:110,wrap:true,opts:RESULT_OPTS},
   {key:'상담 내용',type:'text',w:260,area:true,wrap:true},
@@ -328,7 +328,7 @@ const DEFAULT_SET = { freezeCols:6, freezeRows:1, suffix:false, ageMode:'man', w
 const LS_KEY = 'luvmam.db.v1';
 
 const state = {
-  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 5,
+  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 6,
   q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: '', dragRow: ''
 };
 const sync = { cfg: null, sha: '', key: null, salt: null, timer: 0, pushing: false, again: false, applying: false, rev: 0 };
@@ -376,6 +376,10 @@ function migrate(){
   if (state.sv < 5){
     state.cols.forEach(c => { if (c.calc && (c.w || 0) < 80) c.w = 80; });
     state.sv = 5; b = true;
+  }
+  if (state.sv < 6){
+    state.cols.forEach(c => { if (c.type === 'text' && !c.calc){ c.area = true; c.wrap = true; } });
+    state.sv = 6; b = true;
   }
   return a || b;
 }
@@ -783,7 +787,7 @@ async function readXlsx(file){
       let c = state.cols.find(x => sqz(x.label) === sqz(h.t));
       if (c){ if (c.calc) ignored.push(c.label); else colMap[h.n] = c; return; }
       let nc = newCols.find(x => sqz(x.label) === sqz(h.t));
-      if (!nc){ nc = { key: (h.t === 'id' ? 'id_' : h.t), label: h.t, type: 'text', w: 140, visible: true }; newCols.push(nc); }
+      if (!nc){ nc = { key: (h.t === 'id' ? 'id_' : h.t), label: h.t, type: 'text', w: 200, area: true, wrap: true, visible: true }; newCols.push(nc); }
       colMap[h.n] = nc;
     });
     const recs = [];
@@ -882,7 +886,7 @@ function openPaste(initial){
         if (m === '__new__'){
           const nm = String(hdr[j] || '').trim(); if (!nm) return;
           c = state.cols.find(x => sq(x.label) === sq(nm)) || newCols.find(x => sq(x.label) === sq(nm));
-          if (!c){ c = { key: nm === 'id' ? 'id_' : nm, label: nm, type: 'text', w: 140, visible: true }; newCols.push(c); }
+          if (!c){ c = { key: nm === 'id' ? 'id_' : nm, label: nm, type: 'text', w: 200, area: true, wrap: true, visible: true }; newCols.push(c); }
         } else c = state.cols.find(x => x.key === m);
         if (!c) return;
         const v = normByType(c, r[j] == null ? '' : r[j]); o[c.key] = v; if (v !== '') any = true;
@@ -1048,7 +1052,8 @@ function addCol(){
   const name = $('#ncName').value.trim(), type = $('#ncType').value, pos = $('#ncPos').value;
   if (!name){ toast('새 항목명을 입력해 주세요.'); return; }
   if (state.cols.some(c => sqz(c.label) === sqz(name))){ toast('이미 있는 항목명입니다.'); return; }
-  const nc = { key: (name === 'id' ? 'id_' : name), label: name, type: type, w: type === 'date' ? 100 : (type === 'datetime' ? 150 : 140), visible: true };
+  const nc = { key: (name === 'id' ? 'id_' : name), label: name, type: type, w: type === 'date' ? 100 : (type === 'datetime' ? 150 : 200), visible: true };
+  if (type === 'text'){ nc.area = true; nc.wrap = true; }
   const at = pos ? state.cols.findIndex(c => c.key === pos) + 1 : 0;
   state.cols.splice(at, 0, nc); save(); render(); renderDrawer(); toast("'" + name + "' 항목을 추가했습니다.");
 }
@@ -1338,7 +1343,7 @@ function syncInit(){
 window.__luvmam = { regionOf, calcAge, parseYMD, state, render, moveRowBy, sync };
 
 load();
-if (state.sv < 5){ migrate(); save(); }
+if (state.sv < 6){ migrate(); save(); }
 $('#asof').value = state.asOf;
 render();
 syncInit();
