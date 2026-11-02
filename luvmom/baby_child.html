@@ -1148,6 +1148,7 @@ function simRender(){
     h+='<tr class="tt"><td>합계</td><td></td><td></td><td>'+fm(tp)+'</td><td>'+fm(tv)+'</td><td>'+fm(tv-tp)+'</td></tr></tbody>';
     $("#xt").innerHTML=h;$("#xw").hidden=false;
   }else{$("#xw").hidden=true;$("#xt").innerHTML="";}
+  $("#sv").style.display=EX.length>0?"none":"";
   var ages=[],a;
   for(a=3;a<age;a+=3){ages.push(a);}
   ages.push(age);
@@ -1156,7 +1157,7 @@ function simRender(){
     var p=mon*x*12,v=fv(mon,x,rate);
     bars+='<div class="br"><span>만 '+x+'세</span><div class="bw"><i class="b1" style="width:'+(p/mx*100)+'%"></i><i class="b2" style="width:'+(Math.max(v-p,0)/mx*100)+'%"></i></div><em>'+fm(v)+'만원</em></div>';
   });
-  $("#bars").innerHTML=bars;
+  $("#bars").innerHTML=(EX.length&&!mon)?"":bars;
   $("#n2").textContent=String(CFG.n2).replace(/\{월적립\}/g,fm(mon)).replace(/\{종료나이\}/g,age).replace(/\{원금\}/g,fm(prin)).replace(/\{미충당\}/g,fm(Math.max(prin-covered,0)));
 }
 var EX=[];
