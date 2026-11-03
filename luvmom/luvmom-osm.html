@@ -67,7 +67,7 @@ td.act .no{display:inline-block;min-width:22px;color:var(--sub);font-size:12px}
 .ib.del:hover{background:var(--warnbg);color:var(--warn);border-color:var(--warn)}
 td.bad{background:var(--warnbg) !important;color:#8a1c12}
 td.rs-r{background:#ffd5d5 !important}
-td.rs-b{background:#d6e6ff !important}
+td.rs-b{background:#fff6bf !important}
 td.num{text-align:center}
 .ib+.ib,td.act .no+.ib{margin-left:2px}
 td.act .no{cursor:grab}
@@ -997,7 +997,7 @@ async function exportXlsx(){
       const c = vis[n - 1];
       cell.font = { name: '맑은 고딕', size: 10 }; cell.border = bd;
       cell.alignment = { vertical: 'middle', horizontal: (c.type === 'age' ? 'center' : 'left'), wrapText: !!(c.area || c.wrap) };
-      { const tn = resTone(c, String(cellVal(r, c))); if (tn) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: tn === 'r' ? 'FFFFD5D5' : 'FFD6E6FF' } }; }
+      { const tn = resTone(c, String(cellVal(r, c))); if (tn) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: tn === 'r' ? 'FFFFD5D5' : 'FFFFF6BF' } }; }
       if (c.type === 'date') cell.numFmt = 'yyyy-mm-dd';
       if (c.type === 'datetime') cell.numFmt = / \d{2}:\d{2}$/.test(String(cellVal(r, c))) ? 'yyyy-mm-dd hh:mm' : 'yyyy-mm-dd';
       if (c.type === 'birth' || c.type === 'phone') cell.numFmt = '@';
