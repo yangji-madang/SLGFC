@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>내 회사에 적합한 지원제도 찾기</title>
-<link rel="stylesheet" href="gov_support.css?v=20261028x">
+<link rel="stylesheet" href="gov_support.css?v=20261103a">
 <style>
 body{display:block;min-height:0}
 main{padding-bottom:70px}
@@ -211,11 +211,13 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 </main>
 <footer><div class="cp"><span class="ct" id="ctc"></span><span class="cr" id="cpy"></span></div></footer>
 <script src="gov_support_data.js"></script>
+<script src="gov_support_regions.js?v=20261103a"></script>
+<script src="gov_support_terms.js?v=20261103a"></script>
 <script src="gov_support_config.js"></script>
 <script src="gov_support_updates.js"></script>
-<script src="gov_support_common.js?v=20261028x"></script>
+<script src="gov_support_common.js?v=20261103a"></script>
 <script src="gov_support_match_config.js"></script>
-<script src="gov_support_rules.js?v=20261028"></script>
+<script src="gov_support_rules.js?v=20261103a"></script>
 <script>
 (function(){
   'use strict';
@@ -235,7 +237,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     form:[['','선택'],['corp','법인'],['indiv','개인사업자']],
     scale:[['','선택'],['micro','소상공인'],['small','소기업(소상공인 제외)'],['sme','중기업(소기업 초과)'],['mid','중견기업'],['large','대기업']],
     ind:[['','선택'],['mfg','제조업'],['trade','도소매업'],['med','의료업'],['svc','기타 서비스업·건설 등'],['rental','부동산임대업'],['consume','소비향락(유흥·사행) 서비스업']],
-    region:[['','선택'],['seoul','서울'],['seongnam','경기 성남시'],['gwangju','경기 광주시'],['yongin','경기 용인시'],['gyeonggi','경기 기타 지역(성남·광주·용인 제외)'],['incheon','인천'],['other','비수도권(기타)'],['nation','전국(소재지 특정 안 함)']],
+    region:[['','선택'],['seoul','서울'],['seongnam','경기 성남시'],['gwangju','경기 광주시'],['yongin','경기 용인시'],['hwaseong','경기 화성시'],['gyeonggi','경기 기타 지역(성남·광주·용인 제외)'],['incheon','인천'],['other','비수도권(기타)'],['nation','전국(소재지 특정 안 함)']],
     mtr:[['','선택'],['6','6%'],['15','15%'],['24','24%'],['35','35%'],['38','38%'],['40','40%'],['42','42%'],['45','45%']]
   };
 
@@ -261,6 +263,42 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     if(OT.test(t)) return {k:'other'};
     var c=REG_OPT.filter(function(o){var n=nz(o);return n.indexOf(t)>=0||t.indexOf(n.slice(0,3))>=0&&n.length>2;}).slice(0,5);
     return {bad:'인식할 수 없는 소재지입니다. 시·도 또는 시·군 이름(예: 수원시, 성남시, 서울특별시)을 정확히 입력하거나 목록에서 선택하세요.',cand:c};
+  }
+
+
+  /* ── 소재지 : 광역 → 시·군·구 선택 → 판정 구분(region 키)으로 환산 ── */
+  var LEGK={seoul:['서울',''],incheon:['인천',''],hwaseong:['경기','화성시'],seongnam:['경기','성남시'],gwangju:['경기','광주시'],yongin:['경기','용인시'],gyeonggi:['경기','']}, legacyKey='';
+  function rgKey(sido,sg){
+    if(!sido) return ''; if(sido==='서울') return 'seoul'; if(sido==='인천') return 'incheon';
+    if(sido==='경기'){ return sg==='화성시'?'hwaseong':sg==='성남시'?'seongnam':sg==='광주시'?'gwangju':sg==='용인시'?'yongin':'gyeonggi'; }
+    return 'other';
+  }
+  function rgSync(rebuild){
+    var sd=$('p_sido'), sg=$('p_sigun'), g=G.sidoOf(sd.value);
+    if(rebuild){
+      sg.innerHTML='<option value="">'+(g&&g[2].length?'시·군·구 선택 (선택 안 하면 광역 기준)':'시·군·구 없음')+'</option>'+(g?g[2]:[]).map(function(x){return '<option>'+esc(x)+'</option>';}).join('');
+      sg.disabled=!g||!g[2].length; sg.value='';
+    }
+    if(sd.value) legacyKey='';
+    var key=sd.value?rgKey(sd.value,sg.value):legacyKey, nt=$('n_region'), nm=g?g[0]+(sg.value?' '+sg.value:''):'';
+    if(!nm&&legacyKey){ var o=SEL.region.filter(function(x){return x[0]===legacyKey;})[0]; nm=o?o[1]:''; }
+    $('p_region').value=key; $('p_regionTxt').value=nm;
+    if(!nm){ nt.className='hnt'; nt.innerHTML=''; return; }
+    var lab=SEL.region.filter(function(x){return x[0]===key;})[0], oc=window.GS_OVERCROWD&&window.GS_OVERCROWD[sd.value], info='';
+    if(oc){
+      var st=(sg.value&&oc['구']&&oc['구'][sg.value])||(sd.value==='경기'?'':oc.all);
+      info=st==='y'?' · 수도권 <b>과밀억제권역 해당</b>':st==='p'?' · 과밀억제권역 <b>일부 지역만 해당</b>(세부 동·구역 확인)':st==='n'?' · 수도권이나 과밀억제권역은 아님':sd.value==='경기'?' · 과밀억제권역 여부는 시·군에 따라 다름':'';
+      if(info) info+=' <button type="button" class="tbtn" data-tact="term:과밀억제권역">설명</button>';
+    }
+    nt.className='hnt okk'; nt.innerHTML='✔ '+esc(nm)+(lab&&key?' (판정 구분 : '+esc(lab[1])+')':'')+info;
+  }
+  function rgRestore(v){
+    var sido=v.sido||'', sg=v.sigun||'';
+    legacyKey='';
+    if(!sido&&v.region){ var m=LEGK[v.region]; if(m){sido=m[0];sg=m[1];} else legacyKey=v.region; }
+    $('p_sido').value=sido; rgSync(true);
+    if(sg) $('p_sigun').value=sg;
+    rgSync(false);
   }
 
   /* ── 업종 직접입력: 한국표준산업분류(KSIC) 표준업종만 인정 ── */
@@ -298,7 +336,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     {g:'기본 정보',f:[
       {k:'form',l:'기업 형태',t:'s'},{k:'scale',l:'기업 규모(법적)',t:'s',h:'소상공인⊂소기업⊂중소기업'},
       {k:'ind',l:'업종 (선택 또는 직접입력)',t:'s',typed:1,w:1,ph:'표준업종명 직접입력 (예: 음식점업)',h:'※ 한국표준산업분류(KSIC) 표준업종만 인정합니다. 목록에서 고르거나 업종명을 정확히 입력하세요.'},
-      {k:'region',l:'소재지 (선택 또는 직접입력)',t:'s',typed:1,w:1,ph:'시·군 직접입력 (예: 수원시)',h:'시·도 또는 시·군 이름을 입력하면 자동으로 구분합니다.'},
+      {k:'region',l:'소재지 (광역 → 시·군·구 선택)',t:'s',rg:1,w:1},
       {k:'age',l:'업력(창업 후 경과)',t:'n',u:'년',h:'예: 3.5'}]},
     {g:'매출·과세·수출·자산',note:'※ 소득세 한계세율은 공제 전 ‘대표연소득’기준이므로 공제적용시 세율이 낮아질 수 있습니다.',f:[
       {k:'sales',l:'직전연도 매출액',t:'n',u:'억원',h:'예: 1억400만원 → 1.04'},{k:'taxbase',l:'법인세 과세표준',t:'n',u:'억원'},
@@ -342,6 +380,11 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       if(f.t==='fls'){h+='<div class="chs2 flrow">'+f.items.map(function(x){return '<button type="button" class="chip" data-f="'+x[0]+'" aria-pressed="false">'+esc(x[1])+'</button>';}).join('')+'</div>'; return;}
       if(f.t==='res'){h+='<div class="rsc" id="rs_'+f.k+'" data-kind="'+f.kind+'"></div>'; return;}
       LBL[f.k]=f;
+      if(f.rg){
+        h+='<div class="pf wide"><div class="lbr"><label for="p_sido">'+esc(f.l)+'</label></div><div class="in rgin"><select id="p_sido" data-x="sido"><option value="">광역 선택</option>'+G.REGIONS.map(function(g){return '<option value="'+esc(g[1])+'">'+esc(g[0])+'</option>';}).join('')+'</select><select id="p_sigun" data-x="sigun" disabled><option value="">시·군·구 선택</option></select></div><div class="hnt" id="n_region"></div>'+
+          '<select id="p_region" data-k="region" hidden>'+SEL.region.map(function(o){return '<option value="'+esc(o[0])+'">'+esc(o[1])+'</option>';}).join('')+'</select><input type="hidden" id="p_regionTxt" data-x="regionTxt"></div>';
+        return;
+      }
       h+='<div class="pf'+(f.w?' wide':'')+((f.tx||f.t==='c')?' lnk':'')+'"><div class="lbr"><label for="p_'+f.k+'">'+esc(f.l)+'</label>'+(f.tx?'<button type="button" class="tbtn" data-tax="'+f.tx+'" title="세율표 보기">세율표</button>':'')+'</div><div class="in">';
       if(f.t==='c'){
         h+='<output id="p_'+f.k+'" class="calc">-</output>';
@@ -381,7 +424,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     document.querySelectorAll('#pf [data-k],#pf [data-x]').forEach(function(el){el.value='';});
     Object.keys(o.v||{}).forEach(function(k){var el=$('p_'+k);if(el)el.value=o.v[k];});
     Object.keys(o.f||{}).forEach(function(k){if(o.f[k])flags[k]=true;});
-    syncChips(); typedSync('region',false); typedSync('ind',false); taxSync(false);
+    syncChips(); rgRestore(o.v||{}); typedSync('ind',false); taxSync(false);
   }
   function syncChips(){document.querySelectorAll('#pf .chip[data-f]').forEach(function(b){var on=!!flags[b.dataset.f];b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');});}
 
@@ -442,7 +485,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       var v=P[f.k]; var lab=f.l.replace(/ \(선택 또는 직접입력\)/,'');
       if(v===null||v===''||v===undefined){map[f.k]=[lab,''];return;}
       var val=(f.t==='s'?selLbl(f.k,v):(Number(v).toLocaleString('ko-KR')+' '+(f.u||'')));
-      if(f.typed&&P[f.k+'Txt']) val=P[f.k+'Txt'];
+      if((f.typed||f.rg)&&P[f.k+'Txt']) val=P[f.k+'Txt'];
       map[f.k]=[lab,val];
     });});
     var fl=FLAGS.filter(function(x){return flags[x[0]];}).map(function(x){return x[1];});
@@ -645,13 +688,14 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
   /* 이벤트 */
   $('pf').addEventListener('input',function(e){
     var t=e.target;
-    if(t.dataset.x){typedSync(t.dataset.x.replace('Txt',''),true);}
+    if(t.dataset.x==='indTxt'){typedSync('ind',true);}
     if(t.id==='p_bizinc'||t.id==='p_taxbase') taxSync(t.id==='p_bizinc');
     save();renderAll();
   });
   $('pf').addEventListener('change',function(e){
     var t=e.target;
     if(t.id==='p_mtr') taxSync(false);
+    if(t.id==='p_sido') rgSync(true); else if(t.id==='p_sigun') rgSync(false);
     if(t.dataset.k&&LBL[t.dataset.k].typed){ // 선택하면 직접입력값은 비우고 선택값을 따름
       var k=t.dataset.k; $('p_'+k+'Txt').value=''; typedSync(k,false);
       var nt=$('n_'+k); if(t.value){nt.className='hnt okk';nt.textContent='✔ '+SEL[k].filter(function(o){return o[0]===t.value;})[0][1];}
@@ -700,6 +744,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
   /* 초기 로드 */
   try{var s0=JSON.parse(localStorage.getItem(KEY)||'null'); if(s0) fill(s0);}catch(e){}
   setFixed(); renderAll();
+  G.termsInit();
 })();
 </script>
 </body>

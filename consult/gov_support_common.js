@@ -109,11 +109,72 @@
   G.THEAD = '<tr><th style="min-width:200px">지원·정책명 / 주체</th><th style="min-width:110px">분류·형태</th><th style="min-width:150px">대상 기업</th><th style="min-width:330px">지원 내용</th><th style="min-width:270px">제한조건</th><th style="min-width:190px">신청·문의</th><th style="min-width:230px">확인·출처</th></tr>';
 
   /* 필터 */
-  G.F0 = function () { return { q: '', lv: '', tg: '', lt: '', lvm: 'or', tgm: 'or', ltm: 'or', qm: 'or', lvs: [], tgs: [], lts: [], cats: [], pfs: [], rels: [], chk: false, hideEnd: false, id: '' }; };
+  G.F0 = function () { return { q: '', lv: '', tg: '', lt: '', lvm: 'or', tgm: 'or', ltm: 'or', qm: 'or', lvs: [], tgs: [], lts: [], cats: [], pfs: [], rels: [], chk: false, hideEnd: false, id: '', sido: '', sigun: '', nc: false }; };
+
+  /* 지역(광역·시군구) 선택 : 데이터 r 필드(전국·서울·경기 등)와 제도명·주체에 포함된 시·군·구 이름으로 판별 */
+  G.REGIONS = window.GS_REGIONS || [];
+  G.sidoOf = function (r) {
+    r = String(r || '').trim(); if (!r || r === '전국') return null;
+    for (var i = 0; i < G.REGIONS.length; i++) { var g = G.REGIONS[i]; if (r === g[1] || r === g[0] || g[0].indexOf(r) === 0) return g; }
+    return null;
+  };
+  G.regOf = function (it) {
+    if (it._rg) return it._rg;
+    var r = String(it.r || '').trim(), rg = { local: !!r && r !== '전국', sido: '', city: '' };
+    if (rg.local) {
+      var g = G.sidoOf(r); rg.sido = g ? g[1] : r;
+      if (g) {
+        var text = (it.n || '') + ' ' + (it.ag || '') + ' ' + (it.q || ''), best = '';
+        g[2].forEach(function (c) {
+          var base = c.slice(0, -1), cand = [c, base + '특례시'];
+          cand.forEach(function (w) {
+            var p = text.indexOf(w);
+            while (p >= 0) {
+              var prev = p > 0 ? text.charAt(p - 1) : '';
+              if (!/[가-힣]/.test(prev) && w.length > best.length) { best = c; }
+              p = text.indexOf(w, p + 1);
+            }
+          });
+        });
+        rg.city = best;
+      }
+    }
+    it._rg = rg; return rg;
+  };
+  G.inRegion = function (it, F) {
+    if (!F.sido) return true;
+    var rg = G.regOf(it);
+    if (!rg.local) return !F.nc;
+    if (rg.sido !== F.sido) return false;
+    if (F.sigun && rg.city && rg.city !== F.sigun) return false;
+    return true;
+  };
+  G.regionName = function (F) {
+    if (!F.sido) return '';
+    var g = G.sidoOf(F.sido), n = g ? g[0] : F.sido;
+    return n + (F.sigun ? ' ' + F.sigun : '');
+  };
+  G.regionSummary = function (list, F) {
+    if (!F.sido) return '';
+    var c = 0, s = 0, t = 0, base = G.items.filter(function (it) { return G.inRegion(it, Object.assign({}, F, { nc: false })); });
+    base.forEach(function (it) { var rg = G.regOf(it); if (!rg.local) c++; else if (rg.city) t++; else s++; });
+    var h = '<b>' + esc(G.regionName(F)) + '</b> 기준 : ' + (F.nc ? '중앙정부·전국 제도 제외' : '중앙정부·전국 ' + c + '건') + ' · 광역 단위 ' + s + '건' + (t ? ' · 시·군·구 단위 ' + t + '건' : '');
+    if (F.sigun && !G.items.some(function (it) { var rg = G.regOf(it); return rg.local && rg.sido === F.sido && rg.city === F.sigun; }))
+      h += '<br><span class="rgw">※ ' + esc(F.sigun) + ' 단위로 수록된 제도는 아직 없습니다. 시·군 공고(시청 홈페이지)를 별도로 확인하세요. 광역 단위 제도는 함께 표시됩니다.</span>';
+    return h;
+  };
+  G.REGION_HTML = function () {
+    return '<div class="rgb" id="rgbar"><b class="rgt">내 지역 선택</b>' +
+      '<select id="rgsido" aria-label="광역자치단체"><option value="">광역 선택 안 함 (전체 지역)</option>' + G.REGIONS.map(function (g) { return '<option value="' + esc(g[1]) + '">' + esc(g[0]) + '</option>'; }).join('') + '</select>' +
+      '<select id="rgsigun" aria-label="시·군·구" disabled><option value="">시·군·구 전체</option></select>' +
+      '<label class="rgc"><input type="checkbox" id="rgcen" checked> 중앙정부·전국 제도 함께 보기</label>' +
+      '<div class="rgs" id="rgsum"></div></div>';
+  };
   function has(arr, s) { return (arr || []).join(' ').toLowerCase().indexOf(s) >= 0; }
   G.match = function (it, F) {
     var s;
     if (F.id && it.id !== F.id) return false;
+    if (F.sido && !G.inRegion(it, F)) return false;
     if (F.cats.length && F.cats.indexOf(it.cat) < 0) return false;
     if (F.pfs.length && !F.pfs.some(function (x) { return (it.pf || []).indexOf(x) >= 0; })) return false;
     if (F.rels.length && F.rels.indexOf(it.rel) < 0) return false;
@@ -151,6 +212,7 @@
     ['lvm', 'tgm', 'ltm', 'qm'].forEach(function (k) { if (F[k] === 'and') p.push(k + '=and'); });
     if (F.chk) p.push('chk=1');
     if (F.hideEnd) p.push('he=1');
+    if (F.sido) { p.push('sido=' + encodeURIComponent(F.sido)); if (F.sigun) p.push('sg=' + encodeURIComponent(F.sigun)); if (F.nc) p.push('nc=1'); }
     return p.join('&');
   };
   G.fromQS = function (qs) {
@@ -164,6 +226,9 @@
       else if (k === 'lvm' || k === 'tgm' || k === 'ltm' || k === 'qm') F[k] = v === 'and' ? 'and' : 'or';
       else if (k === 'chk') F.chk = v === '1';
       else if (k === 'he') F.hideEnd = v === '1';
+      else if (k === 'sido') F.sido = v;
+      else if (k === 'sg') F.sigun = v;
+      else if (k === 'nc') F.nc = v === '1';
     });
     return F;
   };
@@ -209,16 +274,38 @@
       $('fq').value = F.q; $('flv').value = F.lv; $('ftg').value = F.tg; $('flt2').value = F.lt;
       chips();
       $('fchk').checked = F.chk; $('fend').checked = F.hideEnd;
+      G.regionSync(F);
     };
     ['fq', 'flv', 'ftg', 'flt2', 'fchk', 'fend'].forEach(function (id) {
       var ev = (id === 'fq' || id === 'flv' || id === 'ftg' || id === 'flt2') ? 'input' : 'change';
       $(id).addEventListener(ev, function () { read(); onChange(); });
     });
+    G.regionInit(F, onChange);
     $('freset').addEventListener('click', function () {
       var n = G.F0(); for (var k in n) F[k] = n[k];
       G.syncUI(); onChange();
     });
     G.syncUI();
+  };
+
+
+  /* 지역 선택 UI 동기화·이벤트 (요소 : rgsido rgsigun rgcen rgsum) */
+  G.regionSync = function (F) {
+    var a = document.getElementById('rgsido'), b = document.getElementById('rgsigun'), c = document.getElementById('rgcen'), s = document.getElementById('rgsum');
+    if (!a) return;
+    a.value = F.sido || '';
+    var g = G.sidoOf(F.sido), cities = g ? g[2] : [];
+    b.innerHTML = '<option value="">' + (g ? '시·군·구 전체 (광역 + 모든 시·군 제도)' : '시·군·구 전체') + '</option>' + cities.map(function (x) { return '<option>' + esc(x) + '</option>'; }).join('');
+    b.disabled = !g || !cities.length; b.value = F.sigun || '';
+    c.disabled = !F.sido; c.checked = !F.nc;
+    if (s) { s.innerHTML = G.regionSummary(null, F); s.style.display = F.sido ? '' : 'none'; }
+  };
+  G.regionInit = function (F, onChange) {
+    var a = document.getElementById('rgsido'); if (!a) return;
+    a.addEventListener('change', function () { F.sido = a.value; F.sigun = ''; if (!F.sido) F.nc = false; G.regionSync(F); onChange(); });
+    document.getElementById('rgsigun').addEventListener('change', function (e) { F.sigun = e.target.value; G.regionSync(F); onChange(); });
+    document.getElementById('rgcen').addEventListener('change', function (e) { F.nc = !e.target.checked; G.regionSync(F); onChange(); });
+    G.regionSync(F);
   };
 
   /* 필터 영역 HTML */
@@ -497,4 +584,197 @@
     var cp = (G.cfg && G.cfg.copy != null && G.cfg.copy !== '') ? G.cfg.copy : G.COPY;
     ['cpy', 'cpyt'].forEach(function (i) { var e = document.getElementById(i); if (e) e.textContent = cp; });
   };
+
+  /* ── 용어 설명 : 본문의 용어를 점선 밑줄로 표시하고 누르면 근거 웹페이지 기반 설명을 팝업으로 보여 줍니다.
+        ‘설명할 단어 선택 모드’에서는 드래그한 단어의 설명을 보거나 설명 추가를 요청(목록 저장·복사)할 수 있습니다. ── */
+  G.TERMS = window.GS_TERMS || [];
+  var TI = {}, TRE = null, TBY = {}, termsReady = false, wrapTimer = 0, tmo = null;
+  var LS = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) { } } };
+  function escRe(x) { return x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  function buildTerms() {
+    TI = {}; TBY = {}; var al = [];
+    G.TERMS.forEach(function (t) { TBY[t.k] = t; [t.k].concat(t.al || []).forEach(function (a) { if (!TI[a]) { TI[a] = t.k; al.push(a); } }); });
+    Object.keys(G.DEF || {}).forEach(function (k) { if (!TI[k]) { TI[k] = k; al.push(k); } });
+    al.sort(function (a, b) { return b.length - a.length; });
+    TRE = al.length ? new RegExp(al.map(escRe).join('|'), 'g') : null;
+  }
+  G.termKeys = function () { return G.TERMS.map(function (t) { return t.k; }).concat(Object.keys(G.DEF || {}).filter(function (k) { return !TBY[k]; })); };
+  function itemBox(id) {
+    var it = (G.items || []).filter(function (x) { return x.id === id; })[0]; if (!it) return '';
+    var h = '<div class="dpi"><b>현황표 기준 : ' + esc(it.n) + '</b>';
+    if (it.a) h += '<p>' + esc(it.a).replace(/\n/g, '<br>') + '</p>';
+    if (it.lim) h += '<p class="dpiq"><b>제한조건·유의</b><br>' + esc(it.lim).replace(/\n/g, '<br>') + '</p>';
+    if (it.chk) h += '<p class="dpn">확인필요 : ' + esc(it.chk) + '</p>';
+    return h + '</div>';
+  }
+  function actHTML(acts) { return '<div class="dpa">' + acts.map(function (a) { return '<button type="button" class="dpab" data-tact="' + esc(a[1]) + '">' + esc(a[0]) + '</button>'; }).join('') + '</div>'; }
+  G.showTerm = function (k, fromIdx) {
+    var t = TBY[k];
+    if (!t) { if (G.DEF && G.DEF[k]) { G.showDef(k); } return; }
+    if (t.fn) { var p = t.fn.split(':'); if (p[0] === 'succ') { G.showSucc(p[1]); return; } }
+    var h = (fromIdx ? '<button type="button" class="dpab dpback" data-tact="idx">← 용어 목록</button>' : '') +
+      '<h3>' + esc(t.t || t.k) + ' <small>용어 설명</small></h3><p class="dpd">' + esc(t.d) + '</p>';
+    (t.secs || []).forEach(function (s) {
+      if (s.h) h += '<h4>' + esc(s.h) + '</h4>';
+      if (s.p) h += '<p class="dpp">' + esc(s.p) + '</p>';
+      if (s.rows) h += '<table class="dpt"><tbody>' + s.rows.map(function (r) { return '<tr><th>' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table>';
+      if (s.ul) h += '<ul class="dpu">' + s.ul.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+      if (s.item) h += itemBox(s.item);
+      if (s.acts) h += actHTML(s.acts);
+    });
+    if ((t.src || []).length) h += '<p class="dpl"><b>근거·참고 웹페이지</b> (새 창으로 열림)</p><ul class="dps">' + t.src.map(function (x) { var u = G.safeUrl(x[1]); return '<li>' + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(x[0]) + '</a>' : esc(x[0])) + '</li>'; }).join('') + '</ul>';
+    if (t.law) h += '<p class="dpl"><b>근거 법령·기준</b> ' + esc(t.law) + '</p>';
+    h += '<p class="dpn">※ 설명은 위 웹페이지 등을 근거로 ' + esc(G.fmtD(t.upd || '')) + ' 기준으로 정리했습니다. 법령은 개정될 수 있으므로 적용 전 국가법령정보센터(law.go.kr)의 현행 조문과 해당 공고문을 확인하세요.</p>';
+    G.pop(h);
+  };
+  G.showTermIndex = function () {
+    var ks = G.termKeys(), h = '<h3>용어 설명 목록 <small>' + ks.length + '개</small></h3><p class="dpd">누르면 설명이 팝업으로 나옵니다.</p><div class="dpx2">' +
+      ks.map(function (k) { var t = TBY[k]; return '<button type="button" class="dpab" data-tact="term:' + esc(k) + '">' + esc(t ? (t.t || t.k) : k) + '</button>'; }).join('') + '</div>';
+    G.pop(h);
+  };
+  function doAct(a) {
+    var p = String(a).split(':'), v = p.slice(1).join(':');
+    if (p[0] === 'tax') G.showTax(v, NaN);
+    else if (p[0] === 'succ') G.showSucc(v);
+    else if (p[0] === 'def') G.showDef(v);
+    else if (p[0] === 'term') G.showTerm(v, true);
+    else if (p[0] === 'idx') G.showTermIndex();
+    else if (p[0] === 'req') showReqList();
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-tact]'); if (b) { e.preventDefault(); doAct(b.getAttribute('data-tact')); return; }
+    var t = e.target.closest && e.target.closest('.trm');
+    if (t && !document.body.classList.contains('noterm')) { e.preventDefault(); e.stopPropagation(); G.showTerm(t.getAttribute('data-term')); }
+  }, true);
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('trm')) { e.preventDefault(); G.showTerm(e.target.getAttribute('data-term')); }
+  });
+
+  var SKIP = 'script,style,textarea,input,select,option,button,a,.trm,.defpop,.noterm,[data-def],#termPanel,#selPop,.nm,.gt thead,.mxc,.vtabs,.tabs,#top,.fixh,.fixf,#mxb,#mxl,.chip,.tbtn,.ovc,.ao,label.ck,.rgb,.dpa';
+  G.termsWrap = function (root) {
+    if (!TRE) return;
+    var walker = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, null), nodes = [], n;
+    while ((n = walker.nextNode())) {
+      var v = n.nodeValue; if (!v || v.length < 2 || !/\S/.test(v)) continue;
+      var p = n.parentNode; if (!p || !p.closest || p.closest(SKIP)) continue;
+      nodes.push(n);
+    }
+    var seen = new WeakMap();
+    nodes.forEach(function (tn) {
+      var txt = tn.nodeValue; TRE.lastIndex = 0; if (!TRE.test(txt)) return; TRE.lastIndex = 0;
+      var blk = tn.parentNode.closest('td,th,li,p,dd,dt,div') || tn.parentNode, sn = seen.get(blk);
+      if (!sn) { sn = {}; blk.querySelectorAll('.trm').forEach(function (x) { sn[x.getAttribute('data-term')] = 1; }); seen.set(blk, sn); }
+      var frag = document.createDocumentFragment(), last = 0, m, any = false;
+      while ((m = TRE.exec(txt))) {
+        var key = TI[m[0]]; if (!key || sn[key]) continue;
+        sn[key] = 1; any = true;
+        if (m.index > last) frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
+        var sp = document.createElement('span'); sp.className = 'trm'; sp.setAttribute('data-term', key); sp.setAttribute('tabindex', '0'); sp.setAttribute('role', 'button');
+        sp.setAttribute('title', '‘' + key + '’ 설명 보기'); sp.textContent = m[0]; frag.appendChild(sp); last = m.index + m[0].length;
+      }
+      if (!any) return;
+      if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
+      tn.parentNode.replaceChild(frag, tn);
+    });
+  };
+  function wrapAll() {
+    if (!termsReady) return;
+    if (tmo) tmo.disconnect();
+    try { G.termsWrap(document.body); } finally { if (tmo) { tmo.takeRecords(); tmo.observe(document.body, { childList: true, subtree: true, characterData: false }); } }
+  }
+
+  /* 설명 요청 목록(이 브라우저에 저장) */
+  function reqGet() { try { return JSON.parse(LS.get('gsTermReq') || '[]') || []; } catch (e) { return []; } }
+  function reqSet(a) { LS.set('gsTermReq', JSON.stringify(a)); updPanel(); }
+  function lookup(w) {
+    if (TI[w]) return TI[w];
+    var best = '';
+    Object.keys(TI).forEach(function (a) { if (a.length >= 2 && (w.indexOf(a) >= 0 || a.indexOf(w) >= 0) && a.length > best.length) best = a; });
+    return best ? TI[best] : '';
+  }
+  function showReqList() {
+    var a = reqGet(), h = '<h3>설명 추가를 요청한 단어 <small>' + a.length + '개</small></h3>';
+    if (!a.length) h += '<p class="dpd">아직 없습니다. ‘설명할 단어 선택 모드’를 켠 뒤 화면의 단어를 드래그하고 ‘설명 요청 추가’를 누르세요.</p>';
+    else {
+      h += '<p class="dpd">이 목록은 이 브라우저에만 저장됩니다. ‘목록 복사’로 복사해 담당자(Claude)에게 전달하면 근거 웹페이지를 찾아 설명을 추가합니다.</p><ul class="dpu" id="reqUl">' +
+        a.map(function (x, i) { return '<li>' + esc(x.w) + ' <small>(' + esc(x.p || '') + ' · ' + esc(x.d || '') + ')</small> <button type="button" class="dpab" data-rdel="' + i + '">삭제</button></li>'; }).join('') + '</ul>' +
+        '<div class="dpa"><button type="button" class="dpab" id="reqCopy">목록 복사</button><button type="button" class="dpab" id="reqClr">전체 삭제</button></div><p class="dpn" id="reqMsg"></p>';
+    }
+    G.pop(h);
+  }
+  document.addEventListener('click', function (e) {
+    var d = e.target.closest && e.target.closest('[data-rdel]');
+    if (d) { var a = reqGet(); a.splice(parseInt(d.getAttribute('data-rdel'), 10), 1); reqSet(a); showReqList(); return; }
+    if (e.target.id === 'reqClr') { reqSet([]); showReqList(); return; }
+    if (e.target.id === 'reqCopy') {
+      var txt = '설명 추가 요청 단어 : ' + reqGet().map(function (x) { return x.w; }).join(', '), msg = document.getElementById('reqMsg');
+      function ok() { if (msg) msg.textContent = '복사했습니다 : ' + txt; }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok, function () { if (msg) msg.textContent = txt; });
+      else { var ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); ok(); } catch (x) { if (msg) msg.textContent = txt; } document.body.removeChild(ta); }
+    }
+  });
+  function selPop() {
+    var old = document.getElementById('selPop'); if (old) old.remove();
+    var sel = window.getSelection && window.getSelection(); if (!sel || !sel.rangeCount) return;
+    var w = sel.toString().replace(/\s+/g, ' ').trim();
+    if (!w || w.length < 2 || w.length > 40) return;
+    var an = sel.anchorNode && (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode);
+    if (an && an.closest && an.closest('#termPanel,#selPop,.defpop,input,textarea,select')) return;
+    var r = sel.getRangeAt(0).getBoundingClientRect(), k = lookup(w), box = document.createElement('div');
+    box.id = 'selPop'; box.className = 'selpop noprint';
+    box.innerHTML = '<b>“' + esc(w.length > 20 ? w.slice(0, 20) + '…' : w) + '”</b> ' + (k ? '<button type="button" data-sact="view" data-k="' + esc(k) + '">설명 보기</button>' : '<span class="sn">설명 없음</span>') + '<button type="button" data-sact="req" data-w="' + esc(w) + '">설명 요청 추가</button><button type="button" data-sact="x" aria-label="닫기">×</button>';
+    document.body.appendChild(box);
+    var top = r.bottom + 8, left = Math.max(8, Math.min(r.left, window.innerWidth - box.offsetWidth - 8));
+    if (top + box.offsetHeight > window.innerHeight - 8) top = Math.max(8, r.top - box.offsetHeight - 8);
+    box.style.top = top + 'px'; box.style.left = left + 'px';
+  }
+  function toast(m) {
+    var t = document.getElementById('tpToast'); if (!t) { t = document.createElement('div'); t.id = 'tpToast'; t.className = 'tptoast noprint'; document.body.appendChild(t); }
+    t.textContent = m; t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(function () { t.style.display = 'none'; }, 2600);
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-sact]'); if (!b) return;
+    var a = b.getAttribute('data-sact'), box = document.getElementById('selPop');
+    if (a === 'view') G.showTerm(b.getAttribute('data-k'));
+    else if (a === 'req') {
+      var w = b.getAttribute('data-w'), arr = reqGet();
+      if (arr.some(function (x) { return x.w === w; })) toast('이미 요청 목록에 있습니다 : ' + w);
+      else { var d = new Date(); arr.push({ w: w, p: document.title.slice(0, 18), d: (d.getMonth() + 1) + '.' + d.getDate() }); reqSet(arr); toast('요청 목록에 추가했습니다 : ' + w + ' (총 ' + arr.length + '개)'); }
+    }
+    if (box) box.remove();
+  });
+  function updPanel() {
+    var b = document.getElementById('tpReq'); if (b) b.textContent = '요청한 단어 (' + reqGet().length + ')';
+    var i = document.getElementById('tpIdx'); if (i) i.textContent = '용어 목록 (' + G.termKeys().length + ')';
+  }
+  function buildPanel() {
+    if (document.getElementById('termPanel')) return;
+    var p = document.createElement('div'); p.id = 'termPanel'; p.className = 'tpn noprint';
+    p.innerHTML = '<button type="button" class="tpt" id="tpToggle" aria-expanded="false">용어 설명 ⓘ</button><div class="tpm" id="tpMenu" hidden>' +
+      '<label><input type="checkbox" id="tpUl" checked> 용어 밑줄 표시 (누르면 설명)</label>' +
+      '<label><input type="checkbox" id="tpSel"> 설명할 단어 선택 모드</label>' +
+      '<div class="tph">켜면 화면의 단어를 드래그했을 때 설명을 보거나 설명 추가를 요청할 수 있습니다.</div>' +
+      '<button type="button" class="dpab" data-tact="idx" id="tpIdx"></button><button type="button" class="dpab" data-tact="req" id="tpReq"></button></div>';
+    document.body.appendChild(p);
+    var off = LS.get('gsTermUl') === '0';
+    document.body.classList.toggle('noterm', off); document.getElementById('tpUl').checked = !off;
+    document.getElementById('tpToggle').addEventListener('click', function () { var m = document.getElementById('tpMenu'); m.hidden = !m.hidden; this.setAttribute('aria-expanded', m.hidden ? 'false' : 'true'); });
+    document.getElementById('tpUl').addEventListener('change', function () { document.body.classList.toggle('noterm', !this.checked); LS.set('gsTermUl', this.checked ? '1' : '0'); });
+    document.getElementById('tpSel').addEventListener('change', function () {
+      document.body.classList.toggle('selmode', this.checked);
+      if (this.checked) toast('단어를 드래그해 선택하세요'); else { var o = document.getElementById('selPop'); if (o) o.remove(); }
+    });
+    ['mouseup', 'touchend', 'keyup'].forEach(function (ev) {
+      document.addEventListener(ev, function (e) { if (!document.body.classList.contains('selmode')) return; if (e.target.closest && e.target.closest('#selPop,#termPanel,.defpop')) return; setTimeout(selPop, 30); });
+    });
+    updPanel();
+  }
+  G.termsInit = function () {
+    buildTerms(); termsReady = true; buildPanel();
+    if (window.MutationObserver) {
+      tmo = new MutationObserver(function () { clearTimeout(wrapTimer); wrapTimer = setTimeout(wrapAll, 150); });
+    }
+    wrapAll();
+  };
+
 })();
