@@ -137,7 +137,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 #xw.xs{display:none}
 #xw .xu{text-align:right;font-size:11px;color:#334155;margin:2px 0}
 #xt tr.tt td{font-weight:800;background:#eef3fa}
-#sim #sv .cd{text-align:right}
+#sim .sv .cd{text-align:right}
 #sim .sv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
 #simN{margin-top:4px}
 #bars{position:relative;flex:1 1 auto;min-height:280px}
@@ -211,6 +211,9 @@ body{word-break:keep-all;overflow-wrap:break-word}
  #simBody{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:stretch}
  #simL,#simR{min-width:0}
  #simN{column-count:2;column-gap:14px}
+ #bars{overflow:hidden;min-height:190px}
+ #sim #bn,#sim #n2{font-size:9px;line-height:1.25;margin-top:1px}
+ #bars svg{width:100%;height:100%}
  #sim #simN .note,#sim #simN .src{break-inside:auto;line-height:1.25;margin-top:1px}
  #sim #simN .note{font-size:9.5px}
  #sim #n1{font-size:9.5px;line-height:1.25}
@@ -343,19 +346,19 @@ body{word-break:keep-all;overflow-wrap:break-word}
   </div><div id="simR">
   <div class="sec">💰 목돈 만들기 예시</div>
   <div class="sg" id="sgIn">
-    <input id="sMon" type="hidden"><input id="sAge" type="hidden">
     <label>연 수익률 가정(%)<input id="sRate" type="number" inputmode="decimal" min="0" max="20" step="0.5"></label>
     <label>이자 계산<select id="sMode"><option value="s" selected>단리</option><option value="c">복리(월 단위)</option></select></label>
   </div>
-  <div class="sv" id="sv"></div>
   <div class="sec noprint">➕ 적립 항목 추가 (기간이 다른 항목 합산)</div>
-  <div class="noprint"><button type="button" class="sm2" id="xAd">+ 아동수당</button><button type="button" class="sm2" id="xP0">+ 부모급여 0세(12개월)</button><button type="button" class="sm2" id="xP1">+ 부모급여 1세(12개월)</button><button type="button" class="sm2" id="xNew">+ 빈 항목</button><button type="button" class="sm2" id="xClr">추가 항목 모두 삭제</button></div>
+  <div class="noprint"><button type="button" class="sm2" id="xAd" title="이미 목록에 있으면 추가되지 않습니다(삭제했을 때만 다시 추가)">+ 아동수당</button><button type="button" class="sm2" id="xP0">+ 부모급여 0세(12개월)</button><button type="button" class="sm2" id="xP1">+ 부모급여 1세(12개월)</button><button type="button" class="sm2" id="xNew">+ 빈 항목</button><button type="button" class="sm2" id="xClr">항목 모두 삭제</button></div>
   <div id="xl" class="noprint"></div>
   <div class="tw xs" id="xw"><div class="xu" id="xu"></div><table id="xt"></table></div>
+  <div class="sv" id="xs"></div>
   <div id="bars"></div>
-  </div></div><div id="simN">
-  <div class="note" id="bn"></div>
+  <div class="sec" id="bnT">📊 그래프 설명</div>
+  <div class="note gx" id="bn"></div>
   <div class="note" id="n2"></div>
+  </div></div><div id="simN">
   <div class="note" id="disc"></div>
   <div class="src">출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015<br>복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html<br>보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&amp;bid=0027&amp;act=view&amp;list_no=1490257<br>임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100<br>서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980<br>경기 시군별 출산장려 지원현황 data.gg.go.kr<br>임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279<br>경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02<br>아동수당 지역구분 정책브리핑 korea.kr/news/policyNewsView.do?newsId=148961693<br>인구감소지역 재지정 경향신문 2026.10.7<br>인천 자치구 개편 경기일보 2026.6.30<br>전남광주통합특별시 구성 위키독스</div>
   </div>
@@ -854,7 +857,7 @@ render();
 /* ===== 설정(관리페이지 연동) ===== */
 var DEFFOOT="※ 지자체 제도는 대표 사례만 수록(전 시·군·구 전수 아님)하며, 지급액·요건·기한은 각 지자체 공고가 우선합니다.\n※ 「확인필요」는 단일 출처·출처 간 상이·시행 전(심의 중) 항목입니다.\n※ 출처 구분: 공식(정부·지자체 게시) / 보도(언론) / 참고(2차 정리글).\n※ 아이사랑포털 childcare.go.kr, 복지로 bokjiro.go.kr에서 최종 확인하세요.";
 var DEFCT="삼성생명 개인/기업 재무 전문가 윤현철 팀장 010-9510-1088",DEFCP="ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.";
-var CFG={contact:DEFCT,copy:"",regNote:"※ 「지자체」를 선택하면 시·도·시·군·구별 제도 유무를 안내합니다. 확인된 자료가 있는 곳만 「있음」으로 표시하고, 확인하지 못한 곳은 「미확인」으로 두어 없다고 단정하지 않습니다(경기도 31개 시·군은 전수 자료 기준).\n미확인 지역은 복지로·아이사랑 또는 해당 지자체에 확인하세요.",n1:"※ 부모급여 2년 전액, 아동수당 만 9세 미만 기준입니다(어린이집 이용 시 부모급여는 보육료를 뺀 차액만 현금, 0세 약 41.6만원).\n※ 양육수당·육아휴직급여·산후도우미·조건부 항목(무주택 출산가구 주거비 등)은 합계에서 제외했습니다.\n※ 아동수당은 2027년부터 매년 1세씩 확대 예정이며, 2027.7.1 이후 출생아는 아이맞이지원금·아동기본수당으로 개편될 수 있습니다(국회 심의 중).\n※ 아동수당 지역구분은 보건복지부 2026.3 발표(수도권 10만·비수도권 10.5만·인구감소 우대 11만·특별 12만) 기준이며, 행정안전부 2026.10.7 인구감소지역 재지정(89→92곳, 금정구·동두천시·통영시 추가)의 아동수당 반영 시점은 확인 전입니다.\n※ 지역사랑상품권 지급 시 인구감소지역 월 1만원 추가는 지자체별 자율이라 합계에서 제외했습니다.",n2:"💰 매월 {월적립}만원씩 아이 만 {종료나이}세까지 모으면 원금 {원금}만원입니다(그래프: 파랑=적립원금, 초록=수익금, 주황=총 적립액, 보라=수익률).\n※ 아동수당은 만 9세 미만까지 받으므로 그 이후 적립분 {미충당}만원은 가계에서 이어서 적립하는 가정입니다.\n※ 이자·수익은 상품마다 달라 수익률 0%면 원금만 표시됩니다.",src:"출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015\n복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html\n보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&act=view&list_no=1490257\n임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100\n서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980\n경기 시군별 출산장려 지원현황 data.gg.go.kr\n임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279\n경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02\n아동수당 지역구분 정책브리핑 korea.kr/news/policyNewsView.do?newsId=148961693\n인구감소지역 재지정 경향신문 2026.10.7\n인천 자치구 개편 경기일보 2026.6.30\n전남광주통합특별시 구성 위키독스",title:"출산·육아 지원금 검색",prtTitle:"출산·육아 지원제도 현황",prtTitleSim:"출산·육아 지원금 예시",sub:"중앙정부·지자체",asOf:"",showChg:true,chgDays:30,simTitle:"우리 지역 출산·육아 지원금 안내",
+var CFG={contact:DEFCT,copy:"",regNote:"※ 「지자체」를 선택하면 시·도·시·군·구별 제도 유무를 안내합니다. 확인된 자료가 있는 곳만 「있음」으로 표시하고, 확인하지 못한 곳은 「미확인」으로 두어 없다고 단정하지 않습니다(경기도 31개 시·군은 전수 자료 기준).\n미확인 지역은 복지로·아이사랑 또는 해당 지자체에 확인하세요.",n1:"※ 부모급여 2년 전액, 아동수당 만 9세 미만 기준입니다(어린이집 이용 시 부모급여는 보육료를 뺀 차액만 현금, 0세 약 41.6만원).\n※ 양육수당·육아휴직급여·산후도우미·조건부 항목(무주택 출산가구 주거비 등)은 합계에서 제외했습니다.\n※ 아동수당은 2027년부터 매년 1세씩 확대 예정이며, 2027.7.1 이후 출생아는 아이맞이지원금·아동기본수당으로 개편될 수 있습니다(국회 심의 중).\n※ 아동수당 지역구분은 보건복지부 2026.3 발표(수도권 10만·비수도권 10.5만·인구감소 우대 11만·특별 12만) 기준이며, 행정안전부 2026.10.7 인구감소지역 재지정(89→92곳, 금정구·동두천시·통영시 추가)의 아동수당 반영 시점은 확인 전입니다.\n※ 지역사랑상품권 지급 시 인구감소지역 월 1만원 추가는 지자체별 자율이라 합계에서 제외했습니다.",n2:"💰 매월 {월적립}만원씩 아이 만 {종료나이}세까지 모으면 원금 {원금}만원입니다(그래프: 막대 파랑=적립원금, 초록=수익금, 막대 위 숫자=총 적립액, 보라 점선=수익률).\n※ 아동수당은 만 9세 미만까지 받으므로 그 이후 적립분 {미충당}만원은 가계에서 이어서 적립하는 가정입니다.\n※ 이자·수익은 상품마다 달라 수익률 0%면 원금만 표시됩니다.",src:"출처(확인일 2026-10-20): 정부24 첫만남이용권 www.gov.kr/portal/service/serviceInfo/135200005015\n복지로 부모급여 m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309189_1155.html\n보건복지부 아동수당 www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&act=view&list_no=1490257\n임신·출산 진료비 www.mohw.go.kr/menu.es?mid=a10711020100\n서울시 산후조리경비·임산부 교통비 news.seoul.go.kr/welfare/archives/577980\n경기 시군별 출산장려 지원현황 data.gg.go.kr\n임신육아종합포털 아이사랑 www.childcare.go.kr/?menuno=279\n경기도 산후조리비 종료 보도 supple.kr/news/cmu4qlehp0025tgcph1ffoz02\n아동수당 지역구분 정책브리핑 korea.kr/news/policyNewsView.do?newsId=148961693\n인구감소지역 재지정 경향신문 2026.10.7\n인천 자치구 개편 경기일보 2026.6.30\n전남광주통합특별시 구성 위키독스",title:"출산·육아 지원금 검색",prtTitle:"출산·육아 지원제도 현황",prtTitleSim:"출산·육아 지원금 예시",sub:"중앙정부·지자체",asOf:"",showChg:true,chgDays:30,simTitle:"우리 지역 출산·육아 지원금 안내",
  simSub:"국가 · 시·도 · 시·군·구 지원을 한 장에 모았습니다.",org:"",gaName:"",phone:"",saveMonthly:10,saveAge:18,saveRate:0,foot:"※ 지자체 제도는 대표 사례만 수록(전 시·군·구 전수 아님)하며, 지급액·요건·기한은 각 지자체 공고가 우선합니다.\n※ 「확인필요」는 단일 출처·출처 간 상이·시행 전(심의 중) 항목입니다.\n※ 출처 구분: 공식(정부·지자체 게시) / 보도(언론) / 참고(2차 정리글).\n※ 아이사랑포털 childcare.go.kr, 복지로 bokjiro.go.kr에서 최종 확인하세요.",extras:[],
  disc:"※ 금액 단위는 만원입니다.\n※ 지원 조건·금액은 수시로 바뀌므로 신청 전 주민센터·구청에서 꼭 확인하세요.\n※ 이 자료는 지원금 안내용이며 특정 보험·금융상품 가입을 권유하지 않습니다.\n※ 목돈 만들기의 수익률은 가정치이며 실제 상품의 수익을 보장하지 않습니다.\n※ 금액은 아이 1명 기준 총액이며, 분할 지급은 지급 기간 동안 거주 요건을 지켜야 받을 수 있습니다.",
  consult:"육아지원금으로 목돈 만들기\n태아/어린이 보험 비교 점검\n자녀 교육 자금 / 저축 연금보험 점검"};
@@ -880,11 +883,12 @@ function ctBuild(){
   var l=ctList(),sel=ctSelGet(l),d=$("#ctSel"),h="";
   d.hidden=l.length<2;
   l.forEach(function(x,i){h+='<label><input type="radio" name="ctR" data-i="'+i+'"'+(sel[i]?' checked':'')+'><span>'+esc(x.t)+'</span></label>';});
+  h+='<label style="border-top:1px solid #cbd5e1;margin-top:3px;padding-top:4px"><input type="radio" name="ctR" data-i="-1"'+(sel.some(function(v){return v;})?'':' checked')+'><span>표시하지 않음</span></label>';
   $("#ctPn").innerHTML=h;
 }
 $("#ctPn").addEventListener("change",function(){
   var l=ctList(),s=[];
-  Array.prototype.forEach.call($("#ctPn").querySelectorAll("input"),function(c){if(c.checked){s.push(l[+c.getAttribute("data-i")].t);}});
+  Array.prototype.forEach.call($("#ctPn").querySelectorAll("input"),function(c){if(c.checked&&+c.getAttribute("data-i")>=0){s.push(l[+c.getAttribute("data-i")].t);}});
   $("#ctSel").open=false;
   try{localStorage.setItem("babyChildCt",JSON.stringify({sig:l.map(function(x){return x.t;}).join("\u0001"),sel:s}));}catch(e){}
   setFoot();
@@ -1068,9 +1072,9 @@ function manFill(){
 function autoAd(){
   var f=adInfo($("#sSido").value,$("#sSgg").value);
   $("#sAd").value=String(f[0]);
-  if(MONAUTO){$("#sMon").value=String(f[0]);}
+  EX.forEach(function(x){if(x.auto){x.mon=f[0];}});
+  if($("#xl")&&typeof xList==="function"){xList();}
 }
-var MONAUTO=true;
 function regionChanged(){
   autoAd();
   if($("#sMan").checked){manFill();}
@@ -1110,7 +1114,7 @@ function simInit(){
   $("#sSido").innerHTML=h;
   RK.forEach(function(t,i){r+='<option value="'+i+'">'+t+'</option>';});
   $("#sRank").innerHTML=r;
-  MONAUTO=true;$("#sMon").value=CFG.saveMonthly;$("#sAge").value=9;$("#sRate").value=CFG.saveRate;
+  EX=[{nm:"아동수당",mon:10,n:NAT.adM,auto:true}];$("#sRate").value=CFG.saveRate;
   $("#sSido").value="서울";sggFill();$("#sSgg").value="종로구";
   autoAd();
 }
@@ -1178,35 +1182,39 @@ function simRender(){
   $("#brk").innerHTML=b;
   $("#n1").textContent=(nl.length?nl.join("\n")+"\n":"")+CFG.n1;
   /* 목돈 만들기 */
-  var mon=num("#sMon"),age=Math.min(30,Math.max(1,Math.round(num("#sAge"))||18)),rate=num("#sRate");
-  var n=age*12,prin=mon*n,val=fv(mon,age,rate);
+  var rate=num("#sRate");
+  var xr=EX.map(function(x,i){return{nm:x.nm||("항목"+(i+1)),mon:x.mon,n:x.n};});
+  var base=null;EX.forEach(function(x){if(!base&&x.nm==="아동수당"){base=x;}});if(!base){base=EX[0]||{mon:0,n:0};}
+  var mon=base.mon||0,n=base.n||0,age=Math.round(n/12*10)/10,prin=mon*n;
   var covered=Math.min(mon,ad)*Math.min(n,NAT.adM);
-  $("#sv").innerHTML=
-    '<div class="cd">월 적립 '+fm(mon)+'만원 × '+n+'개월<b>원금 '+fm(prin)+'만원</b></div>'+
-    '<div class="cd t">연 '+rate+'%('+(isSimple()?'단리':'복리')+') 가정 시<b>'+fm(val)+'만원</b></div>'+
-    '<div class="cd">수익(가정)<b>'+fm(val-prin)+'만원</b></div>'+
-    '<div class="cd">아동수당으로 충당<b>'+fm(covered)+'만원</b></div>';
-  var xr=[{nm:"아동수당",mon:mon,n:n}].concat(EX.map(function(x,i){return{nm:x.nm||("항목"+(i+1)),mon:x.mon,n:x.n};}));
-  $("#xw").classList.toggle("xs",!EX.length);
+  var hasX=xr.length>0;
+  $("#xw").classList.toggle("xs",!hasX);
   $("#xu").textContent="※ 연 이자 "+rate+"%"+(isSimple()?"(단리)":"(복리)")+" 가정, 예상 수치임 (단위 : 만원, 개월, %)";
-  var cnt=xr.filter(function(x,j){return !(j===0&&!x.mon);}).length;
-  if(cnt){
-    var tp=0,tv=0,h='<thead><tr><th>적립 항목</th><th>월 적립액</th><th>기간</th><th>적립 원금</th><th>종료 시 평가액</th><th>수익률</th></tr></thead><tbody>';
-    xr.forEach(function(x,j){if(j===0&&!x.mon){return;}var pr=x.mon*x.n,vv=fvM(x.mon,x.n,rate);tp+=pr;tv+=vv;h+='<tr><td>'+esc(x.nm)+'</td><td>'+fm(x.mon)+'</td><td>'+x.n+'개월('+fm(x.n/12)+'세)</td><td>'+fm(pr)+'</td><td>'+fm(vv)+'</td><td>'+pc(vv,pr)+'</td></tr>';});
-    if(cnt>1){h+='<tr class="tt"><td>합계</td><td></td><td></td><td>'+fm(tp)+'</td><td>'+fm(tv)+'</td><td>'+pc(tv,tp)+'</td></tr>';}
+  var tp=0,tv=0;
+  if(hasX){
+    var h='<thead><tr><th>적립 항목</th><th>월 적립액</th><th>기간</th><th>적립 원금</th><th>종료 시 평가액</th><th>수익률</th></tr></thead><tbody>';
+    xr.forEach(function(x){var pr=x.mon*x.n,vv=fvM(x.mon,x.n,rate);tp+=pr;tv+=vv;h+='<tr><td>'+esc(x.nm)+'</td><td>'+fm(x.mon)+'</td><td>'+x.n+'개월('+fm(x.n/12)+'세)</td><td>'+fm(pr)+'</td><td>'+fm(vv)+'</td><td>'+pc(vv,pr)+'</td></tr>';});
+    if(xr.length>1){h+='<tr class="tt"><td>합계</td><td></td><td></td><td>'+fm(tp)+'</td><td>'+fm(tv)+'</td><td>'+pc(tv,tp)+'</td></tr>';}
     h+='</tbody>';
     $("#xt").innerHTML=h;
-  }else{$("#xt").innerHTML="";}
-  $("#sv").style.display=EX.length>0?"none":"";
-  var its=xr.filter(function(x,j2){return x.mon>0&&x.n>0&&!(j2===0&&!mon);});
+    $("#xs").innerHTML='<div class="cd">원금<b>'+fm(tp)+'만원</b></div><div class="cd t">적립 금액<b>'+fm(tv)+'만원</b></div><div class="cd">수익 금액<b>'+fm(tv-tp)+'만원</b></div><div class="cd">수익률<b>'+pc(tv,tp)+'%</b></div>';
+  }else{$("#xt").innerHTML="";$("#xs").innerHTML="";}
+  var its=xr.filter(function(x){return x.mon>0&&x.n>0;});
   function atAge(x,y){var m=Math.min(x.n,y*12);return[x.mon*m,fvAt(x.mon,m,y*12,rate)];}
   function sumAt(y){var P=0,V=0;its.forEach(function(x){var t=atAge(x,y);P+=t[0];V+=t[1];});return[P,V];}
   var yrs=Math.max(1,Math.ceil(Math.max.apply(null,its.map(function(x){return x.n;}).concat([0]))/12)),a;
   CH={ys:[],P:[],I:[],V:[],R:[],on:its.length>0};
   for(a=0;a<=yrs;a++){var t0=sumAt(a);CH.ys.push(a);CH.P.push(t0[0]);CH.V.push(t0[1]);CH.I.push(t0[1]-t0[0]);CH.R.push(t0[0]>0?(t0[1]-t0[0])/t0[0]*100:0);}
   drawChart();
+  $("#bnT").hidden=$("#bn").hidden=!its.length;
   var a3=Math.min(3,yrs),t3=sumAt(a3);
-  $("#bn").textContent=its.length?("▶ 그래프(나이별 점선)의 금액 계산 방법\n- 위 표의 적립 항목 전체("+its.map(function(x){return x.nm;}).join(", ")+")를 합산한 값입니다. 항목마다 출생 후 매월 말 적립하고, 각자의 적립 기간까지만 납입합니다.\n- 적립 원금 = Σ 항목별 [월 적립액 × min(적립 개월수, 나이×12)]. 예) 만 "+a3+"세 시점 원금 = "+its.map(function(x){return fm(x.mon)+"×"+Math.min(x.n,a3*12);}).join(" + ")+" = "+fm(t3[0])+"만원\n- 평가액(수익률 반영) = 항목별 평가액의 합. "+(isSimple()?"단리: 납입금 1회마다 월 적립액 × 연 수익률 × 보유기간(년)만큼만 이자가 붙고 이자에는 이자가 붙지 않습니다.":"복리: 월 수익률 = (1 + 연 수익률)^(1/12) − 1로 환산해 월마다 이자에 이자가 붙습니다.")+" 적립이 끝난 항목도 그 나이까지 같은 방식으로 계속 불어납니다. 수익률 0%이면 평가액 = 원금입니다.\n- 연 "+rate+"% 가정 시 만 "+a3+"세 평가액은 "+fm(t3[1])+"만원입니다. 그래프의 왼쪽 세로축은 적립원금·수익금·총 적립액(만원), 오른쪽 세로축은 해당 나이까지의 누적 수익률(%)입니다. (표의 '종료 시 평가액'은 각 항목이 끝나는 시점 값이라 그래프의 같은 나이 값과 시점이 다를 수 있습니다.)"):"";
+  $("#bn").textContent=its.length?(
+    "① 막대 : 파랑 = 적립원금, 초록 = 수익금(가정). 막대 위 숫자는 총 적립액(원금 + 수익금)이며 단위는 만원입니다.\n"+
+    "② 보라 점선(오른쪽 세로축) : 해당 나이까지의 누적 수익률(%) = 수익금 ÷ 적립원금 × 100 입니다.\n"+
+    "③ 가로축은 나이(0세 ~ 가장 긴 적립 항목의 종료 나이, 1년 단위)이며, 각 값은 그 나이가 되는 시점까지의 누적입니다.\n"+
+    "④ 계산 방법 : 위 표의 적립 항목 전체("+its.map(function(x){return x.nm;}).join(", ")+")를 합산합니다. 항목마다 출생 후 매월 말 적립하고 각자의 적립 기간까지만 납입하며, 끝난 항목도 그 나이까지 같은 방식으로 불어납니다. "+(isSimple()?"단리는 납입금 1회마다 월 적립액 × 연 수익률 × 보유기간(년)만큼만 이자가 붙고 이자에는 이자가 붙지 않습니다.":"복리는 월 수익률 = (1 + 연 수익률)^(1/12) − 1로 환산해 월마다 이자에 이자가 붙습니다.")+" 수익률 0%이면 총 적립액 = 원금입니다.\n"+
+    "⑤ 예) 연 "+rate+"% 가정, 만 "+a3+"세 시점 : 원금 = "+its.map(function(x){return fm(x.mon)+"×"+Math.min(x.n,a3*12);}).join(" + ")+" = "+fm(t3[0])+"만원, 총 적립액 "+fm(t3[1])+"만원.\n"+
+    "⑥ 표의 '종료 시 평가액'은 각 항목이 끝나는 시점 값이라 그래프의 같은 나이 값과 시점이 다를 수 있습니다."):"";
   $("#n2").textContent=String(CFG.n2).replace(/\{월적립\}/g,fm(mon)).replace(/\{종료나이\}/g,age).replace(/\{원금\}/g,fm(prin)).replace(/\{미충당\}/g,fm(Math.max(prin-covered,0)));
 }
 var EX=[],CH=null;
@@ -1215,16 +1223,16 @@ function drawChart(){
   if(!CH||!CH.on){box.innerHTML="";return;}
   var n=CH.ys.length,i,mob=window.matchMedia("screen and (max-width:760px)").matches;
   var W=Math.max(box.clientWidth||600,mob?n*48+110:0),H=box.clientHeight||300;
-  var S0=[["적립원금",0],["수익금",0],["총 적립액",0],["수익률(%)",1]],rows=1,cx0=0,wi;
-  S0.forEach(function(q){wi=q[0].length*10+(q[1]?66:62)+14;if(cx0&&cx0+wi>W-10){rows++;cx0=0;}cx0+=wi;});
-  var L=52,R=56,T=26+rows*16,B=34,pw=Math.max(60,W-L-R),ph=Math.max(60,H-T-B);
+  var LG=[["적립원금(막대·왼쪽 축)","#2563eb"],["수익금(막대·왼쪽 축)","#16a34a"],["수익률(점선·오른쪽 축)","#7c3aed"],["막대 위 숫자 = 총 적립액","#c2410c"]];
+  var rows=1,cx0=0,wi;
+  LG.forEach(function(q){wi=q[0].length*8.6+40;if(cx0&&cx0+wi>W-8){rows++;cx0=0;}cx0+=wi;});
+  var L=52,R=56,T=30+rows*16,B=34,pw=Math.max(60,W-L-R),ph=Math.max(60,H-T-B);
   var mxV=Math.max.apply(null,CH.V.concat(CH.P,[1])),mxR=Math.max.apply(null,CH.R.concat([1]));
   function nice(v){var e=Math.pow(10,Math.floor(Math.log(v)/Math.LN10)),f=v/e;return(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e;}
-  var yv=nice(mxV*1.12),yr=nice(mxR*1.12);
-  function X(k){return L+(n>1?pw*k/(n-1):0);}
+  var yv=nice(mxV*1.12),yr=nice(mxR*1.12),st=pw/n,bw=Math.min(st*0.58,38),fs=st<34?8:9;
+  function X(k){return L+st*(k+0.5);}
   function YV(v){return T+ph-ph*v/yv;}
   function YR(v){return T+ph-ph*v/yr;}
-  var sp=pw/Math.max(1,n-1),rot=sp<34,fs=rot?8:(sp<46?8:9);
   var o='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="sans-serif">';
   var g;
   for(g=0;g<=5;g++){
@@ -1238,27 +1246,32 @@ function drawChart(){
   o+='<line x1="'+L+'" x2="'+L+'" y1="'+T+'" y2="'+(T+ph)+'" stroke="#64748b"/><line x1="'+(L+pw)+'" x2="'+(L+pw)+'" y1="'+T+'" y2="'+(T+ph)+'" stroke="#6d28d9"/><line x1="'+L+'" x2="'+(L+pw)+'" y1="'+(T+ph)+'" y2="'+(T+ph)+'" stroke="#64748b"/>';
   for(i=0;i<n;i++){o+='<text x="'+X(i)+'" y="'+(T+ph+13)+'" text-anchor="middle" font-size="9.5" fill="#1e293b">'+i+'세</text>';}
   o+='<text x="'+(L+pw/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#334155">나이</text>';
-  var S=[["적립원금",CH.P,"#2563eb",YV,0],["수익금",CH.I,"#16a34a",YV,1],["총 적립액",CH.V,"#ea580c",YV,2],["수익률(%)",CH.R,"#7c3aed",YR,3]];
-  S.forEach(function(se){
-    var pts=[];
-    for(i=0;i<n;i++){pts.push(X(i)+","+se[3](se[1][i]));}
-    o+='<polyline points="'+pts.join(" ")+'" fill="none" stroke="'+se[2]+'" stroke-width="1.8" stroke-dasharray="1.5 3.5" stroke-linecap="round"/>';
-    for(i=0;i<n;i++){
-      var cx=X(i),cy=se[3](se[1][i]),txt=se[4]===3?(i?fm(se[1][i])+"%":""):fm(se[1][i]);
-      o+='<circle cx="'+cx+'" cy="'+cy+'" r="2.2" fill="'+se[2]+'"/>';
-      if(txt){
-        var dy=(se[4]===2||se[4]===3)?-5:9;
-        if(rot){o+='<text transform="translate('+(cx+3)+','+(cy+(dy<0?-4:4))+') rotate(-90)" text-anchor="'+(dy<0?'start':'end')+'" font-size="'+fs+'" fill="'+se[2]+'" font-weight="700">'+txt+'</text>';}
-        else{o+='<text x="'+cx+'" y="'+(cy+dy)+'" text-anchor="middle" font-size="'+fs+'" fill="'+se[2]+'" font-weight="700">'+txt+'</text>';}
-      }
-    }
-  });
+  /* 막대: 적립원금(아래) + 수익금(위), 막대 위 총 적립액 */
+  for(i=0;i<n;i++){
+    var x0=X(i)-bw/2,yP=YV(CH.P[i]),yT=YV(CH.V[i]),hP=T+ph-yP,hI=yP-yT;
+    if(hP>0){o+='<rect x="'+x0+'" y="'+yP+'" width="'+bw+'" height="'+hP+'" fill="#2563eb"/>';}
+    if(hI>0){o+='<rect x="'+x0+'" y="'+yT+'" width="'+bw+'" height="'+hI+'" fill="#16a34a"/>';}
+    if(hP>=11&&bw>=22){o+='<text x="'+X(i)+'" y="'+(yP+hP/2+3)+'" text-anchor="middle" font-size="'+(fs-1)+'" fill="#fff">'+fm(CH.P[i])+'</text>';}
+    if(hI>=11&&bw>=22){o+='<text x="'+X(i)+'" y="'+(yT+hI/2+3)+'" text-anchor="middle" font-size="'+(fs-1)+'" fill="#fff">'+fm(CH.I[i])+'</text>';}
+    o+='<text x="'+X(i)+'" y="'+(yT-4)+'" text-anchor="middle" font-size="'+fs+'" font-weight="800" fill="#c2410c">'+fm(CH.V[i])+'</text>';
+  }
+  /* 수익률 점선(오른쪽 축) */
+  var pts=[];
+  for(i=0;i<n;i++){pts.push(X(i)+","+YR(CH.R[i]));}
+  o+='<polyline points="'+pts.join(" ")+'" fill="none" stroke="#7c3aed" stroke-width="1.8" stroke-dasharray="1.5 3.5" stroke-linecap="round"/>';
+  for(i=0;i<n;i++){
+    var cx=X(i),cy=YR(CH.R[i]);
+    o+='<circle cx="'+cx+'" cy="'+cy+'" r="2.4" fill="#7c3aed" stroke="#fff" stroke-width=".8"/>';
+    if(i){o+='<text x="'+(cx+bw/2+1)+'" y="'+(cy-4)+'" text-anchor="'+(st<34?'start':'middle')+'" font-size="'+fs+'" font-weight="700" fill="#6d28d9" stroke="#fff" stroke-width="2.4" paint-order="stroke"'+(st<34?'':' dx="0"')+'>'+fm(CH.R[i])+'%</text>';}
+  }
   var lx=6,ly=12;
-  S.forEach(function(se){
-    var lab=se[0]+(se[4]===3?" (오른쪽 축)":" (왼쪽 축)"),w2=lab.length*8.6+36;
+  LG.forEach(function(q,k){
+    var w2=q[0].length*8.6+40;
     if(lx>6&&lx+w2>W-4){lx=6;ly+=16;}
-    o+='<line x1="'+lx+'" x2="'+(lx+22)+'" y1="'+ly+'" y2="'+ly+'" stroke="'+se[2]+'" stroke-width="2" stroke-dasharray="1.5 3.5" stroke-linecap="round"/><circle cx="'+(lx+11)+'" cy="'+ly+'" r="2.2" fill="'+se[2]+'"/><text x="'+(lx+26)+'" y="'+(ly+3.5)+'" font-size="10" font-weight="700" fill="#1e293b">'+lab+'</text>';
-    lx+=w2+6;
+    if(k===0||k===1){o+='<rect x="'+lx+'" y="'+(ly-5)+'" width="14" height="10" fill="'+q[1]+'"/>';}
+    else if(k===2){o+='<line x1="'+lx+'" x2="'+(lx+22)+'" y1="'+ly+'" y2="'+ly+'" stroke="'+q[1]+'" stroke-width="2" stroke-dasharray="1.5 3.5" stroke-linecap="round"/><circle cx="'+(lx+11)+'" cy="'+ly+'" r="2.4" fill="'+q[1]+'"/>';}
+    o+='<text x="'+(lx+(k<2?19:(k===2?26:0)))+'" y="'+(ly+3.5)+'" font-size="10" font-weight="700" fill="'+(k===3?q[1]:"#1e293b")+'">'+q[0]+'</text>';
+    lx+=w2+(k===3?0:(k===2?8:0));
   });
   box.innerHTML=o+'</svg>';
 }
@@ -1282,10 +1295,13 @@ function xAdd(nm,mon,n){EX.push({nm:nm,mon:mon,n:n});xList();simRender();}
 $("#xl").addEventListener("input",function(e){
   var t=e.target,i=t.getAttribute("data-i");if(i===null||!EX[i]){return;}
   var k=t.getAttribute("data-k");
-  if(k==="nm"){EX[i].nm=t.value;}else{var v=parseFloat(t.value);v=(isNaN(v)||v<0)?0:v;EX[i][k]=(k==="n")?Math.min(360,Math.round(v)):v;}
+  if(k==="nm"){EX[i].nm=t.value;}else{var v=parseFloat(t.value);v=(isNaN(v)||v<0)?0:v;EX[i][k]=(k==="n")?Math.min(360,Math.round(v)):v;if(k==="mon"){EX[i].auto=false;}}
 });
 $("#xl").addEventListener("click",function(e){var d=e.target.getAttribute("data-del");if(d!==null){EX.splice(+d,1);xList();simRender();}});
-$("#xAd").addEventListener("click",function(){xAdd("아동수당",parseFloat($("#sAd").value)||10,NAT.adM);});
+$("#xAd").addEventListener("click",function(){
+  if(EX.some(function(x){return x.nm==="아동수당";})){return;}
+  EX.unshift({nm:"아동수당",mon:parseFloat($("#sAd").value)||10,n:NAT.adM,auto:true});xList();simRender();
+});
 $("#xP0").addEventListener("click",function(){xAdd("부모급여 0세",NAT.p0/12,12);});
 $("#xP1").addEventListener("click",function(){xAdd("부모급여 1세",NAT.p1/12,12);});
 $("#xNew").addEventListener("click",function(){xAdd("",10,12);});
