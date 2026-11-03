@@ -1233,7 +1233,7 @@ function drawChart(){
   var L=52,R=56,T=46,B=34,pw=Math.max(60,W-L-R),ph=Math.max(60,H-T-B);
   var mxV=Math.max.apply(null,CH.V.concat(CH.P,[1])),mxR=Math.max.apply(null,CH.R.concat([1]));
   function nice(v){var e=Math.pow(10,Math.floor(Math.log(v)/Math.LN10)),f=v/e;return(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e;}
-  var yv=nice(mxV*1.12),yr=nice(mxR*1.12),st=pw/n,bw=Math.min(st*0.58,38),fs=st<34?8:9;
+  var yv=nice(mxV*1.12),yr=mxR>0?mxR:1,st=pw/n,bw=Math.min(st*0.58,38),fs=st<34?8:9;
   function X(k){return L+st*(k+0.5);}
   function YV(v){return T+ph-ph*v/yv;}
   function YR(v){return T+ph-ph*v/yr;}
