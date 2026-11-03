@@ -1233,7 +1233,8 @@ function drawChart(){
   var L=52,R=56,T=46,B=34,pw=Math.max(60,W-L-R),ph=Math.max(60,H-T-B);
   var mxV=Math.max.apply(null,CH.V.concat(CH.P,[1])),mxR=Math.max.apply(null,CH.R.concat([1]));
   function nice(v){var e=Math.pow(10,Math.floor(Math.log(v)/Math.LN10)),f=v/e;return(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e;}
-  var yv=nice(mxV*1.12),yr=mxR>0?mxR:1,st=pw/n,bw=Math.min(st*0.58,38),fs=st<34?8:9;
+  var yv=nice(mxV*1.12),rs=5;while((Math.floor(mxR/rs)+1)*rs/rs>12){rs*=2;}
+  var yr=(Math.floor(mxR/rs)+1)*rs,st=pw/n,bw=Math.min(st*0.58,38),fs=st<34?8:9;
   function X(k){return L+st*(k+0.5);}
   function YV(v){return T+ph-ph*v/yv;}
   function YR(v){return T+ph-ph*v/yr;}
@@ -1243,8 +1244,8 @@ function drawChart(){
     var yy=T+ph*g/5;
     o+='<line x1="'+L+'" x2="'+(L+pw)+'" y1="'+yy+'" y2="'+yy+'" stroke="#e2e8f0"/>';
     o+='<text x="'+(L-4)+'" y="'+(yy+3)+'" text-anchor="end" font-size="9" fill="#334155">'+fm(yv*(5-g)/5)+'</text>';
-    o+='<text x="'+(L+pw+4)+'" y="'+(yy+3)+'" font-size="9" fill="#6d28d9">'+fm(yr*(5-g)/5)+'%</text>';
   }
+  for(g=0;g*rs<=yr;g++){var yq=YR(g*rs);o+='<line x1="'+(L+pw)+'" x2="'+(L+pw+3)+'" y1="'+yq+'" y2="'+yq+'" stroke="#6d28d9"/><text x="'+(L+pw+5)+'" y="'+(yq+3)+'" font-size="9" fill="#6d28d9">'+g*rs+'%</text>';}
   o+='<text x="'+(L-4)+'" y="'+(T-9)+'" font-size="9.5" font-weight="700" fill="#334155" text-anchor="end">(만원)</text>';
   o+='<text x="'+(L+pw+4)+'" y="'+(T-9)+'" font-size="9.5" font-weight="700" fill="#6d28d9">(수익률 %)</text>';
   o+='<line x1="'+L+'" x2="'+L+'" y1="'+T+'" y2="'+(T+ph)+'" stroke="#64748b"/><line x1="'+(L+pw)+'" x2="'+(L+pw)+'" y1="'+T+'" y2="'+(T+ph)+'" stroke="#6d28d9"/><line x1="'+L+'" x2="'+(L+pw)+'" y1="'+(T+ph)+'" y2="'+(T+ph)+'" stroke="#64748b"/>';
