@@ -141,7 +141,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 #sim .sv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
 #simN{margin-top:4px}
 #bars{position:relative}
-@media screen and (max-width:760px){#bars{overflow-x:auto}}
+@media screen{#bars{overflow-x:auto}}
 #simR{display:flex;flex-direction:column}
 #sim .br{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12px}
 #sim .br span{flex:0 0 52px;font-weight:700}
@@ -1222,65 +1222,85 @@ function simRender(){
   $("#n2").textContent=String(CFG.n2).replace(/\{월적립\}/g,fm(mon)).replace(/\{종료나이\}/g,age).replace(/\{원금\}/g,fm(prin)).replace(/\{미충당\}/g,fm(Math.max(prin-covered,0)));
 }
 var EX=[],CH=null;
+var PR=false;
 function drawChart(){
   var box=$("#bars");if(!box){return;}
   if(!CH||!CH.on){box.innerHTML="";return;}
-  var n=CH.ys.length,i,mob=window.matchMedia("screen and (max-width:760px)").matches;
-  var W=Math.max(640,mob?n*48+110:0),H=Math.round(W*0.42);
-  var LG=[["적립원금(막대·왼쪽 축)","#2563eb"],["수익금(막대·왼쪽 축)","#16a34a"],["수익률(점선·오른쪽 축)","#7c3aed"],["막대 위 숫자 = 총 적립액","#c2410c"]];
-  var tc=0;LG.forEach(function(q){tc+=q[0].length;});
-  var lf=Math.min(10,Math.max(6.5,(W-16-4*30)/(tc*0.95)));
-  var L=52,R=56,T=46,B=34,pw=Math.max(60,W-L-R),ph=Math.max(60,H-T-B);
+  var n=CH.ys.length,i,FS=PR?10:12.5;
+  var L=Math.round(FS*3.9),R=Math.round(FS*3.4);
+  function ai(v){return Math.round(v).toLocaleString("ko-KR");}
+  var A1=CH.P.map(ai),A2=CH.I.map(ai),A3=CH.V.map(ai),A4=CH.R.map(function(v){return fm(v)+"%";});
+  var maxc=0;[A1,A2,A3,A4].forEach(function(a){a.forEach(function(t){if(t.length>maxc){maxc=t.length;}});});
+  var cw=FS*0.62,need=maxc*cw+5;
+  var W=PR?520:Math.max(box.clientWidth||520,L+R+n*need);
+  var pw=W-L-R,st=pw/n,rot=st<need,bw=Math.min(st*0.62,34);
+  var rowH=rot?Math.round(maxc*cw+8):Math.round(FS+7);
+  var T=Math.round(FS*2+20),ph=PR?130:Math.max(150,Math.min(250,Math.round(W*0.34)));
+  var tickY=T+ph+FS+5,r0=T+ph+FS*2+12,H=r0+3*rowH+4;
   var mxV=Math.max.apply(null,CH.V.concat(CH.P,[1])),mxR=Math.max.apply(null,CH.R.concat([1]));
-  function nice(v){var e=Math.pow(10,Math.floor(Math.log(v)/Math.LN10)),f=v/e;return(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e;}
   var vs=(function(){var raw=mxV/5,e=Math.pow(10,Math.floor(Math.log(raw)/Math.LN10)),f=raw/e,m=(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10);return m*e;})();
   var yv=(Math.floor(mxV/vs)+1)*vs;if(yv<mxV*1.06){yv+=vs;}
-  var rs=5;while((Math.floor(mxR/rs)+1)*rs/rs>12){rs*=2;}
-  var yr=(Math.floor(mxR/rs)+1)*rs,st=pw/n,bw=Math.min(st*0.58,38),fs=st<34?8:9;
+  var rs=5;while((Math.floor(mxR/rs)+1)>12){rs*=2;}
+  var yr=(Math.floor(mxR/rs)+1)*rs;
   function X(k){return L+st*(k+0.5);}
   function YV(v){return T+ph-ph*v/yv;}
   function YR(v){return T+ph-ph*v/yr;}
-  var o='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" style="display:block;width:'+(mob?W+'px':'100%')+';height:auto" font-family="sans-serif">';
+  var o='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" style="display:block;width:'+(PR?'100%':W+'px')+';height:auto" font-family="sans-serif">';
   var g;
+  /* 범례(한 줄) */
+  var LG=[["적립원금","#2563eb","r"],["수익금","#16a34a","r"],["수익률(점선·오른쪽 축)","#7c3aed","l"],["막대 위 숫자 = 총 적립액","#c2410c","t"]];
+  var tc=0;LG.forEach(function(q){tc+=q[0].length;});
+  var lf=Math.min(FS,Math.max(7,(W-10-3*12-2*20-26)/(tc*0.98)));
+  var lx=4,ly=FS+1;
+  LG.forEach(function(q){
+    if(q[2]==="r"){o+='<rect x="'+lx+'" y="'+(ly-lf*0.5-1)+'" width="14" height="'+(lf*0.8)+'" fill="'+q[1]+'"/>';lx+=19;}
+    else if(q[2]==="l"){o+='<line x1="'+lx+'" x2="'+(lx+22)+'" y1="'+(ly-lf*0.32)+'" y2="'+(ly-lf*0.32)+'" stroke="'+q[1]+'" stroke-width="2" stroke-dasharray="1.5 3.5" stroke-linecap="round"/><circle cx="'+(lx+11)+'" cy="'+(ly-lf*0.32)+'" r="2.8" fill="'+q[1]+'"/>';lx+=26;}
+    o+='<text x="'+lx+'" y="'+ly+'" font-size="'+lf+'" font-weight="700" fill="'+(q[2]==="t"?q[1]:"#1e293b")+'">'+q[0]+'</text>';
+    lx+=q[0].length*lf*0.98+12;
+  });
+  /* 축 */
+  o+='<text x="'+(L-4)+'" y="'+(T-7)+'" font-size="'+FS+'" font-weight="700" fill="#334155" text-anchor="end">(만원)</text>';
+  o+='<text x="'+(W-2)+'" y="'+(T-7)+'" font-size="'+FS+'" font-weight="700" fill="#6d28d9" text-anchor="end">(수익률 %)</text>';
   for(g=0;g*vs<=yv+1e-9;g++){
     var yy=YV(g*vs);
     o+='<line x1="'+L+'" x2="'+(L+pw)+'" y1="'+yy+'" y2="'+yy+'" stroke="#e2e8f0"/>';
-    o+='<text x="'+(L-4)+'" y="'+(yy+3)+'" text-anchor="end" font-size="9" fill="#334155">'+fm(g*vs)+'</text>';
+    o+='<text x="'+(L-4)+'" y="'+(yy+FS*0.35)+'" text-anchor="end" font-size="'+FS+'" fill="#334155">'+fm(g*vs)+'</text>';
   }
-  for(g=0;g*rs<=yr;g++){var yq=YR(g*rs);o+='<line x1="'+(L+pw)+'" x2="'+(L+pw+3)+'" y1="'+yq+'" y2="'+yq+'" stroke="#6d28d9"/><text x="'+(L+pw+5)+'" y="'+(yq+3)+'" font-size="9" fill="#6d28d9">'+g*rs+'%</text>';}
-  o+='<text x="'+(L-4)+'" y="'+(T-9)+'" font-size="9.5" font-weight="700" fill="#334155" text-anchor="end">(만원)</text>';
-  o+='<text x="'+(L+pw+4)+'" y="'+(T-9)+'" font-size="9.5" font-weight="700" fill="#6d28d9">(수익률 %)</text>';
+  for(g=0;g*rs<=yr;g++){var yq=YR(g*rs);o+='<line x1="'+(L+pw)+'" x2="'+(L+pw+3)+'" y1="'+yq+'" y2="'+yq+'" stroke="#6d28d9"/><text x="'+(L+pw+5)+'" y="'+(yq+FS*0.35)+'" font-size="'+FS+'" fill="#6d28d9">'+g*rs+'%</text>';}
   o+='<line x1="'+L+'" x2="'+L+'" y1="'+T+'" y2="'+(T+ph)+'" stroke="#64748b"/><line x1="'+(L+pw)+'" x2="'+(L+pw)+'" y1="'+T+'" y2="'+(T+ph)+'" stroke="#6d28d9"/><line x1="'+L+'" x2="'+(L+pw)+'" y1="'+(T+ph)+'" y2="'+(T+ph)+'" stroke="#64748b"/>';
-  for(i=0;i<n;i++){o+='<text x="'+X(i)+'" y="'+(T+ph+13)+'" text-anchor="middle" font-size="9.5" fill="#1e293b">'+i+'세</text>';}
-  o+='<text x="'+(L+pw/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#334155">나이</text>';
-  /* 막대: 적립원금(아래) + 수익금(위), 막대 위 총 적립액 */
+  /* 막대 + 총 적립액 */
   for(i=0;i<n;i++){
     var x0=X(i)-bw/2,yP=YV(CH.P[i]),yT=YV(CH.V[i]),hP=T+ph-yP,hI=yP-yT;
     if(hP>0){o+='<rect x="'+x0+'" y="'+yP+'" width="'+bw+'" height="'+hP+'" fill="#2563eb"/>';}
     if(hI>0){o+='<rect x="'+x0+'" y="'+yT+'" width="'+bw+'" height="'+hI+'" fill="#16a34a"/>';}
-    if(hP>=11&&bw>=22){o+='<text x="'+X(i)+'" y="'+(yP+hP/2+3)+'" text-anchor="middle" font-size="'+(fs-1)+'" fill="#fff">'+fm(CH.P[i])+'</text>';}
-    if(hI>=11&&bw>=22){o+='<text x="'+X(i)+'" y="'+(yT+hI/2+3)+'" text-anchor="middle" font-size="'+(fs-1)+'" fill="#fff">'+fm(CH.I[i])+'</text>';}
-    o+='<text x="'+X(i)+'" y="'+(yT-4)+'" text-anchor="middle" font-size="'+fs+'" font-weight="800" fill="#c2410c">'+fm(CH.V[i])+'</text>';
   }
   /* 수익률 점선(오른쪽 축) */
-  var pts=[];
-  for(i=0;i<n;i++){pts.push(X(i)+","+YR(CH.R[i]));}
+  var pts=[];for(i=0;i<n;i++){pts.push(X(i)+","+YR(CH.R[i]));}
   o+='<polyline points="'+pts.join(" ")+'" fill="none" stroke="#7c3aed" stroke-width="1.8" stroke-dasharray="1.5 3.5" stroke-linecap="round"/>';
+  for(i=0;i<n;i++){o+='<circle cx="'+X(i)+'" cy="'+YR(CH.R[i])+'" r="2.8" fill="#7c3aed" stroke="#fff" stroke-width=".8"/>';}
   for(i=0;i<n;i++){
-    var cx=X(i),cy=YR(CH.R[i]);
-    o+='<circle cx="'+cx+'" cy="'+cy+'" r="2.4" fill="#7c3aed" stroke="#fff" stroke-width=".8"/>';
-    if(i){o+='<text x="'+(cx+bw/2+1)+'" y="'+(cy-4)+'" text-anchor="'+(st<34?'start':'middle')+'" font-size="'+fs+'" font-weight="700" fill="#6d28d9" stroke="#fff" stroke-width="2.4" paint-order="stroke"'+(st<34?'':' dx="0"')+'>'+fm(CH.R[i])+'%</text>';}
+    var yT2=YV(CH.V[i]);
+    if(rot){o+='<text transform="translate('+(X(i)+FS*0.34)+','+(yT2-4)+') rotate(-90)" font-size="'+FS+'" font-weight="800" fill="#c2410c" stroke="#fff" stroke-width="3" paint-order="stroke">'+A3[i]+'</text>';}
+    else{o+='<text x="'+X(i)+'" y="'+(yT2-4)+'" text-anchor="middle" font-size="'+FS+'" font-weight="800" fill="#c2410c" stroke="#fff" stroke-width="3" paint-order="stroke">'+A3[i]+'</text>';}
   }
-  var lx=6,ly=12;
-  LG.forEach(function(q,k){
-    var w2=q[0].length*lf*0.95+(k<3?30:4);
-    if(k===0||k===1){o+='<rect x="'+lx+'" y="'+(ly-5)+'" width="14" height="10" fill="'+q[1]+'"/>';}
-    else if(k===2){o+='<line x1="'+lx+'" x2="'+(lx+22)+'" y1="'+ly+'" y2="'+ly+'" stroke="'+q[1]+'" stroke-width="2" stroke-dasharray="1.5 3.5" stroke-linecap="round"/><circle cx="'+(lx+11)+'" cy="'+ly+'" r="2.4" fill="'+q[1]+'"/>';}
-    o+='<text x="'+(lx+(k<2?19:(k===2?26:0)))+'" y="'+(ly+3.5)+'" font-size="'+lf+'" font-weight="700" fill="'+(k===3?q[1]:"#1e293b")+'">'+q[0]+'</text>';
-    lx+=w2+6;
+  /* 가로축 눈금 + 연도별 값 행 */
+  o+='<text x="'+(L-4)+'" y="'+tickY+'" text-anchor="end" font-size="'+FS+'" font-weight="700" fill="#334155">나이</text>';
+  for(i=0;i<n;i++){o+='<text x="'+X(i)+'" y="'+tickY+'" text-anchor="middle" font-size="'+FS+'" font-weight="700" fill="#1e293b">'+i+'세</text>';}
+  var RW=[["원금",A1,"#2563eb"],["수익금",A2,"#15803d"],["수익률",A4,"#6d28d9"]];
+  RW.forEach(function(rw,k){
+    var top=r0+k*rowH;
+    if(k%2===0){o+='<rect x="0" y="'+(top-1)+'" width="'+W+'" height="'+rowH+'" fill="#f1f5f9"/>';}
+    o+='<text x="'+(L-4)+'" y="'+(top+rowH/2+FS*0.35)+'" text-anchor="end" font-size="'+FS+'" font-weight="700" fill="'+rw[2]+'">'+rw[0]+'</text>';
+    for(i=0;i<n;i++){
+      if(rot){o+='<text transform="translate('+(X(i)+FS*0.34)+','+(top+rowH-3)+') rotate(-90)" font-size="'+FS+'" fill="'+rw[2]+'" font-weight="700">'+rw[1][i]+'</text>';}
+      else{o+='<text x="'+X(i)+'" y="'+(top+rowH/2+FS*0.35)+'" text-anchor="middle" font-size="'+FS+'" fill="'+rw[2]+'" font-weight="700">'+rw[1][i]+'</text>';}
+    }
   });
   box.innerHTML=o+'</svg>';
 }
+if(window.ResizeObserver){new ResizeObserver(function(){if(!PR){drawChart();}}).observe($("#bars"));}
+window.addEventListener("beforeprint",function(){PR=true;drawChart();});
+window.addEventListener("afterprint",function(){PR=false;drawChart();});
 
 function isSimple(){var e=$("#sMode");return !!e&&e.value==="s";}
 /* 월 말 적립, 납입 n개월 후 Y개월 시점 가치. 복리: 연 수익률을 월 수익률로 환산한 월복리 / 단리: 각 납입금에 연 수익률×보유기간(년)만큼만 이자 */
