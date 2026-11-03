@@ -1283,6 +1283,23 @@ function drawChart(){
     if(rot){o+='<text transform="translate('+(X(i)+FS*0.34)+','+(yT2-4)+') rotate(-90)" font-size="'+FS+'" font-weight="800" fill="#c2410c" stroke="#fff" stroke-width="3" paint-order="stroke">'+A3[i]+'</text>';}
     else{o+='<text x="'+X(i)+'" y="'+(yT2-4)+'" text-anchor="middle" font-size="'+FS+'" font-weight="800" fill="#c2410c" stroke="#fff" stroke-width="3" paint-order="stroke">'+A3[i]+'</text>';}
   }
+  /* 수익률 점 옆 값(총 적립액 글자·다른 값과 겹치면 아래/위로 이동) */
+  if(!rot){
+    var bx=[];
+    for(i=0;i<n;i++){var tw=A3[i].length*cw+2;bx.push([X(i)-tw/2,YV(CH.V[i])-4-FS,tw,FS+3]);}
+    function hit(r){for(var q=0;q<bx.length;q++){var b2=bx[q];if(r[0]<b2[0]+b2[2]&&r[0]+r[2]>b2[0]&&r[1]<b2[1]+b2[3]&&r[1]+r[3]>b2[1]){return true;}}return false;}
+    for(i=0;i<n;i++){
+      var cx=X(i),cy=YR(CH.R[i]),tx=A4[i],w4=tx.length*cw+2,ds=[-6,FS+5,-6-FS-3,2*FS+8],ch=null,k2;
+      for(k2=0;k2<ds.length;k2++){
+        var by=cy+ds[k2],r4=[cx-w4/2,by-FS,w4,FS+2];
+        if(by-FS<T-FS||by>T+ph+2){continue;}
+        if(!hit(r4)){ch=[by,r4];break;}
+      }
+      if(!ch){var by0=cy-6;ch=[by0,[cx-w4/2,by0-FS,w4,FS+2]];}
+      bx.push(ch[1]);
+      o+='<text x="'+cx+'" y="'+ch[0]+'" text-anchor="middle" font-size="'+FS+'" font-weight="800" fill="#6d28d9" stroke="#fff" stroke-width="3" paint-order="stroke">'+tx+'</text>';
+    }
+  }
   /* 가로축 눈금 + 연도별 값 행 */
   o+='<text x="'+(L-4)+'" y="'+tickY+'" text-anchor="end" font-size="'+FS+'" font-weight="700" fill="#334155">나이</text>';
   for(i=0;i<n;i++){o+='<text x="'+X(i)+'" y="'+tickY+'" text-anchor="middle" font-size="'+FS+'" font-weight="700" fill="#1e293b">'+i+'세</text>';}
