@@ -864,17 +864,19 @@ function ctList(){
 }
 function ctSelGet(l){
   try{var s=JSON.parse(localStorage.getItem("babyChildCt")||"null"),sg=l.map(function(x){return x.t;}).join("\u0001");if(s&&s.sig===sg&&Array.isArray(s.sel)){return l.map(function(x){return s.sel.indexOf(x.t)>=0;});}}catch(e){}
-  return l.map(function(x){return x.on;});
+  var f=-1;l.forEach(function(x,i){if(f<0&&x.on){f=i;}});if(f<0&&l.length){f=0;}
+  return l.map(function(x,i){return i===f;});
 }
 function ctBuild(){
   var l=ctList(),sel=ctSelGet(l),d=$("#ctSel"),h="";
   d.hidden=l.length<2;
-  l.forEach(function(x,i){h+='<label><input type="checkbox" data-i="'+i+'"'+(sel[i]?' checked':'')+'><span>'+esc(x.t)+'</span></label>';});
+  l.forEach(function(x,i){h+='<label><input type="radio" name="ctR" data-i="'+i+'"'+(sel[i]?' checked':'')+'><span>'+esc(x.t)+'</span></label>';});
   $("#ctPn").innerHTML=h;
 }
 $("#ctPn").addEventListener("change",function(){
   var l=ctList(),s=[];
   Array.prototype.forEach.call($("#ctPn").querySelectorAll("input"),function(c){if(c.checked){s.push(l[+c.getAttribute("data-i")].t);}});
+  $("#ctSel").open=false;
   try{localStorage.setItem("babyChildCt",JSON.stringify({sig:l.map(function(x){return x.t;}).join("\u0001"),sel:s}));}catch(e){}
   setFoot();
 });
