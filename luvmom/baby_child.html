@@ -41,6 +41,12 @@ s.oldv{color:#9ca3af;text-decoration:line-through;text-decoration-color:#9ca3af}
 #flt label{display:flex;align-items:center;gap:3px;font-size:12px;white-space:nowrap}
 #flt select,#flt input[type=text]{font:inherit;font-size:12.5px;padding:2px 4px;border:1px solid #94a3b8;border-radius:4px;background:#fff;color:var(--tx);height:24px}
 #flt input[type=text]{width:190px}
+#ctSel{position:relative;font-size:12px}
+#ctSel summary{cursor:pointer;list-style:none;padding:0 8px;height:24px;line-height:22px;border:1px solid #94a3b8;border-radius:4px;background:#fff;white-space:nowrap}
+#ctSel summary::-webkit-details-marker{display:none}
+#ctSel .pn{position:absolute;z-index:40;top:26px;left:0;min-width:260px;max-width:92vw;background:#fff;border:1px solid #64748b;border-radius:4px;padding:4px 8px;box-shadow:0 2px 8px #0003}
+#ctSel .pn label{display:flex;align-items:flex-start;gap:4px;padding:2px 0;white-space:normal}
+@media (max-width:760px){#ctSel[open]{flex:0 0 100%}#ctSel .pn{position:static;box-shadow:none;margin-top:3px}}
 #regNote{flex:0 0 100%;font-size:11px;color:#334155;white-space:pre-wrap;line-height:1.3}
 #regNote:empty{display:none}
 #flt [hidden]{display:none!important}
@@ -260,6 +266,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
   <label>검색어 <input type="text" id="kw" placeholder="예: 산후조리, 120만원, 고용24"></label>
   <label><input type="checkbox" id="onlyCh">변경 있음</label>
   <label><input type="checkbox" id="onlyFu">변경 예정</label>
+  <details id="ctSel" hidden><summary>담당자 표시 ▾</summary><div class="pn" id="ctPn"></div></details>
   <button id="rst" type="button">초기화</button>
   <span id="cnt"></span>
 </div>
@@ -849,8 +856,30 @@ var CFG={contact:DEFCT,copy:"",regNote:"※ 「지자체」를 선택하면 시�
 })();
 function fmtD(x){var m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(x||"");return m?m[1]+"."+("0"+m[2]).slice(-2)+"."+("0"+m[3]).slice(-2):(x||"");}
 function aoStr(){var u=window.BABY_CHILD_UPDATES;return fmtD((typeof CFG!=="undefined"&&CFG&&CFG.asOf)||(u&&u.asOf)||"");}
+function ctList(){
+  var a=CFG.contacts,r=[];
+  if(Array.isArray(a)){a.forEach(function(x){if(x&&String(x.t||"").trim()){r.push({t:String(x.t),on:x.on!==false});}});}
+  else{var c=(CFG.contact!=null)?CFG.contact:DEFCT;String(c).split(/\s+\/\s+/).forEach(function(t){if(t.trim()){r.push({t:t.trim(),on:true});}});}
+  return r;
+}
+function ctSelGet(l){
+  try{var s=JSON.parse(localStorage.getItem("babyChildCt")||"null"),sg=l.map(function(x){return x.t;}).join("\u0001");if(s&&s.sig===sg&&Array.isArray(s.sel)){return l.map(function(x){return s.sel.indexOf(x.t)>=0;});}}catch(e){}
+  return l.map(function(x){return x.on;});
+}
+function ctBuild(){
+  var l=ctList(),sel=ctSelGet(l),d=$("#ctSel"),h="";
+  d.hidden=l.length<2;
+  l.forEach(function(x,i){h+='<label><input type="checkbox" data-i="'+i+'"'+(sel[i]?' checked':'')+'><span>'+esc(x.t)+'</span></label>';});
+  $("#ctPn").innerHTML=h;
+}
+$("#ctPn").addEventListener("change",function(){
+  var l=ctList(),s=[];
+  Array.prototype.forEach.call($("#ctPn").querySelectorAll("input"),function(c){if(c.checked){s.push(l[+c.getAttribute("data-i")].t);}});
+  try{localStorage.setItem("babyChildCt",JSON.stringify({sig:l.map(function(x){return x.t;}).join("\u0001"),sel:s}));}catch(e){}
+  setFoot();
+});
 function setFoot(){
-  var c=(CFG.contact!=null)?CFG.contact:DEFCT,cp=CFG.copy?CFG.copy:DEFCP;
+  var cl=ctList(),cs=ctSelGet(cl),c=cl.filter(function(x,i){return cs[i];}).map(function(x){return x.t;}).join("   /   "),cp=CFG.copy?CFG.copy:DEFCP;
   $("#ctc").textContent=c;$("#cpy").textContent=cp;
   function q(x){return '"'+String(x).replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/\n/g," ")+'"';}
   var st=document.getElementById("hfStyle");
@@ -873,6 +902,7 @@ var T0=document.title;
 window.addEventListener("beforeprint",function(){setPT();T0=document.title||T0;document.title=" ";});
 function applyCfg(){
   var u=window.BABY_CHILD_UPDATES,ao=fmtD(CFG.asOf||(u&&u.asOf)||"");
+  ctBuild();
   $("#hTitle").textContent=CFG.title;
   $("#hSub").textContent=CFG.sub;
   $("#asof").textContent=ao?"기준일 "+ao:"";

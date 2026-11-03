@@ -20,6 +20,9 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:14px;padding
 input[type=number]{text-align:right}
 textarea{min-height:64px;white-space:pre-wrap;tab-size:4;overflow-wrap:break-word}
 #sub,#simSub,#phone{min-height:44px}
+.ctr{display:flex;gap:6px;align-items:flex-start;margin-bottom:5px}
+.ctr textarea{flex:1;min-height:34px;white-space:pre-wrap}
+.ctr label{display:flex;align-items:center;gap:3px;white-space:nowrap;font-size:12px;margin-top:6px}
 .ex{border:1px solid var(--bd);border-radius:5px;padding:5px;margin-bottom:6px;background:#f8fafc}
 .exh{display:flex;gap:6px;margin-bottom:4px}
 .exh input{flex:1;font-weight:700}
@@ -99,7 +102,9 @@ button.gh{background:#166534;border-color:#166534}
 
   <fieldset><legend>하단 푸터 (보기·인쇄·관리 모든 페이지 하단에 표시)</legend>
     <div class="g">
-      <label>좌측 — 담당자 연락처<span class="hint">줄바꿈·띄어쓰기 그대로 표시. 비우면 좌측은 표시하지 않습니다.</span><textarea id="contact" rows="2"></textarea></label>
+      <div class="full">좌측 — 담당자 연락처 (여러 명 입력)<span class="hint" style="display:block">여러 명을 등록해 두면 조회 화면 「담당자 표시」에서 보기·인쇄에 나올 사람을 고를 수 있습니다. 「기본 표시」는 처음 열었을 때 표시할 사람입니다. 모두 비우면 좌측은 표시하지 않습니다.</span>
+        <div id="ctList" style="margin-top:4px"></div>
+        <button type="button" id="ctAdd" class="w">＋ 담당자 추가</button></div>
       <label>우측 — Copyright<span class="hint">비우면 기본 문구가 표시됩니다.</span><textarea id="copy" rows="2"></textarea></label>
     </div>
     <div class="hint" style="margin-top:4px">미리보기: <b id="fpv"></b></div>
@@ -128,7 +133,7 @@ button.gh{background:#166534;border-color:#166534}
 
 <script>
 "use strict";
-var KEYS=["title","prtTitle","prtTitleSim","sub","asOf","showChg","chgDays","foot","contact","copy","regNote","simTitle","org","phone","disc","n1","n2","src","saveMonthly","saveAge","saveRate"];
+var KEYS=["title","prtTitle","prtTitleSim","sub","asOf","showChg","chgDays","foot","copy","regNote","simTitle","org","phone","disc","n1","n2","src","saveMonthly","saveAge","saveRate"];
 var NUMS={chgDays:1,saveMonthly:1,saveAge:1,saveRate:1};
 var DEF={
  title:"출산·육아 지원금 검색",
@@ -147,8 +152,29 @@ var DEF={
 function $(id){return document.getElementById(id);}
 function msg(t){$("msg").textContent=t;setTimeout(function(){$("msg").textContent="";},9000);}
 var DEFCP="ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.";
+function ctRow(t,on){
+  var d=document.createElement("div");d.className="ctr";
+  d.innerHTML='<textarea class="ctt" rows="1" placeholder="예) 개인ㆍ기업 재무 전문가 홍길동 팀장 010-0000-0000"></textarea><label><input type="checkbox" class="cto">기본 표시</label><button type="button" class="w ctd">삭제</button>';
+  d.querySelector(".ctt").value=t||"";d.querySelector(".cto").checked=(on!==false);
+  d.querySelector(".ctd").addEventListener("click",function(){d.parentNode.removeChild(d);setFootAdm();});
+  $("ctList").appendChild(d);
+}
+function ctFill(a,old){
+  $("ctList").innerHTML="";
+  if(Array.isArray(a)){a.forEach(function(x){if(x){ctRow(x.t,x.on);}});}
+  else if(old){String(old).split(/\s+\/\s+/).forEach(function(t){if(t.trim()){ctRow(t.trim(),true);}});}
+}
+function ctRead(){
+  var a=[];
+  Array.prototype.forEach.call($("ctList").querySelectorAll(".ctr"),function(d){
+    var t=d.querySelector(".ctt").value;
+    if(t.trim()){a.push({t:t,on:d.querySelector(".cto").checked});}
+  });
+  return a;
+}
+$("ctAdd").addEventListener("click",function(){ctRow("",true);var l=$("ctList").lastChild;if(l){l.querySelector(".ctt").focus();}});
 function setFootAdm(){
-  var c=$("contact").value,cp=$("copy").value||DEFCP;
+  var c=ctRead().filter(function(x){return x.on;}).map(function(x){return x.t.replace(/\n/g," ");}).join("   /   "),cp=$("copy").value||DEFCP;
   $("ctc").textContent=c;$("cpy").textContent=cp;
   $("fpv").textContent=(c?c.replace(/\n/g," ")+"  |  ":"")+cp;
 }
@@ -169,7 +195,7 @@ function exRead(){
   return a;
 }
 $("exAdd").addEventListener("click",function(){exRow("","");var l=$("exList").lastChild;if(l){l.querySelector(".et").focus();}});
-function fillForm(o){exFill(o.extras);KEYS.forEach(function(k){var v=(o[k]===undefined||o[k]===null||(k==="foot"&&!o[k]))?DEF[k]:o[k];if(k==="showChg"){$(k).checked=(v!==false&&v!=="false");}else{$(k).value=v;}});}
+function fillForm(o){exFill(o.extras);ctFill(o.contacts,o.contact);KEYS.forEach(function(k){var v=(o[k]===undefined||o[k]===null||(k==="foot"&&!o[k]))?DEF[k]:o[k];if(k==="showChg"){$(k).checked=(v!==false&&v!=="false");}else{$(k).value=v;}});}
 function readForm(){
   var o={};
   KEYS.forEach(function(k){
@@ -177,7 +203,7 @@ function readForm(){
     if(NUMS[k]){v=parseFloat(v);if(isNaN(v)||v<0){v=DEF[k];}}
     o[k]=v;
   });
-  o.extras=exRead();
+  o.extras=exRead();o.contacts=ctRead();
   return o;
 }
 function load(){
@@ -207,6 +233,7 @@ function parseCfgText(t){
   for(k in DEF){m[k]=DEF[k];}
   for(k in o){if(KEYS.indexOf(k)>=0){m[k]=o[k];}}
   m.extras=Array.isArray(o.extras)?o.extras:[];
+  if(Array.isArray(o.contacts)){m.contacts=o.contacts;}else if(o.contact){m.contact=o.contact;}
   return m;
 }
 /* ---------- GitHub (Contents API) ---------- */
@@ -272,7 +299,7 @@ $("file").addEventListener("change",function(e){
   r.readAsText(f,"utf-8");
 });
 var _ff=fillForm;fillForm=function(o){_ff(o);setFootAdm();};
-load();setFootAdm();document.addEventListener("input",function(e){if(e.target.id==="contact"||e.target.id==="copy"){setFootAdm();}});
+load();setFootAdm();document.addEventListener("input",function(e){if(e.target.id==="copy"||(e.target.classList&&(e.target.classList.contains("ctt")||e.target.classList.contains("cto")))){setFootAdm();}});
 </script>
 </body>
 </html>
