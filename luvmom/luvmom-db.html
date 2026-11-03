@@ -25,6 +25,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 a.btn{text-decoration:none;display:inline-block;line-height:1.4}
 #bBaby{background:#1f8a5b;border-color:#1f8a5b;color:#fff}
 #bBaby:hover{background:#176b46;border-color:#176b46}
+#bScr{background:#6d4cc2;border-color:#6d4cc2;color:#fff}
+#bScr:hover{background:#563aa0;border-color:#563aa0}
 .btn.amber{background:var(--amber);border-color:var(--amber);color:#18212f}
 .btn.amber:hover{background:#ffd462}
 .btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
@@ -103,6 +105,35 @@ td.wc{white-space:pre-line;word-break:break-all;line-height:1.35;padding-top:5px
 .empty .btn{margin:10px 4px 0}
 
 /* 모달 */
+
+/* 스크립트 · 리플렛 */
+.dlg.scr{max-width:920px;height:88vh}
+.scr-tabs{display:flex;gap:4px;padding:8px 16px 0;border-bottom:1px solid var(--line);background:#f8fafd}
+.scr-tabs .st{border:1px solid var(--line);border-bottom:none;background:#eef2f8;padding:7px 16px;border-radius:8px 8px 0 0;font-weight:700;cursor:pointer;color:var(--sub)}
+.scr-tabs .st.on{background:#fff;color:var(--pri-d);box-shadow:inset 0 3px 0 var(--pri)}
+.scr-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.scr-bar select{border:1px solid #aab7c8;border-radius:6px;padding:5px 8px;background:#fff;min-width:170px;font-weight:700}
+.scr-bar label{display:flex;align-items:center;gap:6px;font-weight:700;color:var(--sub)}
+.scr-empty{padding:26px 10px;text-align:center;color:var(--sub);background:#f8fafd;border:1px dashed #b9c6d8;border-radius:8px}
+.scr-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.scr-card{border:1px solid var(--line);border-left:4px solid var(--pri);border-radius:8px;padding:9px 12px;background:#fff}
+.scr-card.ed{display:flex;flex-direction:column;gap:6px;background:#f8fbff}
+.scr-t{font-weight:800;margin-bottom:4px;color:var(--pri-d)}
+.scr-x{white-space:pre-wrap;word-break:break-word;line-height:1.55;font-size:14px}
+.scr-act{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}
+.scr-new{display:flex;flex-direction:column;gap:6px;border-top:2px solid var(--line);padding-top:10px}
+.scr-card input,.scr-new input,.scr-new textarea,.scr-card textarea{border:1px solid #aab7c8;border-radius:6px;padding:6px 8px;background:#fff;width:100%;font:inherit;line-height:1.5}
+.scr-new textarea,.scr-card textarea{resize:vertical}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.th{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;cursor:pointer;display:flex;flex-direction:column}
+.th:hover{box-shadow:0 3px 10px rgba(0,0,0,.18);border-color:var(--pri)}
+.th img{width:100%;height:190px;object-fit:cover;object-position:top;background:#eef2f8;display:block}
+.th .tt{font-weight:800;padding:6px 9px 0;font-size:13.5px}
+.th .tc{padding:2px 9px 8px;font-size:12px;color:var(--sub);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
+.lv{display:flex;gap:14px;flex-wrap:wrap}
+.lv-img{flex:1 1 300px;text-align:center;background:#eef2f8;border-radius:8px;padding:6px}
+.lv-img img{max-width:100%;max-height:62vh}
+.lv-body{flex:1 1 260px}
 .ov{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:14px}
 .dlg{background:#fff;border-radius:10px;width:100%;max-width:780px;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,.35)}
 .dlg.narrow{max-width:520px}
@@ -167,6 +198,7 @@ td.wc{white-space:pre-line;word-break:break-all;line-height:1.35;padding-top:5px
   <button class="btn" id="bDown">엑셀 다운로드</button>
   <button class="btn" id="bSet">항목·틀고정 설정</button>
   <a class="btn" id="bBaby" href="baby_child.html" target="_blank" rel="noopener">출산.육아지원금 확인</a>
+  <button class="btn scrbtn" id="bScr">스크립트 보기</button>
 </header>
 
 <div class="bar">
@@ -333,6 +365,7 @@ const LS_KEY = 'luvmam.db.v1';
 
 const state = {
   cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 7,
+  ex: { types: [], items: [], leaflets: [] },
   q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: '', dragRow: ''
 };
 const sync = { cfg: null, sha: '', key: null, salt: null, timer: 0, pushing: false, again: false, applying: false, rev: 0 };
@@ -343,10 +376,11 @@ function load(){
     if (Array.isArray(o.cols) && o.cols.length){ state.cols = o.cols; state.sv = o.sv || 0; }
     if (Array.isArray(o.rows)) state.rows = o.rows;
     if (o.set) state.set = Object.assign({}, DEFAULT_SET, o.set);
+    state.ex = normEx(o.ex);
   } catch (e) {}
 }
 function save(){
-  try { localStorage.setItem(LS_KEY, JSON.stringify({ v:1, sv:state.sv, cols:state.cols, rows:state.rows, set:state.set, t:Date.now() })); }
+  try { localStorage.setItem(LS_KEY, JSON.stringify({ v:1, sv:state.sv, cols:state.cols, rows:state.rows, set:state.set, ex:state.ex, t:Date.now() })); }
   catch (e) { toast('브라우저 저장에 실패했습니다. 엑셀 다운로드로 백업해 주세요.', 4000); }
   if (!sync.applying) markChanged();
 }
@@ -1086,7 +1120,7 @@ drawer.addEventListener('click', e => {
       save(); render(); toast('열 너비를 기본값으로 되돌렸습니다.');
     }
     if (a === 'sync') openSyncModal();
-    if (a === 'bk') download(new Blob([JSON.stringify({ app: 'luvmam', v: 1, sv: state.sv, cols: state.cols, rows: state.rows, set: state.set })], { type: 'application/json' }), 'luvmam-backup-' + todayStr().replace(/-/g, '') + '.json');
+    if (a === 'bk') download(new Blob([JSON.stringify({ app: 'luvmam', v: 1, sv: state.sv, cols: state.cols, rows: state.rows, set: state.set, ex: state.ex })], { type: 'application/json' }), 'luvmam-backup-' + todayStr().replace(/-/g, '') + '.json');
     if (a === 'rs') $('#fileJ').click();
     if (a === 'reset'){
       const customs = state.cols.filter(c => !DEFAULT_KEYS.has(c.key)).map(c => Object.assign({}, c, { visible: true }));
@@ -1132,6 +1166,194 @@ drawer.addEventListener('drop', e => {
 });
 drawer.addEventListener('dragend', () => { dKey = ''; clrList(); });
 
+/* ───────── 상담 스크립트 · 문자 리플렛 ───────── */
+function normEx(x){
+  x = x || {};
+  const A = v => Array.isArray(v) ? v.filter(i => i && typeof i === 'object') : [];
+  return { types: A(x.types), items: A(x.items), leaflets: A(x.leaflets) };
+}
+function askText(title, label, value, multi){
+  return new Promise(res => {
+    const ov = document.createElement('div'); ov.className = 'ov'; ov.style.zIndex = 250;
+    ov.innerHTML = '<div class="dlg narrow"><h2>' + esc(title) + '</h2><div class="bd form"><div class="f wide"><label>' + esc(label) + '</label>' +
+      (multi ? '<textarea id="atIn" rows="3"></textarea>' : '<input id="atIn" maxlength="30">') + '</div></div><div class="ft"><button class="btn" data-r="0">취소</button><button class="btn pri" data-r="1">확인</button></div></div>';
+    document.body.appendChild(ov);
+    const inp = ov.querySelector('#atIn'); inp.value = value || ''; inp.focus(); inp.select();
+    const done = v => { ov.remove(); res(v); };
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !multi){ e.preventDefault(); done(inp.value.trim()); } if (e.key === 'Escape') done(null); });
+    ov.addEventListener('click', e => { const b = e.target.closest('[data-r]'); if (b) done(b.dataset.r === '1' ? inp.value.trim() : null); });
+  });
+}
+async function copyText(t){
+  try { await navigator.clipboard.writeText(t); toast('복사했습니다.'); return; } catch (e) {}
+  const ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;opacity:0;top:0'; document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch (e) {} ta.remove();
+  toast(ok ? '복사했습니다.' : '복사하지 못했습니다. 직접 드래그해 복사해 주세요.', 2500);
+}
+function makeThumb(file){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => {
+      const W = 320, sc = Math.min(1, W / im.width), cv = document.createElement('canvas');
+      cv.width = Math.max(1, Math.round(im.width * sc)); cv.height = Math.max(1, Math.round(im.height * sc));
+      const g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.drawImage(im, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(url); res(cv.toDataURL('image/jpeg', 0.72));
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('이미지를 읽을 수 없습니다.')); };
+    im.src = url;
+  });
+}
+const leafDir = () => (sync.cfg.path.indexOf('/') >= 0 ? sync.cfg.path.replace(/\/[^/]*$/, '') : '') + '/leaflets/';
+async function uploadLeaflet(file, name){
+  const buf = await file.arrayBuffer();
+  const p = (leafDir() + name).replace(/^\/+/, '');
+  const d = new Date();
+  await gh('/contents/' + p.split('/').map(encodeURIComponent).join('/'), { method: 'PUT', body: JSON.stringify({
+    message: 'luvmom-leaflet: 리플렛 이미지 등록 (' + ymd(d.getFullYear(), d.getMonth() + 1, d.getDate()) + ' ' + hhmm() + ')', content: b64e(buf), branch: sync.cfg.branch }) });
+}
+async function removeLeafFile(name){
+  try {
+    const p = '/contents/' + (leafDir() + name).replace(/^\/+/, '').split('/').map(encodeURIComponent).join('/');
+    const j = await gh(p + '?ref=' + encodeURIComponent(sync.cfg.branch));
+    await gh(p, { method: 'DELETE', body: JSON.stringify({ message: 'luvmom-leaflet: 리플렛 이미지 삭제', sha: j.sha, branch: sync.cfg.branch }) });
+  } catch (e) {}
+}
+const scrUI = { tab: 'script', type: '', edit: '' };
+function openScripts(){
+  const ov = openModal('<h2 style="display:flex;align-items:center;gap:10px">스크립트 보기<span style="margin-left:auto"><button class="btn sm" data-a="close">닫기 ✕</button></span></h2>' +
+    '<div class="scr-tabs"><button class="st" data-tab="script">상담 안내 스크립트</button><button class="st" data-tab="leaflet">문자 리플렛</button></div>' +
+    '<div class="bd" id="scrBody" style="min-height:300px"></div>', false);
+  ov.querySelector('.dlg').classList.add('scr');
+  const body = ov.querySelector('#scrBody');
+  const ex = () => state.ex;
+  function persist(){ save(); }
+  function renderScript(){
+    const E = ex(); if (!E.types.some(t => t.id === scrUI.type)) scrUI.type = E.types.length ? E.types[0].id : '';
+    const items = E.items.filter(i => i.type === scrUI.type);
+    let h = '<div class="scr-bar"><label>유형 <select id="sType">' + (E.types.length ? E.types.map(t => '<option value="' + esc(t.id) + '"' + (t.id === scrUI.type ? ' selected' : '') + '>' + esc(t.name) + ' (' + E.items.filter(i => i.type === t.id).length + ')</option>').join('') : '<option value="">(유형 없음)</option>') + '</select></label>' +
+      '<button class="btn sm" data-a="tadd">＋ 유형 추가</button>' + (scrUI.type ? '<button class="btn sm" data-a="tren">유형 이름 수정</button><button class="btn sm danger" data-a="tdel">유형 삭제</button>' : '') + '</div>';
+    if (!E.types.length) h += '<div class="scr-empty">먼저 <b>＋ 유형 추가</b>로 스크립트 유형(예: 최초 연락, 면담 약속, 부재중 안내)을 만들어 주세요.</div>';
+    else {
+      h += '<div class="scr-list">' + (items.length ? items.map(i => i.id === scrUI.edit
+        ? '<div class="scr-card ed"><input data-f="title" placeholder="제목 (선택)" value="' + esc(i.title || '') + '"><textarea data-f="text" rows="7">' + esc(i.text || '') + '</textarea><div class="scr-act"><button class="btn sm" data-a="ecan">취소</button><button class="btn sm pri" data-a="esave" data-id="' + esc(i.id) + '">저장</button></div></div>'
+        : '<div class="scr-card">' + (i.title ? '<div class="scr-t">' + esc(i.title) + '</div>' : '') + '<div class="scr-x">' + esc(i.text || '') + '</div><div class="scr-act"><button class="btn sm" data-a="copy" data-id="' + esc(i.id) + '">복사</button><button class="btn sm" data-a="edit" data-id="' + esc(i.id) + '">수정</button><button class="btn sm" data-a="del" data-id="' + esc(i.id) + '">삭제</button></div></div>'
+      ).join('') : '<div class="scr-empty">이 유형에는 아직 등록된 스크립트가 없습니다. 아래에서 추가해 주세요.</div>') + '</div>' +
+      '<div class="scr-new"><b>이 유형에 스크립트 추가</b><input id="nTitle" placeholder="제목 (선택)"><textarea id="nText" rows="6" placeholder="스크립트 내용을 입력하세요. (줄바꿈 가능)"></textarea><div class="scr-act"><button class="btn pri" data-a="add">추가</button></div></div>';
+    }
+    body.innerHTML = h;
+  }
+  function renderLeaf(){
+    const L = ex().leaflets;
+    let h = '<div class="scr-bar"><b>문자 발송용 리플렛 이미지</b><button class="btn sm pri" data-a="ladd" style="margin-left:auto">＋ 리플렛 등록</button></div>';
+    h += L.length ? '<div class="thumbs">' + L.map(l => '<div class="th" data-a="lview" data-id="' + esc(l.id) + '"><img src="' + esc(l.thumb || '') + '" alt=""><div class="tt">' + esc(l.title || '(제목 없음)') + '</div><div class="tc">' + esc(l.body || '') + '</div></div>').join('') + '</div>'
+      : '<div class="scr-empty">등록된 리플렛이 없습니다. <b>＋ 리플렛 등록</b>으로 이미지 파일을 올려 주세요.</div>';
+    body.innerHTML = h;
+  }
+  function paint(){
+    ov.querySelectorAll('.st').forEach(b => b.classList.toggle('on', b.dataset.tab === scrUI.tab));
+    if (scrUI.tab === 'script') renderScript(); else renderLeaf();
+  }
+  function leafForm(l){
+    return new Promise(res => {
+      const w = document.createElement('div'); w.className = 'ov'; w.style.zIndex = 250;
+      w.innerHTML = '<div class="dlg narrow"><h2>' + (l ? '리플렛 수정' : '리플렛 등록') + '</h2><div class="bd form">' +
+        (l ? '' : '<div class="f wide"><label>이미지 파일 *</label><input type="file" id="lfFile" accept="image/*"></div>') +
+        '<div class="f wide"><label>제목</label><input id="lfTitle" maxlength="60" value="' + esc(l ? l.title : '') + '"></div>' +
+        '<div class="f wide"><label>내용 (설명·문자 안내 문구 등)</label><textarea id="lfBody" rows="5">' + esc(l ? l.body : '') + '</textarea></div>' +
+        '<div class="err" id="lfErr"></div></div><div class="ft"><button class="btn" data-r="0">취소</button><button class="btn pri" data-r="1">저장</button></div></div>';
+      document.body.appendChild(w);
+      w.addEventListener('click', async e => {
+        const b = e.target.closest('[data-r]'); if (!b) return;
+        if (b.dataset.r === '0'){ w.remove(); res(null); return; }
+        const title = w.querySelector('#lfTitle').value.trim(), body2 = w.querySelector('#lfBody').value, er = m => { w.querySelector('#lfErr').textContent = m; };
+        if (!title) return er('제목을 입력해 주세요.');
+        if (l){ w.remove(); res({ title: title, body: body2 }); return; }
+        const f = w.querySelector('#lfFile').files[0];
+        if (!f) return er('이미지 파일을 선택해 주세요.');
+        if (!/^image\//.test(f.type)) return er('이미지 파일만 등록할 수 있습니다.');
+        if (f.size > 10 * 1024 * 1024) return er('파일이 너무 큽니다. 10MB 이하로 올려 주세요.');
+        if (!canWrite()) return er('GitHub 토큰이 연결되어 있어야 이미지를 올릴 수 있습니다. (상단 GitHub 동기화 설정에서 토큰 입력)');
+        b.disabled = true; b.textContent = '업로드 중…'; er('');
+        try {
+          const thumb = await makeThumb(f);
+          const ext = (String(f.name).match(/\.(png|jpe?g|gif|webp)$/i) || [, (f.type.split('/')[1] || 'png').replace('jpeg', 'jpg')])[1].toLowerCase();
+          const fname = 'lf-' + uid() + '.' + ext;
+          await uploadLeaflet(f, fname);
+          w.remove(); res({ title: title, body: body2, file: fname, thumb: thumb });
+        } catch (err) { b.disabled = false; b.textContent = '저장'; er('업로드 실패: ' + errText(err)); }
+      });
+    });
+  }
+  function leafView(id){
+    const l = ex().leaflets.find(x => x.id === id); if (!l) return;
+    const w = document.createElement('div'); w.className = 'ov'; w.style.zIndex = 240;
+    const src = 'leaflets/' + encodeURIComponent(l.file);
+    w.innerHTML = '<div class="dlg"><h2>' + esc(l.title) + '</h2><div class="bd lv"><div class="lv-img"><img id="lvImg" src="' + esc(src) + '" alt=""></div><div class="lv-body"><div class="scr-x">' + esc(l.body || '') + '</div></div></div>' +
+      '<div class="ft"><button class="btn" data-r="copy">내용 복사</button><a class="btn" href="' + esc(src) + '" target="_blank" rel="noopener">이미지 새 창</a><a class="btn" href="' + esc(src) + '" download="' + esc(l.title || 'leaflet') + '">이미지 저장</a>' +
+      '<button class="btn" data-r="edit">수정</button><button class="btn danger" data-r="del">삭제</button><button class="btn pri" data-r="x">닫기</button></div></div>';
+    document.body.appendChild(w);
+    const im = w.querySelector('#lvImg'); im.onerror = () => { im.onerror = null; im.src = l.thumb; };
+    w.addEventListener('click', async e => {
+      const b = e.target.closest('[data-r]'); if (!b){ if (e.target === w) w.remove(); return; }
+      const r = b.dataset.r;
+      if (r === 'x'){ w.remove(); return; }
+      if (r === 'copy'){ copyText(l.body || ''); return; }
+      if (r === 'edit'){ const v = await leafForm(l); if (v){ l.title = v.title; l.body = v.body; persist(); w.remove(); paint(); } return; }
+      if (r === 'del'){
+        if (!(await askConfirm("'<b>" + esc(l.title) + "</b>' 리플렛을 삭제하시겠습니까?" + (canWrite() ? '<br>GitHub에 올린 이미지 파일도 함께 삭제됩니다.' : ''), '삭제', true))) return;
+        ex().leaflets = ex().leaflets.filter(x => x.id !== id); persist(); if (canWrite()) removeLeafFile(l.file); w.remove(); paint();
+      }
+    });
+  }
+  ov.addEventListener('change', e => { if (e.target.id === 'sType'){ scrUI.type = e.target.value; scrUI.edit = ''; paint(); } });
+  ov.addEventListener('click', async e => {
+    const b = e.target.closest('[data-a],[data-tab]'); if (!b) return;
+    if (b.dataset.tab){ scrUI.tab = b.dataset.tab; scrUI.edit = ''; paint(); return; }
+    const a = b.dataset.a, E = ex(), id = b.dataset.id;
+    if (a === 'close'){ closeModal(); return; }
+    if (a === 'tadd'){
+      const n = await askText('유형 추가', '유형 이름 (예: 최초 연락, 면담 약속)', ''); if (!n) return;
+      if (E.types.some(t => sqz(t.name) === sqz(n))){ toast('이미 있는 유형입니다.'); return; }
+      const t = { id: uid(), name: n }; E.types.push(t); scrUI.type = t.id; persist(); paint(); return;
+    }
+    if (a === 'tren'){
+      const t = E.types.find(x => x.id === scrUI.type); if (!t) return;
+      const n = await askText('유형 이름 수정', '유형 이름', t.name); if (!n || n === t.name) return;
+      if (E.types.some(x => x.id !== t.id && sqz(x.name) === sqz(n))){ toast('이미 있는 유형입니다.'); return; }
+      t.name = n; persist(); paint(); return;
+    }
+    if (a === 'tdel'){
+      const t = E.types.find(x => x.id === scrUI.type); if (!t) return;
+      const c = E.items.filter(i => i.type === t.id).length;
+      if (!(await askConfirm("'<b>" + esc(t.name) + "</b>' 유형을 삭제하시겠습니까?" + (c ? '<br>등록된 스크립트 ' + c + '건도 함께 삭제됩니다.' : ''), '삭제', true))) return;
+      E.types = E.types.filter(x => x.id !== t.id); E.items = E.items.filter(i => i.type !== t.id); scrUI.type = ''; persist(); paint(); return;
+    }
+    if (a === 'add'){
+      const text = body.querySelector('#nText').value, title = body.querySelector('#nTitle').value.trim();
+      if (!text.trim()){ toast('스크립트 내용을 입력해 주세요.'); return; }
+      E.items.push({ id: uid(), type: scrUI.type, title: title, text: text, t: Date.now() }); persist(); paint();
+      const lst = body.querySelector('.scr-list'); if (lst) lst.scrollTop = lst.scrollHeight; toast('스크립트를 추가했습니다.'); return;
+    }
+    const it = E.items.find(i => i.id === id);
+    if (a === 'copy' && it){ copyText((it.title ? it.title + '\n' : '') + it.text); return; }
+    if (a === 'edit' && it){ scrUI.edit = it.id; paint(); return; }
+    if (a === 'ecan'){ scrUI.edit = ''; paint(); return; }
+    if (a === 'esave' && it){
+      const card = b.closest('.scr-card'), tx = card.querySelector('[data-f=text]').value;
+      if (!tx.trim()){ toast('내용을 입력해 주세요.'); return; }
+      it.title = card.querySelector('[data-f=title]').value.trim(); it.text = tx; scrUI.edit = ''; persist(); paint(); return;
+    }
+    if (a === 'del' && it){
+      if (!(await askConfirm('이 스크립트를 삭제하시겠습니까?', '삭제', true))) return;
+      E.items = E.items.filter(i => i.id !== id); persist(); paint(); return;
+    }
+    if (a === 'ladd'){ const v = await leafForm(null); if (v){ E.leaflets.push({ id: uid(), title: v.title, body: v.body, file: v.file, thumb: v.thumb, t: Date.now() }); persist(); paint(); toast('리플렛을 등록했습니다.'); } return; }
+    if (a === 'lview'){ leafView(b.dataset.id); return; }
+  });
+  paint();
+}
+$('#bScr').onclick = openScripts;
+
 /* ───────── 이벤트 연결 ───────── */
 $('#bAdd').onclick = () => openForm();
 $('#bUp').onclick = () => $('#fileX').click();
@@ -1144,7 +1366,7 @@ $('#fileJ').onchange = async e => {
     const o = JSON.parse(await f.text());
     if (!o || o.app !== 'luvmam' || !Array.isArray(o.rows) || !Array.isArray(o.cols)) throw new Error('bad');
     if (!(await askConfirm('백업 파일(고객 ' + o.rows.length + '명)로 현재 데이터를 모두 교체합니다.<br>계속하시겠습니까?', '복원', true))) return;
-    state.cols = o.cols; state.rows = o.rows; state.set = Object.assign({}, DEFAULT_SET, o.set || {}); state.sv = o.sv || 0; migrate();
+    state.cols = o.cols; state.rows = o.rows; state.set = Object.assign({}, DEFAULT_SET, o.set || {}); state.sv = o.sv || 0; state.ex = normEx(o.ex); migrate();
     save(); render(); renderDrawer(); toast('복원되었습니다.');
   } catch (err) { toast('올바른 luvmam 백업 파일이 아닙니다.', 3500); }
 };
@@ -1227,7 +1449,7 @@ async function pullRemote(){
 }
 function applyRemote(r){
   sync.applying = true;
-  state.cols = r.data.cols; state.rows = r.data.rows; state.set = Object.assign({}, DEFAULT_SET, r.data.set || {}); state.sv = r.data.sv || 0;
+  state.cols = r.data.cols; state.rows = r.data.rows; state.set = Object.assign({}, DEFAULT_SET, r.data.set || {}); state.sv = r.data.sv || 0; state.ex = normEx(r.data.ex);
   const mig = migrate();
   save(); sync.applying = false;
   sync.sha = r.sha; sync.cfg.sha = r.sha; sync.cfg.dirty = false; saveSyncCfg();
@@ -1251,7 +1473,7 @@ async function syncPull(mode){
       if (!c.tok){ setStatus('err', 'GitHub에 데이터 없음'); toast('GitHub에 데이터 파일이 아직 없습니다. 처음 한 번은 토큰을 입력해 저장해야 합니다.', 5000); return; }
       sync.sha = ''; await push(false); toast('GitHub에 새 데이터 파일을 만들었습니다.', 3500); return;
     }
-    const same = JSON.stringify(r.data.rows) === JSON.stringify(state.rows) && JSON.stringify(r.data.cols) === JSON.stringify(state.cols);
+    const same = JSON.stringify(r.data.rows) === JSON.stringify(state.rows) && JSON.stringify(r.data.cols) === JSON.stringify(state.cols) && JSON.stringify(normEx(r.data.ex)) === JSON.stringify(state.ex);
     const never = !c.sha;
     if (same){ sync.sha = r.sha; c.sha = r.sha; c.dirty = false; saveSyncCfg(); }
     else if (!c.dirty && (!never || !state.rows.length)){ applyRemote(r); }
@@ -1279,7 +1501,7 @@ async function push(force){
   const rev = sync.rev;
   try {
     if (force){ try { sync.sha = (await gh(cEnc() + '?ref=' + encodeURIComponent(c.branch))).sha; } catch (e) { if (e.status !== 404) throw e; sync.sha = ''; } }
-    const text = JSON.stringify({ v: 1, sv: state.sv, cols: state.cols, rows: state.rows, set: state.set });
+    const text = JSON.stringify({ v: 1, sv: state.sv, cols: state.cols, rows: state.rows, set: state.set, ex: state.ex });
     const o = await encryptData(text);
     const d = new Date();
     const body = { message: 'luvmom-data: 관리화면에서 수정 (' + ymd(d.getFullYear(), d.getMonth() + 1, d.getDate()) + ' ' + hhmm() + ')',
