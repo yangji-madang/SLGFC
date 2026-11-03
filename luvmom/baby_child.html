@@ -140,8 +140,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 #sim .sv .cd{text-align:right}
 #sim .sv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
 #simN{margin-top:4px}
-#bars{position:relative;flex:1 1 auto;min-height:280px}
-#bars svg{position:absolute;left:0;top:0}
+#bars{position:relative}
 @media screen and (max-width:760px){#bars{overflow-x:auto}}
 #simR{display:flex;flex-direction:column}
 #sim .br{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12px}
@@ -195,7 +194,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  .pg{display:block;overflow:visible}
  #pgS{page:tbl}
- #pgM{page:sim;overflow:visible;padding:0}
+ #pgM{page:sim;overflow:visible;padding:0;zoom:.95}
  .pt{position:relative;display:block;text-align:center;border-bottom:2px solid var(--navy);padding-bottom:3px;margin-bottom:4px;min-height:34px}
  .pt #ptL,.pt #ptL2{display:inline-flex;flex-direction:column;align-items:center;line-height:1.15}
  .pt .ptt{display:inline-block;font-size:17px;font-weight:800;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,#14365d,#2c5f9e);padding:3px 26px;border-radius:999px;box-shadow:0 0 0 1.5px #fff,0 0 0 2.5px #14365d}
@@ -211,13 +210,18 @@ body{word-break:keep-all;overflow-wrap:break-word}
  #simBody{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:stretch}
  #simL,#simR{min-width:0}
  #simN{column-count:2;column-gap:14px}
- #bars{overflow:hidden;min-height:190px}
- #sim #bn,#sim #n2{font-size:9px;line-height:1.25;margin-top:1px}
- #bars svg{width:100%;height:100%}
+ #bars{overflow:visible}
+ #sim #bn,#sim #n2{font-size:8.5px;line-height:1.2;margin-top:1px}
+ #sim #xs{margin:2px 0}
+ #sim #xs .cd b{font-size:13px}
+ #sim #bnT{margin:3px 0 1px}
+ #bars svg{width:100%!important;height:auto!important}
  #sim #simN .note,#sim #simN .src{break-inside:auto;line-height:1.25;margin-top:1px}
  #sim #simN .note{font-size:9.5px}
  #sim #n1{font-size:9.5px;line-height:1.25}
- #sim #simN .src{font-size:8.5px;margin-top:2px}
+ #sim #simN .src{font-size:8px;line-height:1.15;margin-top:1px}
+ #sim #simN .note{font-size:9px;line-height:1.2}
+ #simN{margin-top:2px}
  #ov{max-height:none;overflow:visible}
  #res{overflow:visible;height:auto}
  #res table{min-width:0;table-layout:auto}
@@ -1183,7 +1187,7 @@ function simRender(){
   $("#n1").textContent=(nl.length?nl.join("\n")+"\n":"")+CFG.n1;
   /* 목돈 만들기 */
   var rate=num("#sRate");
-  var xr=EX.map(function(x,i){return{nm:x.nm||("항목"+(i+1)),mon:x.mon,n:x.n};});
+  var xr=EX.map(function(x,i){return{nm:x.nm||("항목"+(i+1)),mon:x.mon,n:x.n,ag:x.ag};});
   var base=null;EX.forEach(function(x){if(!base&&x.nm==="아동수당"){base=x;}});if(!base){base=EX[0]||{mon:0,n:0};}
   var mon=base.mon||0,n=base.n||0,age=Math.round(n/12*10)/10,prin=mon*n;
   var covered=Math.min(mon,ad)*Math.min(n,NAT.adM);
@@ -1193,7 +1197,7 @@ function simRender(){
   var tp=0,tv=0;
   if(hasX){
     var h='<thead><tr><th>적립 항목</th><th>월 적립액</th><th>기간</th><th>적립 원금</th><th>종료 시 평가액</th><th>수익률</th></tr></thead><tbody>';
-    xr.forEach(function(x){var pr=x.mon*x.n,vv=fvM(x.mon,x.n,rate);tp+=pr;tv+=vv;h+='<tr><td>'+esc(x.nm)+'</td><td>'+fm(x.mon)+'</td><td>'+x.n+'개월('+fm(x.n/12)+'세)</td><td>'+fm(pr)+'</td><td>'+fm(vv)+'</td><td>'+pc(vv,pr)+'</td></tr>';});
+    xr.forEach(function(x){var pr=x.mon*x.n,vv=fvM(x.mon,x.n,rate);tp+=pr;tv+=vv;h+='<tr><td>'+esc(x.nm)+'</td><td>'+fm(x.mon)+'</td><td>'+x.n+'개월('+(x.ag!==undefined&&x.ag!==null?x.ag:fm(x.n/12))+'세)</td><td>'+fm(pr)+'</td><td>'+fm(vv)+'</td><td>'+pc(vv,pr)+'</td></tr>';});
     if(xr.length>1){h+='<tr class="tt"><td>합계</td><td></td><td></td><td>'+fm(tp)+'</td><td>'+fm(tv)+'</td><td>'+pc(tv,tp)+'</td></tr>';}
     h+='</tbody>';
     $("#xt").innerHTML=h;
@@ -1222,18 +1226,18 @@ function drawChart(){
   var box=$("#bars");if(!box){return;}
   if(!CH||!CH.on){box.innerHTML="";return;}
   var n=CH.ys.length,i,mob=window.matchMedia("screen and (max-width:760px)").matches;
-  var W=Math.max(box.clientWidth||600,mob?n*48+110:0),H=box.clientHeight||300;
+  var W=Math.max(640,mob?n*48+110:0),H=Math.round(W*0.42);
   var LG=[["적립원금(막대·왼쪽 축)","#2563eb"],["수익금(막대·왼쪽 축)","#16a34a"],["수익률(점선·오른쪽 축)","#7c3aed"],["막대 위 숫자 = 총 적립액","#c2410c"]];
-  var rows=1,cx0=0,wi;
-  LG.forEach(function(q){wi=q[0].length*8.6+40;if(cx0&&cx0+wi>W-8){rows++;cx0=0;}cx0+=wi;});
-  var L=52,R=56,T=30+rows*16,B=34,pw=Math.max(60,W-L-R),ph=Math.max(60,H-T-B);
+  var tc=0;LG.forEach(function(q){tc+=q[0].length;});
+  var lf=Math.min(10,Math.max(6.5,(W-16-4*30)/(tc*0.95)));
+  var L=52,R=56,T=46,B=34,pw=Math.max(60,W-L-R),ph=Math.max(60,H-T-B);
   var mxV=Math.max.apply(null,CH.V.concat(CH.P,[1])),mxR=Math.max.apply(null,CH.R.concat([1]));
   function nice(v){var e=Math.pow(10,Math.floor(Math.log(v)/Math.LN10)),f=v/e;return(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e;}
   var yv=nice(mxV*1.12),yr=nice(mxR*1.12),st=pw/n,bw=Math.min(st*0.58,38),fs=st<34?8:9;
   function X(k){return L+st*(k+0.5);}
   function YV(v){return T+ph-ph*v/yv;}
   function YR(v){return T+ph-ph*v/yr;}
-  var o='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="sans-serif">';
+  var o='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" style="display:block;width:'+(mob?W+'px':'100%')+';height:auto" font-family="sans-serif">';
   var g;
   for(g=0;g<=5;g++){
     var yy=T+ph*g/5;
@@ -1266,17 +1270,15 @@ function drawChart(){
   }
   var lx=6,ly=12;
   LG.forEach(function(q,k){
-    var w2=q[0].length*8.6+40;
-    if(lx>6&&lx+w2>W-4){lx=6;ly+=16;}
+    var w2=q[0].length*lf*0.95+(k<3?30:4);
     if(k===0||k===1){o+='<rect x="'+lx+'" y="'+(ly-5)+'" width="14" height="10" fill="'+q[1]+'"/>';}
     else if(k===2){o+='<line x1="'+lx+'" x2="'+(lx+22)+'" y1="'+ly+'" y2="'+ly+'" stroke="'+q[1]+'" stroke-width="2" stroke-dasharray="1.5 3.5" stroke-linecap="round"/><circle cx="'+(lx+11)+'" cy="'+ly+'" r="2.4" fill="'+q[1]+'"/>';}
-    o+='<text x="'+(lx+(k<2?19:(k===2?26:0)))+'" y="'+(ly+3.5)+'" font-size="10" font-weight="700" fill="'+(k===3?q[1]:"#1e293b")+'">'+q[0]+'</text>';
-    lx+=w2+(k===3?0:(k===2?8:0));
+    o+='<text x="'+(lx+(k<2?19:(k===2?26:0)))+'" y="'+(ly+3.5)+'" font-size="'+lf+'" font-weight="700" fill="'+(k===3?q[1]:"#1e293b")+'">'+q[0]+'</text>';
+    lx+=w2+6;
   });
   box.innerHTML=o+'</svg>';
 }
-if(window.ResizeObserver){new ResizeObserver(function(){drawChart();}).observe($("#bars"));}
-window.addEventListener("beforeprint",drawChart);window.addEventListener("afterprint",drawChart);
+
 function isSimple(){var e=$("#sMode");return !!e&&e.value==="s";}
 /* 월 말 적립, 납입 n개월 후 Y개월 시점 가치. 복리: 연 수익률을 월 수익률로 환산한 월복리 / 단리: 각 납입금에 연 수익률×보유기간(년)만큼만 이자 */
 function fvAt(m,n,Y,rate){
@@ -1291,19 +1293,19 @@ function xList(){
     return '<div class="xr"><input class="xn" data-i="'+i+'" data-k="nm" type="text" placeholder="항목명" value="'+esc(x.nm).replace(/"/g,"&quot;")+'">월<input class="xm" data-i="'+i+'" data-k="mon" type="number" min="0" step="1" value="'+x.mon+'">만원 ×<input class="xm" data-i="'+i+'" data-k="n" type="number" min="1" max="360" step="1" value="'+x.n+'">개월<button type="button" data-del="'+i+'">삭제</button></div>';
   }).join("");
 }
-function xAdd(nm,mon,n){EX.push({nm:nm,mon:mon,n:n});xList();simRender();}
+function xAdd(nm,mon,n,ag){EX.push({nm:nm,mon:mon,n:n,ag:ag});xList();simRender();}
 $("#xl").addEventListener("input",function(e){
   var t=e.target,i=t.getAttribute("data-i");if(i===null||!EX[i]){return;}
   var k=t.getAttribute("data-k");
-  if(k==="nm"){EX[i].nm=t.value;}else{var v=parseFloat(t.value);v=(isNaN(v)||v<0)?0:v;EX[i][k]=(k==="n")?Math.min(360,Math.round(v)):v;if(k==="mon"){EX[i].auto=false;}}
+  if(k==="nm"){EX[i].nm=t.value;}else{var v=parseFloat(t.value);v=(isNaN(v)||v<0)?0:v;EX[i][k]=(k==="n")?Math.min(360,Math.round(v)):v;if(k==="mon"){EX[i].auto=false;}if(k==="n"){EX[i].ag=undefined;}}
 });
 $("#xl").addEventListener("click",function(e){var d=e.target.getAttribute("data-del");if(d!==null){EX.splice(+d,1);xList();simRender();}});
 $("#xAd").addEventListener("click",function(){
   if(EX.some(function(x){return x.nm==="아동수당";})){return;}
   EX.unshift({nm:"아동수당",mon:parseFloat($("#sAd").value)||10,n:NAT.adM,auto:true});xList();simRender();
 });
-$("#xP0").addEventListener("click",function(){xAdd("부모급여 0세",NAT.p0/12,12);});
-$("#xP1").addEventListener("click",function(){xAdd("부모급여 1세",NAT.p1/12,12);});
+$("#xP0").addEventListener("click",function(){xAdd("부모급여 0세",NAT.p0/12,12,0);});
+$("#xP1").addEventListener("click",function(){xAdd("부모급여 1세",NAT.p1/12,12,1);});
 $("#xNew").addEventListener("click",function(){xAdd("",10,12);});
 $("#xClr").addEventListener("click",function(){EX=[];xList();simRender();});
 function simEv(e){
