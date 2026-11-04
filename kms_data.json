@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-31",
+ "updated": "2026-11-04",
  "sections": [
   {
    "title": "SLI GFC",
@@ -427,7 +427,7 @@
      ]
     },
     {
-     "title": "정보(통계/지표/건강 등)",
+     "title": "정책/통계/지표",
      "pin": false,
      "links": [
       {
@@ -441,33 +441,12 @@
        "pin": true
       },
       {
-       "label": "국가건강정보포털",
-       "url": "https://health.kdca.go.kr/healthinfo/",
-       "tags": [
-        "건강",
-        "질병",
-        "의학정보"
-       ],
-       "pin": false
-      },
-      {
        "label": "국가데이터처",
        "url": "https://mods.go.kr",
        "tags": [
         "통계청",
         "통계",
         "인구"
-       ],
-       "pin": false
-      },
-      {
-       "label": "국가암지식정보센터",
-       "url": "https://www.cancer.go.kr/",
-       "tags": [
-        "암",
-        "질병",
-        "통계",
-        "건강"
        ],
        "pin": false
       },
@@ -483,22 +462,70 @@
        "pin": false
       },
       {
-       "label": "지역사회건강조사",
-       "url": "https://chs.kdca.go.kr/chs/index.do",
-       "tags": [
-        "건강통계",
-        "질병관리청",
-        "건강"
-       ],
-       "pin": false
-      },
-      {
        "label": "지표누리",
        "url": "https://index.go.kr/",
        "tags": [
         "지표",
         "통계",
         "국가지표"
+       ],
+       "pin": false
+      }
+     ]
+    },
+    {
+     "title": "건강/의학",
+     "pin": false,
+     "links": [
+      {
+       "label": "국가건강정보포털",
+       "url": "https://health.kdca.go.kr/healthinfo",
+       "tags": [
+        "건강",
+        "질병",
+        "의학정보"
+       ],
+       "pin": true
+      },
+      {
+       "label": "질병관리청",
+       "url": "https://www.kdca.go.kr",
+       "tags": [
+        "건강",
+        "질병",
+        "질병관리청"
+       ],
+       "pin": false
+      },
+      {
+       "label": "건강보험심사평가원",
+       "url": "https://www.hira.or.kr/main.do",
+       "tags": [
+        "건강",
+        "보험",
+        "건강보험",
+        "심사"
+       ],
+       "pin": false
+      },
+      {
+       "label": "국가암지식정보센터",
+       "url": "https://www.cancer.go.kr/",
+       "tags": [
+        "암",
+        "질병",
+        "통계",
+        "건강"
+       ],
+       "pin": false
+      },
+      {
+       "label": "지역사회건강조사",
+       "url": "https://chs.kdca.go.kr/chs/index.do",
+       "tags": [
+        "건강통계",
+        "질병관리청",
+        "건강"
        ],
        "pin": false
       },
