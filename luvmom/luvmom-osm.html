@@ -63,6 +63,21 @@ td.fr{position:sticky;z-index:4}
 td.fr.fc{z-index:6}
 .fc-last{border-right:2px solid #5b83bd !important}
 td.act,th.act{text-align:center;padding:0 4px;cursor:default}
+td.sel{cursor:pointer}
+td.sel:hover{outline:2px solid #7fb0ee;outline-offset:-2px}
+.ar{float:right;color:#8aa0bf;font-size:10px;margin-left:6px;line-height:inherit}
+#pickMenu{display:none;position:fixed;z-index:121;background:#fff;border:1px solid #9fb2cc;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.3);min-width:170px;max-width:300px;padding:4px}
+#pickMenu.on{display:block}
+#pickMenu .cmh{padding:5px 10px;font-weight:800;color:var(--sub);border-bottom:1px solid var(--line);margin-bottom:3px}
+#pickMenu .pkl{max-height:260px;overflow:auto}
+#pickMenu button{display:block;width:100%;text-align:left;border:0;background:#fff;padding:7px 10px;border-radius:5px;cursor:pointer;font:inherit}
+#pickMenu button:hover:not(:disabled){background:#e8f0fb}
+#pickMenu button.cur{background:#dbe9fb;font-weight:800}
+#pickMenu button.clr{color:var(--sub);border-top:1px solid var(--line);margin-top:3px;border-radius:0}
+#pickMenu button.edt{color:var(--pri-d)}
+#pickMenu button:disabled{color:#b0bccd;cursor:default}
+#pickMenu small{color:var(--sub)}
+
 .cm{margin-left:5px;font-size:10px;color:#3d5272;cursor:pointer;padding:1px 4px;border-radius:4px;background:rgba(255,255,255,.55)}
 .cm:hover{background:rgba(29,98,196,.3)}
 #colMenu{display:none;position:fixed;z-index:120;background:#fff;border:1px solid #9fb2cc;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.3);min-width:230px;padding:4px}
@@ -266,7 +281,7 @@ td.wc{white-space:pre-line;word-break:break-all;line-height:1.35;padding-top:5px
 
 <aside id="drawer"></aside>
 <div id="fmtPanel"></div>
-<div id="colMenu"></div>
+<div id="colMenu"></div><div id="pickMenu"></div>
 <div id="printArea"></div><style id="pgStyle"></style>
 <div id="modal-root"></div>
 <div id="toast"></div>
@@ -602,7 +617,8 @@ function render(){
     vis.forEach((c, k) => {
       const v = cellVal(r, c);
       const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), (c.type === 'age' ? 'num' : ''), (c.wrap ? 'wc' : ''), (resTone(c, v) ? 'rs-' + resTone(c, v) : '')].filter(Boolean).join(' ');
-      h += '<td class="' + cls + '"' + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(dispVal(c, v)) + '">' + ((c.wrap || S.wrap) ? '<div class="ci"' + (N ? ' style="-webkit-line-clamp:' + N + '"' : '') + '>' + esc(dispVal(c, v)) + '</div>' : esc(dispVal(c, v))) + '</td>';
+      const isSel = c.type === 'select', ar = isSel ? '<span class="ar">▾</span>' : '', cls2 = cls + (isSel ? ' sel' : '');
+      h += '<td class="' + cls2 + '"' + (isSel ? ' data-ck="' + esc(c.key) + '"' : '') + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(dispVal(c, v)) + '">' + ((c.wrap || S.wrap) ? '<div class="ci"' + (N ? ' style="-webkit-line-clamp:' + N + '"' : '') + '>' + ar + esc(dispVal(c, v)) + '</div>' : ar + esc(dispVal(c, v))) + '</td>';
     });
     h += '</tr>';
   });
@@ -689,6 +705,8 @@ gridEl.addEventListener('drop', e => {
 gridEl.addEventListener('dragend', () => { state.dragKey = ''; state.dragRow = ''; clearDrop(); });
 gridEl.addEventListener('click', e => {
   if (e.target.closest('.rz') || state.justResized) return;
+  const seltd = e.target.closest('td.sel');
+  if (seltd && !e.target.closest('button')){ closeColMenu(); openPick(seltd); return; }
   const cmb = e.target.closest('.cm');
   if (cmb){ const r = cmb.getBoundingClientRect(); openColMenu(cmb.dataset.cm, r.left, r.bottom + 4); return; }
   const b = e.target.closest('button[data-act]');
@@ -845,11 +863,21 @@ function parseOpts(t){
   return out;
 }
 async function editOpts(key){
-  const c = state.cols.find(k => k.key === key); if (!c || c.type !== 'select') return;
-  const v = await askText("'" + c.label + "' 선택 항목 편집", '선택 항목 (한 줄에 하나씩, 또는 쉼표로 구분)', (c.opts || []).join('\n'), true);
+  const c = state.cols.find(k => k.key === key); if (!c || (c.type !== 'select' && c.type !== 'text')) return;
+  const toSel = c.type === 'text';
+  let pre = (c.opts || []).join('\n');
+  if (toSel){
+    const cnt = new Map(); state.rows.forEach(r => { const v = String(r[key] == null ? '' : r[key]).trim(); if (v && v.indexOf('\n') < 0 && v.length <= 30) cnt.set(v, (cnt.get(v) || 0) + 1); });
+    pre = Array.from(cnt.entries()).sort((a, b) => b[1] - a[1]).slice(0, 40).map(x => x[0]).join('\n');
+  }
+  const v = await askText(toSel ? "'" + c.label + "' 선택 목록으로 설정" : "'" + c.label + "' 선택 항목 편집",
+    '선택 항목 (한 줄에 하나씩, 또는 쉼표로 구분)' + (toSel ? ' — 이미 입력된 값이 미리 채워져 있습니다' : ''), pre, true);
   if (v === null) return;
   const o = parseOpts(v); if (!o.length){ toast('선택 항목을 1개 이상 입력해 주세요.'); return; }
-  c.opts = o; save(); render(); toast('선택 항목을 저장했습니다. (이미 입력된 값은 그대로 유지됩니다)');
+  c.opts = o;
+  if (toSel){ c.type = 'select'; delete c.area; c.wrap = false; c.w = Math.max(c.w || 0, 110); }
+  save(); render(); if (drawer.classList.contains('on')) renderDrawer();
+  toast(toSel ? "'" + c.label + "' 열을 선택 목록으로 바꿨습니다. 칸을 클릭하면 목록에서 고를 수 있습니다." : '선택 항목을 저장했습니다. (이미 입력된 값은 그대로 유지됩니다)', 3500);
 }
 let cmKey = '';
 function closeColMenu(){ const m = $('#colMenu'); if (m) m.classList.remove('on'); }
@@ -859,7 +887,7 @@ function openColMenu(key, x, y){
   const locked = c.calc || PROTECT.has(c.key), m = $('#colMenu');
   m.innerHTML = '<div class="cmh">' + esc(c.label) + ' 열</div>' +
     '<button data-cm="before">＋ 이 열 <b>앞</b>에 열 추가</button><button data-cm="after">＋ 이 열 <b>뒤</b>에 열 추가</button>' +
-    (c.type === 'select' ? '<button data-cm="opts">☰ 선택 항목 편집</button>' : '') + '<button data-cm="hide">👁 이 열 숨기기 <small>(데이터는 유지)</small></button>' +
+    (c.type === 'select' ? '<button data-cm="opts">☰ 선택 항목 편집</button>' : ((c.type === 'text' && !locked) ? '<button data-cm="opts">☰ 선택 목록으로 설정…</button>' : '')) + '<button data-cm="hide">👁 이 열 숨기기 <small>(데이터는 유지)</small></button>' +
     (locked ? '<button disabled title="다른 기능의 기준이 되는 항목이라 삭제할 수 없습니다">✕ 이 열 삭제 불가 <small>(기준 항목 · 숨기기만 가능)</small></button>' : '<button class="dng" data-cm="del">✕ 이 열 삭제</button>');
   m.classList.add('on');
   const w = m.offsetWidth, h = m.offsetHeight;
@@ -898,6 +926,37 @@ $('#colMenu').addEventListener('click', e => {
 document.addEventListener('pointerdown', e => { if (!e.target.closest('#colMenu') && !e.target.closest('.cm')) closeColMenu(); });
 gridEl.addEventListener('contextmenu', e => { const th = e.target.closest('th[data-key]'); if (!th) return; e.preventDefault(); openColMenu(th.dataset.key, e.clientX, e.clientY); });
 $('#grid').parentElement.addEventListener('scroll', closeColMenu);
+
+/* ───────── 셀 클릭 선택 (선택 목록 열) ───────── */
+let pkCtx = null;
+function closePick(){ const m = $('#pickMenu'); if (m) m.classList.remove('on'); pkCtx = null; }
+function openPick(td){
+  const tr = td.closest('tr'), key = td.dataset.ck, c = state.cols.find(k => k.key === key), row = state.rows.find(r => r.id === tr.dataset.id);
+  if (!c || !row) return;
+  if (pkCtx && pkCtx.id === row.id && pkCtx.key === key){ closePick(); return; }
+  pkCtx = { id: row.id, key: key };
+  const cur = row[key] || '', ops = (c.opts || []).slice(); if (cur && ops.indexOf(cur) < 0) ops.push(cur);
+  const m = $('#pickMenu');
+  m.innerHTML = '<div class="cmh">' + esc(c.label) + ' 선택</div><div class="pkl">' +
+    ops.map(o => '<button data-pv="' + esc(o) + '" class="' + (o === cur ? 'cur' : '') + '">' + (o === cur ? '✔ ' : '') + esc(o) + ((c.opts || []).indexOf(o) < 0 ? ' <small>(목록에 없음)</small>' : '') + '</button>').join('') +
+    '</div><button class="clr" data-pv="" ' + (cur ? '' : 'disabled') + '>⌫ 비우기</button><button class="edt" data-pe="1">✎ 선택 항목 편집…</button>';
+  m.classList.add('on');
+  const r = td.getBoundingClientRect(), w = m.offsetWidth, h = m.offsetHeight;
+  m.style.left = Math.max(4, Math.min(innerWidth - w - 6, r.left)) + 'px';
+  m.style.top = Math.max(4, (r.bottom + h + 8 > innerHeight) ? Math.max(4, r.top - h - 4) : r.bottom + 2) + 'px';
+}
+$('#pickMenu').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || b.disabled || !pkCtx) return;
+  const ctx = pkCtx;
+  if (b.dataset.pe){ closePick(); editOpts(ctx.key); return; }
+  const row = state.rows.find(r => r.id === ctx.id); if (!row) { closePick(); return; }
+  const v = b.dataset.pv;
+  if (v) row[ctx.key] = v; else delete row[ctx.key];
+  closePick(); save(); render();
+});
+document.addEventListener('pointerdown', e => { if (pkCtx && !e.target.closest('#pickMenu') && !e.target.closest('td.sel')) closePick(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && pkCtx) closePick(); });
+$('#grid').parentElement.addEventListener('scroll', closePick);
 
 /* ───────── 행 높이 조절 ───────── */
 let rgs = null;
@@ -1010,6 +1069,7 @@ document.addEventListener('keydown', e => {
 
 /* ───────── 고객 추가·수정 ───────── */
 function openForm(id, afterId){
+  closePick();
   const editing = id ? state.rows.find(r => r.id === id) : null;
   const rec = editing ? Object.assign({}, editing) : { '입수일': todayStr() };
   const fields = state.cols.filter(c => !c.calc);
