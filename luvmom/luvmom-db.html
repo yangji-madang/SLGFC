@@ -63,6 +63,18 @@ td.fr{position:sticky;z-index:4}
 td.fr.fc{z-index:6}
 .fc-last{border-right:2px solid #5b83bd !important}
 td.act,th.act{text-align:center;padding:0 4px;cursor:default}
+#fmtPanel{display:none;position:fixed;top:96px;left:14px;z-index:95;width:470px;max-width:calc(100% - 28px);background:#fff;border:1px solid #9fb2cc;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#fmtPanel.on{display:block}
+#fmtPanel .fh{cursor:move;display:flex;align-items:center;padding:8px 12px;background:#f1f5fb;border-radius:10px 10px 0 0;font-weight:800}
+#fmtPanel .fh .btn{margin-left:auto}
+#fmtPanel .fb{padding:10px 12px}
+#fmtPanel .fr1{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+#fmtPanel select{border:1px solid #aab7c8;border-radius:6px;padding:4px 6px;background:#fff}
+#fmtPanel input[type=color]{width:34px;height:28px;padding:1px;border:1px solid #aab7c8;border-radius:6px;background:#fff;cursor:pointer}
+#fmtPanel .fbtn{min-width:30px;padding:3px 8px;font-size:14px}
+#fmtPanel .fbtn.on{background:var(--pri);border-color:var(--pri);color:#fff}
+#fmtPanel .fal{display:inline-flex;gap:2px}
+
 td.act.no{padding:0 2px}
 td.act:not(.fc):not(.fr){position:relative}
 th.act.ed,td.act.ed{white-space:nowrap}
@@ -234,12 +246,14 @@ td.wc{white-space:pre-line;word-break:break-all;line-height:1.35;padding-top:5px
   <label>검색 <input type="search" id="q" placeholder="이름·전화·주소·메모 검색"></label>
   <label>조회일 <input type="date" id="asof"> <button class="btn sm" id="bToday">오늘</button></label>
   <button class="chip" id="syncChip" title="GitHub 동기화 설정">GitHub 미연결</button>
+  <button class="btn sm" id="bFmt" title="글꼴·크기·굵게·색·정렬">글꼴 서식</button>
   <div class="stat" id="stat"></div>
 </div>
 
 <main class="grid-wrap" id="wrap"><table id="grid"></table></main>
 
 <aside id="drawer"></aside>
+<div id="fmtPanel"></div>
 <div id="printArea"></div><style id="pgStyle"></style>
 <div id="modal-root"></div>
 <div id="toast"></div>
@@ -526,10 +540,10 @@ function viewRows(){
   }
   return list;
 }
-const ROW_LH = 18.2;
 const actW = () => state.set.noW + state.set.editW;
 const KEYCOLS = new Set(['고객명', '생년월일', '나이', '휴대폰', '주소', '관심항목']);
 function render(){
+  applyFmt();
   const grid = $('#grid'), S = state.set, vis = visCols();
   const fc = Math.min(S.freezeCols, vis.length), fr = S.freezeRows;
   const actSticky = fc > 0;
@@ -554,7 +568,7 @@ function render(){
   h += '</tr></thead><tbody>';
   rows.forEach((r, i) => {
     const frozen = i < fr - 1;
-    const cap = r._h || S.rowMax || 0, N = cap ? Math.max(1, Math.floor((cap - 10) / ROW_LH)) : 0;
+    const cap = r._h || S.rowMax || 0, N = cap ? Math.max(1, Math.floor((cap - 10) / rowLH())) : 0;
     h += '<tr data-id="' + r.id + '"' + (r._h ? ' style="height:' + r._h + 'px"' : '') + '>';
     h += '<td class="act no' + (frozen ? ' fr' : '') + (actSticky ? ' fc' : '') + '"' + (actSticky ? ' style="left:0"' : '') + '>' +
          '<span class="no" draggable="true" title="끌어서 행 위치 이동">' + (i + 1) + '</span><div class="rg" title="아래쪽 가장자리를 끌어 이 줄의 높이 조절 (더블클릭: 기본 높이)"></div></td>';
@@ -730,6 +744,74 @@ function autoFit(key){
 }
 gridEl.addEventListener('dblclick', e => { const h = e.target.closest('.rz'); if (h){ e.preventDefault(); autoFit(h.dataset.rz); } });
 
+/* ───────── 글꼴 서식 ───────── */
+const FONT_LIST = [
+  ['', '기본 글꼴'], ['맑은 고딕', "'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans KR',sans-serif"],
+  ['나눔고딕', "'NanumGothic','Nanum Gothic','나눔고딕','Apple SD Gothic Neo','Malgun Gothic',sans-serif"],
+  ['돋움', "Dotum,'돋움','Apple SD Gothic Neo','Malgun Gothic',sans-serif"], ['굴림', "Gulim,'굴림','Apple SD Gothic Neo','Malgun Gothic',sans-serif"],
+  ['바탕', "Batang,'바탕','AppleMyungjo','Noto Serif KR',serif"], ['궁서', "Gungsuh,'궁서','AppleMyungjo',serif"],
+  ['Arial', 'Arial,Helvetica,sans-serif'], ['Times New Roman', "'Times New Roman',Times,serif"], ['Courier New', "'Courier New',monospace"]
+];
+const FONT_SIZES = [9, 10, 11, 12, 13, 13.5, 14, 15, 16, 18, 20, 22, 24];
+function getFmt(){ const S = state.set; if (!S.fmt || typeof S.fmt !== 'object') S.fmt = {}; S.fmt.head = S.fmt.head || {}; S.fmt.cell = S.fmt.cell || {}; return S.fmt; }
+const rowLH = () => (getFmt().cell.size || 13.5) * 1.35;
+function fmtRule(sel, f, skipColor){
+  let s = '';
+  const fam = f.family && FONT_LIST.find(x => x[0] === f.family);
+  if (fam && fam[1]) s += 'font-family:' + fam[1] + ' !important;';
+  if (f.size) s += 'font-size:' + f.size + 'px !important;';
+  if (f.bold != null) s += 'font-weight:' + (f.bold ? 700 : 400) + ' !important;';
+  if (f.align) s += 'text-align:' + f.align + ' !important;';
+  return (s ? sel + '{' + s + '}' : '') + (f.color && !skipColor ? sel + '{color:' + f.color + ' !important}' : '');
+}
+function applyFmt(){
+  const F = getFmt(); let el = $('#fmtStyle');
+  if (!el){ el = document.createElement('style'); el.id = 'fmtStyle'; document.head.appendChild(el); }
+  el.textContent = fmtRule('#grid th:not(.act)', F.head) + fmtRule('#grid td:not(.act)', F.cell, true) +
+    (F.cell.color ? '#grid td:not(.act):not(.bad){color:' + F.cell.color + ' !important}' : '');
+}
+let fmtTarget = 'all';
+function renderFmt(){
+  const F = getFmt(), f = fmtTarget === 'head' ? F.head : F.cell;
+  const eb = fmtTarget === 'head' ? (f.bold != null ? f.bold : true) : !!f.bold;
+  $('#fmtPanel').innerHTML = '<div class="fh" title="제목줄을 끌어 위치를 옮길 수 있습니다">글꼴 서식<button class="btn sm" data-f="close">닫기</button></div><div class="fb">' +
+    '<div class="radios" style="margin:0 0 8px">' + [['all', '전체 적용'], ['head', '제목만 적용'], ['cell', '셀 내용 적용']].map(t => '<label><input type="radio" name="ft" value="' + t[0] + '"' + (fmtTarget === t[0] ? ' checked' : '') + '>' + t[1] + '</label>').join('') + '</div>' +
+    '<div class="fr1"><select id="fFam" title="글꼴">' + FONT_LIST.map(x => '<option value="' + esc(x[0]) + '"' + ((f.family || '') === x[0] ? ' selected' : '') + '>' + esc(x[1].length < 14 ? x[0] || x[1] : x[0]) + '</option>').join('') + '</select>' +
+    '<select id="fSize" title="크기"><option value="">기본</option>' + FONT_SIZES.map(z => '<option value="' + z + '"' + (f.size === z ? ' selected' : '') + '>' + z + '</option>').join('') + '</select>' +
+    '<button class="ib fbtn' + (eb ? ' on' : '') + '" data-f="bold" title="굵게" style="font-weight:800">B</button>' +
+    '<input type="color" id="fCol" value="' + (f.color || (fmtTarget === 'head' ? '#10203a' : '#1a2433')) + '" title="글자색">' +
+    '<span class="fal">' + [['left', '왼쪽', '☰'], ['center', '가운데', '≡'], ['right', '오른쪽', '☷']].map(a => '<button class="ib fbtn' + (f.align === a[0] ? ' on' : '') + '" data-f="al" data-v="' + a[0] + '" title="' + a[1] + ' 정렬">' + a[2] + '</button>').join('') + '</span>' +
+    '<button class="btn sm" data-f="reset" title="선택한 대상의 서식을 기본값으로">서식 초기화</button></div>' +
+    '<div class="note" style="margin-top:6px">바로 화면에 반영·저장됩니다. 글꼴은 사용 중인 기기에 설치된 글꼴만 적용됩니다. 상담결과·오류 칸의 배경/글자색 표시는 유지됩니다.</div></div>';
+}
+function setFmt(patch){
+  const F = getFmt(), tg = fmtTarget === 'all' ? ['head', 'cell'] : [fmtTarget];
+  tg.forEach(t => { Object.keys(patch).forEach(k => { if (patch[k] == null || patch[k] === '') delete F[t][k]; else F[t][k] = patch[k]; }); });
+  save(); render(); renderFmt();
+}
+$('#bFmt').onclick = () => { const p = $('#fmtPanel'); if (p.classList.toggle('on')) renderFmt(); };
+$('#fmtPanel').addEventListener('click', e => {
+  const b = e.target.closest('[data-f]'); if (!b) return; const a = b.dataset.f, f = (fmtTarget === 'head' ? getFmt().head : getFmt().cell);
+  if (a === 'close') $('#fmtPanel').classList.remove('on');
+  else if (a === 'bold'){ const cur = fmtTarget === 'head' ? (f.bold != null ? f.bold : true) : !!f.bold; setFmt({ bold: !cur }); }
+  else if (a === 'al') setFmt({ align: f.align === b.dataset.v ? '' : b.dataset.v });
+  else if (a === 'reset'){ const F = getFmt(); (fmtTarget === 'all' ? ['head', 'cell'] : [fmtTarget]).forEach(t => { F[t] = {}; }); save(); render(); renderFmt(); }
+});
+let fmtDrag = null;
+$('#fmtPanel').addEventListener('pointerdown', e => {
+  const h = e.target.closest('.fh'); if (!h || e.target.closest('button')) return;
+  const p = $('#fmtPanel'), r = p.getBoundingClientRect(); fmtDrag = { dx: e.clientX - r.left, dy: e.clientY - r.top }; h.setPointerCapture(e.pointerId); e.preventDefault();
+});
+document.addEventListener('pointermove', e => { if (!fmtDrag) return; const p = $('#fmtPanel'); p.style.left = Math.max(0, Math.min(innerWidth - 120, e.clientX - fmtDrag.dx)) + 'px'; p.style.top = Math.max(0, Math.min(innerHeight - 60, e.clientY - fmtDrag.dy)) + 'px'; });
+document.addEventListener('pointerup', () => { fmtDrag = null; });
+$('#fmtPanel').addEventListener('change', e => {
+  const t = e.target;
+  if (t.name === 'ft'){ fmtTarget = t.value; renderFmt(); }
+  else if (t.id === 'fFam') setFmt({ family: t.value });
+  else if (t.id === 'fSize') setFmt({ size: t.value ? +t.value : '' });
+  else if (t.id === 'fCol') setFmt({ color: t.value });
+});
+
 /* ───────── 행 높이 조절 ───────── */
 let rgs = null;
 gridEl.addEventListener('pointerdown', e => {
@@ -744,7 +826,7 @@ document.addEventListener('pointermove', e => {
   const dy = e.clientY - rgs.y0; if (Math.abs(dy) > 2) rgs.moved = true;
   rgs.h = Math.max(34, Math.min(1000, Math.round(rgs.h0 + dy)));
   rgs.tr.style.height = rgs.h + 'px';
-  const n = Math.max(1, Math.floor((rgs.h - 10) / ROW_LH));
+  const n = Math.max(1, Math.floor((rgs.h - 10) / rowLH()));
   rgs.tr.querySelectorAll('.ci').forEach(el => { el.style.webkitLineClamp = String(n); });
 });
 function endRowResize(){
