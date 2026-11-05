@@ -186,6 +186,28 @@
        "pin": false
       }
      ]
+    },
+    {
+     "title": "기타 등등",
+     "pin": false,
+     "links": [
+      {
+       "label": "FC MALL",
+       "url": "https://www.stmmall.co.kr/mall/",
+       "tags": [
+        "쇼핑"
+       ],
+       "pin": false
+      },
+      {
+       "label": "임직원MALL",
+       "url": "https://sslifefc.s-bluevery.com/",
+       "tags": [
+        "쇼핑"
+       ],
+       "pin": false
+      }
+     ]
     }
    ]
   },
