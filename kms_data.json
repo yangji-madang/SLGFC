@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-04",
+ "updated": "2026-11-05",
  "sections": [
   {
    "title": "SLI GFC",
@@ -312,7 +312,7 @@
         "분쟁조정",
         "민원"
        ],
-       "pin": false
+       "pin": true
       },
       {
        "label": "금융소비자정보포털 파인",
@@ -362,6 +362,17 @@
         "손보협회",
         "공시",
         "손해보험"
+       ],
+       "pin": false
+      },
+      {
+       "label": "파인(금융소비자포털)",
+       "url": "https://fine.fss.or.kr/fine/main/main.do?menuNo=900000",
+       "tags": [
+        "파인",
+        "보험",
+        "금융",
+        "상품"
        ],
        "pin": false
       }
