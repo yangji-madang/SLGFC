@@ -839,6 +839,18 @@ $('#fmtPanel').addEventListener('change', e => {
 });
 
 /* ───────── 열 추가·삭제 (표 제목 메뉴) ───────── */
+function parseOpts(t){
+  const seen = new Set(), out = [];
+  String(t || '').split(/[\n,，;]+/).forEach(x => { x = x.trim(); if (x && !seen.has(x) && out.length < 40){ seen.add(x); out.push(x); } });
+  return out;
+}
+async function editOpts(key){
+  const c = state.cols.find(k => k.key === key); if (!c || c.type !== 'select') return;
+  const v = await askText("'" + c.label + "' 선택 항목 편집", '선택 항목 (한 줄에 하나씩, 또는 쉼표로 구분)', (c.opts || []).join('\n'), true);
+  if (v === null) return;
+  const o = parseOpts(v); if (!o.length){ toast('선택 항목을 1개 이상 입력해 주세요.'); return; }
+  c.opts = o; save(); render(); toast('선택 항목을 저장했습니다. (이미 입력된 값은 그대로 유지됩니다)');
+}
 let cmKey = '';
 function closeColMenu(){ const m = $('#colMenu'); if (m) m.classList.remove('on'); }
 function openColMenu(key, x, y){
@@ -847,7 +859,7 @@ function openColMenu(key, x, y){
   const locked = c.calc || PROTECT.has(c.key), m = $('#colMenu');
   m.innerHTML = '<div class="cmh">' + esc(c.label) + ' 열</div>' +
     '<button data-cm="before">＋ 이 열 <b>앞</b>에 열 추가</button><button data-cm="after">＋ 이 열 <b>뒤</b>에 열 추가</button>' +
-    '<button data-cm="hide">👁 이 열 숨기기 <small>(데이터는 유지)</small></button>' +
+    (c.type === 'select' ? '<button data-cm="opts">☰ 선택 항목 편집</button>' : '') + '<button data-cm="hide">👁 이 열 숨기기 <small>(데이터는 유지)</small></button>' +
     (locked ? '<button disabled title="다른 기능의 기준이 되는 항목이라 삭제할 수 없습니다">✕ 이 열 삭제 불가 <small>(기준 항목 · 숨기기만 가능)</small></button>' : '<button class="dng" data-cm="del">✕ 이 열 삭제</button>');
   m.classList.add('on');
   const w = m.offsetWidth, h = m.offsetHeight;
@@ -857,15 +869,18 @@ function openColForm(key, where){
   const ref = state.cols.find(k => k.key === key); if (!ref) return;
   const ov = openModal('<h2>열 추가</h2><div class="bd form"><div class="f wide kv" style="margin:0">위치: <b>' + esc(ref.label) + '</b> 열 ' + (where === 'before' ? '앞' : '뒤') + '</div>' +
     '<div class="f"><label>새 항목명 *</label><input id="ncN" maxlength="20" autocomplete="off"></div>' +
-    '<div class="f"><label>입력 형식</label><select id="ncT" style="border:1px solid #aab7c8;border-radius:6px;padding:6px 8px"><option value="text">텍스트 (여러 줄 입력 가능)</option><option value="date">날짜</option><option value="datetime">날짜·시간</option></select></div>' +
+    '<div class="f"><label>입력 형식</label><select id="ncT" style="border:1px solid #aab7c8;border-radius:6px;padding:6px 8px"><option value="text">텍스트 (여러 줄 입력 가능)</option><option value="date">날짜</option><option value="datetime">날짜·시간</option><option value="select">선택 목록 (미리 입력한 항목 중 선택)</option></select></div>' +
+    '<div class="f wide" id="ncOw" style="display:none"><label>선택 항목 * (한 줄에 하나씩, 또는 쉼표로 구분)</label><textarea id="ncO" rows="5" placeholder="예)\n신규\n진행중\n완료"></textarea></div>' +
     '<div class="err" id="ncE"></div></div><div class="ft"><button class="btn" data-a="cancel">취소</button><button class="btn pri" data-a="ok">추가</button></div>', true);
   const inp = ov.querySelector('#ncN'); inp.focus();
+  ov.querySelector('#ncT').addEventListener('change', e => { ov.querySelector('#ncOw').style.display = e.target.value === 'select' ? '' : 'none'; });
   const go = () => {
     const name = inp.value.trim(), type = ov.querySelector('#ncT').value, er = m => { ov.querySelector('#ncE').textContent = m; };
     if (!name) return er('새 항목명을 입력해 주세요.');
     if (state.cols.some(c => sqz(c.label) === sqz(name))) return er('이미 있는 항목명입니다.');
-    const nc = { key: (name === 'id' ? 'id_' : name), label: name, type: type, w: type === 'date' ? 100 : (type === 'datetime' ? 172 : 200), visible: true };
+    const nc = { key: (name === 'id' ? 'id_' : name), label: name, type: type, w: type === 'date' ? 100 : (type === 'datetime' ? 172 : (type === 'select' ? 120 : 200)), visible: true };
     if (type === 'text'){ nc.area = true; nc.wrap = true; }
+    if (type === 'select'){ nc.opts = parseOpts(ov.querySelector('#ncO').value); if (!nc.opts.length) return er('선택 항목을 1개 이상 입력해 주세요.'); }
     const i = state.cols.findIndex(c => c.key === key);
     state.cols.splice(where === 'before' ? i : i + 1, 0, nc);
     save(); render(); if (drawer.classList.contains('on')) renderDrawer(); closeModal(); toast("'" + name + "' 열을 추가했습니다.");
@@ -878,6 +893,7 @@ $('#colMenu').addEventListener('click', e => {
   if (a === 'before' || a === 'after') openColForm(key, a);
   else if (a === 'hide'){ const c = state.cols.find(k => k.key === key); if (c){ c.visible = false; save(); render(); if (drawer.classList.contains('on')) renderDrawer(); toast("'" + c.label + "' 열을 숨겼습니다. (설정에서 다시 표시)"); } }
   else if (a === 'del') delCol(key);
+  else if (a === 'opts') editOpts(key);
 });
 document.addEventListener('pointerdown', e => { if (!e.target.closest('#colMenu') && !e.target.closest('.cm')) closeColMenu(); });
 gridEl.addEventListener('contextmenu', e => { const th = e.target.closest('th[data-key]'); if (!th) return; e.preventDefault(); openColMenu(th.dataset.key, e.clientX, e.clientY); });
@@ -1344,7 +1360,7 @@ function renderDrawer(){
     '<h3>1. 항목 순서 · 표시 · 추가 · 삭제</h3><div class="note">≡ 끌어서 놓기 또는 ▲▼ 버튼으로 순서를 바꿉니다. 표의 제목 칸을 직접 끌어도 됩니다. 제목 칸 오른쪽 가장자리를 끌면 열 너비를 조정할 수 있습니다. 체크 해제 시 화면·엑셀에서 숨김(데이터는 유지)됩니다.</div>' +
     '<ul class="clist" id="clist">' + list + '</ul>' +
     '<div class="note" style="margin-top:8px"><b>항목 추가</b> — 추가한 항목은 고객 입력 칸과 엑셀에도 함께 반영됩니다.</div>' +
-    '<div class="addcol"><input id="ncName" maxlength="20" placeholder="새 항목명"><select id="ncType"><option value="text">텍스트</option><option value="date">날짜</option><option value="datetime">날짜·시간</option></select>' +
+    '<div class="addcol"><input id="ncName" maxlength="20" placeholder="새 항목명"><select id="ncType"><option value="text">텍스트</option><option value="date">날짜</option><option value="datetime">날짜·시간</option><option value="select">선택 목록</option></select>' +
     '<select id="ncPos">' + posOpt + '</select><button class="btn sm pri" data-d="addcol">추가</button></div>' +
     '<div class="note">고객명·생년월일·주소·휴대폰과 자동 항목(나이·지역)은 다른 기능의 기준이라 삭제할 수 없고, 체크 해제로 숨기기만 가능합니다.</div>' +
     '<h3>2. 틀고정 위치</h3>' +
@@ -1367,12 +1383,16 @@ function renderDrawer(){
     '<div class="radios"><button class="btn sm" data-d="bk">JSON 백업 저장</button><button class="btn sm" data-d="rs">JSON 복원</button>' +
     '<button class="btn sm" data-d="rw">열 너비 기본값으로</button><button class="btn sm" data-d="reset">항목·틀고정 기본값으로</button></div></div>';
 }
-function addCol(){
+async function addCol(){
   const name = $('#ncName').value.trim(), type = $('#ncType').value, pos = $('#ncPos').value;
   if (!name){ toast('새 항목명을 입력해 주세요.'); return; }
   if (state.cols.some(c => sqz(c.label) === sqz(name))){ toast('이미 있는 항목명입니다.'); return; }
-  const nc = { key: (name === 'id' ? 'id_' : name), label: name, type: type, w: type === 'date' ? 100 : (type === 'datetime' ? 150 : 200), visible: true };
+  const nc = { key: (name === 'id' ? 'id_' : name), label: name, type: type, w: type === 'date' ? 100 : (type === 'datetime' ? 172 : (type === 'select' ? 120 : 200)), visible: true };
   if (type === 'text'){ nc.area = true; nc.wrap = true; }
+  if (type === 'select'){
+    const v = await askText("'" + name + "' 선택 항목 입력", '선택 항목 (한 줄에 하나씩, 또는 쉼표로 구분)', '', true); if (v === null) return;
+    nc.opts = parseOpts(v); if (!nc.opts.length){ toast('선택 항목을 1개 이상 입력해 주세요.'); return; }
+  }
   const at = pos ? state.cols.findIndex(c => c.key === pos) + 1 : 0;
   state.cols.splice(at, 0, nc); save(); render(); renderDrawer(); toast("'" + name + "' 항목을 추가했습니다.");
 }
