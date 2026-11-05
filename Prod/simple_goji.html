@@ -534,5 +534,141 @@ footer p { margin: 0; font-size: 10.5px; color: var(--ink-soft); text-align: rig
   renderAll();
 })();
 </script>
+<script id="popup-drag">
+/* popup-drag: 팝업(모달·dialog·플로팅 패널) 헤더 영역을 끌어 이동 (마우스·터치 공통) */
+(function () {
+  if (window.__popupDrag) return;
+  window.__popupDrag = 1;
+  var INTER = 'input,textarea,select,button,a,label,option,summary,[contenteditable],[role=button]';
+  var SKIP = /toast|copy|drawer|menu|tooltip|banner|navbar|fmtpanel|pd-skip/i;
+  var NAME = /pop|modal|dlg|dialog|panel|sheet|layer/i;
+  var moved = [], drag = null, lastDrag = 0, lastMove = 0;
+
+  var st = document.createElement('style');
+  st.textContent =
+    'html.pd-can *:not(input):not(textarea):not(select):not(button):not(a):not(label){cursor:move!important}' +
+    'html.pd-drag,html.pd-drag *{cursor:move!important;user-select:none!important;-webkit-user-select:none!important}';
+  (document.head || document.documentElement).appendChild(st);
+
+  function alpha(c) {
+    var m = /rgba?\(([^)]+)\)/.exec(c || '');
+    if (!m) return 0;
+    var p = m[1].split(',');
+    return p.length > 3 ? parseFloat(p[3]) : 1;
+  }
+  function nm(el) { return (el.id || '') + ' ' + (el.getAttribute('class') || ''); }
+
+  function findPanel(t) {
+    if (!t || !t.closest) return null;
+    var d = t.closest('dialog');
+    if (d) return d.open && !SKIP.test(nm(d)) ? d : null;
+    var prev = null, el = t, vw = innerWidth, vh = innerHeight;
+    while (el && el !== document.body && el !== document.documentElement) {
+      var cs = getComputedStyle(el);
+      if (cs.position === 'fixed') {
+        var r = el.getBoundingClientRect();
+        if (r.width >= vw * 0.9 && r.height >= vh * 0.9) {
+          if (!prev || SKIP.test(nm(el))) return null;
+          var ok = NAME.test(nm(el)) || el.getAttribute('role') === 'dialog' ||
+            el.getAttribute('aria-modal') === 'true' ||
+            (alpha(cs.backgroundColor) > 0 && alpha(cs.backgroundColor) < 1);
+          if (!ok) return null;
+          var pr = prev.getBoundingClientRect();
+          if (pr.width >= r.width * 0.98 && pr.height >= r.height * 0.98) return null;
+          return prev;
+        }
+        return NAME.test(nm(el)) && !SKIP.test(nm(el)) ? el : null;
+      }
+      prev = el;
+      el = el.parentElement;
+    }
+    return null;
+  }
+
+  function isHandle(p, cx, cy, t) {
+    if (t.closest(INTER)) return false;
+    var r = p.getBoundingClientRect(), y = cy - r.top;
+    if (cx < r.left || cx > r.right || y < 0 || y > r.height) return false;
+    if (y <= 64) return true;
+    return y <= 120 && !!t.closest('h1,h2,h3,h4,h5,header');
+  }
+
+  function tr(p) {
+    var m = /(-?[\d.]+)px\s+(-?[\d.]+)px/.exec(p.style.translate || '');
+    return m ? [parseFloat(m[1]), parseFloat(m[2])] : [0, 0];
+  }
+
+  function start(cx, cy, t) {
+    var p = findPanel(t);
+    if (!p || !isHandle(p, cx, cy, t)) return null;
+    var o = tr(p);
+    return { p: p, sx: cx, sy: cy, ox: o[0], oy: o[1], r: p.getBoundingClientRect(), moved: false };
+  }
+
+  function move(cx, cy) {
+    var d = drag, dx = cx - d.sx, dy = cy - d.sy;
+    if (!d.moved && Math.abs(dx) + Math.abs(dy) < 4) return;
+    if (!d.moved) {
+      d.moved = true;
+      document.documentElement.classList.add('pd-drag');
+      if (moved.indexOf(d.p) < 0) moved.push(d.p);
+    }
+    dx = Math.max(40 - d.r.right, Math.min(innerWidth - 40 - d.r.left, dx));
+    dy = Math.max(-d.r.top, Math.min(innerHeight - 40 - d.r.top, dy));
+    d.p.style.translate = (d.ox + dx) + 'px ' + (d.oy + dy) + 'px';
+  }
+
+  function end() {
+    if (!drag) return;
+    if (drag.moved) lastDrag = Date.now();
+    drag = null;
+    document.documentElement.classList.remove('pd-drag');
+  }
+
+  window.addEventListener('mousedown', function (e) {
+    if (e.button !== 0) return;
+    var d = start(e.clientX, e.clientY, e.target);
+    if (d) { drag = d; e.preventDefault(); }
+  }, true);
+  window.addEventListener('mousemove', function (e) {
+    if (drag) { move(e.clientX, e.clientY); return; }
+    var n = Date.now();
+    if (n - lastMove < 80) return;
+    lastMove = n;
+    var p = findPanel(e.target);
+    document.documentElement.classList.toggle('pd-can', !!(p && isHandle(p, e.clientX, e.clientY, e.target)));
+  }, true);
+  window.addEventListener('mouseup', end, true);
+  window.addEventListener('click', function (e) {
+    if (lastDrag && Date.now() - lastDrag < 350) { lastDrag = 0; e.stopPropagation(); e.preventDefault(); }
+  }, true);
+
+  window.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 1) return;
+    var t = e.touches[0], d = start(t.clientX, t.clientY, e.target);
+    if (d) { drag = d; e.preventDefault(); }
+  }, { capture: true, passive: false });
+  window.addEventListener('touchmove', function (e) {
+    if (!drag) return;
+    e.preventDefault();
+    move(e.touches[0].clientX, e.touches[0].clientY);
+  }, { capture: true, passive: false });
+  window.addEventListener('touchend', end, true);
+  window.addEventListener('touchcancel', end, true);
+
+  /* 팝업이 닫히면 위치 초기화 */
+  new MutationObserver(function () {
+    if (!moved.length) return;
+    moved = moved.filter(function (p) {
+      if (p.getClientRects().length) return true;
+      p.style.translate = '';
+      return false;
+    });
+  }).observe(document.documentElement, {
+    attributes: true, subtree: true, childList: true,
+    attributeFilter: ['class', 'style', 'open', 'hidden']
+  });
+})();
+</script>
 </body>
 </html>
