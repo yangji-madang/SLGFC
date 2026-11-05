@@ -364,17 +364,6 @@
         "손해보험"
        ],
        "pin": false
-      },
-      {
-       "label": "파인(금융소비자포털)",
-       "url": "https://fine.fss.or.kr/fine/main/main.do?menuNo=900000",
-       "tags": [
-        "파인",
-        "보험",
-        "금융",
-        "상품"
-       ],
-       "pin": false
       }
      ]
     },
