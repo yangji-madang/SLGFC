@@ -63,6 +63,18 @@ td.fr{position:sticky;z-index:4}
 td.fr.fc{z-index:6}
 .fc-last{border-right:2px solid #5b83bd !important}
 td.act,th.act{text-align:center;padding:0 4px;cursor:default}
+.cm{margin-left:5px;font-size:10px;color:#3d5272;cursor:pointer;padding:1px 4px;border-radius:4px;background:rgba(255,255,255,.55)}
+.cm:hover{background:rgba(29,98,196,.3)}
+#colMenu{display:none;position:fixed;z-index:120;background:#fff;border:1px solid #9fb2cc;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.3);min-width:230px;padding:4px}
+#colMenu.on{display:block}
+#colMenu .cmh{padding:5px 10px;font-weight:800;color:var(--sub);border-bottom:1px solid var(--line);margin-bottom:3px}
+#colMenu button{display:block;width:100%;text-align:left;border:0;background:#fff;padding:7px 10px;border-radius:5px;cursor:pointer;font:inherit}
+#colMenu button:hover:not(:disabled){background:#e8f0fb}
+#colMenu button.dng{color:var(--warn)}
+#colMenu button.dng:hover{background:var(--warnbg)}
+#colMenu button:disabled{color:#94a3b8;cursor:not-allowed}
+#colMenu small{color:var(--sub)}
+
 #fmtPanel{display:none;position:fixed;top:96px;left:14px;z-index:95;width:470px;max-width:calc(100% - 28px);background:#fff;border:1px solid #9fb2cc;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
 #fmtPanel.on{display:block}
 #fmtPanel .fh{cursor:move;display:flex;align-items:center;padding:8px 12px;background:#f1f5fb;border-radius:10px 10px 0 0;font-weight:800}
@@ -254,6 +266,7 @@ td.wc{white-space:pre-line;word-break:break-all;line-height:1.35;padding-top:5px
 
 <aside id="drawer"></aside>
 <div id="fmtPanel"></div>
+<div id="colMenu"></div>
 <div id="printArea"></div><style id="pgStyle"></style>
 <div id="modal-root"></div>
 <div id="toast"></div>
@@ -397,10 +410,10 @@ const DEFAULT_COLS = [
   {key:'진료병원',type:'text',w:140,area:true,wrap:true},
   {key:'가입경로',type:'text',w:96,area:true,wrap:true},
   {key:'관심항목',type:'text',w:280,area:true,wrap:true},
-  {key:'상담 희망 시간',type:'datetime',w:150},
+  {key:'상담 희망 시간',type:'datetime',w:172},
   {key:'상담결과',type:'select',w:110,wrap:true,opts:RESULT_OPTS},
   {key:'상담 내용',type:'text',w:260,area:true,wrap:true},
-  {key:'상담일시',type:'datetime',w:150}
+  {key:'상담일시',type:'datetime',w:172}
 ].map(c => Object.assign({label:c.key, visible:true}, c));
 const PROTECT = new Set(['고객명', '생년월일', '주소', '휴대폰']);
 const DEFAULT_KEYS = new Set(DEFAULT_COLS.map(c => c.key));
@@ -408,7 +421,7 @@ const DEFAULT_SET = { freezeCols:6, freezeRows:1, suffix:false, ageMode:'man', w
 const LS_KEY = 'luvmam.db.v1';
 
 const state = {
-  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 7,
+  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 8,
   ex: { types: [], items: [], leaflets: [] },
   q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: '', dragRow: ''
 };
@@ -467,6 +480,10 @@ function migrate(){
     state.cols.forEach(c => { if (c.type === 'select' && c.label.replace(/\s/g, '') === '상담결과'){ c.opts = c.opts || []; if (c.opts.indexOf('고객교체') < 0) c.opts.push('고객교체'); } });
     state.sv = 7; b = true;
   }
+  if (state.sv < 8){
+    state.cols.forEach(c => { if (c.type === 'datetime' && (c.w || 0) < 172) c.w = 172; });
+    state.sv = 8; b = true;
+  }
   return a || b;
 }
 function migrate2(){
@@ -491,6 +508,13 @@ function cellVal(r, c){
   if (c.type === 'age') return calcAge(r['생년월일'], state.asOf, state.set.ageMode);
   if (c.type === 'region') return regionOf(r['주소'], state.set.suffix).text;
   const v = r[c.key]; return v == null ? '' : v;
+}
+const DOW = ['일', '월', '화', '수', '목', '금', '토'];
+function dispVal(c, v){
+  if (c.type !== 'datetime' || !v) return v;
+  const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})(.*)$/); if (!m) return v;
+  const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])); if (d.getUTCMonth() !== +m[2] - 1) return v;
+  return m[1] + '-' + m[2] + '-' + m[3] + '(' + DOW[d.getUTCDay()] + ')' + m[4];
 }
 function isBad(r, c){
   const v = r[c.key];
@@ -562,7 +586,7 @@ function render(){
     const cls = [(fr >= 1 ? 'fh' : ''), (i < fc ? 'fc' : ''), (i === fc - 1 ? 'fc-last' : ''), (KEYCOLS.has(c.label.replace(/\s/g, '')) ? 'kh' : '')].filter(Boolean).join(' ');
     const arrow = state.sortKey === c.key ? '<span class="srt">' + (state.sortDir > 0 ? '▲' : '▼') + '</span>' : '';
     h += '<th draggable="true" data-key="' + esc(c.key) + '" class="' + cls + '"' + (i < fc ? ' style="left:' + left[i] + 'px"' : '') +
-         ' title="클릭: 정렬 / 끌어서 놓기: 항목 순서 변경 / 오른쪽 가장자리 끌기: 너비 조정 (더블클릭: 내용에 맞춤)">' + esc(c.label) + (c.calc ? '<i class="auto">자동</i>' : '') + arrow +
+         ' title="클릭: 정렬 / 끌어서 놓기: 항목 순서 변경 / 오른쪽 가장자리 끌기: 너비 조정 (더블클릭: 내용에 맞춤)">' + esc(c.label) + (c.calc ? '<i class="auto">자동</i>' : '') + arrow + '<span class="cm" data-cm="' + esc(c.key) + '" title="열 추가·삭제 메뉴 (마우스 오른쪽 클릭도 가능)">▾</span>' +
          '<span class="rz" data-rz="' + esc(c.key) + '"></span></th>';
   });
   h += '</tr></thead><tbody>';
@@ -578,7 +602,7 @@ function render(){
     vis.forEach((c, k) => {
       const v = cellVal(r, c);
       const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), (c.type === 'age' ? 'num' : ''), (c.wrap ? 'wc' : ''), (resTone(c, v) ? 'rs-' + resTone(c, v) : '')].filter(Boolean).join(' ');
-      h += '<td class="' + cls + '"' + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(v) + '">' + ((c.wrap || S.wrap) ? '<div class="ci"' + (N ? ' style="-webkit-line-clamp:' + N + '"' : '') + '>' + esc(v) + '</div>' : esc(v)) + '</td>';
+      h += '<td class="' + cls + '"' + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(dispVal(c, v)) + '">' + ((c.wrap || S.wrap) ? '<div class="ci"' + (N ? ' style="-webkit-line-clamp:' + N + '"' : '') + '>' + esc(dispVal(c, v)) + '</div>' : esc(dispVal(c, v))) + '</td>';
     });
     h += '</tr>';
   });
@@ -665,6 +689,8 @@ gridEl.addEventListener('drop', e => {
 gridEl.addEventListener('dragend', () => { state.dragKey = ''; state.dragRow = ''; clearDrop(); });
 gridEl.addEventListener('click', e => {
   if (e.target.closest('.rz') || state.justResized) return;
+  const cmb = e.target.closest('.cm');
+  if (cmb){ const r = cmb.getBoundingClientRect(); openColMenu(cmb.dataset.cm, r.left, r.bottom + 4); return; }
   const b = e.target.closest('button[data-act]');
   if (b){
     const id = b.closest('tr').dataset.id;
@@ -739,7 +765,7 @@ function autoFit(key){
   ctx.font = '700 ' + cs.fontSize + ' ' + cs.fontFamily;
   let m = ctx.measureText(c.label).width + (c.calc ? 44 : 14);
   ctx.font = cs.fontSize + ' ' + cs.fontFamily;
-  viewRows().slice(0, 1000).forEach(r => { const w = ctx.measureText(String(cellVal(r, c))).width; if (w > m) m = w; });
+  viewRows().slice(0, 1000).forEach(r => { const w = ctx.measureText(String(dispVal(c, cellVal(r, c)))).width; if (w > m) m = w; });
   c.w = Math.max(c.calc ? 80 : 50, Math.min(600, Math.ceil(m) + 22)); save(); render();
 }
 gridEl.addEventListener('dblclick', e => { const h = e.target.closest('.rz'); if (h){ e.preventDefault(); autoFit(h.dataset.rz); } });
@@ -811,6 +837,51 @@ $('#fmtPanel').addEventListener('change', e => {
   else if (t.id === 'fSize') setFmt({ size: t.value ? +t.value : '' });
   else if (t.id === 'fCol') setFmt({ color: t.value });
 });
+
+/* ───────── 열 추가·삭제 (표 제목 메뉴) ───────── */
+let cmKey = '';
+function closeColMenu(){ const m = $('#colMenu'); if (m) m.classList.remove('on'); }
+function openColMenu(key, x, y){
+  const c = state.cols.find(k => k.key === key); if (!c) return;
+  cmKey = key;
+  const locked = c.calc || PROTECT.has(c.key), m = $('#colMenu');
+  m.innerHTML = '<div class="cmh">' + esc(c.label) + ' 열</div>' +
+    '<button data-cm="before">＋ 이 열 <b>앞</b>에 열 추가</button><button data-cm="after">＋ 이 열 <b>뒤</b>에 열 추가</button>' +
+    '<button data-cm="hide">👁 이 열 숨기기 <small>(데이터는 유지)</small></button>' +
+    (locked ? '<button disabled title="다른 기능의 기준이 되는 항목이라 삭제할 수 없습니다">✕ 이 열 삭제 불가 <small>(기준 항목 · 숨기기만 가능)</small></button>' : '<button class="dng" data-cm="del">✕ 이 열 삭제</button>');
+  m.classList.add('on');
+  const w = m.offsetWidth, h = m.offsetHeight;
+  m.style.left = Math.max(4, Math.min(innerWidth - w - 6, x)) + 'px'; m.style.top = Math.max(4, Math.min(innerHeight - h - 6, y)) + 'px';
+}
+function openColForm(key, where){
+  const ref = state.cols.find(k => k.key === key); if (!ref) return;
+  const ov = openModal('<h2>열 추가</h2><div class="bd form"><div class="f wide kv" style="margin:0">위치: <b>' + esc(ref.label) + '</b> 열 ' + (where === 'before' ? '앞' : '뒤') + '</div>' +
+    '<div class="f"><label>새 항목명 *</label><input id="ncN" maxlength="20" autocomplete="off"></div>' +
+    '<div class="f"><label>입력 형식</label><select id="ncT" style="border:1px solid #aab7c8;border-radius:6px;padding:6px 8px"><option value="text">텍스트 (여러 줄 입력 가능)</option><option value="date">날짜</option><option value="datetime">날짜·시간</option></select></div>' +
+    '<div class="err" id="ncE"></div></div><div class="ft"><button class="btn" data-a="cancel">취소</button><button class="btn pri" data-a="ok">추가</button></div>', true);
+  const inp = ov.querySelector('#ncN'); inp.focus();
+  const go = () => {
+    const name = inp.value.trim(), type = ov.querySelector('#ncT').value, er = m => { ov.querySelector('#ncE').textContent = m; };
+    if (!name) return er('새 항목명을 입력해 주세요.');
+    if (state.cols.some(c => sqz(c.label) === sqz(name))) return er('이미 있는 항목명입니다.');
+    const nc = { key: (name === 'id' ? 'id_' : name), label: name, type: type, w: type === 'date' ? 100 : (type === 'datetime' ? 172 : 200), visible: true };
+    if (type === 'text'){ nc.area = true; nc.wrap = true; }
+    const i = state.cols.findIndex(c => c.key === key);
+    state.cols.splice(where === 'before' ? i : i + 1, 0, nc);
+    save(); render(); if (drawer.classList.contains('on')) renderDrawer(); closeModal(); toast("'" + name + "' 열을 추가했습니다.");
+  };
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); go(); } });
+  ov.addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (!b) return; if (b.dataset.a === 'cancel') closeModal(); else go(); });
+}
+$('#colMenu').addEventListener('click', e => {
+  const b = e.target.closest('button[data-cm]'); if (!b) return; const a = b.dataset.cm, key = cmKey; closeColMenu();
+  if (a === 'before' || a === 'after') openColForm(key, a);
+  else if (a === 'hide'){ const c = state.cols.find(k => k.key === key); if (c){ c.visible = false; save(); render(); if (drawer.classList.contains('on')) renderDrawer(); toast("'" + c.label + "' 열을 숨겼습니다. (설정에서 다시 표시)"); } }
+  else if (a === 'del') delCol(key);
+});
+document.addEventListener('pointerdown', e => { if (!e.target.closest('#colMenu') && !e.target.closest('.cm')) closeColMenu(); });
+gridEl.addEventListener('contextmenu', e => { const th = e.target.closest('th[data-key]'); if (!th) return; e.preventDefault(); openColMenu(th.dataset.key, e.clientX, e.clientY); });
+$('#grid').parentElement.addEventListener('scroll', closeColMenu);
 
 /* ───────── 행 높이 조절 ───────── */
 let rgs = null;
@@ -887,7 +958,7 @@ function doPrint(cols, land, withNo){
   rows.forEach((r, i) => {
     h += '<tr>' + (withNo ? '<td class="c">' + (i + 1) + '</td>' : '') + cols.map(c => {
       const v = cellVal(r, c), t = resTone(c, v);
-      return '<td class="' + [(c.type === 'age' ? 'c' : ''), (t ? 'rs-' + t : '')].filter(Boolean).join(' ') + '">' + esc(v) + '</td>';
+      return '<td class="' + [(c.type === 'age' ? 'c' : ''), (t ? 'rs-' + t : '')].filter(Boolean).join(' ') + '">' + esc(dispVal(c, v)) + '</td>';
     }).join('') + '</tr>';
   });
   h += '</tbody></table>';
@@ -1236,7 +1307,7 @@ async function exportXlsx(){
       cell.alignment = { vertical: 'middle', horizontal: (c.type === 'age' ? 'center' : 'left'), wrapText: !!(c.area || c.wrap) };
       { const tn = resTone(c, String(cellVal(r, c))); if (tn) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: tn === 'r' ? 'FFFFD5D5' : 'FFFFF6BF' } }; }
       if (c.type === 'date') cell.numFmt = 'yyyy-mm-dd';
-      if (c.type === 'datetime') cell.numFmt = / \d{2}:\d{2}$/.test(String(cellVal(r, c))) ? 'yyyy-mm-dd hh:mm' : 'yyyy-mm-dd';
+      if (c.type === 'datetime') cell.numFmt = / \d{2}:\d{2}$/.test(String(cellVal(r, c))) ? 'yyyy-mm-dd(ddd) hh:mm' : 'yyyy-mm-dd(ddd)';
       if (c.type === 'birth' || c.type === 'phone') cell.numFmt = '@';
     });
   });
@@ -1782,7 +1853,7 @@ function syncInit(){
 window.__luvmam = { regionOf, calcAge, parseYMD, state, render, moveRowBy, sync };
 
 load();
-if (state.sv < 7){ migrate(); save(); }
+if (state.sv < 8){ migrate(); save(); }
 $('#asof').value = state.asOf;
 render();
 syncInit();
