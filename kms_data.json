@@ -121,7 +121,7 @@
        "pin": true
       },
       {
-       "label": "세금 세물레이터",
+       "label": "세금 시물레이터",
        "url": "https://yangji-madang.github.io/SLGFC/consult/tax_simul.html",
        "tags": [
         "세금",
