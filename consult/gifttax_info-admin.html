@@ -132,7 +132,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
   <button type="button" data-adm id="bEdit" class="sec">글자 편집</button>
   <a id="lView" class="lk" data-adm target="_blank" rel="noopener">조회 페이지</a>
   <span id="gst" data-adm></span>
-  <button type="button" id="bCt" class="sec">담당자 정보 숨김</button>
+  <button type="button" data-adm id="bCt" class="sec">담당자 정보 숨김</button>
   <button type="button" data-adm id="bDl" class="sec">수정본 내려받기</button>
   <button type="button" data-adm id="bGh">GitHub에 반영</button>
   <button type="button" data-adm id="bTk" class="sec">토큰 삭제</button>
@@ -253,6 +253,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 (function(){
 var sheetEl=document.getElementById("sheet"),mainEl=document.getElementById("main"),ftEl=document.getElementById("ft");
 var FN=location.pathname.split("/").pop()||"gifttax_info-admin.html";
+if(!/\.html$/i.test(FN))FN+=".html";
 var KEY="info_edit_"+FN,ov={};
 try{ov=JSON.parse(document.getElementById("pov").textContent||"{}")}catch(e){}
 /*ADM{*/try{var sv=JSON.parse(localStorage.getItem(KEY)||"null");if(sv&&sv.ver===sheetEl.getAttribute("data-ver")){if(sv.main)mainEl.innerHTML=sv.main;if(sv.ft)ftEl.innerHTML=sv.ft;if(sv.ov)Object.keys(sv.ov).forEach(function(k){ov[k]=sv.ov[k]})}}catch(e){}/*}ADM*/
@@ -549,15 +550,17 @@ async function ghPush(tk){
     gst('반영 완료. 다른 기기는 1~2분 후 새로고침하면 보입니다.');
   }catch(e){
     if(e&&e.auth){try{localStorage.removeItem(TKEY)}catch(_){}gst('토큰이 올바르지 않거나 권한이 없습니다. 다시 눌러 새 토큰을 입력하세요.',true)}
-    else{gst((e&&e.msg)||'네트워크 오류로 반영하지 못했습니다.',true)}
+    else{gst((e&&e.msg)||('반영하지 못했습니다 ('+(e&&e.name?e.name+': ':'')+(e&&e.message?e.message:String(e))+'). 인터넷 연결과 토큰을 확인해 주세요.'),true)}
   }
 }
 document.getElementById('bGh').addEventListener('click',function(){
   if(editing){setEdit(false);saveLocal()}
   var tk=getTk();
+  if(tk&&/[^\x21-\x7e]/.test(tk)){try{localStorage.removeItem(TKEY)}catch(e){}tk='';gst('저장된 토큰에 사용할 수 없는 문자가 있어 삭제했습니다. 다시 입력해 주세요.',true)}
   if(!tk){
     tk=(prompt('GitHub 토큰을 입력하세요.\n(fine-grained 토큰, SLGFC 저장소 Contents 읽기·쓰기 권한. 이 브라우저에만 저장됩니다.)')||'').trim();
     if(!tk)return;
+    if(/[^\x21-\x7e]/.test(tk)){gst('토큰에 공백·한글 등 사용할 수 없는 문자가 있습니다. 영문·숫자만 복사해 붙여넣어 주세요.',true);return}
     try{localStorage.setItem(TKEY,tk)}catch(e){}
   }
   ghPush(tk);
@@ -567,11 +570,13 @@ document.getElementById('bTk').addEventListener('click',function(){
   if(confirm('이 브라우저에 저장된 GitHub 토큰을 삭제합니다.')){try{localStorage.removeItem(TKEY)}catch(e){}gst('토큰을 삭제했습니다.')}
 });
 /*}ADM*/
+/*ADM{*/
 /* 담당자 정보 표시/숨김 (조회·인쇄 공통, 이 브라우저에 기억) */
 var CKEY='info_hide_contact',bCt=document.getElementById('bCt');
 function setCt(h){document.body.classList.toggle('hidec',h);bCt.textContent=h?'담당자 정보 표시':'담당자 정보 숨김';try{localStorage.setItem(CKEY,h?'1':'0')}catch(e){}}
 try{if(localStorage.getItem(CKEY)==='1'){document.body.classList.add('hidec');bCt.textContent='담당자 정보 표시'}}catch(e){}
 bCt.addEventListener('click',function(){setCt(!document.body.classList.contains('hidec'))});
+/*}ADM*/
 /* 화면 맞춤 및 인쇄 */
 function fitView(){
   sheetEl.style.zoom='';

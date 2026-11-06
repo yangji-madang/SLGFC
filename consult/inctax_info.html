@@ -131,7 +131,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
   
   
   
-  <button type="button" id="bCt" class="sec">담당자 정보 숨김</button>
+  
   
   
   
@@ -140,7 +140,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 </div>
 
 
-<main class="sheet" id="sheet" data-ver="1793927355786">
+<main class="sheet" id="sheet" data-ver="1793929206738">
 <div class="main" id="main">
 
 <header class="ttl">
@@ -255,6 +255,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 (function(){
 var sheetEl=document.getElementById("sheet"),mainEl=document.getElementById("main"),ftEl=document.getElementById("ft");
 var FN=location.pathname.split("/").pop()||"inctax_info-admin.html";
+if(!/\.html$/i.test(FN))FN+=".html";
 var KEY="info_edit_"+FN,ov={};
 try{ov=JSON.parse(document.getElementById("pov").textContent||"{}")}catch(e){}
 
@@ -411,11 +412,7 @@ function boot(){linkFt();sentenceBreak();fitContent();}
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(boot)}else{boot()}
 
 
-/* 담당자 정보 표시/숨김 (조회·인쇄 공통, 이 브라우저에 기억) */
-var CKEY='info_hide_contact',bCt=document.getElementById('bCt');
-function setCt(h){document.body.classList.toggle('hidec',h);bCt.textContent=h?'담당자 정보 표시':'담당자 정보 숨김';try{localStorage.setItem(CKEY,h?'1':'0')}catch(e){}}
-try{if(localStorage.getItem(CKEY)==='1'){document.body.classList.add('hidec');bCt.textContent='담당자 정보 표시'}}catch(e){}
-bCt.addEventListener('click',function(){setCt(!document.body.classList.contains('hidec'))});
+
 /* 화면 맞춤 및 인쇄 */
 function fitView(){
   sheetEl.style.zoom='';
