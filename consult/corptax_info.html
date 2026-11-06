@@ -11,7 +11,7 @@ html{background:#e9edf3}
 body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans CJK KR','Noto Sans KR',sans-serif;color:var(--ink);font-size:8.6pt;line-height:1.36;word-break:keep-all;overflow-wrap:normal;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .bar{position:fixed;top:8px;right:12px;z-index:5}
 .bar button{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
-.sheet{width:210mm;height:296.5mm;margin:10px auto;background:#fff;padding:6mm 6.5mm 7mm;display:flex;flex-direction:column;gap:2.4mm;box-shadow:0 2px 14px rgba(20,40,80,.18);overflow:hidden;position:relative}
+.sheet{width:210mm;height:296.5mm;margin:10px auto;background:#fff;padding:5.5mm 6.5mm 6.5mm;display:flex;flex-direction:column;gap:2.1mm;box-shadow:0 2px 14px rgba(20,40,80,.18);overflow:hidden;position:relative}
 /* 제목 */
 .ttl{display:flex;align-items:center;gap:3mm;border-radius:2.2mm;padding:1.8mm 4mm;color:#fff;border-bottom:.8mm solid #f2b84b;
 background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent 60%),linear-gradient(110deg,#1f6fb8 0%,#2f8fd0 45%,#37b3c9 100%)}
@@ -84,21 +84,20 @@ background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent
 .cd p{font-size:7.3pt;color:var(--ink);line-height:1.32;margin-top:.5mm}
 .cd p u{text-decoration:none;color:var(--red);font-weight:700}
 /* 오해 */
-.myth{display:flex;flex-direction:column;gap:1mm;flex:1}
+.myth{display:flex;flex-direction:column;gap:.8mm;flex:1;min-height:0}
 .mt{flex:1;min-height:0;position:relative;display:grid;grid-template-columns:.95fr 3.4mm 1.5fr;align-items:stretch;border:1px solid var(--line);border-radius:1.5mm;overflow:hidden;cursor:pointer}
-.mt .o{background:var(--redl);padding:.9mm 2mm;color:#6d2a25}
+.mt .o{background:var(--redl);padding:.4mm 2mm;color:#6d2a25}
 .mt .o:before{content:"✕ 오해";margin-right:1.2mm;white-space:nowrap;font-weight:700;color:var(--red);font-size:6.8pt}
 .mt .ar{background:linear-gradient(90deg,var(--redl),var(--grnl));display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:7pt}
-.mt .s{background:var(--grnl);padding:.9mm 2mm;color:#1f4d3a}
+.mt .s{background:var(--grnl);padding:.4mm 2mm;color:#1f4d3a}
 .mt .s:before{content:"○ 사실";margin-right:1.2mm;white-space:nowrap;font-weight:700;color:var(--grn);font-size:6.8pt}
 .mt .o,.mt .s{font-size:7.6pt;line-height:1.32;display:flex;align-items:center}
 /* 바닥 */
 .grow{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
-.ft{border-top:1.4px solid var(--gold);padding-top:1mm;flex-shrink:0}
-.ft .law{font-size:6.5pt;color:var(--mut);line-height:1.35}
-.ft .row{display:flex;justify-content:space-between;align-items:center;margin-top:.8mm;font-size:7.4pt}
-.ft .row .l{color:var(--navy);font-weight:700}
-.ft .row .r{color:var(--navy);font-weight:700;letter-spacing:.01em}
+.ft{margin-top:2.6mm;border-top:1.4px solid var(--gold);background:var(--soft);border-radius:0 0 1.5mm 1.5mm;padding:1.3mm 2.5mm 1.4mm;flex-shrink:0}
+.ft .law{font-size:5.9pt;color:var(--mut);line-height:1.35}
+.ft .row{display:flex;justify-content:space-between;align-items:center;margin-top:.8mm;font-size:6.6pt}
+.ft .row .l,.ft .row .r{color:var(--navy);font-weight:700}
 /* 팝업 */
 .pop{position:fixed;z-index:20;width:min(390px,92vw);background:#fff;border-radius:8px;box-shadow:0 8px 30px rgba(10,25,55,.35);border:1px solid #c8d2e3;font-size:13px;line-height:1.6}
 .pop[hidden]{display:none}
@@ -184,7 +183,7 @@ background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent
 </section>
 
 <section>
-  <div class="sh"><span class="n">5</span>대표·경리 담당자가 꼭 주의할 점<span class="hint">각 칸을 누르면 사례와 대응 방법이 열립니다</span></div>
+  <div class="sh"><span class="n">5</span>대표·경리 담당자가 꼭 주의할 점 · 분납과 연부연납<span class="hint">각 칸을 누르면 사례와 대응 방법이 열립니다</span></div>
   <div class="grid3">
     <div class="cd" data-p="c1" tabindex="0"><span class="tg">증빙</span><b>3만 원 넘는 지출은 적격증빙</b><p>세금계산서·카드·현금영수증이 없으면 <u>증빙불비 가산세 2%</u>가 붙을 수 있습니다.</p></div>
     <div class="cd" data-p="c2" tabindex="0"><span class="tg">가지급금</span><b>대표가 가져간 돈이 '빌린 돈'이면</b><p>받지 않은 이자도 <u>인정이자(연 4.6%)</u>로 과세하고, 방치하면 대표 상여로 보아 소득세까지 부과합니다.</p></div>
@@ -192,6 +191,9 @@ background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent
     <div class="cd" data-p="c4" tabindex="0"><span class="tg">승용차</span><b>업무용 승용차는 전부 비용 처리 불가</b><p>운행기록부가 없으면 차량당 연 <u>1,500만 원</u>까지만 인정. 감가상각비 연 800만 원 한도, 전용보험 필수.</p></div>
     <div class="cd" data-p="c5" tabindex="0"><span class="tg">임원</span><b>임원 퇴직금은 정관이 좌우합니다</b><p>정관 규정이 없으면 <u>직전 1년 총급여×10%×근속연수</u>까지만 비용 인정, 초과분은 상여 처리.</p></div>
     <div class="cd" data-p="c6" tabindex="0"><span class="tg">기한</span><b>신고·납부 기한을 놓치면</b><p>무신고 <u>20%</u>, 과소신고 <u>10%</u>, 납부지연 <u>하루 0.022%</u>(연 약 8%). 부정행위는 40%입니다.</p></div>
+    <div class="cd" data-p="c7" tabindex="0"><span class="tg">분납</span><b>세금이 크면 나눠 낼 수 있습니다</b><p>납부세액 <u>1,000만 원</u> 초과 시 기한 후 <u>1개월(중소기업 2개월)</u> 이내 분납합니다. 이자는 없습니다.</p></div>
+    <div class="cd" data-p="c8" tabindex="0"><span class="tg">연부연납</span><b>법인세에는 연부연납이 없습니다</b><p>연부연납은 <u>상속세·증여세</u> 제도입니다(2,000만 원 초과, 담보). 법인세는 분납·납기연장으로 대응합니다.</p></div>
+    <div class="cd" data-p="c9" tabindex="0"><span class="tg">납기연장</span><b>낼 돈이 없다면 미리 신청하세요</b><p>재해·사업상 큰 손실 때 <u>납부기한 연장·징수유예</u>를 신청하면 미룰 수 있습니다. 기한 전 신청 필수.</p></div>
   </div>
 </section>
 
@@ -246,6 +248,9 @@ c3:{t:'기업업무추진비(구 접대비) 한도',b:'<p><em>한도</em>기본�
 c4:{t:'업무용승용차 : 비용 처리 한도',b:'<p><em>핵심</em>업무용승용차 관련비용(감가상각비, 유류비, 보험료, 수선비 등)은 운행기록부를 작성하지 않으면 차량당 연 1,500만 원까지만 비용으로 인정됩니다. 운행기록부를 작성하면 업무사용 비율만큼 인정됩니다.</p><p><em>감가상각비</em>차량당 연 800만 원이 상한이며, 초과분은 이월해 공제합니다.</p><p><em>보험</em>법인은 모든 업무용승용차에 업무전용자동차보험에 가입해야 하며 미가입 시 관련비용이 전액 불인정됩니다.</p>',l:'법인세법 제27조의2'},
 c5:{t:'임원 퇴직금과 정관',b:'<p><em>쉬운 설명</em>임원 퇴직금은 정관(또는 정관이 위임한 퇴직급여지급규정)에 정한 금액까지 비용으로 인정됩니다.</p><p><em>규정이 없다면</em>퇴직 직전 1년간 총급여 × 10% × 근속연수까지만 인정되고, 초과분은 비용 불인정 및 임원 상여로 처분되어 추가 과세될 수 있습니다.</p><p><em>별도 한도</em>퇴직금을 받는 임원 개인 측에도 소득세법상 퇴직소득 한도(2020년 이후 근속분 2배수)가 있어, 초과분은 근로소득으로 과세됩니다.</p><p><em>대응</em>정관과 임원퇴직금지급규정을 미리 정비하세요.</p>',l:'법인세법 시행령 제44조, 소득세법 제22조'},
 c6:{t:'가산세 : 기한을 놓친 대가',b:'<p><em>무신고</em>납부할 세액의 20%(부정행위 40%)</p><p><em>과소신고</em>부족하게 신고한 세액의 10%(부정행위 40%)</p><p><em>납부지연</em>미납세액 × 하루 0.022% × 일수(연 약 8.03%). 고지서 기한까지도 안 내면 3% 추가</p><p><em>줄이는 방법</em>기한 후 신고는 6개월 이내에 한해 무신고 가산세를 50%·30%·20%(1개월 이내·3개월 이내·6개월 이내) 감면, 수정신고는 6개월 이내 90%·75%·50% 등 과소신고 가산세를 감면받습니다. 세무서가 조사에 착수한 것을 알고 신고하면 감면되지 않습니다.</p>',l:'국세기본법 제47조의2~제47조의4, 제48조'},
+c7:{t:'분납 : 세금을 나눠 내는 제도',b:'<p><em>요건</em>법인세로 납부할 세액이 1,000만 원을 넘으면 납부기한이 지난 날부터 1개월(중소기업 2개월) 이내에 일부를 나중에 낼 수 있습니다.</p><p><em>분납 금액</em>납부세액 1,000만~2,000만 원이면 1,000만 원을 초과하는 금액, 2,000만 원 초과면 세액의 50% 이하입니다.</p><p><em>예시</em>납부세액 4,000만 원(중소기업) → 신고 때 2,000만 원 이상 납부, 나머지 2,000만 원 이하는 2개월 안에 납부(12월 결산 기준 5월 말 무렵).</p><p><em>주의</em>분납분을 기한 안에 못 내면 그 부분에 납부지연가산세(하루 0.022%)가 붙습니다. 법인지방소득세도 분납 요건이 따로 있습니다.</p>',l:'법인세법 제64조 제2항'},
+c8:{t:'연부연납 : 법인세에는 없고 상속·증여세에 있는 제도',b:'<p><em>쉬운 설명</em>세금을 여러 해에 걸쳐 나눠 내는 제도로 상속세·증여세에 있습니다. 법인세에는 없으니 혼동하지 마세요.</p><p><em>상속·증여세 요건</em>납부세액 2,000만 원 초과, 담보 제공, 세무서장 허가. 금전·보증서 등을 담보로 내면 신청일에 허가된 것으로 봅니다.</p><p><em>기간</em>상속세 최대 10년(가업상속공제 등 대상은 최대 20년), 증여세 최대 5년(조세특례 대상 15년). 이자 성격의 가산금이 붙습니다.</p><p><em>법인세는?</em>분납(1개월·중소기업 2개월)과 납부기한 연장·징수유예로 자금 부담을 조절합니다.</p>',l:'상속세 및 증여세법 제71조·제72조, 법인세법 제64조'},
+c9:{t:'납부기한 연장·징수유예',b:'<p><em>쉬운 설명</em>재해를 입었거나 사업에 현저한 손실이 생겨 세금을 낼 수 없을 때 세무서에 신청해 납부기한을 미루는 제도입니다. 기한이 지나기 전에 신청해야 합니다.</p><p><em>직권 연장</em>경기침체 업종 등은 국세청이 직권으로 납부기한을 3개월 연장해 주기도 합니다. 이때 신고는 기한 안에 해야 하고 납부기한만 늦춰집니다.</p><p><em>확인 필요</em>대상 요건, 연장 가능 기간, 담보 여부는 사안마다 다르므로 관할 세무서나 세무전문가와 확인하세요.</p>',l:'국세징수법(납부기한 연장·징수유예 규정)'},
 m1:{t:'오해 1 : 법인 돈은 내 돈이다',b:'<p><em>사실</em>법인은 대표와 별개의 법적 주체입니다. 법인 돈을 개인 용도로 쓰면 ① 급여·상여(근로소득세, 4대보험) ② 배당(배당소득세) ③ 가지급금(인정이자 4.6%, 상여 처분 위험) 중 하나로 처리됩니다.</p><p><em>정리</em>합법적으로 꺼내는 길은 급여, 배당, 퇴직금뿐이며 각각 세금이 따릅니다.</p>',l:'법인세법 제28조, 시행령 제89조'},
 m2:{t:'오해 2 : 비용이 많으면 무조건 절세',b:'<p><em>사실</em>비용 100만 원을 더 쓰면 세금은 세율만큼(법인세 10~25% + 지방소득세 합산 11~27.5%)만 줄어듭니다. 나머지 약 73~89%는 그냥 사라진 돈입니다.</p><p><em>추가</em>업무와 무관한 지출, 증빙 없는 지출, 한도 초과분은 비용으로 인정되지 않아 절세 효과가 없습니다.</p>',l:'법인세법 제19조, 제55조'},
 m3:{t:'오해 3 : 적자면 신고하지 않아도 된다',b:'<p><em>사실</em>영리법인은 소득이 없거나 결손이어도 법인세 신고 의무가 있습니다.</p><p><em>이유</em>이월결손금은 신고된(또는 결정·경정된) 과세표준에 포함된 결손금만 나중 이익에서 공제됩니다. 2020년 이후 발생분은 15년 이내, 공제 한도는 소득의 80%(중소기업 100%)입니다.</p>',l:'법인세법 제13조, 제60조'},
@@ -294,6 +299,36 @@ ph.addEventListener('pointermove',function(e){
 function endDrag(e){drag=null;try{ph.releasePointerCapture(e.pointerId)}catch(_){}}
 ph.addEventListener('pointerup',endDrag);
 ph.addEventListener('pointercancel',endDrag);
+
+/* 문장 단위 줄바꿈 : 줄 수가 늘지 않을 때만 문장마다 새 줄 */
+function sentenceBreak(){
+  var els=document.querySelectorAll('.cd p,.mt .s>span,.note,.st p,.tn p');
+  els.forEach(function(el){
+    if(el.dataset.sb)return;
+    var txt=el.textContent;
+    if(!/\.\s+\S/.test(txt))return;
+    var kids=Array.prototype.slice.call(el.childNodes),spans=[],cur=null;
+    function ns(){cur=document.createElement('span');cur.className='sn';spans.push(cur)}
+    ns();
+    kids.forEach(function(n){
+      if(n.nodeType===3){
+        var parts=n.nodeValue.split(/(?<=\.)\s+(?=\S)/);
+        parts.forEach(function(t,i){if(i>0)ns();cur.appendChild(document.createTextNode(i<parts.length-1?t+' ':t))});
+      }else{cur.appendChild(n.cloneNode(true))}
+    });
+    if(spans.length<2)return;
+    var orig=el.innerHTML;
+    var lh=parseFloat(getComputedStyle(el).lineHeight)||12;
+    var n0=Math.round(el.getBoundingClientRect().height/lh);
+    el.innerHTML='';spans.forEach(function(sp){el.appendChild(sp)});
+    el.dataset.sb='1';
+    var n1=Math.round(el.getBoundingClientRect().height/lh);
+    spans.forEach(function(sp){sp.style.display='block'});
+    var n2=Math.round(el.getBoundingClientRect().height/lh);
+    if(n2>n0||n0<2){el.innerHTML=orig;}
+  });
+}
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(sentenceBreak)}else{sentenceBreak()}
 
 /* 화면 맞춤 및 인쇄 */
 var sh=document.getElementById('sheet');
