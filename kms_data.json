@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-05",
+ "updated": "2026-11-06",
  "sections": [
   {
    "title": "SLI GFC",
@@ -116,6 +116,39 @@
        "pin": false
       },
       {
+       "label": "세금 이해 : 4. 종합소득세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/inctax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "소득세"
+       ],
+       "pin": false
+      },
+      {
+       "label": "세금 이해 : 2. 상속세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/inhtax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "상속세"
+       ],
+       "pin": false
+      },
+      {
+       "label": "세금 이해 : 3. 증여세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/gifttax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "증여세"
+       ],
+       "pin": false
+      },
+      {
        "label": "법인컨설팅AI",
        "url": "https://cc.learninvest.co.kr/",
        "tags": [
@@ -134,6 +167,17 @@
         "라이브",
         "방송",
         "BLO"
+       ],
+       "pin": false
+      },
+      {
+       "label": "세금 이해 : 1. 법인세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/corptax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "법인세"
        ],
        "pin": false
       },
