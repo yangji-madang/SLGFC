@@ -34,7 +34,7 @@
       <div class="w3" style="border:1px solid var(--bd);border-radius:6px;padding:6px 8px;background:#f8fafc">
         <label style="font-size:13px">하단 푸터 (보기·인쇄 모든 페이지 하단에 고정 표시)</label>
         <div class="g2" style="margin-top:4px">
-          <div class="w2"><label for="cCt">좌측 : 담당자 연락처</label><input type="text" id="cCt"></div>
+          <div class="w2"><label for="cCt">좌측 : 담당자 연락처</label><input type="text" id="cCt" disabled placeholder="공통 설정 사용 : contacts_admin.html 에서 관리"></div>
           <div class="w2"><label for="cCp">우측 : Copyright (비우면 기본 문구)</label><input type="text" id="cCp"></div>
         </div>
         <div class="mini" style="margin-top:4px">미리보기: <b id="fpL"></b> &nbsp;|&nbsp; <b id="fpR"></b></div>
@@ -115,7 +115,7 @@
   function fillCfg(){
     $('cAsOf').value=W.upd.asOf||''; $('cTitle').value=W.cfg.title||''; $('cSub').value=W.cfg.sub||'';
     $('cPrt').value=W.cfg.prtTitle||''; $('cDays').value=W.cfg.chgDays||30; $('cShow').checked=W.cfg.showChg!==false;
-    $('cFoot').value=W.cfg.foot||''; $('cDisc').value=W.cfg.disc||''; $('cCt').value=W.cfg.contact!=null?W.cfg.contact:G.CONTACT; $('cCp').value=W.cfg.copy||G.COPY; fpv();
+    $('cFoot').value=W.cfg.foot||''; $('cDisc').value=W.cfg.disc||''; $('cCt').value=''; $('cCp').value=W.cfg.copy||G.COPY; fpv();
     $('tlta').value=(W.data.timeline||[]).map(function(t){return t.join(' | ');}).join('\n');
   }
   function readCfg(){
@@ -433,5 +433,6 @@
   });
 })();
 </script>
+<script src="../contacts.js"></script>
 </body>
 </html>

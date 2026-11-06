@@ -371,6 +371,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 </div>
 <footer><div class="cp"><span class="ct" id="ctc"></span><span class="cr" id="cpy"></span></div></footer>
+<script src="../contacts.js"></script>
 <script src="baby_child_config.js"></script>
 <script src="baby_child_updates.js"></script>
 <script>
@@ -876,30 +877,29 @@ var CFG={contact:DEFCT,copy:"",regNote:"※ 「지자체」를 선택하면 시�
 function fmtD(x){var m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(x||"");return m?m[1]+"."+("0"+m[2]).slice(-2)+"."+("0"+m[3]).slice(-2):(x||"");}
 function aoStr(){var u=window.BABY_CHILD_UPDATES;return fmtD((typeof CFG!=="undefined"&&CFG&&CFG.asOf)||(u&&u.asOf)||"");}
 function ctList(){
-  var a=CFG.contacts,r=[];
-  if(Array.isArray(a)){a.forEach(function(x){if(x&&String(x.t||"").trim()){r.push({t:String(x.t),on:x.on!==false});}});}
-  else{var c=(CFG.contact!=null)?CFG.contact:DEFCT;String(c).split(/\s+\/\s+/).forEach(function(t){if(t.trim()){r.push({t:t.trim(),on:true});}});}
+  /* 담당자 목록은 공통 설정(contacts.json) 사용 : contacts_admin.html 에서 관리 */
+  var r=[];if(window.SLGCT){SLGCT.list().forEach(function(x){r.push({t:String(x.t),id:x.id,on:false});});}
   return r;
 }
 function ctSelGet(l){
-  try{var s=JSON.parse(localStorage.getItem("babyChildCt")||"null"),sg=l.map(function(x){return x.t;}).join("\u0001");if(s&&s.sig===sg&&Array.isArray(s.sel)){return l.map(function(x){return s.sel.indexOf(x.t)>=0;});}}catch(e){}
-  var f=-1;l.forEach(function(x,i){if(f<0&&x.on){f=i;}});if(f<0&&l.length){f=0;}
-  return l.map(function(x,i){return i===f;});
+  var v=window.SLGCT?SLGCT.sel():"";
+  return l.map(function(x){return x.id===v;});
 }
 function ctBuild(){
   var l=ctList(),sel=ctSelGet(l),d=$("#ctSel"),h="";
-  d.hidden=l.length<2;
+  d.hidden=!l.length;
   l.forEach(function(x,i){h+='<label><input type="radio" name="ctR" data-i="'+i+'"'+(sel[i]?' checked':'')+'><span>'+esc(x.t)+'</span></label>';});
   h+='<label style="border-top:1px solid #cbd5e1;margin-top:3px;padding-top:4px"><input type="radio" name="ctR" data-i="-1"'+(sel.some(function(v){return v;})?'':' checked')+'><span>표시하지 않음</span></label>';
   $("#ctPn").innerHTML=h;
 }
 $("#ctPn").addEventListener("change",function(){
-  var l=ctList(),s=[];
-  Array.prototype.forEach.call($("#ctPn").querySelectorAll("input"),function(c){if(c.checked&&+c.getAttribute("data-i")>=0){s.push(l[+c.getAttribute("data-i")].t);}});
+  var l=ctList(),id="";
+  Array.prototype.forEach.call($("#ctPn").querySelectorAll("input"),function(c){if(c.checked&&+c.getAttribute("data-i")>=0){id=l[+c.getAttribute("data-i")].id;}});
   $("#ctSel").open=false;
-  try{localStorage.setItem("babyChildCt",JSON.stringify({sig:l.map(function(x){return x.t;}).join("\u0001"),sel:s}));}catch(e){}
+  if(window.SLGCT){SLGCT.setSel(id);}
   setFoot();
 });
+if(window.SLGCT){SLGCT.ready(function(){ctBuild();setFoot();});}
 function setFoot(){
   var cl=ctList(),cs=ctSelGet(cl),c=cl.filter(function(x,i){return cs[i];}).map(function(x){return x.t;}).join("   /   "),cp=CFG.copy?CFG.copy:DEFCP;
   $("#ctc").textContent=c;$("#cpy").textContent=cp;

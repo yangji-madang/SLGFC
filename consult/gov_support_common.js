@@ -519,6 +519,8 @@
 
 
   /* 인쇄 머리글·바닥글: 쪽 여백 영역(@page 여백 상자)에 넣어 모든 쪽에서 잘리지 않고 쪽번호와 같은 줄에 표시 */
+  document.addEventListener('slgct', function () { G.setFoot(); if (G.hf) G.hf(); });
+
   G.hf = function () {
     function t(id) { var e = document.getElementById(id); return e ? e.textContent : ''; }
     function q(x) { return '"' + String(x).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ') + '"'; }
@@ -579,7 +581,8 @@
     if (a) a.textContent = '기준일 : ' + G.fmtD(G.asOf);
   };
   G.setFoot = function () {
-    var c = (G.cfg && G.cfg.contact != null) ? G.cfg.contact : G.CONTACT;
+    /* 담당자는 공통 설정(contacts.json)에서 페이지별로 선택합니다. 기본은 표시하지 않음 */
+    var c = window.SLGCT ? window.SLGCT.text() : '';
     ['ctc', 'ctct'].forEach(function (i) { var e = document.getElementById(i); if (e) e.textContent = c; });
     var cp = (G.cfg && G.cfg.copy != null && G.cfg.copy !== '') ? G.cfg.copy : G.COPY;
     ['cpy', 'cpyt'].forEach(function (i) { var e = document.getElementById(i); if (e) e.textContent = cp; });

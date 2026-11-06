@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>담당자 공통 관리 | SLGFC</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#eef1f6;color:#1d2433;font-family:system-ui,-apple-system,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",sans-serif;font-size:15px;line-height:1.5}
+.bar{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;padding:10px 16px}
+.bar button,.bar a{font:inherit;font-size:13px;padding:6px 14px;border:1px solid #17294a;border-radius:4px;background:#17294a;color:#fff;cursor:pointer;text-decoration:none}
+.bar .sec{background:#fff;color:#17294a}
+.sheet{max-width:860px;margin:0 auto 18px;background:#fff;border:1px solid #cfd6e4;border-radius:6px;padding:18px 22px 12px}
+h1{margin:0 0 4px;font-size:21px;color:#17294a}
+.sub{margin:0 0 14px;color:#4a5670;font-size:13.5px}
+.row{display:flex;gap:6px;align-items:center;margin:0 0 7px}
+.row input{flex:1;min-width:0;font:inherit;padding:8px 10px;border:1px solid #94a3b8;border-radius:4px}
+.row button{font:inherit;font-size:13px;width:34px;height:34px;border:1px solid #94a3b8;border-radius:4px;background:#fff;cursor:pointer}
+.row button.del{color:#b4231a;border-color:#e3a39e}
+.row .n{width:22px;text-align:right;color:#6b7690;font-size:13px}
+.add{font:inherit;font-size:14px;padding:7px 14px;border:1px dashed #17294a;border-radius:4px;background:#f6f8fc;color:#17294a;cursor:pointer;margin-top:4px}
+.prev{margin:16px 0 4px;padding:10px 12px;border:1px solid #d7deea;border-radius:4px;background:#f8fafc;font-size:13.5px}
+.prev b{display:block;color:#4a5670;font-size:12.5px;margin-bottom:3px}
+.prev div{padding:2px 0}
+.st{margin:10px 0 0;font-size:13.5px;min-height:1.4em}
+.st.err{color:#b4231a}.st.ok{color:#1b6b3a}
+.how{margin:14px 0 0;padding:10px 12px;background:#fff8e6;border-left:4px solid #e0a43a;font-size:13px;color:#4a3b14}
+.how li{margin:2px 0}
+.cp{max-width:860px;margin:0 auto 16px;text-align:right;font-size:12.5px;color:#4a5670;padding:0 6px}
+@media print{body{background:#fff}.bar,.add,.row button,.st{display:none}.sheet{border:none;max-width:none;padding:0}.row input{border:1px solid #888}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <a class="sec" href="index.html">처음으로</a>
+  <button type="button" class="sec" id="bRst">원래대로</button>
+  <button type="button" class="sec" id="bTk">토큰 삭제</button>
+  <button type="button" id="bGh">GitHub에 반영</button>
+  <button type="button" id="prt">인쇄 / PDF 저장</button>
+</div>
+<div class="sheet">
+  <h1>담당자 공통 관리</h1>
+  <p class="sub">여기서 등록한 담당자는 SLGFC 모든 인쇄 페이지의 「담당자 표시」 선택 목록에 나타납니다. 선택은 각 페이지에서 따로 하며, 기본값은 「표시하지 않음」입니다.</p>
+  <div id="list"></div>
+  <button type="button" class="add" id="add">＋ 담당자 추가</button>
+  <div class="prev"><b>선택 목록 미리보기</b><div id="pv"></div></div>
+  <div class="st" id="st"></div>
+  <ul class="how">
+    <li>이름·직함·연락처를 한 줄로 입력합니다. 이 줄이 인쇄물 하단 왼쪽에 그대로 찍힙니다.</li>
+    <li>수정 후 「GitHub에 반영」을 눌러야 다른 기기와 모든 페이지에 적용됩니다(1~2분 소요).</li>
+    <li>담당자를 삭제하면, 그 담당자를 선택해 둔 페이지는 「표시하지 않음」으로 돌아갑니다.</li>
+  </ul>
+</div>
+<div class="cp">ⓒ<span id="yr">2026</span>. YOON HYUNCHUL, ALL RIGHTS RESERVED.</div>
+<script>
+(function(){
+var GH={o:'yangji-madang',r:'SLGFC',b:'main',p:'contacts.json'},TKEY='info_gh_token';
+var $=function(i){return document.getElementById(i)};
+$('yr').textContent=new Date().getFullYear();
+var rows=[],baseUpd=null,orig=[];
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function st(m,c){var e=$('st');e.textContent=m||'';e.className='st'+(c?' '+c:'')}
+function newId(){return 'c'+Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36)}
+function draw(){
+  var h='';
+  rows.forEach(function(r,i){
+    h+='<div class="row" data-i="'+i+'"><span class="n">'+(i+1)+'</span><input type="text" maxlength="120" value="'+esc(r.t)+'" placeholder="예) 삼성생명 개인/기업 재무 전문가 홍길동 팀장 · 010-0000-0000">'+
+       '<button type="button" data-a="up" title="위로"'+(i?'':' disabled')+'>▲</button><button type="button" data-a="dn" title="아래로"'+(i<rows.length-1?'':' disabled')+'>▼</button><button type="button" class="del" data-a="del" title="삭제">✕</button></div>';
+  });
+  $('list').innerHTML=h||'<p class="sub">등록된 담당자가 없습니다. 아래 「담당자 추가」를 누르세요.</p>';
+  pv();
+}
+function pv(){
+  var h='';rows.forEach(function(r,i){if(r.t.trim())h+='<div>'+(i+1)+'. '+esc(r.t.trim())+'</div>'});
+  h+='<div style="color:#6b7690">표시하지 않음 (기본)</div>';$('pv').innerHTML=h;
+}
+$('list').addEventListener('input',function(e){
+  var row=e.target.closest('.row');if(!row)return;rows[+row.dataset.i].t=e.target.value;pv();st('');
+});
+$('list').addEventListener('click',function(e){
+  var b=e.target.closest('button[data-a]');if(!b)return;var i=+b.closest('.row').dataset.i,a=b.dataset.a;
+  if(a==='del'){if(!confirm('이 담당자를 삭제합니다.\n'+(rows[i].t||'(빈 줄)'))){return}rows.splice(i,1)}
+  else if(a==='up'&&i>0){var t=rows[i];rows[i]=rows[i-1];rows[i-1]=t}
+  else if(a==='dn'&&i<rows.length-1){var t2=rows[i];rows[i]=rows[i+1];rows[i+1]=t2}
+  draw();st('');
+});
+$('add').addEventListener('click',function(){rows.push({id:newId(),t:''});draw();var ins=$('list').querySelectorAll('input');if(ins.length)ins[ins.length-1].focus()});
+$('bRst').addEventListener('click',function(){if(confirm('수정 내용을 버리고 저장된 목록으로 되돌립니다.')){rows=orig.map(function(r){return{id:r.id,t:r.t}});draw();st('')}});
+$('prt').addEventListener('click',function(){window.print()});
+$('bTk').addEventListener('click',function(){try{localStorage.removeItem(TKEY)}catch(e){}st('저장된 토큰을 삭제했습니다.','ok')});
+
+function load(){
+  fetch('contacts.json',{cache:'no-cache'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){
+    baseUpd=j.updated||null;
+    rows=(j.contacts||[]).map(function(x){return{id:x.id||newId(),t:String(x.t||'')}});
+    orig=rows.map(function(r){return{id:r.id,t:r.t}});draw();
+  }).catch(function(){st('contacts.json 을 불러오지 못했습니다. 새로고침하거나 주소를 확인하세요.','err')});
+}
+function b64(s){var u=new TextEncoder().encode(s),x='';u.forEach(function(c){x+=String.fromCharCode(c)});return btoa(x)}
+function unb64(s){var x=atob(s.replace(/\s/g,'')),u=new Uint8Array(x.length);for(var i=0;i<x.length;i++)u[i]=x.charCodeAt(i);return new TextDecoder().decode(u)}
+async function api(method,url,tk,body){
+  var r;
+  try{r=await fetch(url,{method:method,headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},body:body?JSON.stringify(body):undefined})}
+  catch(e){throw {msg:'GitHub에 연결하지 못했습니다 ('+(e&&e.message||'네트워크')+'). 인터넷 연결과 토큰 문자를 확인하세요.'}}
+  return r;
+}
+async function push(tk){
+  var url='https://api.github.com/repos/'+GH.o+'/'+GH.r+'/contents/'+GH.p;
+  var clean=rows.map(function(r){return{id:r.id,t:r.t.replace(/\s+/g,' ').trim()}}).filter(function(r){return r.t});
+  var ra=await api('GET',url+'?ref='+GH.b,tk);
+  if(!ra.ok){throw {msg:(ra.status===401?'토큰이 올바르지 않거나 만료되었습니다.':ra.status===404?'저장소 또는 권한을 확인하세요(404).':'확인 실패 ('+ra.status+')'),bad:ra.status===401}}
+  var ja=await ra.json(),live=null;try{live=JSON.parse(unb64(ja.content)).updated||null}catch(e){}
+  if(live!==baseUpd){throw {msg:'다른 곳에서 먼저 수정되었습니다. 새로고침 후 다시 수정해 주세요(내용 보호).'}}
+  var upd=new Date().toISOString();
+  var out=JSON.stringify({updated:upd,contacts:clean},null,2)+'\n';
+  var rp=await api('PUT',url,tk,{message:'[담당자 공통 관리] 담당자 목록 수정',content:b64(out),sha:ja.sha,branch:GH.b});
+  if(!rp.ok){throw {msg:'반영 실패 ('+rp.status+')'+(rp.status===409?' : 동시에 수정되었습니다. 새로고침 후 다시 시도하세요.':'')}}
+  baseUpd=upd;rows=clean.map(function(r){return{id:r.id,t:r.t}});orig=rows.map(function(r){return{id:r.id,t:r.t}});draw();
+}
+$('bGh').addEventListener('click',async function(){
+  var tk='';try{tk=localStorage.getItem(TKEY)||''}catch(e){}
+  if(tk&&/[^\x21-\x7e]/.test(tk)){tk='';try{localStorage.removeItem(TKEY)}catch(e){}}
+  if(!tk){
+    tk=(prompt('GitHub 토큰을 입력하세요.\n(fine-grained 토큰, SLGFC 저장소 Contents 읽기·쓰기 권한. 이 브라우저에만 저장됩니다.)')||'').trim();
+    if(!tk)return;
+    if(/[^\x21-\x7e]/.test(tk)){st('토큰에 한글·공백 등 잘못된 문자가 있습니다. 토큰만 다시 붙여 넣으세요.','err');return}
+    try{localStorage.setItem(TKEY,tk)}catch(e){}
+  }
+  if(rows.some(function(r){return !r.t.trim()})&&!confirm('빈 줄은 저장되지 않습니다. 계속할까요?'))return;
+  st('GitHub에 반영 중…');$('bGh').disabled=true;
+  try{await push(tk);st('반영 완료. 다른 기기와 모든 페이지는 1~2분 후 새로고침하면 보입니다.','ok')}
+  catch(e){if(e&&e.bad){try{localStorage.removeItem(TKEY)}catch(x){}}st((e&&e.msg)||'반영 중 오류가 발생했습니다.','err')}
+  $('bGh').disabled=false;
+});
+load();
+})();
+</script>
+</body>
+</html>
