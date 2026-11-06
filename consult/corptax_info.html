@@ -8,18 +8,21 @@
 :root{--navy:#17294a;--navy2:#2a4470;--gold:#b08435;--goldl:#f5ecd7;--ink:#1d2433;--mut:#566074;--line:#d5dbe6;--soft:#f3f6fb;--red:#b4443c;--redl:#fbeeec;--grn:#2c7a5b;--grnl:#eaf5ef}
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:#e9edf3}
-body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans CJK KR','Noto Sans KR',sans-serif;color:var(--ink);font-size:8.6pt;line-height:1.38;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans CJK KR','Noto Sans KR',sans-serif;color:var(--ink);font-size:8.6pt;line-height:1.36;word-break:keep-all;overflow-wrap:normal;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .bar{position:fixed;top:8px;right:12px;z-index:5}
 .bar button{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
-.sheet{width:210mm;height:296.5mm;margin:10px auto;background:#fff;padding:6mm 6.5mm 4.5mm;display:flex;flex-direction:column;gap:2.4mm;box-shadow:0 2px 14px rgba(20,40,80,.18);overflow:hidden;position:relative}
+.sheet{width:210mm;height:296.5mm;margin:10px auto;background:#fff;padding:6mm 6.5mm 7mm;display:flex;flex-direction:column;gap:2.4mm;box-shadow:0 2px 14px rgba(20,40,80,.18);overflow:hidden;position:relative}
 /* 제목 */
-.ttl{display:flex;justify-content:space-between;align-items:flex-end;border-radius:2.2mm;padding:2.6mm 5mm 2.3mm;color:#fff;border-bottom:.9mm solid var(--gold);
-background:radial-gradient(120% 170% at 100% 0%,rgba(214,176,98,.30),transparent 55%),linear-gradient(115deg,#1b2f55 0%,#2b4a7a 60%,#41679a 100%)}
-.ttl .tag{font-size:6.8pt;letter-spacing:.14em;color:#e8d3a2}
-.ttl h1{font-size:19pt;line-height:1.15;letter-spacing:-.01em;margin:.4mm 0 .6mm}
-.ttl .sub{font-size:8.4pt;opacity:.9}
-.ttl .qd{font-size:7pt;opacity:.82;white-space:nowrap}
-.ttl .qd b{font-weight:600;letter-spacing:.02em}
+.ttl{display:flex;align-items:center;gap:3mm;border-radius:2.2mm;padding:1.8mm 4mm;color:#fff;border-bottom:.8mm solid #f2b84b;
+background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent 60%),linear-gradient(110deg,#1f6fb8 0%,#2f8fd0 45%,#37b3c9 100%)}
+.ttl h1{font-size:16pt;line-height:1.1;white-space:nowrap;letter-spacing:-.01em}
+.ttl .sub{font-size:7.8pt;line-height:1.3;opacity:.95;flex:1;border-left:1px solid rgba(255,255,255,.45);padding-left:3mm}
+.ttl .sub i{display:block;font-style:normal;font-size:6.4pt;letter-spacing:.12em;color:#fff2c9}
+.ttl .chips{display:flex;gap:1.2mm}
+.ttl .chips span{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);border-radius:5mm;padding:.3mm 2mm;font-size:6.8pt;white-space:nowrap}
+.ttl .chips b{color:#fff2c9}
+.ttl .qd{font-size:6.4pt;opacity:.9;white-space:nowrap;align-self:flex-start}
+.ttl .qd b{font-weight:600}
 /* 섹션 머리 */
 .sh{display:flex;align-items:center;gap:1.8mm;font-size:10.2pt;font-weight:700;color:var(--navy);border-bottom:1.4px solid var(--gold);padding-bottom:.8mm;margin-bottom:1.6mm}
 .sh .n{display:inline-flex;align-items:center;justify-content:center;width:5mm;height:5mm;border-radius:50%;background:var(--navy);color:#f1dcab;font-size:8pt}
@@ -52,13 +55,15 @@ background:radial-gradient(120% 170% at 100% 0%,rgba(214,176,98,.30),transparent
 .note{font-size:6.9pt;color:var(--mut);line-height:1.35;margin-top:1mm}
 .note a,.lk{color:var(--navy2);text-decoration:underline dotted;cursor:pointer}
 .ex{width:100%;border-collapse:collapse;font-size:7.8pt}
-.ex td{padding:.4mm 1.4mm;border-bottom:1px solid #e6eaf1}
+.ex td{padding:.3mm 1.4mm;border-bottom:1px solid #e6eaf1}
 .ex td:nth-child(2){text-align:right;font-weight:700;white-space:nowrap}
 .ex td:nth-child(3){color:var(--mut);font-size:7.2pt}
 .ex tr.hl td{background:var(--soft);font-weight:700;color:var(--navy)}
 .ex tr.fin td{background:var(--navy);color:#f6e6bd;font-weight:700}
 .ex tr.fin td:nth-child(3){color:#dfe6f2}
-.ex .neg{color:var(--red)}
+.ex .neg td:nth-child(2){color:var(--red)}
+.ex tr[data-p]{cursor:pointer}
+.ex tr.sb td:first-child{padding-left:5.5mm}
 .cap{font-size:6.9pt;color:var(--mut);margin-bottom:.8mm}
 .co{margin-top:1mm;white-space:nowrap;border:1px solid #e3d3a8;background:var(--goldl);border-radius:1.4mm;padding:.9mm 2mm;font-size:7.6pt;cursor:pointer}
 .co b{color:var(--navy)}
@@ -80,7 +85,7 @@ background:radial-gradient(120% 170% at 100% 0%,rgba(214,176,98,.30),transparent
 .cd p u{text-decoration:none;color:var(--red);font-weight:700}
 /* 오해 */
 .myth{display:flex;flex-direction:column;gap:1mm;flex:1}
-.mt{flex:1;position:relative;display:grid;grid-template-columns:.95fr 3.4mm 1.5fr;align-items:stretch;border:1px solid var(--line);border-radius:1.5mm;overflow:hidden;cursor:pointer}
+.mt{flex:1;min-height:0;position:relative;display:grid;grid-template-columns:.95fr 3.4mm 1.5fr;align-items:stretch;border:1px solid var(--line);border-radius:1.5mm;overflow:hidden;cursor:pointer}
 .mt .o{background:var(--redl);padding:.9mm 2mm;color:#6d2a25}
 .mt .o:before{content:"✕ 오해";margin-right:1.2mm;white-space:nowrap;font-weight:700;color:var(--red);font-size:6.8pt}
 .mt .ar{background:linear-gradient(90deg,var(--redl),var(--grnl));display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:7pt}
@@ -88,8 +93,8 @@ background:radial-gradient(120% 170% at 100% 0%,rgba(214,176,98,.30),transparent
 .mt .s:before{content:"○ 사실";margin-right:1.2mm;white-space:nowrap;font-weight:700;color:var(--grn);font-size:6.8pt}
 .mt .o,.mt .s{font-size:7.6pt;line-height:1.32;display:flex;align-items:center}
 /* 바닥 */
-.grow{flex:1 1 auto;display:flex;flex-direction:column}
-.ft{border-top:1.4px solid var(--gold);padding-top:1mm}
+.grow{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+.ft{border-top:1.4px solid var(--gold);padding-top:1mm;flex-shrink:0}
 .ft .law{font-size:6.5pt;color:var(--mut);line-height:1.35}
 .ft .row{display:flex;justify-content:space-between;align-items:center;margin-top:.8mm;font-size:7.4pt}
 .ft .row .l{color:var(--navy);font-weight:700}
@@ -114,11 +119,9 @@ background:radial-gradient(120% 170% at 100% 0%,rgba(214,176,98,.30),transparent
 <main class="sheet" id="sheet">
 
 <header class="ttl">
-  <div>
-    <div class="tag">TAX BRIEFING · 세금 한눈에 보기</div>
-    <h1>법인세 개요</h1>
-    <div class="sub">회사가 1년 동안 번 이익에 대해 회사가 내는 세금 : 어떻게 계산하고, 무엇을 조심할까요?</div>
-  </div>
+  <h1>법인세 개요</h1>
+  <div class="sub"><i>TAX BRIEFING</i>회사가 번 이익에 내는 세금 : 계산 방법과 주의점</div>
+  <div class="chips"><span>세율 <b>10~25%</b></span><span>신고 <b>종료 후 3개월</b></span><span>지방세 <b>+10%</b></span></div>
   <div class="qd">조회일 <b id="qd">2026.11.06</b></div>
 </header>
 
@@ -152,15 +155,17 @@ background:radial-gradient(120% 170% at 100% 0%,rgba(214,176,98,.30),transparent
   <section>
     <div class="sh"><span class="n">3</span>계산 예시<span class="hint">12월 결산 중소법인 · 2026 사업연도 · 가정 수치</span></div>
     <table class="ex">
-      <tr data-p="ex" style="cursor:pointer"><td>회계상 당기순이익</td><td>4억 원</td><td>손익계산서상 이익 (가정)</td></tr>
-      <tr data-p="adj" style="cursor:pointer"><td>(+) 세무조정 가산</td><td>5,000만 원</td><td>접대비 한도초과·승용차 비용 초과 등</td></tr>
-      <tr class="hl" data-p="tb" style="cursor:pointer"><td>(=) 과세표준</td><td>4억 5,000만 원</td><td>이월결손금 없다고 가정</td></tr>
-      <tr data-p="prog" style="cursor:pointer"><td>산출세액</td><td>7,000만 원</td><td>2억×10% + 2.5억×20%</td></tr>
-      <tr data-p="credit" style="cursor:pointer"><td>(−) 세액공제·감면</td><td class="neg">−1,000만 원</td><td>예 : 고용 관련 공제 (가정)</td></tr>
+      <tr data-p="ex"><td>회계상 당기순이익</td><td>4억 원</td><td>손익계산서상 이익 (가정)</td></tr>
+      <tr class="sb" data-p="adj"><td>(+) 세무조정 가산</td><td>5,000만 원</td><td>접대비·승용차 비용 초과 등</td></tr>
+      <tr class="hl" data-p="tb"><td>(=) 과세표준</td><td>4억 5,000만 원</td><td>이월결손금 없다고 가정</td></tr>
+      <tr class="sb" data-p="prog"><td>과세표준 × 세율 20%</td><td>9,000만 원</td><td>2억 초과 구간 세율 적용</td></tr>
+      <tr class="sb neg" data-p="prog"><td>(−) 누진공제</td><td>−2,000만 원</td><td>200억 이하 구간 공제액</td></tr>
+      <tr class="hl" data-p="prog"><td>(=) 산출세액</td><td>7,000만 원</td><td>구간별 : 2억×10% + 2.5억×20%</td></tr>
+      <tr class="sb neg" data-p="credit"><td>(−) 세액공제·감면</td><td>−1,000만 원</td><td>예 : 고용 관련 공제 (가정)</td></tr>
       <tr><td>총부담세액</td><td>6,000만 원</td><td>7,000만 − 1,000만</td></tr>
-      <tr data-p="t_mid" style="cursor:pointer"><td>(−) 중간예납 등 기납부</td><td class="neg">−2,000만 원</td><td>8월에 미리 낸 세금 (가정)</td></tr>
+      <tr class="sb neg" data-p="t_mid"><td>(−) 중간예납 등 기납부</td><td>−2,000만 원</td><td>8월에 미리 낸 세금 (가정)</td></tr>
       <tr class="hl"><td>3월 신고 때 낼 법인세</td><td>4,000만 원</td><td>6,000만 − 2,000만</td></tr>
-      <tr data-p="local" style="cursor:pointer"><td>(+) 법인지방소득세 (약식)</td><td>600만 원</td><td>총부담세액의 약 10%</td></tr>
+      <tr class="sb" data-p="local"><td>(+) 법인지방소득세 (약식)</td><td>600만 원</td><td>총부담세액의 약 10%</td></tr>
       <tr class="fin"><td>세금 부담 합계</td><td>6,600만 원</td><td>과세표준 대비 약 14.7%</td></tr>
     </table>
     <div class="co" data-p="exinc">세율 인상 체감 : 2025년 세율이면 <b>6,550만</b> → 2026년 <b>7,000만 원</b> ( <b>+450만 원</b>, 약 +6.9% ) <span class="lk">[왜?]</span></div>
@@ -202,7 +207,7 @@ background:radial-gradient(120% 170% at 100% 0%,rgba(214,176,98,.30),transparent
 </section>
 
 <footer class="ft">
-  <div class="law">근거 : 법인세법 제13조·제14조~제19조·제25조·제27조의2·제28조·제55조·제60조·제63조·제64조, 동법 시행령 제44조·제89조, 국세기본법 제47조의2~제47조의4, 지방세법 제103조의20.<br>※ 이해를 돕기 위한 설명 자료이며 예시 수치는 가정입니다. 2026.11.06 확인한 현행 법령 기준이고 2026년 세제개편안(정부안, 미확정)은 반영하지 않았습니다. 개별 사안은 세무전문가와 확인하세요.</div>
+  <div class="law">근거 : 법인세법 제13·15·19·25·27조의2·28·55·60·63·64조, 동법 시행령 제44·89조, 국세기본법 제47조의2~4, 지방세법 제103조의20<br>※ 설명용 자료이며 예시는 가정입니다. 2026.11.06 현행법 기준(2026 세제개편안 미반영). 개별 사안은 전문가와 확인하세요.</div>
   <div class="row"><span class="l">삼성생명 개인/기업 재무 전문가 윤현철 팀장 · 010-9510-1088</span><span class="r">ⓒ<span id="yr">2026</span>. YOON HYUNCHUL ALL RIGHTS RESERVED.</span></div>
 </footer>
 </main>
