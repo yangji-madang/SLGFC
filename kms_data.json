@@ -73,7 +73,7 @@
      "pin": false,
      "links": [
       {
-       "label": "세금 이해 : 1. 법인세",
+       "label": "개념 : 1. 법인세",
        "url": "https://yangji-madang.github.io/SLGFC/consult/corptax_info.html",
        "tags": [
         "세금",
@@ -84,7 +84,7 @@
        "pin": true
       },
       {
-       "label": "세금 이해 : 2. 상속세",
+       "label": "개념 : 2. 상속세",
        "url": "https://yangji-madang.github.io/SLGFC/consult/inhtax_info.html",
        "tags": [
         "세금",
@@ -95,7 +95,7 @@
        "pin": true
       },
       {
-       "label": "세금 이해 : 3. 증여세",
+       "label": "개념 : 3. 증여세",
        "url": "https://yangji-madang.github.io/SLGFC/consult/gifttax_info.html",
        "tags": [
         "세금",
@@ -106,7 +106,7 @@
        "pin": true
       },
       {
-       "label": "세금 이해 : 4. 종합소득세",
+       "label": "개념 : 4. 소득세",
        "url": "https://yangji-madang.github.io/SLGFC/consult/inctax_info.html",
        "tags": [
         "세금",
@@ -147,7 +147,7 @@
         "재무",
         "크레탑"
        ],
-       "pin": false
+       "pin": true
       },
       {
        "label": "런인베스트",
@@ -157,7 +157,7 @@
         "강의",
         "영상"
        ],
-       "pin": false
+       "pin": true
       },
       {
        "label": "CO파트너",
