@@ -192,6 +192,10 @@
        "pin": false
       },
       {
+       "br": true,
+       "pin": false
+      },
+      {
        "label": "이자계산기(네이버)",
        "url": "https://search.naver.com/search.naver?where=nexearch&sm=tab_etc&mra=bkUz&pkid=69&qvt=0&query=%EC%A0%81%EA%B8%88%EA%B3%84%EC%82%B0%EA%B8%B0",
        "tags": [
