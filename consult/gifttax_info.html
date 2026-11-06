@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>증여세 개요 | 세금 한눈에 보기</title>
+<style>
+:root{--navy:#17294a;--navy2:#2a4470;--gold:#b08435;--goldl:#f5ecd7;--ink:#1d2433;--mut:#566074;--line:#d5dbe6;--soft:#f3f6fb;--red:#b4443c;--redl:#fbeeec;--grn:#2c7a5b;--grnl:#eaf5ef}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#e9edf3}
+body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans CJK KR','Noto Sans KR',sans-serif;color:var(--ink);font-size:8.6pt;line-height:1.36;word-break:keep-all;overflow-wrap:normal;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.bar{display:flex;gap:6px;position:static;width:210mm;max-width:100%;margin:8px auto -4px;justify-content:flex-end;flex-wrap:wrap}
+.bar button{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
+.sheet{width:210mm;height:296.5mm;margin:10px auto;background:#fff;padding:5.5mm 6.5mm 6.5mm;display:flex;flex-direction:column;gap:0;box-shadow:0 2px 14px rgba(20,40,80,.18);overflow:hidden;position:relative}
+/* 제목 */
+.ttl{display:flex;align-items:center;gap:3mm;border-radius:2.2mm;padding:1.8mm 4mm;color:#fff;border-bottom:.8mm solid #f2b84b;text-shadow:0 1px 2px rgba(0,28,70,.55);
+background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 60%),linear-gradient(110deg,#0f4c8f 0%,#1763ad 45%,#1c86a6 100%)}
+.ttl h1{font-size:16.5pt;line-height:1.1;white-space:nowrap;letter-spacing:-.01em;font-weight:800}
+.ttl .sub{font-size:8pt;font-weight:700;line-height:1.3;flex:1;border-left:1px solid rgba(255,255,255,.6);padding-left:3mm}
+.ttl .sub i{display:block;font-style:normal;font-size:6.4pt;letter-spacing:.12em;color:#ffe8a8;font-weight:700}
+.ttl .chips{display:flex;gap:1.2mm}
+.ttl .chips span{background:rgba(6,30,70,.38);border:1px solid rgba(255,255,255,.6);border-radius:5mm;padding:.3mm 2mm;font-size:6.9pt;font-weight:700;white-space:nowrap}
+.ttl .chips b{color:#ffe08a}
+.ttl .qd{font-size:6.4pt;white-space:nowrap;align-self:flex-start;font-weight:600}
+/* 섹션 머리 */
+.sh{display:flex;align-items:center;gap:1.8mm;font-size:10.2pt;font-weight:700;color:var(--navy);border-bottom:1.4px solid var(--gold);padding-bottom:.8mm;margin-bottom:1.6mm}
+.sh .n{display:inline-flex;align-items:center;justify-content:center;width:5mm;height:5mm;border-radius:50%;background:var(--navy);color:#f1dcab;font-size:8pt}
+.sh .hint{margin-left:auto;font-size:6.8pt;font-weight:400;color:var(--mut)}
+/* 흐름 */
+.chain{display:grid;grid-template-columns:repeat(7,1fr);gap:3.4mm}
+.st{position:relative;border:1px solid var(--line);border-top:.8mm solid var(--navy2);border-radius:1.6mm;background:linear-gradient(#fff,var(--soft));padding:1.3mm 1.7mm 1.5mm;cursor:pointer;min-height:16mm}
+.st:hover,.cd:hover,.rw:hover,.mt:hover,.tn:hover .tb{box-shadow:0 0 0 1.5px var(--gold) inset}
+.st .no{display:inline-block;width:3.6mm;height:3.6mm;line-height:3.6mm;text-align:center;border-radius:50%;background:var(--gold);color:#fff;font-size:6.6pt;margin-right:1mm;vertical-align:1px}
+.st b{font-size:9.4pt;color:var(--navy)}
+.st small{display:block;color:var(--gold);font-weight:700;font-size:7.4pt;margin:.2mm 0 .4mm}
+.st p{font-size:7.3pt;color:var(--mut);line-height:1.3}
+.st:not(:last-child)::after{content:"";position:absolute;top:50%;right:-3.1mm;border-left:2.3mm solid var(--gold);border-top:1.4mm solid transparent;border-bottom:1.4mm solid transparent;transform:translateY(-50%)}
+.i{position:absolute;top:1mm;right:1mm;width:3.2mm;height:3.2mm;line-height:3.2mm;border-radius:50%;background:var(--navy2);color:#fff;font-size:6pt;text-align:center;font-style:italic;font-family:Georgia,serif}
+.fm{white-space:nowrap;margin-top:1.8mm;background:var(--goldl);border:1px solid #e3d3a8;border-radius:1.6mm;padding:1.3mm 3mm;text-align:center;font-weight:700;color:var(--navy);font-size:8.4pt}
+.fm i{font-style:normal;color:var(--gold);font-weight:400}
+.fm span{font-weight:400;color:var(--mut);font-size:7.6pt}
+/* 2열 */
+.two{display:grid;grid-template-columns:67mm 1fr;gap:3.2mm}
+.rt{font-size:7.8pt}
+.rh,.rw{display:grid;grid-template-columns:17mm 1fr 11.5mm 11mm;gap:1.2mm;align-items:center}
+.rh{font-size:6.8pt;color:var(--mut);text-align:center;padding-bottom:.6mm}
+.rw{padding:.9mm .6mm;border-bottom:1px dashed var(--line);cursor:pointer}
+.rw .rl{font-weight:700;color:var(--navy);font-size:7.6pt}
+.rw .bb{position:relative;height:4.4mm;background:#edf1f7;border-radius:1mm;overflow:hidden}
+.rw .bb i{position:absolute;left:0;top:0;bottom:0;border-radius:1mm;background:linear-gradient(90deg,#2a4470,#4d74a8)}
+.rw .bb b{position:absolute;left:1.4mm;top:0;line-height:4.4mm;color:#fff;font-size:8pt}
+.rw .re{text-align:center;color:var(--gold);font-weight:700}
+.rw .rd{text-align:center;color:var(--mut)}
+.note{font-size:6.9pt;color:var(--mut);line-height:1.35;margin-top:1mm}
+.note a,.lk{color:var(--navy2);text-decoration:underline dotted;cursor:pointer}
+.ex{width:100%;border-collapse:collapse;font-size:7.8pt}
+.ex td{padding:.3mm 1.4mm;border-bottom:1px solid #e6eaf1}
+.ex td:nth-child(2){text-align:right;font-weight:700;white-space:nowrap}
+.ex td:nth-child(3){color:var(--mut);font-size:7.2pt}
+.ex tr.hl td{background:var(--soft);font-weight:700;color:var(--navy)}
+.ex tr.fin td{background:var(--navy);color:#f6e6bd;font-weight:700}
+.ex tr.fin td:nth-child(3){color:#dfe6f2}
+.ex .neg td:nth-child(2){color:var(--red)}
+.ex tr[data-p]{cursor:pointer}
+.ex tr.sb td:first-child{padding-left:5.5mm}
+.cap{font-size:6.9pt;color:var(--mut);margin-bottom:.8mm}
+.co{margin-top:1mm;white-space:nowrap;border:1px solid #e3d3a8;background:var(--goldl);border-radius:1.4mm;padding:.9mm 2mm;font-size:7.6pt;cursor:pointer}
+.co b{color:var(--navy)}
+/* 일정 */
+.tl{display:grid;grid-template-columns:repeat(5,1fr);position:relative;gap:2mm}
+.tl::before{content:"";position:absolute;left:10%;right:10%;top:1.5mm;height:.7mm;background:linear-gradient(90deg,var(--navy2),var(--gold))}
+.tn{position:relative;text-align:center;cursor:pointer;padding-top:3.8mm}
+.tn::before{content:"";position:absolute;top:0;left:50%;width:3.2mm;height:3.2mm;margin-left:-1.6mm;border-radius:50%;background:#fff;border:.8mm solid var(--gold)}
+.tn .tb{border:1px solid var(--line);border-radius:1.5mm;background:var(--soft);padding:.9mm 1.4mm 1.1mm}
+.tn .dt{font-weight:700;color:var(--navy);font-size:9pt}
+.tn .tt{font-weight:700;color:var(--gold);font-size:7.8pt}
+.tn p{font-size:7pt;font-weight:700;color:#3a465e;line-height:1.28}
+/* 카드 */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:2.2mm}
+.cd{position:relative;border:1px solid var(--line);border-left:1mm solid var(--gold);border-radius:1.5mm;background:#fff;padding:1.1mm 1.8mm 1.2mm;cursor:pointer}
+.cd .tg{display:inline-block;background:var(--navy);color:#f1dcab;border-radius:1mm;font-size:6.6pt;padding:.1mm 1.4mm;margin-right:1mm}
+.cd b{font-size:8.1pt;color:var(--navy);white-space:nowrap}
+.cd p{font-size:7.3pt;color:var(--ink);line-height:1.32;margin-top:.5mm}
+.cd p u{text-decoration:none;color:var(--red);font-weight:700}
+/* 오해 */
+.myth{display:flex;flex-direction:column;gap:.8mm;flex:1 1 auto}
+.mt{flex:1 0 auto;position:relative;display:grid;grid-template-columns:.95fr 3.4mm 1.5fr;align-items:stretch;border:1px solid var(--line);border-radius:1.5mm;overflow:hidden;cursor:pointer}
+.mt .o{background:var(--redl);padding:.4mm 2mm;color:#6d2a25}
+.mt .o:before{content:"✕ 오해";margin-right:1.2mm;white-space:nowrap;font-weight:700;color:var(--red);font-size:6.8pt}
+.mt .ar{background:linear-gradient(90deg,var(--redl),var(--grnl));display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:7pt}
+.mt .s{background:var(--grnl);padding:.4mm 2mm;color:#1f4d3a}
+.mt .s:before{content:"○ 사실";margin-right:1.2mm;white-space:nowrap;font-weight:700;color:var(--grn);font-size:6.8pt}
+.mt .o,.mt .s{font-size:7.6pt;line-height:1.32;display:flex;align-items:center}
+/* 바닥 */
+.main{display:flex;flex-direction:column;gap:2.1mm;flex:1 1 auto}
+.grow{flex:1 1 auto;display:flex;flex-direction:column}
+.ft{margin-top:2.6mm;border-top:1.4px solid var(--gold);background:var(--soft);border-radius:0 0 1.5mm 1.5mm;padding:1.3mm 2.5mm 1.4mm;flex-shrink:0}
+.law a,.lw a{color:inherit;text-decoration:underline dotted;text-underline-offset:1px}.law a:hover,.lw a:hover{color:#1763ad}
+.ft .law{font-size:5.9pt;color:var(--mut);line-height:1.35}
+.ft .row{display:flex;justify-content:space-between;align-items:center;margin-top:.8mm;font-size:6.6pt}
+.ft .row .l,.ft .row .r{color:var(--navy);font-weight:700}
+/* 팝업 */
+.pop{position:fixed;z-index:20;width:min(390px,92vw);background:#fff;border-radius:8px;box-shadow:0 8px 30px rgba(10,25,55,.35);border:1px solid #c8d2e3;font-size:13px;line-height:1.6}
+.pop[hidden]{display:none}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;background:linear-gradient(115deg,#1b2f55,#35598a);color:#f6e6bd;border-radius:8px 8px 0 0;cursor:move;touch-action:none;user-select:none}
+.ph b{font-size:14px}
+.ph button{border:0;background:transparent;color:#fff;font-size:20px;line-height:1;cursor:pointer;padding:0 4px}
+.pb{padding:10px 14px 12px;max-height:68vh;overflow:auto;color:#222}
+.pb p{margin-bottom:7px}
+.pb em{display:inline-block;font-style:normal;font-weight:700;font-size:11px;background:var(--goldl);color:#7a5a1e;border-radius:3px;padding:0 6px;margin-right:6px}
+.pb .lw{margin-top:8px;padding-top:6px;border-top:1px dashed #ccd4e2;font-size:11.5px;color:#5a6577}
+@page{size:A4 portrait;margin:0}
+@media print{html,body{background:#fff}.sheet{margin:0;box-shadow:none;zoom:1!important}.bar,.pop{display:none!important}.i{display:none}.st:hover,.cd:hover,.rw:hover,.mt:hover,.tn:hover .tb{box-shadow:none}}
+.bar button.sec{background:#fff;color:var(--navy)}
+.editing [data-ed]{outline:1px dashed #e0a43a;outline-offset:1px;cursor:text}
+.editing [data-ed]:focus{outline:2px solid #e0a43a;background:#fffbea}
+.editing [data-p]{cursor:text}
+.edtip{display:none;position:fixed;left:12px;bottom:10px;z-index:6;background:#17294a;color:#ffe8a8;font-size:12px;padding:6px 12px;border-radius:5px}
+.editing .edtip{display:block}
+.pop [contenteditable]{outline:1px dashed #e0a43a}
+@media print{.edtip{display:none!important}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <button type="button" id="bEdit" class="sec">글자 편집</button>
+  <button type="button" id="bDl" class="sec">수정본 내려받기</button>
+  <button type="button" id="bRst" class="sec">원래대로</button>
+  <button type="button" id="prt">인쇄 / PDF 저장</button>
+</div>
+<div class="edtip">편집 모드 : 글자만 수정됩니다(서식 없음). 팝업 설명은 Alt+클릭으로 열어 수정하세요.</div>
+
+<main class="sheet" id="sheet" data-ver="1">
+<div class="main" id="main">
+
+<header class="ttl">
+  <h1>증여세 개요</h1>
+  <div class="sub"><i>TAX BRIEFING</i>공짜로 받은 재산에 내는 세금 : 계산과 주의점</div>
+  <div class="chips"><span>세율 <b>10~50%</b></span><span>신고 <b>3개월</b></span><span>공제 <b>10년 합산</b></span></div>
+  <div class="qd">조회일 <b id="qd">2026.11.06</b></div>
+</header>
+
+<section>
+  <div class="sh"><span class="n">1</span>증여세는 이렇게 계산됩니다<span class="hint">각 칸을 누르면 쉬운 설명이 열립니다</span></div>
+  <div class="chain">
+    <div class="st" data-p="gf" tabindex="0"><span class="i">i</span><span class="no">1</span><b>증여재산</b><small>공짜로 받은 재산</small><p>현금·부동산·주식, 싸게 산 이익</p></div>
+    <div class="st" data-p="debt" tabindex="0"><span class="i">i</span><span class="no">2</span><b>차감항목</b><small>떠안은 빚은 뺌</small><p>전세보증금·대출 인수액</p></div>
+    <div class="st" data-p="sum" tabindex="0"><span class="i">i</span><span class="no">3</span><b>10년 합산</b><small>같은 증여자 것</small><p>10년 내 증여를 더해 계산</p></div>
+    <div class="st" data-p="ded" tabindex="0"><span class="i">i</span><span class="no">4</span><b>증여재산공제</b><small>관계별 공제</small><p>배우자 6억, 자녀 5천만 원 등</p></div>
+    <div class="st" data-p="tb" tabindex="0"><span class="i">i</span><span class="no">5</span><b>과세표준</b><small>세율 곱하는 기준</small><p>과세가액 − 증여재산공제</p></div>
+    <div class="st" data-p="rate" tabindex="0"><span class="i">i</span><span class="no">6</span><b>세율</b><small>10~50%</small><p>5단계 누진세율</p></div>
+    <div class="st" data-p="pay" tabindex="0"><span class="i">i</span><span class="no">7</span><b>납부세액</b><small>받은 사람이 신고</small><p>받은 달 말일부터 3개월</p></div>
+  </div>
+  <div class="fm">증여세 = ( 증여재산 <i>−</i> 인수채무 <i>+</i> 10년 내 합산증여 <i>−</i> 증여재산공제 ) <i>×</i> 세율 <i>−</i> 누진공제 <span>&nbsp;※ 납세의무자는 받는 사람</span></div>
+</section>
+
+<div class="two">
+  <section>
+    <div class="sh"><span class="n">2</span>세율 한눈에<span class="hint">2026.11.06 현행 기준</span></div>
+    <div class="rt">
+      <div class="rh"><span>과세표준</span><span>세율 (비례 막대)</span><span>끝 세액</span><span>누진공제</span></div>
+      <div class="rw" data-p="prog" tabindex="0"><span class="rl">1억 이하</span><span class="bb"><i style="width:26%"></i><b>10%</b></span><span class="re">1,000만</span><span class="rd">없음</span></div>
+      <div class="rw" data-p="prog" tabindex="0"><span class="rl">1억~5억</span><span class="bb"><i style="width:40%"></i><b>20%</b></span><span class="re">9,000만</span><span class="rd">1,000만</span></div>
+      <div class="rw" data-p="prog" tabindex="0"><span class="rl">5억~10억</span><span class="bb"><i style="width:60%"></i><b>30%</b></span><span class="re">2.4억</span><span class="rd">6,000만</span></div>
+      <div class="rw" data-p="prog" tabindex="0"><span class="rl">10억~30억</span><span class="bb"><i style="width:80%"></i><b>40%</b></span><span class="re">10.4억</span><span class="rd">1.6억</span></div>
+      <div class="rw" data-p="prog" tabindex="0"><span class="rl">30억 초과</span><span class="bb"><i style="width:100%"></i><b>50%</b></span><span class="re">20.4억</span><span class="rd">4.6억</span></div>
+    </div>
+    <div class="note">산출세액 = 과세표준 × 세율 − 누진공제 <span class="lk" data-p="prog">[계산 요령]</span><br>끝 세액 = 구간 끝 과표 기준(30억 초과는 50억).<br>상속세와 같은 세율표, 2026 세제개편안은 미반영입니다. <span class="lk" data-p="gen">[세대생략 할증이란?]</span></div>
+  </section>
+
+  <section>
+    <div class="sh"><span class="n">3</span>계산 예시<span class="hint">성년 자녀 증여 · 가정 수치</span></div>
+    <table class="ex">
+      <tr data-p="gf"><td>증여재산가액 (시가)</td><td>3억 원</td><td>부모 → 성년 자녀 현금 증여 (가정)</td></tr>
+      <tr class="sb neg" data-p="debt"><td>(−) 인수한 채무</td><td>0원</td><td>부담부증여 아님 (가정)</td></tr>
+      <tr class="sb" data-p="sum"><td>(+) 10년 내 합산 증여</td><td>0원</td><td>같은 증여자의 이전 증여 없음</td></tr>
+      <tr class="hl"><td>(=) 증여세 과세가액</td><td>3억 원</td><td>3억 − 0 + 0</td></tr>
+      <tr class="sb neg" data-p="ded"><td>(−) 증여재산공제</td><td>−5,000만 원</td><td>직계존속 → 성년 자녀 (10년 한도)</td></tr>
+      <tr class="hl" data-p="tb"><td>(=) 과세표준</td><td>2억 5,000만 원</td><td>3억 − 5,000만</td></tr>
+      <tr class="sb" data-p="prog"><td>과세표준 × 세율 20%</td><td>5,000만 원</td><td>1억 초과~5억 이하 구간</td></tr>
+      <tr class="sb neg" data-p="prog"><td>(−) 누진공제</td><td>−1,000만 원</td><td>해당 구간 공제액</td></tr>
+      <tr class="hl" data-p="prog"><td>(=) 산출세액</td><td>4,000만 원</td><td>구간별 : 1억×10% + 1.5억×20%</td></tr>
+      <tr class="sb neg" data-p="c7"><td>(−) 분납 (2개월 내 납부)</td><td>−2,000만 원</td><td>2,000만 원 초과 시 50% 이하 (선택)</td></tr>
+      <tr class="hl" data-p="pay"><td>신고기한 내 낼 증여세</td><td>2,000만 원</td><td>받은 달 말일부터 3개월 내</td></tr>
+      <tr class="fin"><td>증여세 부담 합계</td><td>4,000만 원</td><td>증여재산의 약 13.3%</td></tr>
+    </table>
+    <div class="co" data-p="exm">혼인·출산 증여재산공제 1억 추가(요건 충족) 시 : 산출세액 <b>4,000만 → 2,000만 원</b> <span class="lk">[왜?]</span></div>
+  </section>
+</div>
+
+<section>
+  <div class="sh"><span class="n">4</span>증여 일정 한눈에<span class="hint">증여일 기준 · 신고기한은 증여받은 달의 말일부터 계산</span></div>
+  <div class="tl">
+    <div class="tn" data-p="t1" tabindex="0"><div class="tb"><div class="dt">증여일</div><div class="tt">증여 발생</div><p>현금은 입금일, 부동산은 등기접수일</p></div></div>
+    <div class="tn" data-p="t2" tabindex="0"><div class="tb"><div class="dt">3개월 이내</div><div class="tt">신고·납부</div><p>부동산은 취득세도 3개월 내 신고</p></div></div>
+    <div class="tn" data-p="t3" tabindex="0"><div class="tb"><div class="dt">기한 후 2개월</div><div class="tt">분납 마감</div><p>1,000만 원 초과분을 나눠 납부</p></div></div>
+    <div class="tn" data-p="t4" tabindex="0"><div class="tb"><div class="dt">최장 5년</div><div class="tt">연부연납</div><p>2,000만 원 초과, 담보 제공, 가산금 부담</p></div></div>
+    <div class="tn" data-p="t5" tabindex="0"><div class="tb"><div class="dt">증여 후 10년</div><div class="tt">합산·이월과세</div><p>10년 내 증여 합산, 부동산은 이월과세</p></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="n">5</span>증여받는 사람·주는 사람이 꼭 주의할 점 · 분납과 연부연납<span class="hint">각 칸을 누르면 사례와 대응 방법이 열립니다</span></div>
+  <div class="grid3">
+    <div class="cd" data-p="c1" tabindex="0"><span class="tg">합산</span><b>10년 합산이 핵심</b><p>같은 증여자(직계존속은 합쳐서) <u>10년 내 증여는 합산</u>해 세율·공제를 다시 계산. 쪼개 줘도 소용없음.</p></div>
+    <div class="cd" data-p="c2" tabindex="0"><span class="tg">공제</span><b>공제는 10년 한도</b><p>배우자 <u>6억</u>, 직계존비속 <u>5천만 원</u>(미성년 2천만), 기타친족 1천만 원. 혼인·출산은 <u>1억 추가</u>.</p></div>
+    <div class="cd" data-p="c3" tabindex="0"><span class="tg">기한</span><b>신고기한 놓치면</b><p>받은 달 말일부터 <u>3개월</u>. 무신고 <u>20%</u>, 납부지연 <u>하루 0.022%</u>, 부정행위 40%.</p></div>
+    <div class="cd" data-p="c4" tabindex="0"><span class="tg">평가</span><b>재산은 시가로 평가</b><p>아파트 등은 <u>매매사례·감정가액</u>이 우선. 시가가 없을 때 공시가격 등으로 보충 평가.</p></div>
+    <div class="cd" data-p="c5" tabindex="0"><span class="tg">부담부</span><b>빚 낀 증여는 양도세</b><p>대출·보증금을 넘기면 <u>그 채무액은 양도</u>로 보아 증여자에게 양도세. 나머지에만 증여세.</p></div>
+    <div class="cd" data-p="c6" tabindex="0"><span class="tg">자금출처</span><b>자금출처 소명 대비</b><p>소득이 적은데 집·주식을 사면 <u>증여로 추정</u>. 취득자금 출처를 입증하지 못하면 과세.</p></div>
+    <div class="cd" data-p="c7" tabindex="0"><span class="tg">분납</span><b>세금이 크면 나눠 납부</b><p>납부세액 <u>1,000만 원</u> 초과 시 기한 후 <u>2개월</u> 이내 분납. 2,000만 원 초과는 50% 이하. 무이자.</p></div>
+    <div class="cd" data-p="c8" tabindex="0"><span class="tg">연부연납</span><b>연부연납으로 5년 분할</b><p>세액 <u>2,000만 원 초과</u>, 담보 제공 시 허가일부터 <u>5년</u> 분할. 가산금 부담. 가업승계 특례는 15년.</p></div>
+    <div class="cd" data-p="c9" tabindex="0"><span class="tg">반환</span><b>잘못 준 증여는 반환</b><p>금전 외 재산은 신고기한 내 <u>반환하면 증여가 없던 것</u>. 기한 후 3개월 내 반환분도 과세 제외. 금전은 제외.</p></div>
+  </div>
+</section>
+
+<section class="grow">
+  <div class="sh"><span class="n">6</span>일반인이 자주 하는 오해, 사실은?<span class="hint">각 줄을 누르면 근거가 열립니다</span></div>
+  <div class="myth">
+    <div class="mt" data-p="m1" tabindex="0"><div class="o">"해마다 5천만 원씩은 세금 없이 줄 수 있다"</div><div class="ar">▶</div><div class="s"><span>공제는 <b>10년 합산</b> 한도입니다. 매년 줘도 10년 내 합쳐서 5천만 원 넘는 부분에 과세됩니다.</span></div></div>
+    <div class="mt" data-p="m2" tabindex="0"><div class="o">"증여 신고를 안 하면 세무서가 모른다"</div><div class="ar">▶</div><div class="s"><span>금융·등기 자료로 파악합니다. 무신고 시 부과제척기간 <b>15년</b>, 가산세 20% 이상이 붙습니다.</span></div></div>
+    <div class="mt" data-p="m3" tabindex="0"><div class="o">"부부끼리는 얼마를 줘도 세금이 없다"</div><div class="ar">▶</div><div class="s"><span>배우자 공제도 <b>10년 6억 원</b>까지입니다. 넘는 부분은 일반 증여와 같이 과세됩니다.</span></div></div>
+    <div class="mt" data-p="m4" tabindex="0"><div class="o">"증여세는 주는 사람이 낸다"</div><div class="ar">▶</div><div class="s"><span>납세의무자는 <b>받는 사람</b>입니다. 증여자가 세금을 대신 내주면 그 금액도 증여로 봅니다.</span></div></div>
+    <div class="mt" data-p="m5" tabindex="0"><div class="o">"부동산은 공시가격으로 신고하면 된다"</div><div class="ar">▶</div><div class="s"><span>매매사례·감정가액 같은 <b>시가가 있으면 시가 우선</b>입니다. 공시가격은 시가가 없을 때 씁니다.</span></div></div>
+  </div>
+</section>
+
+</div>
+<footer class="ft" id="ft">
+  <div class="law">근거 : 상속세 및 증여세법 제4·4조의2·35·45·47·53·53조의2·56·57·60·61·68·70·71·72조, 국세기본법 제26조의2, 제47조의2~제47조의4, 소득세법 제88조, 제97조의2, 지방세법 제20조<br>※ 설명용 자료이며 예시는 가정입니다. 2026.11.06 현행법 기준(2026 세제개편안 미반영). 개별 사안은 전문가와 확인하세요.</div>
+  <div class="row"><span class="l">삼성생명 개인/기업 재무 전문가 윤현철 팀장 · 010-9510-1088</span><span class="r">ⓒ<span id="yr">2026</span>. YOON HYUNCHUL ALL RIGHTS RESERVED.</span></div>
+</footer>
+</main>
+
+<div class="pop" id="pop" hidden role="dialog" aria-modal="false" aria-labelledby="pt">
+  <div class="ph" id="ph"><b id="pt"></b><button type="button" id="px" aria-label="닫기">×</button></div>
+  <div class="pb" id="pbody"></div>
+</div>
+
+<script id="pov" type="application/json">{}</script>
+<script>
+(function(){
+var sheetEl=document.getElementById("sheet"),mainEl=document.getElementById("main"),ftEl=document.getElementById("ft");
+var KEY="info_edit_"+(location.pathname.split("/").pop()||"gifttax_info.html"),ov={};
+try{ov=JSON.parse(document.getElementById("pov").textContent||"{}")}catch(e){}
+try{var sv=JSON.parse(localStorage.getItem(KEY)||"null");if(sv&&sv.ver===sheetEl.getAttribute("data-ver")){if(sv.main)mainEl.innerHTML=sv.main;if(sv.ft)ftEl.innerHTML=sv.ft;if(sv.ov)Object.keys(sv.ov).forEach(function(k){ov[k]=sv.ov[k]})}}catch(e){}
+var d=new Date(),y=d.getFullYear(),m=('0'+(d.getMonth()+1)).slice(-2),dd=('0'+d.getDate()).slice(-2);
+document.getElementById('qd').textContent=y+'.'+m+'.'+dd;
+document.getElementById('yr').textContent=y;
+
+var P={
+gf:{t:"증여재산 : 대가 없이 받은 재산과 이익",b:"<p><em>쉬운 설명</em>무상으로 받은 현금·부동산·주식은 물론, 시세보다 싸게 사거나 비싸게 팔아 준 경우의 차액 이익도 증여로 봅니다.</p><p><em>범위</em>증여세는 증여를 받은 사람이 신고·납부합니다. 증여일은 현금은 입금일, 부동산은 등기 접수일 등 재산별로 정해져 있습니다.</p>",l:"상속세 및 증여세법 제4조, 제35조"},
+debt:{t:"인수 채무 : 부담부증여면 채무액은 뺀다",b:"<p><em>쉬운 설명</em>증여받은 재산에 전세보증금이나 대출이 있어서 받는 사람이 그 빚을 떠안으면, 떠안은 채무액은 증여재산에서 뺍니다.</p><p><em>유의</em>대신 증여자는 그 채무액만큼 재산을 넘긴 것으로 보아 양도소득세를 낼 수 있습니다.</p>",l:"상속세 및 증여세법 제47조, 소득세법 제88조"},
+sum:{t:"10년 합산 : 같은 사람이 준 증여는 합쳐서",b:"<p><em>쉬운 설명</em>증여일 전 10년 안에 같은 증여자에게서 받은 증여재산 합계가 1,000만 원 이상이면 이번 증여재산에 더해 세금을 계산합니다. 이미 낸 증여세는 공제합니다.</p><p><em>주의</em>직계존속(부모·조부모 등)은 한 사람으로 봅니다. 아버지에게 받고 어머니에게 또 받아도 합산입니다.</p>",l:"상속세 및 증여세법 제47조, 제58조"},
+ded:{t:"증여재산공제 : 관계별 10년 한도",b:"<p><em>금액</em>배우자 6억 원, 직계존속 5,000만 원(수증자가 미성년자면 2,000만 원), 직계비속 5,000만 원, 기타 친족(6촌 이내 혈족·4촌 이내 인척) 1,000만 원입니다.</p><p><em>혼인·출산</em>혼인신고 전후 2년 이내, 또는 자녀 출생·입양 후 2년 이내에 직계존속에게 받으면 1억 원을 추가로 공제합니다.</p><p><em>주의</em>공제는 10년간 합산 한도이고 여러 증여자에게 받아도 같은 관계 그룹이면 한도를 함께 씁니다.</p>",l:"상속세 및 증여세법 제53조, 제53조의2"},
+tb:{t:"과세표준 : 세율을 곱하는 기준금액",b:"<p><em>쉬운 설명</em>증여세 과세가액에서 증여재산공제와 감정평가수수료를 뺀 금액입니다. 이 금액에 세율을 곱합니다.</p><p><em>최저한</em>과세표준이 50만 원 미만이면 증여세를 부과하지 않습니다.</p>",l:"상속세 및 증여세법 제55조"},
+rate:{t:"세율 : 5단계 누진세율",b:"<p><em>쉬운 설명</em>증여세 세율은 상속세와 같습니다. 1억 원 이하 10%, 1억~5억 20%, 5억~10억 30%, 10억~30억 40%, 30억 초과 50%입니다.</p><p><em>예시</em>과세표준 5억 원이면 5억 × 20% − 1,000만 = 9,000만 원입니다.</p>",l:"상속세 및 증여세법 제56조, 제26조"},
+pay:{t:"납부세액 : 받은 사람이 신고하고 낸다",b:"<p><em>쉬운 설명</em>증여받은 달의 말일부터 3개월 안에 신고하고 같은 기한까지 납부합니다. 납세의무자는 받은 사람입니다.</p><p><em>연대</em>수증자가 세금을 낼 능력이 없는 등 일정한 경우에는 증여자가 연대해서 낼 수 있습니다.</p><p><em>할증</em>자녀가 아닌 직계비속(손자녀)에게 주면 산출세액의 30%(미성년자이고 20억 원 초과 시 40%)가 가산됩니다.</p>",l:"상속세 및 증여세법 제4조의2, 제57조, 제68조, 제70조"},
+prog:{t:"누진공제 : 구간별 계산의 지름길",b:"<p><em>쉬운 설명</em>구간별로 나눠 계산하는 대신 \"과세표준 × 세율 − 누진공제\" 한 줄로 같은 값을 얻습니다.</p><p><em>검산</em>과세표준 2.5억 원이면 2.5억 × 20% − 1,000만 = 4,000만 원입니다. 구간별로는 1억 × 10% + 1.5억 × 20% = 1,000만 + 3,000만 = 4,000만 원으로 같습니다.</p>",l:"상속세 및 증여세법 제56조, 제26조"},
+gen:{t:"세대생략 할증 : 한 세대를 건너뛰면 추가 과세",b:"<p><em>쉬운 설명</em>자녀를 건너뛰고 손자녀에게 바로 증여하면 중간 세대의 상속세·증여세를 한 번 건너뛰게 됩니다. 이를 막기 위해 산출세액에 30%를 더합니다.</p><p><em>예외</em>수증자가 미성년자이고 증여재산이 20억 원을 넘으면 40%입니다. 증여자의 자녀가 사망해 그 자녀의 자녀가 받는 경우는 할증하지 않습니다.</p>",l:"상속세 및 증여세법 제57조"},
+ex:{t:"계산 예시의 가정",b:"<p><em>가정</em>부모가 성년 자녀에게 현금 3억 원을 한 번 증여했고, 같은 증여자의 10년 내 이전 증여는 없다고 가정했습니다.</p><p><em>주의</em>실제 세액은 증여재산 평가, 이전 증여 이력, 공제 한도 사용 여부에 따라 달라집니다. 부동산은 취득세도 따로 부담합니다.</p>",l:"상속세 및 증여세법 제47조, 제53조, 제56조"},
+exm:{t:"혼인·출산 증여재산공제의 효과",b:"<p><em>비교</em>기본 공제 5,000만 원에 혼인·출산 공제 1억 원을 더하면 과세표준이 2.5억 원에서 1.5억 원으로 줄고, 산출세액은 1.5억 × 20% − 1,000만 = 2,000만 원이 됩니다.</p><p><em>요건</em>혼인신고일 전 2년부터 후 2년 이내, 또는 출생·입양 후 2년 이내에 직계존속에게 받은 증여가 대상이며 공제 합계 한도는 1억 원입니다.</p>",l:"상속세 및 증여세법 제53조의2"},
+t1:{t:"증여일 : 증여가 이루어진 날",b:"<p><em>쉬운 설명</em>증여일은 재산을 실제로 받은 날입니다. 현금은 입금일, 부동산은 소유권이전등기 신청서 접수일 기준입니다.</p><p><em>의미</em>신고기한과 10년 합산 기간이 모두 이날부터 계산됩니다.</p>",l:"상속세 및 증여세법 제4조"},
+t2:{t:"신고·납부 : 받은 달 말일부터 3개월",b:"<p><em>기한</em>증여받은 달의 말일부터 3개월 이내입니다. 예를 들어 3월 15일에 받았다면 6월 30일까지입니다.</p><p><em>취득세</em>부동산·차량 등은 증여세와 별개로 취득세를 취득일이 속한 달의 말일부터 3개월 안에 신고해야 합니다.</p>",l:"상속세 및 증여세법 제68조, 지방세법 제20조"},
+t3:{t:"분납 : 기한 후 2개월 안에 나머지 납부",b:"<p><em>쉬운 설명</em>납부세액이 1,000만 원을 넘으면 일부를 신고기한 후 2개월 이내에 낼 수 있습니다. 2,000만 원 이하는 1,000만 원 초과분, 2,000만 원 초과는 50% 이하입니다.</p><p><em>유의</em>연부연납을 선택하면 분납과 함께 쓸 수 없습니다.</p>",l:"상속세 및 증여세법 제70조, 상속세 및 증여세법 시행령 제66조"},
+t4:{t:"연부연납 : 증여는 최장 5년",b:"<p><em>쉬운 설명</em>증여세 납부세액이 2,000만 원을 넘으면 담보를 제공하고 허가를 받아 5년 동안 나눠 낼 수 있습니다. 가업승계 증여세 과세특례 대상은 15년입니다.</p><p><em>비용</em>연부연납 가산금(이자 성격)이 붙고 각 회분 납부액은 1,000만 원을 넘어야 합니다.</p>",l:"상속세 및 증여세법 제71조, 제72조"},
+t5:{t:"증여 후 10년 : 합산과 이월과세 기간",b:"<p><em>증여세</em>같은 증여자의 10년 내 증여는 합산되므로 한도를 다시 쓰려면 10년이 지나야 합니다.</p><p><em>양도세</em>배우자·직계존비속에게 증여받은 부동산 등을 10년 안에 팔면 증여가액이 아니라 증여자의 당초 취득가액으로 양도차익을 계산합니다(2023년 이후 증여분).</p>",l:"상속세 및 증여세법 제47조, 소득세법 제97조의2"},
+c1:{t:"합산 과세 : 쪼개 줘도 합쳐서 계산",b:"<p><em>쉬운 설명</em>같은 증여자에게서 10년 안에 받은 증여재산이 합산 대상입니다. 매년 나눠 받아도 10년 동안의 합계로 공제와 세율이 적용됩니다.</p><p><em>대응</em>10년 단위로 공제 한도를 쓰는 장기 계획이 필요합니다.</p>",l:"상속세 및 증여세법 제47조"},
+c2:{t:"증여재산공제 한도",b:"<p><em>쉬운 설명</em>관계별 공제는 10년 합산 한도입니다. 직계존속에게 받은 증여는 아버지·어머니·조부모를 합쳐 한도 5,000만 원(미성년자 2,000만 원)을 씁니다.</p><p><em>추가</em>혼인·출산 공제는 별도로 최대 1억 원이며, 기본 공제와 따로 관리됩니다.</p>",l:"상속세 및 증여세법 제53조, 제53조의2"},
+c3:{t:"가산세 : 기한을 놓친 대가",b:"<p><em>기한</em>증여받은 달의 말일부터 3개월입니다.</p><p><em>가산세</em>무신고 20%(부정행위 40%), 과소신고 10%, 납부지연 하루 0.022%입니다.</p><p><em>줄이는 법</em>기한 후 신고나 수정신고를 빨리 하면 가산세를 감면받습니다.</p>",l:"국세기본법 제47조의2, 제47조의3, 제47조의4, 상속세 및 증여세법 제68조"},
+c4:{t:"재산 평가 : 시가가 우선",b:"<p><em>쉬운 설명</em>증여재산은 증여일 현재의 시가로 평가합니다. 같거나 유사한 재산의 매매사례가액이나 감정가액이 있으면 시가로 보고, 없을 때 공시가격 같은 보충적 방법을 씁니다.</p><p><em>유의</em>아파트는 같은 단지의 최근 거래가 시가가 될 수 있어, 공시가격으로 신고했다가 시가로 경정될 수 있습니다.</p>",l:"상속세 및 증여세법 제60조, 제61조"},
+c5:{t:"부담부증여 : 빚을 넘기면 양도세도 발생",b:"<p><em>쉬운 설명</em>대출금이나 전세보증금을 함께 넘기는 증여입니다. 받는 사람이 떠안은 채무액은 증여세 대상에서 빠지는 대신, 증여자가 그 부분을 양도한 것으로 봅니다.</p><p><em>결과</em>채무액 부분은 증여자의 양도소득세, 나머지는 수증자의 증여세로 나뉩니다. 양도차익이 큰 재산일수록 세금이 늘 수 있습니다.</p>",l:"상속세 및 증여세법 제47조, 소득세법 제88조"},
+c6:{t:"자금출처 : 취득자금을 소명하지 못하면 증여",b:"<p><em>쉬운 설명</em>소득이나 재산이 적은 사람이 집·주식을 사면 취득자금의 출처를 소명해야 합니다. 입증하지 못한 금액은 증여받은 것으로 추정합니다.</p><p><em>대응</em>소득 증빙, 대출 내역, 예금 인출 기록 등을 남겨 두세요. 일정 기준 미만 금액은 소명을 면제받는 기준이 있습니다.</p>",l:"상속세 및 증여세법 제45조"},
+c7:{t:"분납 : 세금을 나눠 내는 제도",b:"<p><em>쉬운 설명</em>납부세액이 1,000만 원을 넘으면 일부를 납부기한 후 2개월 이내에 낼 수 있습니다. 이자(가산세)가 없습니다.</p><p><em>금액</em>납부세액 2,000만 원 이하는 1,000만 원 초과분, 2,000만 원 초과는 50% 이하입니다.</p>",l:"상속세 및 증여세법 제70조, 상속세 및 증여세법 시행령 제66조"},
+c8:{t:"연부연납 : 5년에 나눠 내기",b:"<p><em>요건</em>납부세액이 2,000만 원을 넘어야 하고, 신고할 때 신청서를 내고 허가를 받은 뒤 담보를 제공합니다.</p><p><em>기간</em>허가일부터 일반 증여재산은 5년, 조세특례제한법상 가업승계 증여세 과세특례를 받은 재산은 15년입니다.</p><p><em>비용</em>연부연납 가산금(이자 성격)이 붙습니다.</p>",l:"상속세 및 증여세법 제71조, 제72조"},
+c9:{t:"반환 : 잘못 준 증여를 되돌리기",b:"<p><em>쉬운 설명</em>금전이 아닌 재산은 증여세 신고기한 안에 증여자에게 반환하면 처음부터 증여가 없었던 것으로 봅니다. 신고기한이 지난 뒤 3개월 안에 반환하거나 다시 증여하는 분은 그 반환·재증여에 대한 증여세를 부과하지 않습니다.</p><p><em>예외</em>금전은 반환해도 증여로 봅니다. 반환 전에 세무서가 과세표준과 세액을 결정한 경우도 제외됩니다.</p>",l:"상속세 및 증여세법 제4조"},
+m1:{t:"오해 1 : 해마다 5천만 원씩은 세금 없이 줄 수 있다",b:"<p><em>사실</em>증여재산공제는 10년 합산 한도입니다. 부모가 자녀에게 매년 1,000만 원씩 5년을 줘도 한도 5,000만 원을 모두 쓴 것입니다.</p><p><em>결과</em>6년째에 더 주면 공제할 금액이 남지 않아 그 증여분이 과세표준이 됩니다.</p>",l:"상속세 및 증여세법 제47조, 제53조"},
+m2:{t:"오해 2 : 증여 신고를 안 하면 세무서가 모른다",b:"<p><em>사실</em>금융기관 계좌 이체, 부동산 등기, 주식 명의 변동 자료가 세무서에 모입니다. 자금출처 조사로 뒤늦게 드러나기도 합니다.</p><p><em>결과</em>무신고 시 국세 부과제척기간이 15년으로 길고, 무신고가산세 20%와 납부지연가산세가 붙습니다.</p>",l:"국세기본법 제26조의2, 제47조의2"},
+m3:{t:"오해 3 : 부부끼리는 얼마를 줘도 세금이 없다",b:"<p><em>사실</em>배우자 증여재산공제는 10년간 6억 원입니다. 이 한도를 넘는 금액은 일반 증여와 같은 세율로 과세됩니다.</p><p><em>참고</em>부부 공동재산을 정리하는 경우와 실제 증여는 구분되므로 자금 출처와 지분 설정 기준을 확인해야 합니다.</p>",l:"상속세 및 증여세법 제53조"},
+m4:{t:"오해 4 : 증여세는 주는 사람이 낸다",b:"<p><em>사실</em>증여세의 납세의무자는 받는 사람입니다. 신고·납부도 받는 사람이 합니다.</p><p><em>유의</em>증여자가 세금을 대신 내주면 그 금액도 증여로 보아 추가로 과세될 수 있습니다. 수증자가 낼 능력이 없는 등 예외적인 경우에는 증여자에게도 연대납부 의무가 생깁니다.</p>",l:"상속세 및 증여세법 제4조의2"},
+m5:{t:"오해 5 : 부동산은 공시가격으로 신고하면 된다",b:"<p><em>사실</em>증여재산은 시가로 평가합니다. 같은 단지의 매매사례가액이나 감정가액이 있으면 그 금액이 시가가 됩니다.</p><p><em>결과</em>공시가격은 시가가 없을 때 쓰는 보충적 평가입니다. 공시가격으로 신고했다가 시가로 경정되면 세금과 가산세를 추가로 낼 수 있습니다.</p>",l:"상속세 및 증여세법 제60조, 제61조"}
+};
+
+Object.keys(ov).forEach(function(k){P[k]=ov[k]});
+
+/* 법령 조문 링크 (국가법령정보센터) */
+var LAWRE=/((?:법인세법|소득세법|상속세 및 증여세법|조세특례제한법|국세기본법|국세징수법|지방세법|민법)(?: ?시행령)?|동법(?: 시행령)?|시행령)|(제\d+(?:조의\d+|조)?(?:[·~](?:제)?\d+(?:조의\d+|조)?)*)/g;
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function linkLaw(str){
+  var base='',dec=false;
+  return esc(str).replace(LAWRE,function(m,nm,ch){
+    if(nm){
+      if(nm==='시행령'){dec=true;return m}
+      if(nm.indexOf('동법')===0){dec=/시행령/.test(nm);return m}
+      base=nm.replace(/ ?시행령$/,'');dec=/시행령$/.test(nm);return m;
+    }
+    if(!base||ch.indexOf('조')<0)return m;
+    var law=(base+(dec?'시행령':'')).replace(/\s/g,'');
+    return ch.replace(/\d+(?:조의\d+)?/g,function(d){
+      var a=d.split('조의'),art='제'+a[0]+'조'+(a[1]?'의'+a[1]:'');
+      return '<a href="https://www.law.go.kr/법령/'+encodeURIComponent(law)+'/'+encodeURIComponent(art)+'" target="_blank" rel="noopener">'+d+'</a>';
+    });
+  });
+}
+function linkFt(){var l=document.querySelector('#ft .law');if(!l)return;
+  l.querySelectorAll('a').forEach(function(a){a.replaceWith(document.createTextNode(a.textContent))});l.normalize();
+  var parts=[];l.childNodes.forEach(function(n){parts.push(n.nodeType===3?linkLaw(n.nodeValue):(n.nodeName==='BR'?'<br>':esc(n.textContent)))});
+  l.innerHTML=parts.join('')}
+function unlinkFt(){var l=document.querySelector('#ft .law');if(l){l.querySelectorAll('a').forEach(function(a){a.replaceWith(document.createTextNode(a.textContent))});l.normalize()}}
+var editing=false,curId=null;
+var pop=document.getElementById('pop'),ph=document.getElementById('ph'),pt=document.getElementById('pt'),pbd=document.getElementById('pbody');
+function openP(id){
+  var o=P[id];if(!o)return;curId=id;
+  pt.textContent=o.t;
+  pbd.innerHTML=o.b+'<div class="lw">근거 : '+(editing?esc(o.l):linkLaw(o.l))+'</div>';
+  pbd.scrollTop=0;setPopEdit();
+  if(pop.hidden){
+    pop.hidden=false;
+    var w=pop.offsetWidth;
+    pop.style.left=Math.max(8,(window.innerWidth-w)/2)+'px';
+    pop.style.top=Math.max(8,Math.round(window.innerHeight*0.14))+'px';
+  }
+}
+function closeP(){pop.hidden=true}
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-p]');
+  if(t){if(editing&&!e.altKey)return;openP(t.getAttribute('data-p'));}
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){closeP();return}
+  if(!editing&&(e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('[data-p]')){e.preventDefault();openP(e.target.getAttribute('data-p'));}
+});
+document.getElementById('px').addEventListener('click',closeP);
+/* 드래그 */
+var drag=null;
+ph.addEventListener('pointerdown',function(e){
+  if(e.target.closest('button')||(editing&&e.target===pt))return;
+  var r=pop.getBoundingClientRect();
+  drag={dx:e.clientX-r.left,dy:e.clientY-r.top};
+  ph.setPointerCapture(e.pointerId);
+});
+ph.addEventListener('pointermove',function(e){
+  if(!drag)return;
+  var x=e.clientX-drag.dx,yy=e.clientY-drag.dy;
+  x=Math.min(Math.max(0,x),window.innerWidth-60);
+  yy=Math.min(Math.max(0,yy),window.innerHeight-40);
+  pop.style.left=x+'px';pop.style.top=yy+'px';
+});
+function endDrag(e){drag=null;try{ph.releasePointerCapture(e.pointerId)}catch(_){}}
+ph.addEventListener('pointerup',endDrag);
+ph.addEventListener('pointercancel',endDrag);
+
+/* 문장 단위 줄바꿈 : 줄 수가 늘지 않을 때만 문장마다 새 줄 */
+function sentenceBreak(){
+  var els=document.querySelectorAll('.cd p,.mt .s>span,.note,.st p,.tn p');
+  els.forEach(function(el){
+    if(el.dataset.sb)return;
+    var txt=el.textContent;
+    if(!/\.\s+\S/.test(txt))return;
+    var kids=Array.prototype.slice.call(el.childNodes),spans=[],cur=null;
+    function ns(){cur=document.createElement('span');cur.className='sn';spans.push(cur)}
+    ns();
+    kids.forEach(function(n){
+      if(n.nodeType===3){
+        var parts=n.nodeValue.split(/(?<=\.)\s+(?=\S)/);
+        parts.forEach(function(t,i){if(i>0)ns();cur.appendChild(document.createTextNode(i<parts.length-1?t+' ':t))});
+      }else{cur.appendChild(n.cloneNode(true))}
+    });
+    if(spans.length<2)return;
+    var orig=el.innerHTML;
+    var lh=parseFloat(getComputedStyle(el).lineHeight)||12;
+    var n0=Math.round(el.getBoundingClientRect().height/lh);
+    el.innerHTML='';spans.forEach(function(sp){el.appendChild(sp)});
+    el.dataset.sb='1';
+    var n1=Math.round(el.getBoundingClientRect().height/lh);
+    spans.forEach(function(sp){sp.style.display='block'});
+    var n2=Math.round(el.getBoundingClientRect().height/lh);
+    if(n2>n0||n0<2){el.innerHTML=orig;}
+  });
+}
+
+/* 본문 자동 맞춤 : 글꼴이 달라 넘치면 비율 축소 */
+function fitContent(){
+  var oz=sheetEl.style.zoom;sheetEl.style.zoom='';
+  mainEl.style.flex='none';mainEl.style.zoom='';mainEl.style.width='';mainEl.style.height='';
+  var cs=getComputedStyle(sheetEl),pX=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight),pY=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
+  var innerW=sheetEl.clientWidth-pX,avail=sheetEl.clientHeight-pY-ftEl.offsetHeight-parseFloat(getComputedStyle(ftEl).marginTop);
+  var z=1;
+  for(;z>=0.72;z-=0.01){
+    mainEl.style.zoom=z<1?z:'';mainEl.style.width=(innerW/z)+'px';mainEl.style.height=(avail/z)+'px';
+    if(mainEl.scrollHeight<=mainEl.clientHeight+1)break;
+  }
+  sheetEl.style.zoom=oz;
+}
+function boot(){linkFt();sentenceBreak();fitContent();}
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(boot)}else{boot()}
+
+/* 글자 편집 */
+var plainOK=(function(){var t=document.createElement('div');try{t.contentEditable='plaintext-only';return t.contentEditable==='plaintext-only'}catch(e){return false}})();
+var CE=plainOK?'plaintext-only':'true';
+function hosts(root){var out=[];(function w(el){
+  if(el.nodeType!==1||el.id==='qd'||el.id==='yr'||el.classList.contains('i'))return;
+  var own=Array.prototype.some.call(el.childNodes,function(n){return n.nodeType===3&&n.nodeValue.trim()});
+  if(own){out.push(el);return}
+  Array.prototype.forEach.call(el.children,w)})(root);return out}
+function normalize(root){
+  root.querySelectorAll('.sn').forEach(function(sp){while(sp.firstChild)sp.parentNode.insertBefore(sp.firstChild,sp);sp.remove()});
+  root.querySelectorAll('[data-sb]').forEach(function(e){e.removeAttribute('data-sb')});
+  root.querySelectorAll('[contenteditable],[data-ed]').forEach(function(e){e.removeAttribute('contenteditable');e.removeAttribute('data-ed')});
+}
+function setPopEdit(){
+  [pt,pbd].forEach(function(e){if(editing){e.setAttribute('contenteditable',CE)}else{e.removeAttribute('contenteditable')}});
+}
+function setEdit(on){
+  editing=on;document.body.classList.toggle('editing',on);
+  document.getElementById('bEdit').textContent=on?'편집 완료·저장':'글자 편집';
+  if(on){unlinkFt();
+    hosts(mainEl).concat(hosts(ftEl)).forEach(function(h){h.setAttribute('contenteditable',CE);h.setAttribute('data-ed','1')});
+  }else{
+    document.querySelectorAll('#sheet [data-ed]').forEach(function(h){h.removeAttribute('contenteditable');h.removeAttribute('data-ed')});
+  }
+  setPopEdit();
+}
+function saveLocal(){
+  var m=mainEl.cloneNode(true),f=ftEl.cloneNode(true);normalize(m);normalize(f);
+  try{localStorage.setItem(KEY,JSON.stringify({ver:sheetEl.getAttribute('data-ver'),main:m.innerHTML,ft:f.innerHTML,ov:ov}))}catch(e){}
+  mainEl.innerHTML=m.innerHTML;ftEl.innerHTML=f.innerHTML;
+  boot();
+}
+document.getElementById('bEdit').addEventListener('click',function(){
+  if(!editing){setEdit(true)}else{setEdit(false);saveLocal()}
+});
+document.addEventListener('input',function(e){
+  if(!editing||!curId||!pop.contains(e.target))return;
+  var c=pbd.cloneNode(true),lw=c.querySelector('.lw'),l=lw?lw.textContent.replace(/^\s*근거\s*:\s*/,''):(P[curId].l||'');
+  if(lw)lw.remove();
+  P[curId]={t:pt.textContent,b:c.innerHTML,l:l};ov[curId]=P[curId];
+  try{var sv=JSON.parse(localStorage.getItem(KEY)||'{}');sv.ver=sheetEl.getAttribute('data-ver');sv.ov=ov;localStorage.setItem(KEY,JSON.stringify(sv))}catch(_){}
+});
+document.addEventListener('keydown',function(e){
+  if(!editing)return;
+  var t=e.target;if(!(t&&t.closest&&t.closest('[contenteditable]')))return;
+  if((e.ctrlKey||e.metaKey)&&/^[biu]$/i.test(e.key)){e.preventDefault();return}
+  if(e.isComposing)return;
+  if(e.key==='Enter'){e.preventDefault();insBr();return}
+  if(e.key===' '&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();insSp();return}
+});
+function selRange(){var sl=window.getSelection();if(!sl||!sl.rangeCount)return null;return {sl:sl,r:sl.getRangeAt(0)}}
+function insBr(){
+  var o=selRange();if(!o)return;var r=o.r;r.deleteContents();
+  var br=document.createElement('br');r.insertNode(br);
+  var nx=br.nextSibling;
+  if(!nx||(nx.nodeType===1&&nx.nodeName!=='BR'&&false)){br.parentNode.insertBefore(document.createElement('br'),br.nextSibling)}
+  r.setStartAfter(br);r.collapse(true);o.sl.removeAllRanges();o.sl.addRange(r);
+}
+function insSp(){
+  var o=selRange();if(!o)return;var r=o.r;r.deleteContents();
+  var n=r.startContainer,i=r.startOffset,prev='',next='';
+  if(n.nodeType===3){prev=n.nodeValue.charAt(i-1);next=n.nodeValue.charAt(i)}
+  var ch=(!prev||/[\s\u00a0]/.test(prev)||!next||/[\s\u00a0]/.test(next))?'\u00a0':' ';
+  var tn=document.createTextNode(ch);r.insertNode(tn);
+  r.setStartAfter(tn);r.collapse(true);o.sl.removeAllRanges();o.sl.addRange(r);
+  var host=tn.parentNode&&tn.parentNode.closest&&tn.parentNode.closest('[contenteditable]');if(host)host.normalize();
+}
+document.addEventListener('paste',function(e){
+  if(!editing)return;var t=e.target;if(!(t&&t.closest&&t.closest('[contenteditable]')))return;
+  e.preventDefault();var txt=(e.clipboardData||window.clipboardData).getData('text').replace(/\s*\n\s*/g,' ');
+  document.execCommand('insertText',false,txt);
+});
+document.getElementById('bRst').addEventListener('click',function(){
+  if(confirm('이 브라우저에 저장된 수정 내용을 지우고 원래대로 되돌립니다.')){try{localStorage.removeItem(KEY)}catch(e){}location.reload()}
+});
+document.getElementById('bDl').addEventListener('click',function(){
+  if(editing){setEdit(false);saveLocal()}
+  var doc=document.documentElement.cloneNode(true);
+  var m=doc.querySelector('#main'),f=doc.querySelector('#ft'),sh=doc.querySelector('#sheet');
+  normalize(m);normalize(f);
+  ['style'].forEach(function(a){m.removeAttribute(a);sh.removeAttribute(a)});
+  sh.setAttribute('data-ver',String(Date.now()));
+  doc.querySelector('#pov').textContent=JSON.stringify(ov).replace(/</g,'\\u003c');
+  var pp=doc.querySelector('#pop');pp.setAttribute('hidden','');pp.removeAttribute('style');doc.querySelector('#pt').textContent='';doc.querySelector('#pbody').innerHTML='';
+  doc.querySelector('body').className='';
+  var html='<!DOCTYPE html>\n'+doc.outerHTML;
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  a.download=(location.pathname.split('/').pop()||'gifttax_info.html');document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
+});
+/* 화면 맞춤 및 인쇄 */
+function fitView(){
+  sheetEl.style.zoom='';
+  var w=sheetEl.getBoundingClientRect().width,a=document.documentElement.clientWidth-12;
+  if(a<w){sheetEl.style.zoom=(a/w).toFixed(4)}
+}
+fitView();window.addEventListener('resize',function(){fitView();var z=sheetEl.style.zoom;fitContent();});
+window.addEventListener('beforeprint',function(){sheetEl.style.zoom='';});
+window.addEventListener('afterprint',fitView);
+document.getElementById('prt').addEventListener('click',function(){window.print()});
+})();
+</script>
+</body>
+</html>

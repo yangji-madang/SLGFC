@@ -283,16 +283,15 @@ m5:{t:'오해 5 : 영수증만 있으면 비용',b:'<p><em>사실</em>비용이 
 Object.keys(ov).forEach(function(k){P[k]=ov[k]});
 
 /* 법령 조문 링크 (국가법령정보센터) */
-var LAWRE=/(법인세법 시행령|법인세법시행령|상속세 및 증여세법|법인세법|소득세법|조세특례제한법|국세기본법|국세징수법|지방세법|동법 시행령|동법|시행령)|(제\d+(?:조의\d+|조)?(?:[·~](?:제)?\d+(?:조의\d+|조)?)*)/g;
+var LAWRE=/((?:법인세법|소득세법|상속세 및 증여세법|조세특례제한법|국세기본법|국세징수법|지방세법|민법)(?: ?시행령)?|동법(?: 시행령)?|시행령)|(제\d+(?:조의\d+|조)?(?:[·~](?:제)?\d+(?:조의\d+|조)?)*)/g;
 function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function linkLaw(str){
   var base='',dec=false;
   return esc(str).replace(LAWRE,function(m,nm,ch){
     if(nm){
-      if(nm==='동법'){return m}
-      if(nm==='동법 시행령'||nm==='시행령'){dec=true;return m}
-      if(/시행령$/.test(nm)){base=nm.replace(/\s?시행령$/,'');dec=true;return m}
-      base=nm;dec=false;return m;
+      if(nm==='시행령'){dec=true;return m}
+      if(nm.indexOf('동법')===0){dec=/시행령/.test(nm);return m}
+      base=nm.replace(/ ?시행령$/,'');dec=/시행령$/.test(nm);return m;
     }
     if(!base||ch.indexOf('조')<0)return m;
     var law=(base+(dec?'시행령':'')).replace(/\s/g,'');
