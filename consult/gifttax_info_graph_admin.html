@@ -159,11 +159,12 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
   <button type="button" data-adm="" id="bGh">GitHub에 반영</button>
   <button type="button" data-adm="" id="bTk" class="sec">토큰 삭제</button>
   <button type="button" data-adm="" id="bRst" class="sec">원래대로</button>
+  <a id="lDetail" class="lk" href="gifttax_info-admin.html">상세 페이지</a>
   <button type="button" id="prt">인쇄 / PDF 저장</button>
 </div>
 <div class="edtip" data-adm="">편집 모드 : 글자만 수정됩니다(서식 없음). 팝업 설명은 Alt+클릭으로 열어 수정하세요.</div>
 
-<main class="sheet" id="sheet" data-ver="1793937460183">
+<main class="sheet" id="sheet" data-ver="1793937674367">
 <div class="main" id="main">
 
 <header class="ttl">
@@ -474,7 +475,7 @@ function buildHtml(ver,mode){
   doc.querySelector('#pov').textContent=JSON.stringify(ov).replace(/</g,'\\u003c');
   var pp=doc.querySelector('#pop');pp.setAttribute('hidden','');pp.removeAttribute('style');doc.querySelector('#pt').textContent='';doc.querySelector('#pbody').innerHTML='';
   doc.querySelector('#gst').textContent='';
-  var bc=doc.querySelector('#bCt');if(bc)bc.textContent='담당자 정보 숨김';
+  var bc=doc.querySelector('#bCt');if(bc)bc.textContent='담당자 정보 숨김';var ld=doc.querySelector('#lDetail');if(ld&&mode==='view')ld.setAttribute('href',ld.getAttribute('href').replace('-admin',''));
   doc.querySelector('body').className='';
   if(mode==='view'){
     doc.querySelectorAll('[data-adm]').forEach(function(e){e.remove()});
