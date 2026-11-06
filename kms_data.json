@@ -69,7 +69,7 @@
      ]
     },
     {
-     "title": "교육/강의",
+     "title": "세제",
      "pin": false,
      "links": [
       {
@@ -117,7 +117,11 @@
        "pin": true
       },
       {
-       "label": "세금계산기",
+       "br": true,
+       "pin": true
+      },
+      {
+       "label": "세금 세물레이터",
        "url": "https://yangji-madang.github.io/SLGFC/consult/tax_simul.html",
        "tags": [
         "세금",
@@ -126,12 +130,14 @@
         "상속",
         "증여"
        ],
-       "pin": true
-      },
-      {
-       "br": true,
-       "pin": true
-      },
+       "pin": false
+      }
+     ]
+    },
+    {
+     "title": "교육/정보",
+     "pin": false,
+     "links": [
       {
        "label": "CRETOP",
        "url": "https://www.cretop.com",
@@ -141,7 +147,7 @@
         "재무",
         "크레탑"
        ],
-       "pin": true
+       "pin": false
       },
       {
        "label": "런인베스트",
@@ -151,7 +157,7 @@
         "강의",
         "영상"
        ],
-       "pin": true
+       "pin": false
       },
       {
        "label": "CO파트너",
@@ -175,20 +181,6 @@
        "pin": false
       },
       {
-       "br": true,
-       "pin": false
-      },
-      {
-       "label": "이자계산기(네이버)",
-       "url": "https://buly.kr/7mEccti",
-       "tags": [
-        "세금",
-        "이자",
-        "계산"
-       ],
-       "pin": false
-      },
-      {
        "label": "삼성생명 Business Live ON",
        "url": "https://www.samsung2030blo.com/",
        "tags": [
@@ -196,6 +188,18 @@
         "라이브",
         "방송",
         "BLO"
+       ],
+       "pin": false
+      },
+      {
+       "label": "이자계산기(네이버)",
+       "url": "https://search.naver.com/search.naver?where=nexearch&sm=tab_etc&mra=bkUz&pkid=69&qvt=0&query=%EC%A0%81%EA%B8%88%EA%B3%84%EC%82%B0%EA%B8%B0",
+       "tags": [
+        "이자",
+        "계산",
+        "네이버",
+        "보험",
+        "비교"
        ],
        "pin": false
       }
