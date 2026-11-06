@@ -42,6 +42,7 @@ a.btn{text-decoration:none;display:inline-block;line-height:1.4}
 
 /* 표 */
 .grid-wrap{flex:1;min-height:0;overflow:auto;background:var(--panel);position:relative}
+.cpy{flex:0 0 auto;text-align:right;font-size:11px;color:var(--sub);padding:3px 14px 4px;background:var(--panel);border-top:1px solid var(--line)}
 table{border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:13.5px}
 th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:0 8px;height:34px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;vertical-align:middle}
@@ -125,6 +126,7 @@ body.resizing-y,body.resizing-y *{cursor:row-resize !important;user-select:none}
   #printArea .ptt{display:flex;justify-content:space-between;align-items:baseline}
   #printArea .ptt b{font-size:15pt}
   #printArea .ptt span{font-size:8pt;font-weight:400;color:#333}
+  #printArea .pcp{text-align:right;font-size:8pt;margin-top:3px;color:#333}
   #printArea td.c{text-align:center}
   #printArea td.rs-r{background:#ffd5d5 !important}
   #printArea td.rs-b{background:#fff6bf !important}
@@ -278,6 +280,8 @@ td.wc{white-space:pre-line;word-break:break-all;line-height:1.35;padding-top:5px
 </div>
 
 <main class="grid-wrap" id="wrap"><table id="grid"></table></main>
+<footer class="cpy">ⓒ<span id="cyr">2026</span>. YOON HYUNCHUL, ALL RIGHTS RESERVED.</footer>
+<script>document.getElementById("cyr").textContent=new Date().getFullYear();</script>
 
 <aside id="drawer"></aside>
 <div id="fmtPanel"></div>
@@ -1036,7 +1040,7 @@ function doPrint(cols, land, withNo){
       return '<td class="' + [(c.type === 'age' ? 'c' : ''), (t ? 'rs-' + t : '')].filter(Boolean).join(' ') + '">' + esc(dispVal(c, v)) + '</td>';
     }).join('') + '</tr>';
   });
-  h += '</tbody></table>';
+  h += '</tbody></table><div class="pcp">ⓒ' + d.getFullYear() + '. YOON HYUNCHUL, ALL RIGHTS RESERVED.</div>';
   $('#printArea').innerHTML = h;
   $('#pgStyle').textContent = '@page{size:A4 ' + (land ? 'landscape' : 'portrait') + ';margin:10mm}';
   setTimeout(() => window.print(), 60);

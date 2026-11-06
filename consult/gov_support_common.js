@@ -18,7 +18,7 @@
   G.LT = ['매출·소득기준', '상시근로자·고용기준', '업력·창업기한', '업종 제한', '지역 제한', '신청기한·선착순', '체납·신용 제한', '사후관리·추징', '교육·인증 요건'];
   G.REL = ['공식', '보도', '참고'];
   G.CONTACT = '삼성생명 개인/기업 재무 전문가 윤현철 팀장 010-9510-1088';
-  G.COPY = 'ⓒ2026. YOON HYUNCHUL ALL RIGHTS RESERVED.';
+  G.COPY = 'ⓒ2026. YOON HYUNCHUL, ALL RIGHTS RESERVED.';
 
   G.esc = function (s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
