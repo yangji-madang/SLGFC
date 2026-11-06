@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>상속세 개요 | 세금 한눈에 보기</title>
 <style>
 :root{--navy:#17294a;--navy2:#2a4470;--gold:#b08435;--goldl:#f5ecd7;--ink:#1d2433;--mut:#566074;--line:#d5dbe6;--soft:#f3f6fb;--red:#b4443c;--redl:#fbeeec;--grn:#2c7a5b;--grnl:#eaf5ef}
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:#e9edf3}
-body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans CJK KR','Noto Sans KR',sans-serif;color:var(--ink);font-size:8.6pt;line-height:1.36;word-break:keep-all;overflow-wrap:normal;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:system-ui,-apple-system,'Segoe UI','Malgun Gothic','Apple SD Gothic Neo','Noto Sans CJK KR',sans-serif;color:var(--ink);font-size:8.6pt;line-height:1.36;word-break:keep-all;overflow-wrap:normal;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .bar{display:flex;gap:6px;position:static;width:210mm;max-width:100%;margin:8px auto -4px;justify-content:flex-end;flex-wrap:wrap}
 .bar button{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
 .sheet{width:210mm;height:296.5mm;margin:10px auto;background:#fff;padding:5.5mm 6.5mm 6.5mm;display:flex;flex-direction:column;gap:0;box-shadow:0 2px 14px rgba(20,40,80,.18);overflow:hidden;position:relative}
 /* 제목 */
-.ttl{display:flex;align-items:center;gap:3mm;border-radius:2.2mm;padding:1.8mm 4mm;color:#fff;border-bottom:.8mm solid #f2b84b;text-shadow:0 1px 2px rgba(0,28,70,.55);
-background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 60%),linear-gradient(110deg,#0f4c8f 0%,#1763ad 45%,#1c86a6 100%)}
+.ttl{display:flex;align-items:center;gap:3mm;border-radius:2.2mm;padding:1.8mm 4mm;color:#fff;border-bottom:.8mm solid #f2b84b;text-shadow:0 1px 2px rgba(30,18,8,.6);
+background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 60%),linear-gradient(110deg,#3e2a1c 0%,#654530 45%,#85603a 100%)}
 .ttl h1{font-size:16.5pt;line-height:1.1;white-space:nowrap;letter-spacing:-.01em;font-weight:800}
 .ttl .sub{font-size:8pt;font-weight:700;line-height:1.3;flex:1;border-left:1px solid rgba(255,255,255,.6);padding-left:3mm}
 .ttl .sub i{display:block;font-style:normal;font-size:6.4pt;letter-spacing:.12em;color:#ffe8a8;font-weight:700}
@@ -98,7 +98,12 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 .law a,.lw a{color:inherit;text-decoration:underline dotted;text-underline-offset:1px}.law a:hover,.lw a:hover{color:#1763ad}
 .ft .law{font-size:5.9pt;color:var(--mut);line-height:1.35}
 .ft .row{display:flex;justify-content:space-between;align-items:center;margin-top:.8mm;font-size:6.6pt}
-.ft .row .l,.ft .row .r{color:var(--navy);font-weight:700}
+.ft .row .l{color:var(--navy);font-weight:700}
+.ft .row .r{color:var(--navy);font-weight:400;font-size:6.1pt;margin-left:auto}
+.hidec .ft .row .l{display:none}.editing.hidec .ft .row .l{display:inline}
+.bar a.lk{font-size:12px;padding:5px 12px;border:1px solid var(--navy);border-radius:4px;color:var(--navy);background:#fff;text-decoration:none}
+#gst{align-self:center;font-size:11px;color:#17294a;margin-right:4px}
+@media print{#gst{display:none!important}}
 /* 팝업 */
 .pop{position:fixed;z-index:20;width:min(390px,92vw);background:#fff;border-radius:8px;box-shadow:0 8px 30px rgba(10,25,55,.35);border:1px solid #c8d2e3;font-size:13px;line-height:1.6}
 .pop[hidden]{display:none}
@@ -121,16 +126,21 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 @media print{.edtip{display:none!important}}
 </style>
 </head>
-<body>
+<body class="">
 <div class="bar">
-  <button type="button" id="bEdit" class="sec">글자 편집</button>
-  <button type="button" id="bDl" class="sec">수정본 내려받기</button>
-  <button type="button" id="bRst" class="sec">원래대로</button>
+  
+  
+  
+  <button type="button" id="bCt" class="sec">담당자 정보 숨김</button>
+  
+  
+  
+  
   <button type="button" id="prt">인쇄 / PDF 저장</button>
 </div>
-<div class="edtip">편집 모드 : 글자만 수정됩니다(서식 없음). 팝업 설명은 Alt+클릭으로 열어 수정하세요.</div>
 
-<main class="sheet" id="sheet" data-ver="1">
+
+<main class="sheet" id="sheet" data-ver="1793927359534">
 <div class="main" id="main">
 
 <header class="ttl">
@@ -171,7 +181,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
   <section>
     <div class="sh"><span class="n">3</span>계산 예시<span class="hint">배우자·자녀 상속 · 가정 수치</span></div>
     <table class="ex">
-      <tr data-p="ass"><td>총상속재산</td><td>20억 원</td><td>부동산 14억 + 금융 4억 + 기타 2억 (가정)</td></tr>
+      <tbody><tr data-p="ass"><td>총상속재산</td><td>20억 원</td><td>부동산 14억 + 금융 4억 + 기타 2억 (가정)</td></tr>
       <tr class="sb neg" data-p="dbt"><td>(−) 채무·장례비 등</td><td>−2억 원</td><td>공과금·장례비·채무 (가정)</td></tr>
       <tr class="hl" data-p="pre"><td>(=) 상속세 과세가액</td><td>18억 원</td><td>사전증여 없다고 가정</td></tr>
       <tr class="sb neg" data-p="ded"><td>(−) 일괄공제</td><td>−5억 원</td><td>기초+인적공제 대신 선택</td></tr>
@@ -183,7 +193,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
       <tr class="hl" data-p="prog"><td>(=) 산출세액</td><td>3,400만 원</td><td>구간별 : 1억×10% + 1.2억×20%</td></tr>
       <tr class="sb neg" data-p="c7"><td>(−) 분납 (2개월 내 납부)</td><td>−1,700만 원</td><td>2,000만 원 초과 시 50% 이하 (선택)</td></tr>
       <tr class="fin"><td>신고기한 내 낼 상속세</td><td>1,700만 원</td><td>총 3,400만 원 중 (분납 1,700만 원)</td></tr>
-    </table>
+    </tbody></table>
     <div class="co" data-p="exb">비교 : 배우자공제 없이 계산하면 과표 12.2억 → 산출세액 약 <b>3.28억 원</b> (약 9.6배) <span class="lk">[왜?]</span></div>
   </section>
 </div>
@@ -228,11 +238,11 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 </div>
 <footer class="ft" id="ft">
   <div class="law">근거 : 상속세 및 증여세법 제3조의2·8·9·10·13·14·15·18·19·20·21·22·26·27·28·60·61·67·70·71·73조, 국세기본법 제26조의2, 제47조의2~제47조의4, 민법 제1019조<br>※ 설명용 자료이며 예시는 가정입니다. 2026.11.06 현행법 기준(2026 세제개편안 미반영). 개별 사안은 전문가와 확인하세요.</div>
-  <div class="row"><span class="l">삼성생명 개인/기업 재무 전문가 윤현철 팀장 · 010-9510-1088</span><span class="r">ⓒ<span id="yr">2026</span>. YOON HYUNCHUL ALL RIGHTS RESERVED.</span></div>
+  <div class="row"><span class="l">삼성생명 개인/기업 재무 전문가 윤현철 팀장 · 010-9510-1088</span><span class="r">ⓒ<span id="yr">2026</span>. Yoon Hyunchul All Rights Reserved.</span></div>
 </footer>
 </main>
 
-<div class="pop" id="pop" hidden role="dialog" aria-modal="false" aria-labelledby="pt">
+<div class="pop" id="pop" hidden="" role="dialog" aria-modal="false" aria-labelledby="pt">
   <div class="ph" id="ph"><b id="pt"></b><button type="button" id="px" aria-label="닫기">×</button></div>
   <div class="pb" id="pbody"></div>
 </div>
@@ -241,9 +251,10 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 <script>
 (function(){
 var sheetEl=document.getElementById("sheet"),mainEl=document.getElementById("main"),ftEl=document.getElementById("ft");
-var KEY="info_edit_"+(location.pathname.split("/").pop()||"inhtax_info.html"),ov={};
+var FN=location.pathname.split("/").pop()||"inhtax_info-admin.html";
+var KEY="info_edit_"+FN,ov={};
 try{ov=JSON.parse(document.getElementById("pov").textContent||"{}")}catch(e){}
-try{var sv=JSON.parse(localStorage.getItem(KEY)||"null");if(sv&&sv.ver===sheetEl.getAttribute("data-ver")){if(sv.main)mainEl.innerHTML=sv.main;if(sv.ft)ftEl.innerHTML=sv.ft;if(sv.ov)Object.keys(sv.ov).forEach(function(k){ov[k]=sv.ov[k]})}}catch(e){}
+
 var d=new Date(),y=d.getFullYear(),m=('0'+(d.getMonth()+1)).slice(-2),dd=('0'+d.getDate()).slice(-2);
 document.getElementById('qd').textContent=y+'.'+m+'.'+dd;
 document.getElementById('yr').textContent=y;
@@ -307,13 +318,13 @@ function linkFt(){var l=document.querySelector('#ft .law');if(!l)return;
   var parts=[];l.childNodes.forEach(function(n){parts.push(n.nodeType===3?linkLaw(n.nodeValue):(n.nodeName==='BR'?'<br>':esc(n.textContent)))});
   l.innerHTML=parts.join('')}
 function unlinkFt(){var l=document.querySelector('#ft .law');if(l){l.querySelectorAll('a').forEach(function(a){a.replaceWith(document.createTextNode(a.textContent))});l.normalize()}}
-var editing=false,curId=null;
+var editing=false,curId=null,onOpen=null;
 var pop=document.getElementById('pop'),ph=document.getElementById('ph'),pt=document.getElementById('pt'),pbd=document.getElementById('pbody');
 function openP(id){
   var o=P[id];if(!o)return;curId=id;
   pt.textContent=o.t;
   pbd.innerHTML=o.b+'<div class="lw">근거 : '+(editing?esc(o.l):linkLaw(o.l))+'</div>';
-  pbd.scrollTop=0;setPopEdit();
+  pbd.scrollTop=0;if(onOpen)onOpen();
   if(pop.hidden){
     pop.hidden=false;
     var w=pop.offsetWidth;
@@ -395,95 +406,12 @@ function fitContent(){
 function boot(){linkFt();sentenceBreak();fitContent();}
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(boot)}else{boot()}
 
-/* 글자 편집 */
-var plainOK=(function(){var t=document.createElement('div');try{t.contentEditable='plaintext-only';return t.contentEditable==='plaintext-only'}catch(e){return false}})();
-var CE=plainOK?'plaintext-only':'true';
-function hosts(root){var out=[];(function w(el){
-  if(el.nodeType!==1||el.id==='qd'||el.id==='yr'||el.classList.contains('i'))return;
-  var own=Array.prototype.some.call(el.childNodes,function(n){return n.nodeType===3&&n.nodeValue.trim()});
-  if(own){out.push(el);return}
-  Array.prototype.forEach.call(el.children,w)})(root);return out}
-function normalize(root){
-  root.querySelectorAll('.sn').forEach(function(sp){while(sp.firstChild)sp.parentNode.insertBefore(sp.firstChild,sp);sp.remove()});
-  root.querySelectorAll('[data-sb]').forEach(function(e){e.removeAttribute('data-sb')});
-  root.querySelectorAll('[contenteditable],[data-ed]').forEach(function(e){e.removeAttribute('contenteditable');e.removeAttribute('data-ed')});
-}
-function setPopEdit(){
-  [pt,pbd].forEach(function(e){if(editing){e.setAttribute('contenteditable',CE)}else{e.removeAttribute('contenteditable')}});
-}
-function setEdit(on){
-  editing=on;document.body.classList.toggle('editing',on);
-  document.getElementById('bEdit').textContent=on?'편집 완료·저장':'글자 편집';
-  if(on){unlinkFt();
-    hosts(mainEl).concat(hosts(ftEl)).forEach(function(h){h.setAttribute('contenteditable',CE);h.setAttribute('data-ed','1')});
-  }else{
-    document.querySelectorAll('#sheet [data-ed]').forEach(function(h){h.removeAttribute('contenteditable');h.removeAttribute('data-ed')});
-  }
-  setPopEdit();
-}
-function saveLocal(){
-  var m=mainEl.cloneNode(true),f=ftEl.cloneNode(true);normalize(m);normalize(f);
-  try{localStorage.setItem(KEY,JSON.stringify({ver:sheetEl.getAttribute('data-ver'),main:m.innerHTML,ft:f.innerHTML,ov:ov}))}catch(e){}
-  mainEl.innerHTML=m.innerHTML;ftEl.innerHTML=f.innerHTML;
-  boot();
-}
-document.getElementById('bEdit').addEventListener('click',function(){
-  if(!editing){setEdit(true)}else{setEdit(false);saveLocal()}
-});
-document.addEventListener('input',function(e){
-  if(!editing||!curId||!pop.contains(e.target))return;
-  var c=pbd.cloneNode(true),lw=c.querySelector('.lw'),l=lw?lw.textContent.replace(/^\s*근거\s*:\s*/,''):(P[curId].l||'');
-  if(lw)lw.remove();
-  P[curId]={t:pt.textContent,b:c.innerHTML,l:l};ov[curId]=P[curId];
-  try{var sv=JSON.parse(localStorage.getItem(KEY)||'{}');sv.ver=sheetEl.getAttribute('data-ver');sv.ov=ov;localStorage.setItem(KEY,JSON.stringify(sv))}catch(_){}
-});
-document.addEventListener('keydown',function(e){
-  if(!editing)return;
-  var t=e.target;if(!(t&&t.closest&&t.closest('[contenteditable]')))return;
-  if((e.ctrlKey||e.metaKey)&&/^[biu]$/i.test(e.key)){e.preventDefault();return}
-  if(e.isComposing)return;
-  if(e.key==='Enter'){e.preventDefault();insBr();return}
-  if(e.key===' '&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();insSp();return}
-});
-function selRange(){var sl=window.getSelection();if(!sl||!sl.rangeCount)return null;return {sl:sl,r:sl.getRangeAt(0)}}
-function insBr(){
-  var o=selRange();if(!o)return;var r=o.r;r.deleteContents();
-  var br=document.createElement('br');r.insertNode(br);
-  var nx=br.nextSibling;
-  if(!nx||(nx.nodeType===1&&nx.nodeName!=='BR'&&false)){br.parentNode.insertBefore(document.createElement('br'),br.nextSibling)}
-  r.setStartAfter(br);r.collapse(true);o.sl.removeAllRanges();o.sl.addRange(r);
-}
-function insSp(){
-  var o=selRange();if(!o)return;var r=o.r;r.deleteContents();
-  var n=r.startContainer,i=r.startOffset,prev='',next='';
-  if(n.nodeType===3){prev=n.nodeValue.charAt(i-1);next=n.nodeValue.charAt(i)}
-  var ch=(!prev||/[\s\u00a0]/.test(prev)||!next||/[\s\u00a0]/.test(next))?'\u00a0':' ';
-  var tn=document.createTextNode(ch);r.insertNode(tn);
-  r.setStartAfter(tn);r.collapse(true);o.sl.removeAllRanges();o.sl.addRange(r);
-  var host=tn.parentNode&&tn.parentNode.closest&&tn.parentNode.closest('[contenteditable]');if(host)host.normalize();
-}
-document.addEventListener('paste',function(e){
-  if(!editing)return;var t=e.target;if(!(t&&t.closest&&t.closest('[contenteditable]')))return;
-  e.preventDefault();var txt=(e.clipboardData||window.clipboardData).getData('text').replace(/\s*\n\s*/g,' ');
-  document.execCommand('insertText',false,txt);
-});
-document.getElementById('bRst').addEventListener('click',function(){
-  if(confirm('이 브라우저에 저장된 수정 내용을 지우고 원래대로 되돌립니다.')){try{localStorage.removeItem(KEY)}catch(e){}location.reload()}
-});
-document.getElementById('bDl').addEventListener('click',function(){
-  if(editing){setEdit(false);saveLocal()}
-  var doc=document.documentElement.cloneNode(true);
-  var m=doc.querySelector('#main'),f=doc.querySelector('#ft'),sh=doc.querySelector('#sheet');
-  normalize(m);normalize(f);
-  ['style'].forEach(function(a){m.removeAttribute(a);sh.removeAttribute(a)});
-  sh.setAttribute('data-ver',String(Date.now()));
-  doc.querySelector('#pov').textContent=JSON.stringify(ov).replace(/</g,'\\u003c');
-  var pp=doc.querySelector('#pop');pp.setAttribute('hidden','');pp.removeAttribute('style');doc.querySelector('#pt').textContent='';doc.querySelector('#pbody').innerHTML='';
-  doc.querySelector('body').className='';
-  var html='<!DOCTYPE html>\n'+doc.outerHTML;
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
-  a.download=(location.pathname.split('/').pop()||'inhtax_info.html');document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
-});
+
+/* 담당자 정보 표시/숨김 (조회·인쇄 공통, 이 브라우저에 기억) */
+var CKEY='info_hide_contact',bCt=document.getElementById('bCt');
+function setCt(h){document.body.classList.toggle('hidec',h);bCt.textContent=h?'담당자 정보 표시':'담당자 정보 숨김';try{localStorage.setItem(CKEY,h?'1':'0')}catch(e){}}
+try{if(localStorage.getItem(CKEY)==='1'){document.body.classList.add('hidec');bCt.textContent='담당자 정보 표시'}}catch(e){}
+bCt.addEventListener('click',function(){setCt(!document.body.classList.contains('hidec'))});
 /* 화면 맞춤 및 인쇄 */
 function fitView(){
   sheetEl.style.zoom='';
@@ -496,5 +424,6 @@ window.addEventListener('afterprint',fitView);
 document.getElementById('prt').addEventListener('click',function(){window.print()});
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
