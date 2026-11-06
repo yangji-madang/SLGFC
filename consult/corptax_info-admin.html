@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow" data-adm>
+<meta name="robots" content="noindex,nofollow" data-adm="">
 <title>법인세 개요 | 세금 한눈에 보기 · 편집</title>
 <style>
 :root{--navy:#17294a;--navy2:#2a4470;--gold:#b08435;--goldl:#f5ecd7;--ink:#1d2433;--mut:#566074;--line:#d5dbe6;--soft:#f3f6fb;--red:#b4443c;--redl:#fbeeec;--grn:#2c7a5b;--grnl:#eaf5ef}
@@ -127,26 +126,26 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 @media print{.edtip{display:none!important}}
 </style>
 </head>
-<body>
+<body class="">
 <div class="bar">
-  <button type="button" data-adm id="bEdit" class="sec">글자 편집</button>
-  <a id="lView" class="lk" data-adm target="_blank" rel="noopener">조회 페이지</a>
-  <span id="gst" data-adm></span>
-  <button type="button" data-adm id="bCt" class="sec">담당자 정보 숨김</button>
-  <button type="button" data-adm id="bDl" class="sec">수정본 내려받기</button>
-  <button type="button" data-adm id="bGh">GitHub에 반영</button>
-  <button type="button" data-adm id="bTk" class="sec">토큰 삭제</button>
-  <button type="button" data-adm id="bRst" class="sec">원래대로</button>
+  <button type="button" data-adm="" id="bEdit" class="sec">글자 편집</button>
+  <a id="lView" class="lk" data-adm="" target="_blank" rel="noopener" href="corptax_info.html">조회 페이지</a>
+  <span id="gst" data-adm="" style="color: rgb(23, 41, 74);"></span>
+  <button type="button" data-adm="" id="bCt" class="sec">담당자 정보 숨김</button>
+  <button type="button" data-adm="" id="bDl" class="sec">수정본 내려받기</button>
+  <button type="button" data-adm="" id="bGh">GitHub에 반영</button>
+  <button type="button" data-adm="" id="bTk" class="sec">토큰 삭제</button>
+  <button type="button" data-adm="" id="bRst" class="sec">원래대로</button>
   <button type="button" id="prt">인쇄 / PDF 저장</button>
 </div>
-<div class="edtip" data-adm>편집 모드 : 글자만 수정됩니다(서식 없음). 팝업 설명은 Alt+클릭으로 열어 수정하세요.</div>
+<div class="edtip" data-adm="">편집 모드 : 글자만 수정됩니다(서식 없음). 팝업 설명은 Alt+클릭으로 열어 수정하세요.</div>
 
-<main class="sheet" id="sheet" data-ver="4">
+<main class="sheet" id="sheet" data-ver="1793929313489">
 <div class="main" id="main">
 
 <header class="ttl">
   <h1>법인세 개요</h1>
-  <div class="sub"><i>TAX BRIEFING</i>회사가 번 이익에 내는 세금 : 계산 방법과 주의점</div>
+  <div class="sub"><i>TAX BRIEFING</i>회사가 번 이익에 내는 세금<br>: 계산 방법과 주의점</div>
   <div class="chips"><span>세율 <b>10~25%</b></span><span>신고 <b>종료 후 3개월</b></span><span>지방세 <b>+10%</b></span></div>
   <div class="qd">조회일 <b id="qd">2026.11.06</b></div>
 </header>
@@ -181,7 +180,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
   <section>
     <div class="sh"><span class="n">3</span>계산 예시<span class="hint">12월 결산 중소법인 · 2026 사업연도 · 가정 수치</span></div>
     <table class="ex">
-      <tr data-p="ex"><td>회계상 당기순이익</td><td>4억 원</td><td>손익계산서상 이익 (가정)</td></tr>
+      <tbody><tr data-p="ex"><td>회계상 당기순이익</td><td>4억 원</td><td>손익계산서상 이익 (가정)</td></tr>
       <tr class="sb" data-p="adj"><td>(+) 세무조정 가산</td><td>5,000만 원</td><td>접대비·승용차 비용 초과 등</td></tr>
       <tr class="hl" data-p="tb"><td>(=) 과세표준</td><td>4억 5,000만 원</td><td>이월결손금 없다고 가정</td></tr>
       <tr class="sb" data-p="prog"><td>과세표준 × 세율 20%</td><td>9,000만 원</td><td>2억 초과 구간 세율 적용</td></tr>
@@ -193,7 +192,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
       <tr class="hl"><td>3월 신고 때 낼 법인세</td><td>4,000만 원</td><td>6,000만 − 2,000만</td></tr>
       <tr class="sb" data-p="local"><td>(+) 법인지방소득세 (약식)</td><td>600만 원</td><td>총부담세액의 약 10%</td></tr>
       <tr class="fin"><td>세금 부담 합계</td><td>6,600만 원</td><td>과세표준 대비 약 14.7%</td></tr>
-    </table>
+    </tbody></table>
     <div class="co" data-p="exinc">세율 인상 체감 : 2025년 세율이면 <b>6,550만</b> → 2026년 <b>7,000만 원</b> ( <b>+450만 원</b>, 약 +6.9% ) <span class="lk">[왜?]</span></div>
   </section>
 </div>
@@ -238,11 +237,11 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 </div>
 <footer class="ft" id="ft">
   <div class="law">근거 : 법인세법 제13·15·19·25·27조의2·28·55·60·63·64조, 동법 시행령 제44·89조, 국세기본법 제47조의2~제47조의4, 제48조, 국세징수법 제13조, 상속세 및 증여세법 제71조, 지방세법 제103조의20<br>※ 설명용 자료이며 예시는 가정입니다. 2026.11.06 현행법 기준(2026 세제개편안 미반영). 개별 사안은 전문가와 확인하세요.</div>
-  <div class="row"><span class="l">삼성생명 개인/기업 재무 전문가 윤현철 팀장 · 010-9510-1088</span><span class="r">ⓒ<span id="yr">2026</span>. YOON HYUNCHUL, ALL RIGHTS RESERVED.</span></div>
+  <div class="row"><span class="l">삼성생명 개인/기업 재무 전문가 윤현철 팀장 · 010-9510-1088</span><span class="r">ⓒ<span id="yr">2026</span>. YOON HYUNCHUL, ALL RIGHT RESERVED.</span></div>
 </footer>
 </main>
 
-<div class="pop" id="pop" hidden role="dialog" aria-modal="false" aria-labelledby="pt">
+<div class="pop" id="pop" hidden="" role="dialog" aria-modal="false" aria-labelledby="pt">
   <div class="ph" id="ph"><b id="pt"></b><button type="button" id="px" aria-label="닫기">×</button></div>
   <div class="pb" id="pbody"></div>
 </div>
@@ -588,5 +587,6 @@ window.addEventListener('afterprint',fitView);
 document.getElementById('prt').addEventListener('click',function(){window.print()});
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
