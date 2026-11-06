@@ -9,20 +9,19 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:#e9edf3}
 body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans CJK KR','Noto Sans KR',sans-serif;color:var(--ink);font-size:8.6pt;line-height:1.36;word-break:keep-all;overflow-wrap:normal;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.bar{position:fixed;top:8px;right:12px;z-index:5}
+.bar{display:flex;gap:6px;position:static;width:210mm;max-width:100%;margin:8px auto -4px;justify-content:flex-end;flex-wrap:wrap}
 .bar button{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
-.sheet{width:210mm;height:296.5mm;margin:10px auto;background:#fff;padding:5.5mm 6.5mm 6.5mm;display:flex;flex-direction:column;gap:2.1mm;box-shadow:0 2px 14px rgba(20,40,80,.18);overflow:hidden;position:relative}
+.sheet{width:210mm;height:296.5mm;margin:10px auto;background:#fff;padding:5.5mm 6.5mm 6.5mm;display:flex;flex-direction:column;gap:0;box-shadow:0 2px 14px rgba(20,40,80,.18);overflow:hidden;position:relative}
 /* 제목 */
-.ttl{display:flex;align-items:center;gap:3mm;border-radius:2.2mm;padding:1.8mm 4mm;color:#fff;border-bottom:.8mm solid #f2b84b;
-background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent 60%),linear-gradient(110deg,#1f6fb8 0%,#2f8fd0 45%,#37b3c9 100%)}
-.ttl h1{font-size:16pt;line-height:1.1;white-space:nowrap;letter-spacing:-.01em}
-.ttl .sub{font-size:7.8pt;line-height:1.3;opacity:.95;flex:1;border-left:1px solid rgba(255,255,255,.45);padding-left:3mm}
-.ttl .sub i{display:block;font-style:normal;font-size:6.4pt;letter-spacing:.12em;color:#fff2c9}
+.ttl{display:flex;align-items:center;gap:3mm;border-radius:2.2mm;padding:1.8mm 4mm;color:#fff;border-bottom:.8mm solid #f2b84b;text-shadow:0 1px 2px rgba(0,28,70,.55);
+background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 60%),linear-gradient(110deg,#0f4c8f 0%,#1763ad 45%,#1c86a6 100%)}
+.ttl h1{font-size:16.5pt;line-height:1.1;white-space:nowrap;letter-spacing:-.01em;font-weight:800}
+.ttl .sub{font-size:8pt;font-weight:700;line-height:1.3;flex:1;border-left:1px solid rgba(255,255,255,.6);padding-left:3mm}
+.ttl .sub i{display:block;font-style:normal;font-size:6.4pt;letter-spacing:.12em;color:#ffe8a8;font-weight:700}
 .ttl .chips{display:flex;gap:1.2mm}
-.ttl .chips span{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);border-radius:5mm;padding:.3mm 2mm;font-size:6.8pt;white-space:nowrap}
-.ttl .chips b{color:#fff2c9}
-.ttl .qd{font-size:6.4pt;opacity:.9;white-space:nowrap;align-self:flex-start}
-.ttl .qd b{font-weight:600}
+.ttl .chips span{background:rgba(6,30,70,.38);border:1px solid rgba(255,255,255,.6);border-radius:5mm;padding:.3mm 2mm;font-size:6.9pt;font-weight:700;white-space:nowrap}
+.ttl .chips b{color:#ffe08a}
+.ttl .qd{font-size:6.4pt;white-space:nowrap;align-self:flex-start;font-weight:600}
 /* 섹션 머리 */
 .sh{display:flex;align-items:center;gap:1.8mm;font-size:10.2pt;font-weight:700;color:var(--navy);border-bottom:1.4px solid var(--gold);padding-bottom:.8mm;margin-bottom:1.6mm}
 .sh .n{display:inline-flex;align-items:center;justify-content:center;width:5mm;height:5mm;border-radius:50%;background:var(--navy);color:#f1dcab;font-size:8pt}
@@ -37,7 +36,7 @@ background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent
 .st p{font-size:7.3pt;color:var(--mut);line-height:1.3}
 .st:not(:last-child)::after{content:"";position:absolute;top:50%;right:-3.1mm;border-left:2.3mm solid var(--gold);border-top:1.4mm solid transparent;border-bottom:1.4mm solid transparent;transform:translateY(-50%)}
 .i{position:absolute;top:1mm;right:1mm;width:3.2mm;height:3.2mm;line-height:3.2mm;border-radius:50%;background:var(--navy2);color:#fff;font-size:6pt;text-align:center;font-style:italic;font-family:Georgia,serif}
-.fm{margin-top:1.8mm;background:var(--goldl);border:1px solid #e3d3a8;border-radius:1.6mm;padding:1.3mm 3mm;text-align:center;font-weight:700;color:var(--navy);font-size:8.6pt}
+.fm{white-space:nowrap;margin-top:1.8mm;background:var(--goldl);border:1px solid #e3d3a8;border-radius:1.6mm;padding:1.3mm 3mm;text-align:center;font-weight:700;color:var(--navy);font-size:8.4pt}
 .fm i{font-style:normal;color:var(--gold);font-weight:400}
 .fm span{font-weight:400;color:var(--mut);font-size:7.6pt}
 /* 2열 */
@@ -75,17 +74,17 @@ background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent
 .tn .tb{border:1px solid var(--line);border-radius:1.5mm;background:var(--soft);padding:.9mm 1.4mm 1.1mm}
 .tn .dt{font-weight:700;color:var(--navy);font-size:9pt}
 .tn .tt{font-weight:700;color:var(--gold);font-size:7.8pt}
-.tn p{font-size:7pt;color:var(--mut);line-height:1.28}
+.tn p{font-size:7pt;font-weight:700;color:#3a465e;line-height:1.28}
 /* 카드 */
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:2.2mm}
 .cd{position:relative;border:1px solid var(--line);border-left:1mm solid var(--gold);border-radius:1.5mm;background:#fff;padding:1.1mm 1.8mm 1.2mm;cursor:pointer}
 .cd .tg{display:inline-block;background:var(--navy);color:#f1dcab;border-radius:1mm;font-size:6.6pt;padding:.1mm 1.4mm;margin-right:1mm}
-.cd b{font-size:8.3pt;color:var(--navy)}
+.cd b{font-size:8.1pt;color:var(--navy);white-space:nowrap}
 .cd p{font-size:7.3pt;color:var(--ink);line-height:1.32;margin-top:.5mm}
 .cd p u{text-decoration:none;color:var(--red);font-weight:700}
 /* 오해 */
-.myth{display:flex;flex-direction:column;gap:.8mm;flex:1;min-height:0}
-.mt{flex:1;min-height:0;position:relative;display:grid;grid-template-columns:.95fr 3.4mm 1.5fr;align-items:stretch;border:1px solid var(--line);border-radius:1.5mm;overflow:hidden;cursor:pointer}
+.myth{display:flex;flex-direction:column;gap:.8mm;flex:1 1 auto}
+.mt{flex:1 0 auto;position:relative;display:grid;grid-template-columns:.95fr 3.4mm 1.5fr;align-items:stretch;border:1px solid var(--line);border-radius:1.5mm;overflow:hidden;cursor:pointer}
 .mt .o{background:var(--redl);padding:.4mm 2mm;color:#6d2a25}
 .mt .o:before{content:"✕ 오해";margin-right:1.2mm;white-space:nowrap;font-weight:700;color:var(--red);font-size:6.8pt}
 .mt .ar{background:linear-gradient(90deg,var(--redl),var(--grnl));display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:7pt}
@@ -93,7 +92,8 @@ background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent
 .mt .s:before{content:"○ 사실";margin-right:1.2mm;white-space:nowrap;font-weight:700;color:var(--grn);font-size:6.8pt}
 .mt .o,.mt .s{font-size:7.6pt;line-height:1.32;display:flex;align-items:center}
 /* 바닥 */
-.grow{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+.main{display:flex;flex-direction:column;gap:2.1mm;flex:1 1 auto}
+.grow{flex:1 1 auto;display:flex;flex-direction:column}
 .ft{margin-top:2.6mm;border-top:1.4px solid var(--gold);background:var(--soft);border-radius:0 0 1.5mm 1.5mm;padding:1.3mm 2.5mm 1.4mm;flex-shrink:0}
 .ft .law{font-size:5.9pt;color:var(--mut);line-height:1.35}
 .ft .row{display:flex;justify-content:space-between;align-items:center;margin-top:.8mm;font-size:6.6pt}
@@ -110,12 +110,27 @@ background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent
 .pb .lw{margin-top:8px;padding-top:6px;border-top:1px dashed #ccd4e2;font-size:11.5px;color:#5a6577}
 @page{size:A4 portrait;margin:0}
 @media print{html,body{background:#fff}.sheet{margin:0;box-shadow:none;zoom:1!important}.bar,.pop{display:none!important}.i{display:none}.st:hover,.cd:hover,.rw:hover,.mt:hover,.tn:hover .tb{box-shadow:none}}
+.bar button.sec{background:#fff;color:var(--navy)}
+.editing [data-ed]{outline:1px dashed #e0a43a;outline-offset:1px;cursor:text}
+.editing [data-ed]:focus{outline:2px solid #e0a43a;background:#fffbea}
+.editing [data-p]{cursor:text}
+.edtip{display:none;position:fixed;left:12px;bottom:10px;z-index:6;background:#17294a;color:#ffe8a8;font-size:12px;padding:6px 12px;border-radius:5px}
+.editing .edtip{display:block}
+.pop [contenteditable]{outline:1px dashed #e0a43a}
+@media print{.edtip{display:none!important}}
 </style>
 </head>
 <body>
-<div class="bar"><button type="button" id="prt">인쇄 / PDF 저장</button></div>
+<div class="bar">
+  <button type="button" id="bEdit" class="sec">글자 편집</button>
+  <button type="button" id="bDl" class="sec">수정본 내려받기</button>
+  <button type="button" id="bRst" class="sec">원래대로</button>
+  <button type="button" id="prt">인쇄 / PDF 저장</button>
+</div>
+<div class="edtip">편집 모드 : 글자만 수정됩니다(서식 없음). 팝업 설명은 Alt+클릭으로 열어 수정하세요.</div>
 
-<main class="sheet" id="sheet">
+<main class="sheet" id="sheet" data-ver="1">
+<div class="main" id="main">
 
 <header class="ttl">
   <h1>법인세 개요</h1>
@@ -129,13 +144,13 @@ background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent
   <div class="chain">
     <div class="st" data-p="ik" tabindex="0"><span class="i">i</span><span class="no">1</span><b>익금</b><small>회사가 번 돈</small><p>매출·이자·임대료·처분이익</p></div>
     <div class="st" data-p="sg" tabindex="0"><span class="i">i</span><span class="no">2</span><b>손금</b><small>회사가 쓴 돈</small><p>원가·급여·임차료·감가상각비</p></div>
-    <div class="st" data-p="adj" tabindex="0"><span class="i">i</span><span class="no">3</span><b>세무조정</b><small>장부와 세법의 차이</small><p>한도 넘는 비용은 더하고(+), 빼주는 것은 뺌(−)</p></div>
+    <div class="st" data-p="adj" tabindex="0"><span class="i">i</span><span class="no">3</span><b>세무조정</b><small>장부와 세법의 차이</small><p>한도 초과 비용 가산(+), 특례 차감(−)</p></div>
     <div class="st" data-p="tb" tabindex="0"><span class="i">i</span><span class="no">4</span><b>과세표준</b><small>세금 매기는 기준금액</small><p>소득 − 이월결손금 − 비과세</p></div>
-    <div class="st" data-p="rate" tabindex="0"><span class="i">i</span><span class="no">5</span><b>세율</b><small>10·20·22·25%</small><p>4단계 누진 : 클수록 높은 세율</p></div>
-    <div class="st" data-p="credit" tabindex="0"><span class="i">i</span><span class="no">6</span><b>감면·공제</b><small>세액에서 직접 차감</small><p>중소기업 감면·고용·투자 공제, 기납부세액 차감</p></div>
-    <div class="st" data-p="pay" tabindex="0"><span class="i">i</span><span class="no">7</span><b>납부세액</b><small>신고하고 납부</small><p>종료 후 3개월 이내 + 지방소득세</p></div>
+    <div class="st" data-p="rate" tabindex="0"><span class="i">i</span><span class="no">5</span><b>세율</b><small>10·20·22·25%</small><p>4단계 누진세율</p></div>
+    <div class="st" data-p="credit" tabindex="0"><span class="i">i</span><span class="no">6</span><b>감면·공제</b><small>세액에서 직접 차감</small><p>중소 감면·고용·투자 공제, 기납부 차감</p></div>
+    <div class="st" data-p="pay" tabindex="0"><span class="i">i</span><span class="no">7</span><b>납부세액</b><small>신고하고 납부</small><p>종료 후 3개월 내 + 지방소득세</p></div>
   </div>
-  <div class="fm">법인세 = ( 익금 <i>−</i> 손금 <i>±</i> 세무조정 <i>−</i> 이월결손금 ) <i>×</i> 세율 <i>−</i> 세액공제·감면 <i>−</i> 기납부세액 <span>&nbsp;&nbsp;※ 법인지방소득세(법인세의 약 10%)는 별도로 신고·납부</span></div>
+  <div class="fm">법인세 = ( 익금 <i>−</i> 손금 <i>±</i> 세무조정 <i>−</i> 이월결손금 ) <i>×</i> 세율 <i>−</i> 세액공제·감면 <i>−</i> 기납부세액 <span>&nbsp;※ 지방소득세(약 10%) 별도 신고·납부</span></div>
 </section>
 
 <div class="two">
@@ -148,7 +163,7 @@ background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent
       <div class="rw" data-p="prog" tabindex="0"><span class="rl">200억~3천억</span><span class="bb"><i style="width:88%"></i><b>22%</b></span><span class="re">24.2%</span><span class="rd">4.2억</span></div>
       <div class="rw" data-p="prog" tabindex="0"><span class="rl">3천억 초과</span><span class="bb"><i style="width:100%"></i><b>25%</b></span><span class="re">27.5%</span><span class="rd">94.2억</span></div>
     </div>
-    <div class="note">산출세액 = 과세표준 × 세율 − 누진공제 <span class="lk" data-p="prog">[계산 요령]</span><br>2025년까지는 9·19·21·24%였고, 2026년 1월 1일 이후 시작하는 사업연도부터 전 구간 1%p 올랐습니다. 12월 결산 법인은 <b>2027년 3월 신고분</b>부터 새 세율입니다.<br>※ 부동산임대업 주업 등 소규모 <span class="lk" data-p="small">성실신고확인대상 법인</span>은 200억 이하도 20%입니다. <span class="lk" data-p="local">지방소득세란?</span></div>
+    <div class="note">산출세액 = 과세표준 × 세율 − 누진공제 <span class="lk" data-p="prog">[계산 요령]</span><br>2025년까지 9·19·21·24%, 2026년 1월 1일 이후 시작 사업연도부터 전 구간 1%p 인상. 12월 결산 법인은 <b>2027년 3월 신고분</b>부터 새 세율.<br>※ 부동산임대업 주업 등 소규모 <span class="lk" data-p="small">성실신고확인대상 법인</span>은 200억 이하도 20%. <span class="lk" data-p="local">지방소득세란?</span></div>
   </section>
 
   <section>
@@ -174,41 +189,42 @@ background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent
 <section>
   <div class="sh"><span class="n">4</span>1년 일정 한눈에<span class="hint">12월 결산 법인 기준 · 사업연도는 정관으로 정하며 최대 1년</span></div>
   <div class="tl">
-    <div class="tn" data-p="t_start" tabindex="0"><div class="tb"><div class="dt">1월 1일</div><div class="tt">사업연도 시작</div><p>이때부터의 거래가 올해 소득 계산 대상</p></div></div>
-    <div class="tn" data-p="t_mid" tabindex="0"><div class="tb"><div class="dt">8월 31일</div><div class="tt">중간예납</div><p>작년 세금의 1/2 또는 가결산액 선납</p></div></div>
-    <div class="tn" data-p="t_end" tabindex="0"><div class="tb"><div class="dt">12월 31일</div><div class="tt">사업연도 종료·결산</div><p>장부 마감 후 세무조정으로 세금 계산</p></div></div>
-    <div class="tn" data-p="t_file" tabindex="0"><div class="tb"><div class="dt">다음해 3월 31일</div><div class="tt">법인세 신고·납부</div><p>종료 후 3개월 이내, 1천만 원 초과 시 분납</p></div></div>
-    <div class="tn" data-p="local" tabindex="0"><div class="tb"><div class="dt">다음해 4월 30일</div><div class="tt">지방소득세 신고·납부</div><p>법인세 신고 후 1개월 이내, 지자체에 신고</p></div></div>
+    <div class="tn" data-p="t_start" tabindex="0"><div class="tb"><div class="dt">1월 1일</div><div class="tt">사업연도 시작</div><p>이날부터 거래가 올해 소득 계산 대상</p></div></div>
+    <div class="tn" data-p="t_mid" tabindex="0"><div class="tb"><div class="dt">8월 31일</div><div class="tt">중간예납</div><p>전년 세액 1/2 또는 가결산액 선납</p></div></div>
+    <div class="tn" data-p="t_end" tabindex="0"><div class="tb"><div class="dt">12월 31일</div><div class="tt">사업연도 종료·결산</div><p>장부 마감, 세무조정 후 세액 계산</p></div></div>
+    <div class="tn" data-p="t_file" tabindex="0"><div class="tb"><div class="dt">다음해 3월 31일</div><div class="tt">법인세 신고·납부</div><p>종료 후 3개월 이내, 1천만 원 초과 분납 가능</p></div></div>
+    <div class="tn" data-p="local" tabindex="0"><div class="tb"><div class="dt">다음해 4월 30일</div><div class="tt">지방소득세 신고·납부</div><p>법인세 신고 후 1개월 내 지자체 신고</p></div></div>
   </div>
 </section>
 
 <section>
   <div class="sh"><span class="n">5</span>대표·경리 담당자가 꼭 주의할 점 · 분납과 연부연납<span class="hint">각 칸을 누르면 사례와 대응 방법이 열립니다</span></div>
   <div class="grid3">
-    <div class="cd" data-p="c1" tabindex="0"><span class="tg">증빙</span><b>3만 원 넘는 지출은 적격증빙</b><p>세금계산서·카드·현금영수증이 없으면 <u>증빙불비 가산세 2%</u>가 붙을 수 있습니다.</p></div>
-    <div class="cd" data-p="c2" tabindex="0"><span class="tg">가지급금</span><b>대표가 가져간 돈이 '빌린 돈'이면</b><p>받지 않은 이자도 <u>인정이자(연 4.6%)</u>로 과세하고, 방치하면 대표 상여로 보아 소득세까지 부과합니다.</p></div>
-    <div class="cd" data-p="c3" tabindex="0"><span class="tg">접대비</span><b>기업업무추진비는 한도가 있습니다</b><p>기본 연 <u>3,600만 원</u>(일반법인 1,200만 원)에 매출 비례분을 더한 한도. 초과분은 비용 불인정.</p></div>
-    <div class="cd" data-p="c4" tabindex="0"><span class="tg">승용차</span><b>업무용 승용차는 전부 비용 처리 불가</b><p>운행기록부가 없으면 차량당 연 <u>1,500만 원</u>까지만 인정. 감가상각비 연 800만 원 한도, 전용보험 필수.</p></div>
-    <div class="cd" data-p="c5" tabindex="0"><span class="tg">임원</span><b>임원 퇴직금은 정관이 좌우합니다</b><p>정관 규정이 없으면 <u>직전 1년 총급여×10%×근속연수</u>까지만 비용 인정, 초과분은 상여 처리.</p></div>
-    <div class="cd" data-p="c6" tabindex="0"><span class="tg">기한</span><b>신고·납부 기한을 놓치면</b><p>무신고 <u>20%</u>, 과소신고 <u>10%</u>, 납부지연 <u>하루 0.022%</u>(연 약 8%). 부정행위는 40%입니다.</p></div>
-    <div class="cd" data-p="c7" tabindex="0"><span class="tg">분납</span><b>세금이 크면 나눠 낼 수 있습니다</b><p>납부세액 <u>1,000만 원</u> 초과 시 기한 후 <u>1개월(중소기업 2개월)</u> 이내 분납합니다. 이자는 없습니다.</p></div>
-    <div class="cd" data-p="c8" tabindex="0"><span class="tg">연부연납</span><b>법인세에는 연부연납이 없습니다</b><p>연부연납은 <u>상속세·증여세</u> 제도입니다(2,000만 원 초과, 담보). 법인세는 분납·납기연장으로 대응합니다.</p></div>
-    <div class="cd" data-p="c9" tabindex="0"><span class="tg">납기연장</span><b>낼 돈이 없다면 미리 신청하세요</b><p>재해·사업상 큰 손실 때 <u>납부기한 연장·징수유예</u>를 신청하면 미룰 수 있습니다. 기한 전 신청 필수.</p></div>
+    <div class="cd" data-p="c1" tabindex="0"><span class="tg">증빙</span><b>3만 원 초과 지출은 적격증빙</b><p>세금계산서·카드·현금영수증 없으면 <u>증빙불비 가산세 2%</u> 부과 가능.</p></div>
+    <div class="cd" data-p="c2" tabindex="0"><span class="tg">가지급금</span><b>인출금이 가지급금이면</b><p>받지 않은 이자도 <u>인정이자(연 4.6%)</u> 과세, 방치 시 대표 상여로 보아 소득세 부과.</p></div>
+    <div class="cd" data-p="c3" tabindex="0"><span class="tg">접대비</span><b>기업업무추진비는 한도 있음</b><p>기본 연 <u>3,600만 원</u>(일반법인 1,200만 원)+매출 비례분이 한도. 초과분 비용 불인정.</p></div>
+    <div class="cd" data-p="c4" tabindex="0"><span class="tg">승용차</span><b>승용차는 전부 비용처리 불가</b><p>운행기록부 없으면 차량당 연 <u>1,500만 원</u>까지만 인정. 감가상각비 연 800만 원 한도, 전용보험 필수.</p></div>
+    <div class="cd" data-p="c5" tabindex="0"><span class="tg">임원</span><b>임원 퇴직금은 정관이 좌우</b><p>정관 규정 없으면 <u>직전 1년 총급여×10%×근속연수</u>까지만 비용 인정, 초과분 상여 처리.</p></div>
+    <div class="cd" data-p="c6" tabindex="0"><span class="tg">기한</span><b>신고·납부 기한 놓치면</b><p>무신고 <u>20%</u>, 과소신고 <u>10%</u>, 납부지연 <u>하루 0.022%</u>(연 약 8%). 부정행위 40%.</p></div>
+    <div class="cd" data-p="c7" tabindex="0"><span class="tg">분납</span><b>세금이 크면 나눠 납부</b><p>납부세액 <u>1,000만 원</u> 초과 시 기한 후 <u>1개월(중소 2개월)</u> 내 분납. 무이자.</p></div>
+    <div class="cd" data-p="c8" tabindex="0"><span class="tg">연부연납</span><b>법인세는 연부연납 없음</b><p>연부연납은 <u>상속·증여세</u> 제도(2,000만 원 초과, 담보). 법인세는 분납·납기연장으로 대응.</p></div>
+    <div class="cd" data-p="c9" tabindex="0"><span class="tg">납기연장</span><b>낼 돈 없으면 미리 신청</b><p>재해·큰 손실 시 <u>납부기한 연장·징수유예</u> 신청 가능. 기한 전 신청 필수.</p></div>
   </div>
 </section>
 
 <section class="grow">
   <div class="sh"><span class="n">6</span>일반인이 자주 하는 오해, 사실은?<span class="hint">각 줄을 누르면 근거가 열립니다</span></div>
   <div class="myth">
-    <div class="mt" data-p="m1" tabindex="0"><div class="o">"법인 통장의 돈은 곧 내 돈이다"</div><div class="ar">▶</div><div class="s"><span>법인은 대표와 <b>별개의 인격</b>입니다. 꺼내 쓰면 급여·배당(소득세) 또는 가지급금(인정이자·상여 처분)이 됩니다.</span></div></div>
-    <div class="mt" data-p="m2" tabindex="0"><div class="o">"비용을 많이 쓸수록 무조건 절세다"</div><div class="ar">▶</div><div class="s"><span>쓴 돈의 <b>세율만큼(약 11~27.5%)만</b> 세금이 줄고 나머지는 현금이 사라집니다. 업무 무관 지출은 비용 자체가 불인정됩니다.</span></div></div>
-    <div class="mt" data-p="m3" tabindex="0"><div class="o">"적자인 해는 신고하지 않아도 된다"</div><div class="ar">▶</div><div class="s"><span>적자여도 <b>신고 의무</b>가 있습니다. 신고해야 적자를 나중 이익에서 빼는 <b>이월결손금(최대 15년)</b> 공제를 받습니다.</span></div></div>
-    <div class="mt" data-p="m4" tabindex="0"><div class="o">"법인세율이 낮으니 법인이 무조건 유리하다"</div><div class="ar">▶</div><div class="s"><span>법인세를 낸 뒤 개인이 쓰려고 <b>급여·배당·퇴직금</b>으로 꺼낼 때 소득세가 또 붙습니다. 소득 규모와 인출 계획으로 비교해야 합니다.</span></div></div>
-    <div class="mt" data-p="m5" tabindex="0"><div class="o">"영수증만 있으면 전부 비용이다"</div><div class="ar">▶</div><div class="s"><span>증빙은 <b>필요조건</b>일 뿐입니다. 업무 관련성, 실제 거래, 법정 한도(접대비·승용차 등)까지 모두 충족해야 합니다.</span></div></div>
+    <div class="mt" data-p="m1" tabindex="0"><div class="o">"법인 통장의 돈은 곧 내 돈이다"</div><div class="ar">▶</div><div class="s"><span>법인은 대표와 <b>별개 인격</b>. 꺼내 쓰면 급여·배당(소득세) 또는 가지급금(인정이자·상여 처분).</span></div></div>
+    <div class="mt" data-p="m2" tabindex="0"><div class="o">"비용을 많이 쓸수록 무조건 절세다"</div><div class="ar">▶</div><div class="s"><span>세금은 <b>세율만큼(약 11~27.5%)만</b> 줄고 나머지는 현금 유출. 업무 무관 지출은 비용 불인정.</span></div></div>
+    <div class="mt" data-p="m3" tabindex="0"><div class="o">"적자인 해는 신고하지 않아도 된다"</div><div class="ar">▶</div><div class="s"><span>적자여도 <b>신고 의무</b> 있음. 신고해야 적자를 이후 이익에서 빼는 <b>이월결손금(최대 15년)</b> 공제 가능.</span></div></div>
+    <div class="mt" data-p="m4" tabindex="0"><div class="o">"법인세율이 낮으니 법인이 무조건 유리하다"</div><div class="ar">▶</div><div class="s"><span>법인세 후 <b>급여·배당·퇴직금</b>으로 꺼낼 때 소득세 추가. 소득 규모·인출 계획으로 비교 필요.</span></div></div>
+    <div class="mt" data-p="m5" tabindex="0"><div class="o">"영수증만 있으면 전부 비용이다"</div><div class="ar">▶</div><div class="s"><span>증빙은 <b>필요조건</b>. 업무 관련성·실제 거래·법정 한도(접대비·승용차 등)까지 충족해야 함.</span></div></div>
   </div>
 </section>
 
-<footer class="ft">
+</div>
+<footer class="ft" id="ft">
   <div class="law">근거 : 법인세법 제13·15·19·25·27조의2·28·55·60·63·64조, 동법 시행령 제44·89조, 국세기본법 제47조의2~4, 지방세법 제103조의20<br>※ 설명용 자료이며 예시는 가정입니다. 2026.11.06 현행법 기준(2026 세제개편안 미반영). 개별 사안은 전문가와 확인하세요.</div>
   <div class="row"><span class="l">삼성생명 개인/기업 재무 전문가 윤현철 팀장 · 010-9510-1088</span><span class="r">ⓒ<span id="yr">2026</span>. YOON HYUNCHUL ALL RIGHTS RESERVED.</span></div>
 </footer>
@@ -219,8 +235,13 @@ background:radial-gradient(90% 220% at 100% 0%,rgba(255,214,120,.45),transparent
   <div class="pb" id="pbody"></div>
 </div>
 
+<script id="pov" type="application/json">{}</script>
 <script>
 (function(){
+var sheetEl=document.getElementById("sheet"),mainEl=document.getElementById("main"),ftEl=document.getElementById("ft");
+var KEY="info_edit_"+(location.pathname.split("/").pop()||"corptax_info.html"),ov={};
+try{ov=JSON.parse(document.getElementById("pov").textContent||"{}")}catch(e){}
+try{var sv=JSON.parse(localStorage.getItem(KEY)||"null");if(sv&&sv.ver===sheetEl.getAttribute("data-ver")){if(sv.main)mainEl.innerHTML=sv.main;if(sv.ft)ftEl.innerHTML=sv.ft;if(sv.ov)Object.keys(sv.ov).forEach(function(k){ov[k]=sv.ov[k]})}}catch(e){}
 var d=new Date(),y=d.getFullYear(),m=('0'+(d.getMonth()+1)).slice(-2),dd=('0'+d.getDate()).slice(-2);
 document.getElementById('qd').textContent=y+'.'+m+'.'+dd;
 document.getElementById('yr').textContent=y;
@@ -258,12 +279,14 @@ m4:{t:'오해 4 : 법인세율이 낮으니 법인이 유리',b:'<p><em>사실</
 m5:{t:'오해 5 : 영수증만 있으면 비용',b:'<p><em>사실</em>비용이 인정되려면 ① 사업과 관련 ② 실제 거래 ③ 적격증빙 ④ 법정 한도 내여야 합니다. 증빙은 그중 하나일 뿐입니다.</p><p><em>예시</em>가족 여행 카드 결제, 대표 개인 물품 구입은 세금계산서가 있어도 업무 무관으로 비용 불인정되고 대표 상여로 처분될 수 있습니다.</p>',l:'법인세법 제19조, 제25조, 제27조의2'}
 };
 
+Object.keys(ov).forEach(function(k){P[k]=ov[k]});
+var editing=false,curId=null;
 var pop=document.getElementById('pop'),ph=document.getElementById('ph'),pt=document.getElementById('pt'),pbd=document.getElementById('pbody');
 function openP(id){
-  var o=P[id];if(!o)return;
+  var o=P[id];if(!o)return;curId=id;
   pt.textContent=o.t;
   pbd.innerHTML=o.b+'<div class="lw">근거 : '+o.l+'</div>';
-  pbd.scrollTop=0;
+  pbd.scrollTop=0;setPopEdit();
   if(pop.hidden){
     pop.hidden=false;
     var w=pop.offsetWidth;
@@ -274,17 +297,17 @@ function openP(id){
 function closeP(){pop.hidden=true}
 document.addEventListener('click',function(e){
   var t=e.target.closest('[data-p]');
-  if(t){openP(t.getAttribute('data-p'));}
+  if(t){if(editing&&!e.altKey)return;openP(t.getAttribute('data-p'));}
 });
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){closeP();return}
-  if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('[data-p]')){e.preventDefault();openP(e.target.getAttribute('data-p'));}
+  if(!editing&&(e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('[data-p]')){e.preventDefault();openP(e.target.getAttribute('data-p'));}
 });
 document.getElementById('px').addEventListener('click',closeP);
 /* 드래그 */
 var drag=null;
 ph.addEventListener('pointerdown',function(e){
-  if(e.target.closest('button'))return;
+  if(e.target.closest('button')||(editing&&e.target===pt))return;
   var r=pop.getBoundingClientRect();
   drag={dx:e.clientX-r.left,dy:e.clientY-r.top};
   ph.setPointerCapture(e.pointerId);
@@ -328,18 +351,102 @@ function sentenceBreak(){
     if(n2>n0||n0<2){el.innerHTML=orig;}
   });
 }
-if(document.fonts&&document.fonts.ready){document.fonts.ready.then(sentenceBreak)}else{sentenceBreak()}
 
-/* 화면 맞춤 및 인쇄 */
-var sh=document.getElementById('sheet');
-function fit(){
-  sh.style.zoom='';
-  var w=sh.getBoundingClientRect().width,a=document.documentElement.clientWidth-12;
-  if(a<w){sh.style.zoom=(a/w).toFixed(4)}
+/* 본문 자동 맞춤 : 글꼴이 달라 넘치면 비율 축소 */
+function fitContent(){
+  var oz=sheetEl.style.zoom;sheetEl.style.zoom='';
+  mainEl.style.flex='none';mainEl.style.zoom='';mainEl.style.width='';mainEl.style.height='';
+  var cs=getComputedStyle(sheetEl),pX=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight),pY=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
+  var innerW=sheetEl.clientWidth-pX,avail=sheetEl.clientHeight-pY-ftEl.offsetHeight-parseFloat(getComputedStyle(ftEl).marginTop);
+  var z=1;
+  for(;z>=0.72;z-=0.01){
+    mainEl.style.zoom=z<1?z:'';mainEl.style.width=(innerW/z)+'px';mainEl.style.height=(avail/z)+'px';
+    if(mainEl.scrollHeight<=mainEl.clientHeight+1)break;
+  }
+  sheetEl.style.zoom=oz;
 }
-fit();window.addEventListener('resize',fit);
-window.addEventListener('beforeprint',function(){sh.style.zoom='';});
-window.addEventListener('afterprint',fit);
+function boot(){sentenceBreak();fitContent();}
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(boot)}else{boot()}
+
+/* 글자 편집 */
+var plainOK=(function(){var t=document.createElement('div');try{t.contentEditable='plaintext-only';return t.contentEditable==='plaintext-only'}catch(e){return false}})();
+var CE=plainOK?'plaintext-only':'true';
+function hosts(root){var out=[];(function w(el){
+  if(el.nodeType!==1||el.id==='qd'||el.id==='yr'||el.classList.contains('i'))return;
+  var own=Array.prototype.some.call(el.childNodes,function(n){return n.nodeType===3&&n.nodeValue.trim()});
+  if(own){out.push(el);return}
+  Array.prototype.forEach.call(el.children,w)})(root);return out}
+function normalize(root){
+  root.querySelectorAll('.sn').forEach(function(sp){while(sp.firstChild)sp.parentNode.insertBefore(sp.firstChild,sp);sp.remove()});
+  root.querySelectorAll('[data-sb]').forEach(function(e){e.removeAttribute('data-sb')});
+  root.querySelectorAll('[contenteditable],[data-ed]').forEach(function(e){e.removeAttribute('contenteditable');e.removeAttribute('data-ed')});
+}
+function setPopEdit(){
+  [pt,pbd].forEach(function(e){if(editing){e.setAttribute('contenteditable',CE)}else{e.removeAttribute('contenteditable')}});
+}
+function setEdit(on){
+  editing=on;document.body.classList.toggle('editing',on);
+  document.getElementById('bEdit').textContent=on?'편집 완료·저장':'글자 편집';
+  if(on){
+    hosts(mainEl).concat(hosts(ftEl)).forEach(function(h){h.setAttribute('contenteditable',CE);h.setAttribute('data-ed','1')});
+  }else{
+    document.querySelectorAll('#sheet [data-ed]').forEach(function(h){h.removeAttribute('contenteditable');h.removeAttribute('data-ed')});
+  }
+  setPopEdit();
+}
+function saveLocal(){
+  var m=mainEl.cloneNode(true),f=ftEl.cloneNode(true);normalize(m);normalize(f);
+  try{localStorage.setItem(KEY,JSON.stringify({ver:sheetEl.getAttribute('data-ver'),main:m.innerHTML,ft:f.innerHTML,ov:ov}))}catch(e){}
+  mainEl.innerHTML=m.innerHTML;ftEl.innerHTML=f.innerHTML;
+  boot();
+}
+document.getElementById('bEdit').addEventListener('click',function(){
+  if(!editing){setEdit(true)}else{setEdit(false);saveLocal()}
+});
+document.addEventListener('input',function(e){
+  if(!editing||!curId||!pop.contains(e.target))return;
+  var c=pbd.cloneNode(true),lw=c.querySelector('.lw'),l=lw?lw.textContent.replace(/^\s*근거\s*:\s*/,''):(P[curId].l||'');
+  if(lw)lw.remove();
+  P[curId]={t:pt.textContent,b:c.innerHTML,l:l};ov[curId]=P[curId];
+  try{var sv=JSON.parse(localStorage.getItem(KEY)||'{}');sv.ver=sheetEl.getAttribute('data-ver');sv.ov=ov;localStorage.setItem(KEY,JSON.stringify(sv))}catch(_){}
+});
+document.addEventListener('keydown',function(e){
+  if(!editing)return;
+  var t=e.target;if(!(t&&t.closest&&t.closest('[contenteditable]')))return;
+  if((e.ctrlKey||e.metaKey)&&/^[biu]$/i.test(e.key)){e.preventDefault();return}
+  if(e.key==='Enter'){e.preventDefault()}
+});
+document.addEventListener('paste',function(e){
+  if(!editing)return;var t=e.target;if(!(t&&t.closest&&t.closest('[contenteditable]')))return;
+  e.preventDefault();var txt=(e.clipboardData||window.clipboardData).getData('text').replace(/\s*\n\s*/g,' ');
+  document.execCommand('insertText',false,txt);
+});
+document.getElementById('bRst').addEventListener('click',function(){
+  if(confirm('이 브라우저에 저장된 수정 내용을 지우고 원래대로 되돌립니다.')){try{localStorage.removeItem(KEY)}catch(e){}location.reload()}
+});
+document.getElementById('bDl').addEventListener('click',function(){
+  if(editing){setEdit(false);saveLocal()}
+  var doc=document.documentElement.cloneNode(true);
+  var m=doc.querySelector('#main'),f=doc.querySelector('#ft'),sh=doc.querySelector('#sheet');
+  normalize(m);normalize(f);
+  ['style'].forEach(function(a){m.removeAttribute(a);sh.removeAttribute(a)});
+  sh.setAttribute('data-ver',String(Date.now()));
+  doc.querySelector('#pov').textContent=JSON.stringify(ov).replace(/</g,'\\u003c');
+  var pp=doc.querySelector('#pop');pp.setAttribute('hidden','');pp.removeAttribute('style');doc.querySelector('#pt').textContent='';doc.querySelector('#pbody').innerHTML='';
+  doc.querySelector('body').className='';
+  var html='<!DOCTYPE html>\n'+doc.outerHTML;
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  a.download=(location.pathname.split('/').pop()||'corptax_info.html');document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
+});
+/* 화면 맞춤 및 인쇄 */
+function fitView(){
+  sheetEl.style.zoom='';
+  var w=sheetEl.getBoundingClientRect().width,a=document.documentElement.clientWidth-12;
+  if(a<w){sheetEl.style.zoom=(a/w).toFixed(4)}
+}
+fitView();window.addEventListener('resize',function(){fitView();var z=sheetEl.style.zoom;fitContent();});
+window.addEventListener('beforeprint',function(){sheetEl.style.zoom='';});
+window.addEventListener('afterprint',fitView);
 document.getElementById('prt').addEventListener('click',function(){window.print()});
 })();
 </script>
