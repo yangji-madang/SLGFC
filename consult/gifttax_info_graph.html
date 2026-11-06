@@ -125,6 +125,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 .editing .edtip{display:block}
 .pop [contenteditable]{outline:1px dashed #e0a43a}
 @media print{.edtip{display:none!important}}
+/* 누진공제 표기 */.sc .bar2{display:flex;align-items:flex-start;justify-content:center;padding-top:1mm}.nj{color:#fff;font-size:9pt;font-weight:800;line-height:1.1;text-align:center;text-shadow:0 1px 1px rgba(0,0,0,.45);white-space:nowrap;background:rgba(40,16,8,.42);border-radius:1mm;padding:.3mm 1.2mm;align-self:flex-start}.stair{height:38mm}.njc{font-size:8pt;color:#7a6a5a;text-align:right;margin-top:.6mm}.sc:nth-child(1) .bar2{height:9.0mm}.sc:nth-child(2) .bar2{height:12.2mm}.sc:nth-child(3) .bar2{height:15.5mm}.sc:nth-child(4) .bar2{height:18.8mm}.sc:nth-child(5) .bar2{height:22.0mm}
 </style>
 </head>
 <body class="">
@@ -162,7 +163,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 </div>
 
 
-<main class="sheet" id="sheet" data-ver="1793936552608">
+<main class="sheet" id="sheet" data-ver="1793937151386">
 <div class="main" id="main">
 
 <header class="ttl">
@@ -181,7 +182,8 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 <div class="two">
   <section class="box">
     <div class="gh">세율은 5단계<small>상속세와 같은 세율표</small></div>
-    <div class="stair" style="grid-template-columns:repeat(5,1fr)"><div class="sc" data-p="prog" tabindex="0"><div class="pc">10%</div><div class="bar2"></div><div class="rg">1억 이하</div></div><div class="sc" data-p="prog" tabindex="0"><div class="pc">20%</div><div class="bar2"></div><div class="rg">1억~5억</div></div><div class="sc" data-p="prog" tabindex="0"><div class="pc">30%</div><div class="bar2"></div><div class="rg">5억~10억</div></div><div class="sc" data-p="prog" tabindex="0"><div class="pc">40%</div><div class="bar2"></div><div class="rg">10억~<br>30억</div></div><div class="sc" data-p="prog" tabindex="0"><div class="pc">50%</div><div class="bar2"></div><div class="rg">30억<br>초과</div></div></div>
+    <div class="stair" style="grid-template-columns:repeat(5,1fr)"><div class="sc" data-p="prog" tabindex="0"><div class="pc">10%</div><div class="bar2"><span class="nj">없음</span></div><div class="rg">1억 이하</div></div><div class="sc" data-p="prog" tabindex="0"><div class="pc">20%</div><div class="bar2"><span class="nj">1,000만</span></div><div class="rg">1억~5억</div></div><div class="sc" data-p="prog" tabindex="0"><div class="pc">30%</div><div class="bar2"><span class="nj">6,000만</span></div><div class="rg">5억~10억</div></div><div class="sc" data-p="prog" tabindex="0"><div class="pc">40%</div><div class="bar2"><span class="nj">1.6억</span></div><div class="rg">10억~<br>30억</div></div><div class="sc" data-p="prog" tabindex="0"><div class="pc">50%</div><div class="bar2"><span class="nj">4.6억</span></div><div class="rg">30억<br>초과</div></div></div>
+    <div class="njc">막대 안 숫자 = 누진공제</div>
     <div class="up" data-p="c1" tabindex="0"><span class="i">i</span><b>▲ 10년 합산</b><span class="t">같은 증여자의 10년 내 증여를<br>더해 세율·공제 재계산</span></div>
   </section>
 

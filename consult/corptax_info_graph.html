@@ -121,6 +121,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 .editing .edtip{display:block}
 .pop [contenteditable]{outline:1px dashed #e0a43a}
 @media print{.edtip{display:none!important}}
+/* 누진공제 표기 */.sc .bar2{display:flex;align-items:flex-start;justify-content:center;padding-top:1mm}.nj{color:#fff;font-size:9pt;font-weight:800;line-height:1.1;text-align:center;text-shadow:0 1px 1px rgba(0,0,0,.45);white-space:nowrap;background:rgba(40,16,8,.42);border-radius:1mm;padding:.3mm 1.2mm;align-self:flex-start}.stair{height:38mm}.njc{font-size:8pt;color:#7a6a5a;text-align:right;margin-top:.6mm}.sc:nth-child(1) .bar2{height:9.0mm}.sc:nth-child(2) .bar2{height:13.3mm}.sc:nth-child(3) .bar2{height:17.7mm}.sc:nth-child(4) .bar2{height:22.0mm}
 </style>
 </head>
 <body class="">
@@ -150,7 +151,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 </div>
 
 
-<main class="sheet" id="sheet" data-ver="1793936283080">
+<main class="sheet" id="sheet" data-ver="1793937151386">
 <div class="main" id="main">
 
 <header class="ttl">
@@ -180,11 +181,12 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
   <section class="box">
     <div class="gh">세율은 4단계<small>2026년 개시 사업연도~</small></div>
     <div class="stair">
-      <div class="sc" data-p="prog" tabindex="0"><div class="pc">10%</div><div class="bar2"></div><div class="rg">2억 이하</div></div>
-      <div class="sc" data-p="prog" tabindex="0"><div class="pc">20%</div><div class="bar2"></div><div class="rg">2억~200억</div></div>
-      <div class="sc" data-p="prog" tabindex="0"><div class="pc">22%</div><div class="bar2"></div><div class="rg">200억~3천억</div></div>
-      <div class="sc" data-p="prog" tabindex="0"><div class="pc">25%</div><div class="bar2"></div><div class="rg">3천억&nbsp;초과</div></div>
+      <div class="sc" data-p="prog" tabindex="0"><div class="pc">10%</div><div class="bar2"><span class="nj">없음</span></div><div class="rg">2억 이하</div></div>
+      <div class="sc" data-p="prog" tabindex="0"><div class="pc">20%</div><div class="bar2"><span class="nj">2,000만</span></div><div class="rg">2억~200억</div></div>
+      <div class="sc" data-p="prog" tabindex="0"><div class="pc">22%</div><div class="bar2"><span class="nj">4.2억</span></div><div class="rg">200억~3천억</div></div>
+      <div class="sc" data-p="prog" tabindex="0"><div class="pc">25%</div><div class="bar2"><span class="nj">94.2억</span></div><div class="rg">3천억&nbsp;초과</div></div>
     </div>
+    <div class="njc">막대 안 숫자 = 누진공제</div>
     <div class="up" data-p="exinc" tabindex="0"><span class="i">i</span><b>▲ 전년비+1%p</b><span class="t">2026년 시작 사업연도부터 인상<br></span></div>
   </section>
 
