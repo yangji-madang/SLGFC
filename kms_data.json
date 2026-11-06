@@ -73,6 +73,50 @@
      "pin": false,
      "links": [
       {
+       "label": "세금 이해 : 1. 법인세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/corptax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "법인세"
+       ],
+       "pin": true
+      },
+      {
+       "label": "세금 이해 : 2. 상속세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/inhtax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "상속세"
+       ],
+       "pin": true
+      },
+      {
+       "label": "세금 이해 : 3. 증여세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/gifttax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "증여세"
+       ],
+       "pin": true
+      },
+      {
+       "label": "세금 이해 : 4. 종합소득세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/inctax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "소득세"
+       ],
+       "pin": true
+      },
+      {
        "label": "세금계산기",
        "url": "https://yangji-madang.github.io/SLGFC/consult/tax_simul.html",
        "tags": [
@@ -82,6 +126,10 @@
         "상속",
         "증여"
        ],
+       "pin": true
+      },
+      {
+       "br": true,
        "pin": true
       },
       {
@@ -127,58 +175,7 @@
        "pin": false
       },
       {
-       "label": "삼성생명 Business Live ON",
-       "url": "https://www.samsung2030blo.com/",
-       "tags": [
-        "교육",
-        "라이브",
-        "방송",
-        "BLO"
-       ],
-       "pin": false
-      },
-      {
-       "label": "세금 이해 : 1. 법인세",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/corptax_info.html",
-       "tags": [
-        "세금",
-        "이해",
-        "개요",
-        "법인세"
-       ],
-       "pin": false
-      },
-      {
-       "label": "세금 이해 : 2. 상속세",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/inhtax_info.html",
-       "tags": [
-        "세금",
-        "이해",
-        "개요",
-        "상속세"
-       ],
-       "pin": false
-      },
-      {
-       "label": "세금 이해 : 3. 증여세",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/gifttax_info.html",
-       "tags": [
-        "세금",
-        "이해",
-        "개요",
-        "증여세"
-       ],
-       "pin": false
-      },
-      {
-       "label": "세금 이해 : 4. 종합소득세",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/inctax_info.html",
-       "tags": [
-        "세금",
-        "이해",
-        "개요",
-        "소득세"
-       ],
+       "br": true,
        "pin": false
       },
       {
@@ -188,6 +185,17 @@
         "세금",
         "이자",
         "계산"
+       ],
+       "pin": false
+      },
+      {
+       "label": "삼성생명 Business Live ON",
+       "url": "https://www.samsung2030blo.com/",
+       "tags": [
+        "교육",
+        "라이브",
+        "방송",
+        "BLO"
        ],
        "pin": false
       }
