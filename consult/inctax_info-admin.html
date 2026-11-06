@@ -148,7 +148,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
   <h1>종합소득세 개요</h1>
   <div class="sub"><i>TAX BRIEFING</i>개인이 번 소득에 내는 세금 : 계산과 주의점</div>
   <div class="chips"><span>세율 <b>6~45%</b></span><span>신고 <b>5월 1~31일</b></span><span>지방세 <b>+10%</b></span></div>
-  <div class="qd">조회일 <b id="qd">2026.11.06</b></div>
+  <div class="qd">기준일 <b id="qd">2026.11.06</b></div>
 </header>
 
 <section>
@@ -261,7 +261,7 @@ var KEY="info_edit_"+FN,ov={};
 try{ov=JSON.parse(document.getElementById("pov").textContent||"{}")}catch(e){}
 /*ADM{*/try{var sv=JSON.parse(localStorage.getItem(KEY)||"null");if(sv&&sv.ver===sheetEl.getAttribute("data-ver")){if(sv.main)mainEl.innerHTML=sv.main;if(sv.ft)ftEl.innerHTML=sv.ft;if(sv.ov)Object.keys(sv.ov).forEach(function(k){ov[k]=sv.ov[k]})}}catch(e){}/*}ADM*/
 var d=new Date(),y=d.getFullYear(),m=('0'+(d.getMonth()+1)).slice(-2),dd=('0'+d.getDate()).slice(-2);
-document.getElementById('qd').textContent=y+'.'+m+'.'+dd;
+var ASOF=document.getElementById('qd').textContent;
 document.getElementById('yr').textContent=y;
 
 var P={
@@ -409,8 +409,11 @@ function fitContent(){
   }
   sheetEl.style.zoom=oz;
 }
-function boot(){linkFt();sentenceBreak();fitContent();}
+function setAsof(){var q=document.getElementById('qd');if(q)q.textContent=ASOF;var l=document.querySelector('#ft .law');if(l&&!editing)l.innerHTML=l.innerHTML.replace(/\d{4}\.\d{2}\.\d{2}(?= 현행법 기준)/,ASOF)}
+function boot(){linkFt();setAsof();sentenceBreak();fitContent();}
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(boot)}else{boot()}
+/* 기준일 : info_basis.json(매일 아침 점검 작업이 갱신)을 읽어 표시. 읽지 못하면 이 파일에 적힌 날짜를 그대로 씁니다. */
+try{fetch('info_basis.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.asof)return;var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(j.asof);if(!m)return;ASOF=m[1]+'.'+m[2]+'.'+m[3];setAsof();if(j.pending&&j.pending.length&&window.showPending)window.showPending(j.pending);fitContent()}).catch(function(){})}catch(e){}
 
 /*ADM{*/
 /* 글자 편집 */
@@ -516,6 +519,7 @@ onOpen=setPopEdit;
 /* GitHub 반영 : 편집 페이지(-admin)와 조회 페이지를 함께 갱신. 토큰은 이 브라우저의 localStorage에만 저장 */
 var VN=FN.replace('-admin',''),GH={o:'yangji-madang',r:'SLGFC',b:'main',pa:'consult/'+FN,pv:'consult/'+VN},TKEY='info_gh_token',baseVer=sheetEl.getAttribute('data-ver');
 document.getElementById('lView').href=VN;
+window.showPending=function(p){gst('법령 변경 확인 필요 '+p.length+'건 : '+p.join(' / '),true)};
 function gst(msg,bad){var e=document.getElementById('gst');e.textContent=msg;e.style.color=bad?'#b3261e':'#17294a'}
 function b64(s){var u=new TextEncoder().encode(s),bin='';for(var i=0;i<u.length;i+=0x8000)bin+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(bin)}
 function unb64(s){var bin=atob(s.replace(/\s/g,'')),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)}
