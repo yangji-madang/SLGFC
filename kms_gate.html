@@ -108,6 +108,7 @@
     flex-wrap:wrap;
     gap:5px;
   }
+  .lrows{ display:flex; flex-direction:column; gap:5px; }   /* 줄바꿈으로 나뉜 링크 줄들 */
   a.link{
     display:inline-block;
     padding:3px 8px;
@@ -335,10 +336,21 @@ function start(data){
       const h3 = document.createElement("h3");
       h3.textContent = g.title;
       sub.appendChild(h3);
-      const row = document.createElement("div");
-      row.className = "links";
+      const rows = document.createElement("div");
+      rows.className = "lrows";
+      const rowList = [];   /* 줄바꿈으로 나뉜 줄: { el, links } */
       const store = [];
-      ordered(g.links, true, function(l){ return l.label; }).forEach(function(item){
+      let cur = null;
+      /* 관리화면에서 정한 순서 그대로(고정 항목만 앞으로). br 항목은 줄바꿈 표시 */
+      ordered(g.links, false, function(l){ return l.label; }).forEach(function(item){
+        if (item.br) { if (cur && cur.links.length) cur = null; return; }   /* 맨 앞·연속 줄바꿈은 무시 */
+        if (!cur) {
+          const row = document.createElement("div");
+          row.className = "links";
+          rows.appendChild(row);
+          cur = { el: row, links: [] };
+          rowList.push(cur);
+        }
         const a = document.createElement("a");
         a.className = "link" + (item.pin ? " pinned" : "");
         a.href = item.url;
@@ -346,12 +358,14 @@ function start(data){
         a.rel = "noopener";
         a.textContent = item.label;
         if (item.tags && item.tags.length) a.title = item.tags.map(function(t){ return "#" + t; }).join(" ");
-        row.appendChild(a);
-        store.push({ el: a, label: item.label, tags: (item.tags || []).map(normQ) });
+        cur.el.appendChild(a);
+        const rec = { el: a, label: item.label, tags: (item.tags || []).map(normQ) };
+        cur.links.push(rec);
+        store.push(rec);
       });
-      sub.appendChild(row);
+      sub.appendChild(rows);
       box.appendChild(sub);
-      secModel.subs.push({ title: g.title, el: sub, links: store });
+      secModel.subs.push({ title: g.title, el: sub, links: store, rows: rowList });
     });
     model.push(secModel);
   });
@@ -418,6 +432,9 @@ function start(data){
           if (ok && q !== "") ok = norm(l.label).indexOf(q) >= 0 || l.tags.some(function(t){ return t.indexOf(q) >= 0; });
           l.el.classList.toggle("hide", !ok);
           if (ok) subVisible++;
+        });
+        sub.rows.forEach(function(r){   /* 보이는 링크가 없는 줄은 숨김(빈 줄 방지) */
+          r.el.classList.toggle("hide", !r.links.some(function(l){ return !l.el.classList.contains("hide"); }));
         });
         sub.el.classList.toggle("hide", subVisible === 0);
         secVisible += subVisible;

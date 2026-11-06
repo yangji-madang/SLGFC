@@ -96,6 +96,8 @@
   .lk{ display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1.7fr) minmax(0,1.4fr) auto; gap:3px; align-items:center;
        margin-top:3px; padding-top:3px; border-top:1px dashed rgba(95,125,160,0.55); }
   .lk .acts{ display:flex; gap:3px; flex-wrap:nowrap; }
+  .lk.brk{ grid-template-columns:minmax(0,1fr) auto; background:repeating-linear-gradient(135deg,rgba(63,100,141,0.10) 0 6px,rgba(63,100,141,0.20) 6px 12px); border-radius:3px; }
+  .lk.brk .bl{ font-weight:800; color:#1d3552; padding-left:4px; }
   .addrow{ margin-top:3px; }
   .set{ display:grid; gap:4px; margin-top:5px; }
   .set label{ display:grid; gap:2px; font-size:11.6px; font-weight:800; color:#0b2547; }
@@ -264,6 +266,7 @@ function input(val, ph, cls, onch){
 }
 
 var tKey = function(x){ return x.title; }, lKey = function(x){ return x.label; };
+function nLinks(g){ return g.links.filter(function(l){ return !l.br; }).length; }   /* 줄바꿈 표시는 개수에서 제외 */
 var opened = new WeakSet();   /* 펼쳐 둔 대분류·중분류 */
 
 function sortOnce(list, key){   /* 한 번만 가나다순으로 재배치 (고정 항목은 맨 앞 유지) */
@@ -299,12 +302,12 @@ function render(){
     r.appendChild(el("span", "cnt", sec.groups.length + "개"));
     r.appendChild(pinBtn(sec, function(){ togglePin(data.sections, sec, false, tKey); rerender(); }));
     arrows(data.sections, sec, tKey, r);
-    r.appendChild(mini("가나다", "중분류를 영문→가나다순으로 한 번 정렬(고정 항목 제외). 이후 ▲▼로 다시 조정 가능. 링크는 항상 자동 정렬", function(){
+    r.appendChild(mini("가나다", "중분류를 영문→가나다순으로 한 번 정렬(고정 항목 제외). 이후 ▲▼로 다시 조정 가능", function(){
       if (!confirm("'" + sec.title + "' 아래 중분류를 영문→가나다순으로 재정렬합니다(고정 항목은 맨 앞 유지). 계속할까요?")) return;
       sortOnce(sec.groups, tKey); rerender();
     }));
     r.appendChild(mini("삭제", "대분류 삭제", function(){
-      var n = sec.groups.reduce(function(a, g){ return a + g.links.length; }, 0);
+      var n = sec.groups.reduce(function(a, g){ return a + nLinks(g); }, 0);
       if (confirm("'" + sec.title + "' 대분류와 하위 중분류·링크 " + n + "개를 삭제합니다. 계속할까요?")) { data.sections.splice(data.sections.indexOf(sec), 1); rerender(); }
     }, "del"));
     sb.appendChild(r);
@@ -317,9 +320,13 @@ function render(){
         gr.appendChild(toggler(g));
         gr.appendChild(el("span", "tag", "중분류"));
         gr.appendChild(input(g.title, "중분류 이름", "name", function(v, i){ g.title = v.trim(); i.classList.toggle("bad", !g.title); changed(); }));
-        gr.appendChild(el("span", "cnt", g.links.length + "개"));
+        gr.appendChild(el("span", "cnt", nLinks(g) + "개"));
         gr.appendChild(pinBtn(g, function(){ togglePin(sec.groups, g, false, tKey); rerender(); }));
         arrows(sec.groups, g, tKey, gr);
+        gr.appendChild(mini("가나다", "이 중분류의 링크를 영문→가나다순으로 한 번 정렬(고정 항목 제외, 줄바꿈 표시는 삭제됨). 이후 ▲▼로 다시 조정 가능", function(){
+          if (!confirm("'" + g.title + "' 아래 링크를 영문→가나다순으로 재정렬합니다(고정 항목은 맨 앞 유지, 줄바꿈 표시는 삭제됩니다). 계속할까요?")) return;
+          g.links = g.links.filter(function(l){ return !l.br; }); sortOnce(g.links, lKey); rerender();
+        }));
         gr.appendChild(mini("이동", "다른 대분류로 이동", function(){
           var names = data.sections.map(function(s, k){ return (k + 1) + ". " + s.title; }).join("\n");
           var a = prompt("이동할 대분류 번호를 입력하세요.\n" + names, "");
@@ -329,13 +336,22 @@ function render(){
           }
         }));
         gr.appendChild(mini("삭제", "중분류 삭제", function(){
-          if (confirm("'" + g.title + "' 중분류와 링크 " + g.links.length + "개를 삭제합니다. 계속할까요?")) { sec.groups.splice(sec.groups.indexOf(g), 1); rerender(); }
+          if (confirm("'" + g.title + "' 중분류와 링크 " + nLinks(g) + "개를 삭제합니다. 계속할까요?")) { sec.groups.splice(sec.groups.indexOf(g), 1); rerender(); }
         }, "del"));
         gb.appendChild(gr);
 
         if (opened.has(g)) {
-          normalize(g.links, true, lKey);
+          normalize(g.links, false, lKey);   /* 순서는 직접 조정(고정 항목만 앞) */
           g.links.forEach(function(l){
+            if (l.br) {   /* 줄바꿈 표시 행 */
+              var br = el("div", "lk brk" + (l.pin ? " pinned" : ""));
+              br.appendChild(el("span", "bl", "↵ 줄바꿈 (여기서 다음 줄로 넘김)"));
+              var bc = el("div", "acts");
+              arrows(g.links, l, lKey, bc);
+              bc.appendChild(mini("삭제", "줄바꿈 삭제", function(){ g.links.splice(g.links.indexOf(l), 1); rerender(); }, "del"));
+              br.appendChild(bc); gb.appendChild(br);
+              return;
+            }
             var lr = el("div", "lk" + (l.pin ? " pinned" : ""));
             lr.appendChild(input(l.label, "링크 이름", "", function(v, i){ l.label = v.trim(); i.classList.toggle("bad", !l.label); changed(); }));
             lr.appendChild(input(l.url, "주소 (https://… 또는 Prod/파일.html)", "", function(v, i){ l.url = v.trim(); i.classList.toggle("bad", !validUrl(l.url)); changed(); }));
@@ -343,8 +359,13 @@ function render(){
             ti.addEventListener("blur", function(){ ti.value = tagsText(l.tags); });
             lr.appendChild(ti);
             var ac = el("div", "acts");
-            ac.appendChild(pinBtn(l, function(){ togglePin(g.links, l, true, lKey); rerender(); }));
-            arrows(g.links, l, lKey, ac, true);
+            ac.appendChild(pinBtn(l, function(){ togglePin(g.links, l, false, lKey); rerender(); }));
+            arrows(g.links, l, lKey, ac);
+            ac.appendChild(mini("↵", "이 링크 아래에 줄바꿈 넣기", function(){
+              var k = g.links.indexOf(l) + 1;
+              if (g.links[k] && g.links[k].br) { msg("info", "이미 이 링크 아래에 줄바꿈이 있습니다."); return; }
+              g.links.splice(k, 0, { label: "", url: "", tags: [], pin: !!l.pin, br: true }); rerender();
+            }));
             ac.appendChild(mini("삭제", "링크 삭제", function(){
               if (confirm("'" + l.label + "' 링크를 삭제합니다. 계속할까요?")) { g.links.splice(g.links.indexOf(l), 1); rerender(); }
             }, "del"));
@@ -412,6 +433,7 @@ function validate(){
     s.groups.forEach(function(g){
       if (!g.title) errs.push("[" + (s.title || "?") + "] 이름이 비어 있는 중분류가 있습니다.");
       g.links.forEach(function(l){
+        if (l.br) return;
         if (!l.label) errs.push("[" + (g.title || "?") + "] 이름이 비어 있는 링크가 있습니다.");
         else if (!validUrl(l.url)) errs.push("'" + l.label + "' 의 주소 형식이 올바르지 않습니다: " + l.url);
       });
@@ -425,7 +447,7 @@ function clean(){
   d.footer = { notice: data.footer.notice.trim(), copyright: upA(data.footer.copyright.trim()) };
   d.bgY = Number(data.bgY);
   d.sections.forEach(function(s){ s.sort = false; s.pin = !!s.pin;
-    s.groups.forEach(function(g){ g.pin = !!g.pin; g.links.forEach(function(l){ l.pin = !!l.pin; l.tags = l.tags || []; }); }); });
+    s.groups.forEach(function(g){ g.pin = !!g.pin; g.links = g.links.map(function(l){ return l.br ? { br: true, pin: !!l.pin } : { label: l.label, url: l.url, tags: l.tags || [], pin: !!l.pin }; }); }); });
   return d;
 }
 
@@ -434,6 +456,7 @@ function adopt(d){
   d = d || {}; d.sections = (d.sections || []).map(function(s){
     return { title: s.title || "", sort: !!s.sort, pin: !!s.pin, groups: (s.groups || []).map(function(g){
       return { title: g.title || "", pin: !!g.pin, links: (g.links || []).map(function(l){
+        if (l.br) return { label: "", url: "", tags: [], pin: !!l.pin, br: true };
         return { label: l.label || "", url: l.url || "", tags: Array.isArray(l.tags) ? l.tags : parseTags(l.tags || ""), pin: !!l.pin };
       })};
     })};

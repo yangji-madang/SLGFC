@@ -116,39 +116,6 @@
        "pin": false
       },
       {
-       "label": "세금 이해 : 4. 종합소득세",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/inctax_info.html",
-       "tags": [
-        "세금",
-        "이해",
-        "개요",
-        "소득세"
-       ],
-       "pin": false
-      },
-      {
-       "label": "세금 이해 : 2. 상속세",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/inhtax_info.html",
-       "tags": [
-        "세금",
-        "이해",
-        "개요",
-        "상속세"
-       ],
-       "pin": false
-      },
-      {
-       "label": "세금 이해 : 3. 증여세",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/gifttax_info.html",
-       "tags": [
-        "세금",
-        "이해",
-        "개요",
-        "증여세"
-       ],
-       "pin": false
-      },
-      {
        "label": "법인컨설팅AI",
        "url": "https://cc.learninvest.co.kr/",
        "tags": [
@@ -178,6 +145,39 @@
         "이해",
         "개요",
         "법인세"
+       ],
+       "pin": false
+      },
+      {
+       "label": "세금 이해 : 2. 상속세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/inhtax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "상속세"
+       ],
+       "pin": false
+      },
+      {
+       "label": "세금 이해 : 3. 증여세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/gifttax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "증여세"
+       ],
+       "pin": false
+      },
+      {
+       "label": "세금 이해 : 4. 종합소득세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/inctax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "소득세"
        ],
        "pin": false
       },
@@ -554,16 +554,6 @@
        "pin": true
       },
       {
-       "label": "질병관리청",
-       "url": "https://www.kdca.go.kr",
-       "tags": [
-        "건강",
-        "질병",
-        "질병관리청"
-       ],
-       "pin": false
-      },
-      {
        "label": "건강보험심사평가원",
        "url": "https://www.hira.or.kr/main.do",
        "tags": [
@@ -592,6 +582,16 @@
         "건강통계",
         "질병관리청",
         "건강"
+       ],
+       "pin": false
+      },
+      {
+       "label": "질병관리청",
+       "url": "https://www.kdca.go.kr",
+       "tags": [
+        "건강",
+        "질병",
+        "질병관리청"
        ],
        "pin": false
       },
