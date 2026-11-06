@@ -32,6 +32,8 @@ button{font-family:inherit;cursor:pointer}
 .cbtn:hover{background:var(--navy2);color:#fff}
 .cbtn.alt{border-color:var(--gold);color:#7a5e16}
 .cbtn.alt:hover{background:var(--gold);color:#fff}
+.cbtn.info{margin-left:auto;align-self:center;display:inline-block;line-height:normal;text-decoration:none;background:linear-gradient(135deg,#e8590c,#f08c00);border-color:#c2410c;color:#fff;box-shadow:0 1px 5px rgba(194,65,12,.45);white-space:nowrap}
+.cbtn.info:hover{background:linear-gradient(135deg,#c2410c,#e8590c);color:#fff}
 #viewBar{display:flex;gap:6px;padding:6px 16px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);background:#fff}
 #viewBar .seg button{border:1px solid var(--navy2);background:#fff;color:var(--navy2);padding:4px 14px;font-weight:700;font-size:13.5px}
 #viewBar .seg button:first-child{border-radius:6px 0 0 6px}
@@ -184,6 +186,7 @@ const HELP={};
 function H(key,title,body,law,chk){HELP[key]={t:title,b:body,l:law||'',c:chk||''};}
 const MODS={};
 const ORDER=['corp','inc','inh','gift'];
+const INFO_PAGE={corp:'corptax_info.html',inc:'inctax_info.html',inh:'inhtax_info.html',gift:'gifttax_info.html'};
 const M=(id,label,o)=>Object.assign({id,label,type:'money'},o||{});
 const P=(id,label,o)=>Object.assign({id,label,type:'pct'},o||{});
 const I=(id,label,o)=>Object.assign({id,label,type:'int'},o||{});
@@ -326,6 +329,7 @@ function renderCaseBar(){
   if(t.cases.length<6){
     h+=`<button type="button" class="cbtn" data-add="blank">＋ 새 계산 추가</button><button type="button" class="cbtn alt" data-add="copy">⧉ 현재 계산 복제</button>`;
   }
+  h+=`<a class="cbtn info" href="${INFO_PAGE[S.tab]}" target="_blank" rel="noopener" title="${MODS[S.tab].name} 개요 페이지를 새 창으로 엽니다">📘 ${MODS[S.tab].name} 개요 보기</a>`;
   $('#caseBar').innerHTML=h;
 }
 function renderViewBar(){
