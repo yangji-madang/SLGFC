@@ -425,6 +425,7 @@ const DEFAULT_COLS = [
   {key:'주소',type:'text',w:270,area:true,wrap:true},
   {key:'지역',type:'region',w:96,calc:true},
   {key:'출산예정일',type:'date',w:104},
+  {key:'남은날',type:'dday',w:96,calc:true},
   {key:'임신주수',type:'text',w:76,area:true,wrap:true},
   {key:'진료병원',type:'text',w:140,area:true,wrap:true},
   {key:'가입경로',type:'text',w:96,area:true,wrap:true},
@@ -440,7 +441,7 @@ const DEFAULT_SET = { freezeCols:6, freezeRows:1, suffix:false, ageMode:'man', w
 const LS_KEY = 'luvmam.db.v1';
 
 const state = {
-  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 8,
+  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 9,
   ex: { types: [], items: [], leaflets: [] },
   q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: '', dragRow: ''
 };
@@ -503,6 +504,12 @@ function migrate(){
     state.cols.forEach(c => { if (c.type === 'datetime' && (c.w || 0) < 172) c.w = 172; });
     state.sv = 8; b = true;
   }
+  if (state.sv < 9){
+    const ex = state.cols.find(c => c.label.replace(/\s/g, '') === '남은날');
+    if (ex){ ex.type = 'dday'; ex.calc = true; delete ex.area; delete ex.wrap; ex.w = Math.max(ex.w || 0, 96); }
+    else { const i = state.cols.findIndex(c => c.label.replace(/\s/g, '') === '출산예정일'); if (i >= 0) state.cols.splice(i + 1, 0, { key: '남은날', label: '남은날', type: 'dday', w: 96, calc: true, visible: true }); }
+    state.sv = 9; b = true;
+  }
   return a || b;
 }
 function migrate2(){
@@ -523,13 +530,19 @@ function migrate2(){
 const visCols = () => state.cols.filter(c => c.visible);
 
 /* ───────── 값 표시·정규화 ───────── */
+function daysLeft(due, ref){
+  const a = parseYMD(due), b = parseYMD(ref); if (!a || !b) return '';
+  return Math.round((Date.UTC(a[0], a[1] - 1, a[2]) - Date.UTC(b[0], b[1] - 1, b[2])) / 86400000);
+}
 function cellVal(r, c){
   if (c.type === 'age') return calcAge(r['생년월일'], state.asOf, state.set.ageMode);
   if (c.type === 'region') return regionOf(r['주소'], state.set.suffix).text;
+  if (c.type === 'dday') return daysLeft(r['출산예정일'], state.asOf);
   const v = r[c.key]; return v == null ? '' : v;
 }
 const DOW = ['일', '월', '화', '수', '목', '금', '토'];
 function dispVal(c, v){
+  if (c.type === 'dday'){ if (v === '' || v == null) return ''; const n = +v; return n > 0 ? n + '일' : (n === 0 ? '오늘' : (-n) + '일 지남'); }
   if (c.type !== 'datetime' || !v) return v;
   const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})(.*)$/); if (!m) return v;
   const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])); if (d.getUTCMonth() !== +m[2] - 1) return v;
@@ -620,7 +633,7 @@ function render(){
          '<button class="ib" data-act="ins" title="이 행 아래에 새 고객 삽입">＋</button><button class="ib del" data-act="del" title="삭제">✕</button></td>';
     vis.forEach((c, k) => {
       const v = cellVal(r, c);
-      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), (c.type === 'age' ? 'num' : ''), (c.wrap ? 'wc' : ''), (resTone(c, v) ? 'rs-' + resTone(c, v) : '')].filter(Boolean).join(' ');
+      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), ((c.type === 'age' || c.type === 'dday') ? 'num' : ''), (c.wrap ? 'wc' : ''), (resTone(c, v) ? 'rs-' + resTone(c, v) : '')].filter(Boolean).join(' ');
       const isSel = c.type === 'select', ar = isSel ? '<span class="ar">▾</span>' : '', cls2 = cls + (isSel ? ' sel' : '');
       h += '<td class="' + cls2 + '"' + (isSel ? ' data-ck="' + esc(c.key) + '"' : '') + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(dispVal(c, v)) + '">' + ((c.wrap || S.wrap) ? '<div class="ci"' + (N ? ' style="-webkit-line-clamp:' + N + '"' : '') + '>' + ar + esc(dispVal(c, v)) + '</div>' : ar + esc(dispVal(c, v))) + '</td>';
     });
@@ -1037,7 +1050,7 @@ function doPrint(cols, land, withNo){
   rows.forEach((r, i) => {
     h += '<tr>' + (withNo ? '<td class="c">' + (i + 1) + '</td>' : '') + cols.map(c => {
       const v = cellVal(r, c), t = resTone(c, v);
-      return '<td class="' + [(c.type === 'age' ? 'c' : ''), (t ? 'rs-' + t : '')].filter(Boolean).join(' ') + '">' + esc(dispVal(c, v)) + '</td>';
+      return '<td class="' + [((c.type === 'age' || c.type === 'dday') ? 'c' : ''), (t ? 'rs-' + t : '')].filter(Boolean).join(' ') + '">' + esc(dispVal(c, v)) + '</td>';
     }).join('') + '</tr>';
   });
   h += '</tbody></table><div class="pcp">ⓒ' + d.getFullYear() + '. YOON HYUNCHUL, ALL RIGHTS RESERVED.</div>';
@@ -1379,12 +1392,13 @@ async function exportXlsx(){
       const v = cellVal(r, c);
       if (c.type === 'date'){ const p = parseYMD(v); if (p) return new Date(Date.UTC(p[0], p[1] - 1, p[2])); }
       if (c.type === 'datetime'){ const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})(?: (\d{2}):(\d{2}))?$/); if (m) return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0))); }
+      if (c.type === 'dday') return dispVal(c, v);
       return v;
     }));
     row.eachCell({ includeEmpty: true }, (cell, n) => {
       const c = vis[n - 1];
       cell.font = { name: '맑은 고딕', size: 10 }; cell.border = bd;
-      cell.alignment = { vertical: 'middle', horizontal: (c.type === 'age' ? 'center' : 'left'), wrapText: !!(c.area || c.wrap) };
+      cell.alignment = { vertical: 'middle', horizontal: ((c.type === 'age' || c.type === 'dday') ? 'center' : 'left'), wrapText: !!(c.area || c.wrap) };
       { const tn = resTone(c, String(cellVal(r, c))); if (tn) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: tn === 'r' ? 'FFFFD5D5' : 'FFFFF6BF' } }; }
       if (c.type === 'date') cell.numFmt = 'yyyy-mm-dd';
       if (c.type === 'datetime') cell.numFmt = / \d{2}:\d{2}$/.test(String(cellVal(r, c))) ? 'yyyy-mm-dd(ddd) hh:mm' : 'yyyy-mm-dd(ddd)';
@@ -1937,7 +1951,7 @@ function syncInit(){
 window.__luvmam = { regionOf, calcAge, parseYMD, state, render, moveRowBy, sync };
 
 load();
-if (state.sv < 8){ migrate(); save(); }
+if (state.sv < 9){ migrate(); save(); }
 $('#asof').value = state.asOf;
 render();
 syncInit();
