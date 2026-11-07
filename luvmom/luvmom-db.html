@@ -420,6 +420,7 @@ const DEFAULT_COLS = [
   {key:'고객명',type:'text',w:90,area:true,wrap:true},
   {key:'생년월일',type:'birth',w:92},
   {key:'나이',type:'age',w:80,calc:true},
+  {key:'보험나이',type:'insage',w:96,calc:true},
   {key:'휴대폰',type:'phone',w:122},
   {key:'가입일',type:'date',w:100},
   {key:'주소',type:'text',w:270,area:true,wrap:true},
@@ -434,14 +435,14 @@ const DEFAULT_COLS = [
   {key:'상담결과',type:'select',w:110,wrap:true,opts:RESULT_OPTS},
   {key:'상담 내용',type:'text',w:260,area:true,wrap:true},
   {key:'상담일시',type:'datetime',w:172}
-].map(c => Object.assign({label:c.key, visible:true}, c));
+].map(c => Object.assign({label:c.key, visible:true, hl:['고객명','생년월일','나이','보험나이','휴대폰','주소','관심항목'].includes(c.key)}, c));
 const PROTECT = new Set(['고객명', '생년월일', '주소', '휴대폰']);
 const DEFAULT_KEYS = new Set(DEFAULT_COLS.map(c => c.key));
 const DEFAULT_SET = { freezeCols:6, freezeRows:1, suffix:false, ageMode:'man', wrap:false, noW:50, editW:150, rowMax:96 };
 const LS_KEY = 'luvmam.db.v1';
 
 const state = {
-  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 9,
+  cols: clone(DEFAULT_COLS), rows: [], set: Object.assign({}, DEFAULT_SET), sv: 10,
   ex: { types: [], items: [], leaflets: [] },
   q: '', sortKey: '', sortDir: 1, asOf: todayStr(), dragKey: '', dragRow: ''
 };
@@ -510,6 +511,17 @@ function migrate(){
     else { const i = state.cols.findIndex(c => c.label.replace(/\s/g, '') === '출산예정일'); if (i >= 0) state.cols.splice(i + 1, 0, { key: '남은날', label: '남은날', type: 'dday', w: 96, calc: true, visible: true }); }
     state.sv = 9; b = true;
   }
+  if (state.sv < 10){
+    const KEY = ['고객명', '생년월일', '나이', '보험나이', '휴대폰', '주소', '관심항목'];
+    if (!state.cols.some(c => c.type === 'insage')){
+      const i = state.cols.findIndex(c => c.type === 'age' || c.label.replace(/\s/g, '') === '나이');
+      const nc = { key: '보험나이', label: '보험나이', type: 'insage', w: 96, calc: true, visible: true };
+      if (state.cols.some(c => c.key === nc.key)) nc.key = '보험나이_';
+      if (i >= 0){ state.cols.splice(i + 1, 0, nc); if (state.set && state.set.freezeCols >= i + 1) state.set.freezeCols++; }
+    }
+    state.cols.forEach(c => { c.hl = KEY.indexOf(c.label.replace(/\s/g, '')) >= 0; });
+    state.sv = 10; b = true;
+  }
   return a || b;
 }
 function migrate2(){
@@ -535,7 +547,8 @@ function daysLeft(due, ref){
   return Math.round((Date.UTC(a[0], a[1] - 1, a[2]) - Date.UTC(b[0], b[1] - 1, b[2])) / 86400000);
 }
 function cellVal(r, c){
-  if (c.type === 'age') return calcAge(r['생년월일'], state.asOf, state.set.ageMode);
+  if (c.type === 'age') return calcAge(r['생년월일'], state.asOf, 'man');
+  if (c.type === 'insage') return calcAge(r['생년월일'], state.asOf, 'ins');
   if (c.type === 'region') return regionOf(r['주소'], state.set.suffix).text;
   if (c.type === 'dday') return daysLeft(r['출산예정일'], state.asOf);
   const v = r[c.key]; return v == null ? '' : v;
@@ -554,7 +567,7 @@ function isBad(r, c){
   if (c.type === 'birth') return !!v && !(/^\d{8}$/.test(v) && parseYMD(v));
   if (c.type === 'datetime') return !!v && !/^\d{4}-\d{2}-\d{2}( \d{2}:\d{2})?$/.test(v);
   if (c.type === 'select') return !!v && !(c.opts || []).includes(v);
-  if (c.type === 'age') return !!r['생년월일'] && cellVal(r, c) === '';
+  if (c.type === 'age' || c.type === 'insage') return !!r['생년월일'] && cellVal(r, c) === '';
   if (c.type === 'region') return regionOf(r['주소'], false).bad;
   return false;
 }
@@ -597,7 +610,7 @@ function viewRows(){
   return list;
 }
 const actW = () => state.set.noW + state.set.editW;
-const KEYCOLS = new Set(['고객명', '생년월일', '나이', '휴대폰', '주소', '관심항목']);
+const KEYCOLS = new Set(['고객명', '생년월일', '나이', '보험나이', '휴대폰', '주소', '관심항목']);
 function render(){
   applyFmt();
   const grid = $('#grid'), S = state.set, vis = visCols();
@@ -615,7 +628,7 @@ function render(){
   h += '<th class="act no' + (fr >= 1 ? ' fh' : '') + (actSticky ? ' fc' : '') + '"' + (actSticky ? ' style="left:0"' : '') + '>No.<span class="rz" data-rz="__no"></span></th>';
   h += '<th class="act ed' + (fr >= 1 ? ' fh' : '') + (actSticky ? ' fc' : '') + '"' + (actSticky ? ' style="left:' + NO + 'px"' : '') + '>수정<span class="rz" data-rz="__ed"></span></th>';
   vis.forEach((c, i) => {
-    const cls = [(fr >= 1 ? 'fh' : ''), (i < fc ? 'fc' : ''), (i === fc - 1 ? 'fc-last' : ''), (KEYCOLS.has(c.label.replace(/\s/g, '')) ? 'kh' : '')].filter(Boolean).join(' ');
+    const cls = [(fr >= 1 ? 'fh' : ''), (i < fc ? 'fc' : ''), (i === fc - 1 ? 'fc-last' : ''), (c.hl ? 'kh' : '')].filter(Boolean).join(' ');
     const arrow = state.sortKey === c.key ? '<span class="srt">' + (state.sortDir > 0 ? '▲' : '▼') + '</span>' : '';
     h += '<th draggable="true" data-key="' + esc(c.key) + '" class="' + cls + '"' + (i < fc ? ' style="left:' + left[i] + 'px"' : '') +
          ' title="클릭: 정렬 / 끌어서 놓기: 항목 순서 변경 / 오른쪽 가장자리 끌기: 너비 조정 (더블클릭: 내용에 맞춤)">' + esc(c.label) + (c.calc ? '<i class="auto">자동</i>' : '') + arrow + '<span class="cm" data-cm="' + esc(c.key) + '" title="열 추가·삭제 메뉴 (마우스 오른쪽 클릭도 가능)">▾</span>' +
@@ -633,7 +646,7 @@ function render(){
          '<button class="ib" data-act="ins" title="이 행 아래에 새 고객 삽입">＋</button><button class="ib del" data-act="del" title="삭제">✕</button></td>';
     vis.forEach((c, k) => {
       const v = cellVal(r, c);
-      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), ((c.type === 'age' || c.type === 'dday') ? 'num' : ''), (c.wrap ? 'wc' : ''), (resTone(c, v) ? 'rs-' + resTone(c, v) : '')].filter(Boolean).join(' ');
+      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), ((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'num' : ''), (c.wrap ? 'wc' : ''), (resTone(c, v) ? 'rs-' + resTone(c, v) : '')].filter(Boolean).join(' ');
       const isSel = c.type === 'select', ar = isSel ? '<span class="ar">▾</span>' : '', cls2 = cls + (isSel ? ' sel' : '');
       h += '<td class="' + cls2 + '"' + (isSel ? ' data-ck="' + esc(c.key) + '"' : '') + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(dispVal(c, v)) + '">' + ((c.wrap || S.wrap) ? '<div class="ci"' + (N ? ' style="-webkit-line-clamp:' + N + '"' : '') + '>' + ar + esc(dispVal(c, v)) + '</div>' : ar + esc(dispVal(c, v))) + '</td>';
     });
@@ -660,8 +673,7 @@ function render(){
   }
   const fcl = fc > 0 ? colLetter(fc + 1) : 'A', fro = fr > 0 ? fr + 1 : 1;
   const fz = (fc === 0 && fr === 0) ? '없음' : fcl + fro;
-  $('#stat').innerHTML = '전체 <b>' + state.rows.length + '</b>명 · 표시 <b>' + rows.length + '</b>명 · 나이 기준 <b>' +
-    (S.ageMode === 'ins' ? '보험나이' : '만 나이') + '</b> · 틀고정 <b>' + fz + '</b>';
+  $('#stat').innerHTML = '전체 <b>' + state.rows.length + '</b>명 · 표시 <b>' + rows.length + '</b>명 · 틀고정 <b>' + fz + '</b>';
 }
 function colLetter(n){ let s = ''; while (n > 0){ const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
 
@@ -904,7 +916,7 @@ function openColMenu(key, x, y){
   const locked = c.calc || PROTECT.has(c.key), m = $('#colMenu');
   m.innerHTML = '<div class="cmh">' + esc(c.label) + ' 열</div>' +
     '<button data-cm="before">＋ 이 열 <b>앞</b>에 열 추가</button><button data-cm="after">＋ 이 열 <b>뒤</b>에 열 추가</button>' +
-    (c.type === 'select' ? '<button data-cm="opts">☰ 선택 항목 편집</button>' : ((c.type === 'text' && !locked) ? '<button data-cm="opts">☰ 선택 목록으로 설정…</button>' : '')) + '<button data-cm="hide">👁 이 열 숨기기 <small>(데이터는 유지)</small></button>' +
+    (c.type === 'select' ? '<button data-cm="opts">☰ 선택 항목 편집</button>' : ((c.type === 'text' && !locked) ? '<button data-cm="opts">☰ 선택 목록으로 설정…</button>' : '')) + '<button data-cm="hl">★ 제목 노란 바탕 ' + (c.hl ? '<b>해제</b>' : '<b>지정</b> <small>(주요 항목)</small>') + '</button><button data-cm="hide">👁 이 열 숨기기 <small>(데이터는 유지)</small></button>' +
     (locked ? '<button disabled title="다른 기능의 기준이 되는 항목이라 삭제할 수 없습니다">✕ 이 열 삭제 불가 <small>(기준 항목 · 숨기기만 가능)</small></button>' : '<button class="dng" data-cm="del">✕ 이 열 삭제</button>');
   m.classList.add('on');
   const w = m.offsetWidth, h = m.offsetHeight;
@@ -939,6 +951,7 @@ $('#colMenu').addEventListener('click', e => {
   else if (a === 'hide'){ const c = state.cols.find(k => k.key === key); if (c){ c.visible = false; save(); render(); if (drawer.classList.contains('on')) renderDrawer(); toast("'" + c.label + "' 열을 숨겼습니다. (설정에서 다시 표시)"); } }
   else if (a === 'del') delCol(key);
   else if (a === 'opts') editOpts(key);
+  else if (a === 'hl'){ const c = state.cols.find(k => k.key === key); if (c){ c.hl = !c.hl; save(); render(); if (drawer.classList.contains('on')) renderDrawer(); } }
 });
 document.addEventListener('pointerdown', e => { if (!e.target.closest('#colMenu') && !e.target.closest('.cm')) closeColMenu(); });
 gridEl.addEventListener('contextmenu', e => { const th = e.target.closest('th[data-key]'); if (!th) return; e.preventDefault(); openColMenu(th.dataset.key, e.clientX, e.clientY); });
@@ -1050,7 +1063,7 @@ function doPrint(cols, land, withNo){
   rows.forEach((r, i) => {
     h += '<tr>' + (withNo ? '<td class="c">' + (i + 1) + '</td>' : '') + cols.map(c => {
       const v = cellVal(r, c), t = resTone(c, v);
-      return '<td class="' + [((c.type === 'age' || c.type === 'dday') ? 'c' : ''), (t ? 'rs-' + t : '')].filter(Boolean).join(' ') + '">' + esc(dispVal(c, v)) + '</td>';
+      return '<td class="' + [((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'c' : ''), (t ? 'rs-' + t : '')].filter(Boolean).join(' ') + '">' + esc(dispVal(c, v)) + '</td>';
     }).join('') + '</tr>';
   });
   h += '</tbody></table><div class="pcp">ⓒ' + d.getFullYear() + '. YOON HYUNCHUL, ALL RIGHTS RESERVED.</div>';
@@ -1120,9 +1133,8 @@ function openForm(id, afterId){
   const q = k => ov.querySelector('[data-k="' + k + '"]');
   const upd = () => {
     const b = normBirth(q('생년월일') ? q('생년월일').value : ''), a = q('주소') ? q('주소').value : '';
-    const age = calcAge(b, state.asOf, state.set.ageMode), rg = regionOf(a, state.set.suffix);
-    $('#calc').innerHTML = '자동 계산 · 나이: <b>' + (age === '' ? '-' : age + '세') + '</b> (' + esc(state.asOf) + ' 기준, ' +
-      (state.set.ageMode === 'ins' ? '보험나이' : '만 나이') + ') · 지역: <b>' + esc(rg.text || '-') + '</b>';
+    const age = calcAge(b, state.asOf, 'man'), ins = calcAge(b, state.asOf, 'ins'), rg = regionOf(a, state.set.suffix);
+    $('#calc').innerHTML = '자동 계산 (' + esc(state.asOf) + ' 기준) · 나이: <b>' + (age === '' ? '-' : age + '세') + '</b> · 보험나이: <b>' + (ins === '' ? '-' : ins + '세') + '</b> · 지역: <b>' + esc(rg.text || '-') + '</b>';
   };
   ov.addEventListener('input', upd); upd();
   const collect = () => {
@@ -1398,7 +1410,7 @@ async function exportXlsx(){
     row.eachCell({ includeEmpty: true }, (cell, n) => {
       const c = vis[n - 1];
       cell.font = { name: '맑은 고딕', size: 10 }; cell.border = bd;
-      cell.alignment = { vertical: 'middle', horizontal: ((c.type === 'age' || c.type === 'dday') ? 'center' : 'left'), wrapText: !!(c.area || c.wrap) };
+      cell.alignment = { vertical: 'middle', horizontal: ((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'center' : 'left'), wrapText: !!(c.area || c.wrap) };
       { const tn = resTone(c, String(cellVal(r, c))); if (tn) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: tn === 'r' ? 'FFFFD5D5' : 'FFFFF6BF' } }; }
       if (c.type === 'date') cell.numFmt = 'yyyy-mm-dd';
       if (c.type === 'datetime') cell.numFmt = / \d{2}:\d{2}$/.test(String(cellVal(r, c))) ? 'yyyy-mm-dd(ddd) hh:mm' : 'yyyy-mm-dd(ddd)';
@@ -1428,6 +1440,7 @@ function renderDrawer(){
     '<li draggable="true" data-key="' + esc(c.key) + '"><span class="hd" title="끌어서 순서 변경">≡</span><span class="idx">' + (i + 1) + '</span>' +
     '<input type="checkbox" data-vis="' + esc(c.key) + '"' + (c.visible ? ' checked' : '') + ' title="표시 여부">' +
     '<span class="nm' + (c.visible ? '' : ' off') + '">' + esc(c.label) + (c.calc ? '<i>자동</i>' : '') + '</span>' +
+    '<button class="ib' + (c.hl ? ' on' : '') + '" data-hl="' + esc(c.key) + '" title="제목 노란 바탕(주요 항목) 지정/해제">★</button>' +
     '<button class="ib' + (c.wrap ? ' on' : '') + '" data-wr="' + esc(c.key) + '" title="셀 내용 줄바꿈 표시">↵</button>' +
     '<button class="ib" data-mv="up" data-k="' + esc(c.key) + '"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
     '<button class="ib" data-mv="dn" data-k="' + esc(c.key) + '"' + (i === state.cols.length - 1 ? ' disabled' : '') + '>▼</button>' +
@@ -1436,6 +1449,8 @@ function renderDrawer(){
   $('#drawer').innerHTML =
     '<div class="dh">항목·틀고정 설정<button class="btn sm" data-d="close">닫기</button></div><div class="db">' +
     '<h3>1. 항목 순서 · 표시 · 추가 · 삭제</h3><div class="note">≡ 끌어서 놓기 또는 ▲▼ 버튼으로 순서를 바꿉니다. 표의 제목 칸을 직접 끌어도 됩니다. 제목 칸 오른쪽 가장자리를 끌면 열 너비를 조정할 수 있습니다. 체크 해제 시 화면·엑셀에서 숨김(데이터는 유지)됩니다.</div>' +
+    '<div class="note" style="margin-top:4px">★ 버튼: 제목 칸을 <b style="background:#ffd966;padding:0 4px">노란 바탕</b>(주요 항목)으로 표시합니다. ↵ 버튼: 셀 내용 줄바꿈 표시.</div>' +
+    '<div style="display:flex;gap:6px;margin:4px 0"><button class="btn sm" data-d="hlreset">노란 바탕 기본 항목으로</button><button class="btn sm" data-d="hlnone">노란 바탕 모두 해제</button></div>' +
     '<ul class="clist" id="clist">' + list + '</ul>' +
     '<div class="note" style="margin-top:8px"><b>항목 추가</b> — 추가한 항목은 고객 입력 칸과 엑셀에도 함께 반영됩니다.</div>' +
     '<div class="addcol"><input id="ncName" maxlength="20" placeholder="새 항목명"><select id="ncType"><option value="text">텍스트</option><option value="date">날짜</option><option value="datetime">날짜·시간</option><option value="select">선택 목록</option></select>' +
@@ -1446,9 +1461,7 @@ function renderDrawer(){
     '<div class="row2"><label>행 고정</label><select id="selFr">' + frOpt + '</select></div>' +
     '<div class="note">엑셀 기준 틀고정 셀: <b>' + cell + '</b> (엑셀 다운로드 파일에도 동일하게 적용됩니다)</div>' +
     '<h3>3. 표시 옵션</h3>' +
-    '<div class="note"><b>나이 기준</b> (조회일 기준 자동계산)</div>' +
-    '<div class="radios"><label><input type="radio" name="am" value="man"' + (S.ageMode === 'man' ? ' checked' : '') + '>만 나이</label>' +
-    '<label><input type="radio" name="am" value="ins"' + (S.ageMode === 'ins' ? ' checked' : '') + '>보험나이 (생일 후 6개월 이상 시 +1)</label></div>' +
+    '<div class="note"><b>나이</b>는 만 나이, <b>보험나이</b>는 생일 후 6개월 이상 지나면 +1세로 각각 별도 열에 함께 표시됩니다. (조회일 기준 자동계산)</div>' +
     '<div class="note"><b>지역 표기</b></div>' +
     '<div class="radios"><label><input type="radio" name="sf" value="0"' + (!S.suffix ? ' checked' : '') + '>구·시 생략 (서울 종로)</label>' +
     '<label><input type="radio" name="sf" value="1"' + (S.suffix ? ' checked' : '') + '>구·시 포함 (서울 종로구)</label></div>' +
@@ -1494,6 +1507,8 @@ drawer.addEventListener('click', e => {
       state.set.noW = DEFAULT_SET.noW; state.set.editW = DEFAULT_SET.editW;
       save(); render(); toast('열 너비를 기본값으로 되돌렸습니다.');
     }
+    if (a === 'hlreset'){ state.cols.forEach(c => { c.hl = KEYCOLS.has(c.label.replace(/\s/g, '')); }); save(); render(); renderDrawer(); }
+    if (a === 'hlnone'){ state.cols.forEach(c => { c.hl = false; }); save(); render(); renderDrawer(); }
     if (a === 'rh'){ state.rows.forEach(r => { delete r._h; }); save(); render(); toast('개별 행 높이를 모두 초기화했습니다.'); }
     if (a === 'sync') openSyncModal();
     if (a === 'bk') download(new Blob([JSON.stringify({ app: 'luvmam', v: 1, sv: state.sv, cols: state.cols, rows: state.rows, set: state.set, ex: state.ex })], { type: 'application/json' }), 'luvmam-backup-' + todayStr().replace(/-/g, '') + '.json');
@@ -1505,6 +1520,8 @@ drawer.addEventListener('click', e => {
     }
     return;
   }
+  const hlb = e.target.closest('[data-hl]');
+  if (hlb){ const c = state.cols.find(x => x.key === hlb.dataset.hl); if (c){ c.hl = !c.hl; save(); render(); renderDrawer(); } return; }
   const wr = e.target.closest('[data-wr]');
   if (wr){ const c = state.cols.find(x => x.key === wr.dataset.wr); if (c){ c.wrap = !c.wrap; save(); render(); renderDrawer(); } return; }
   const dc = e.target.closest('[data-dc]');
@@ -1951,7 +1968,7 @@ function syncInit(){
 window.__luvmam = { regionOf, calcAge, parseYMD, state, render, moveRowBy, sync };
 
 load();
-if (state.sv < 9){ migrate(); save(); }
+if (state.sv < 10){ migrate(); save(); }
 $('#asof').value = state.asOf;
 render();
 syncInit();
