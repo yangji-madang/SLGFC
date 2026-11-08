@@ -137,6 +137,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 #xw.xs{display:none}
 #xw .xu{text-align:right;font-size:11px;color:#334155;margin:2px 0}
 #xt tr.tt td{font-weight:800;background:#eef3fa}
+#xt td.rm{text-align:left;font-size:11px;line-height:1.3}
 #sim .sv .cd{text-align:right}
 #sim .sv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
 #simN{margin-top:4px}
@@ -1048,10 +1049,10 @@ var SD={
  "부산":{items:[["부산형 산후조리경비(확인 필요)",[100,100,100,100]]]},
  "인천":{items:[
   ["인천 천사(1040) 지원금 — 1~7세 연 120만원×7년, 인천e음 포인트(지역화폐)",[840,840,840,840],{s:"인천 천사지원금",f:"연 120×7년(1~7세)",mon:10,n:84,st:12}],
-  ["인천 아이(i) 꿈 수당 — 8세 월 15만원×12개월(2024년 이후 출생), 인천e음 포인트(지역화폐)",[180,180,180,180],{s:"인천 아이 꿈 수당",f:"월 15×12개월(8세)",mon:15,n:12,st:96}]
+  ["인천 아이(i) 꿈 수당 — 8~18세 월 15만원(2024년 이후 출생), 9세까지 24개월 반영, 인천e음 포인트(지역화폐)",[360,360,360,360],{s:"인천 아이 꿈 수당",f:"월 15×24개월(8~9세)",mon:15,n:24,st:96,rm:"18세까지 연 180만원 계속(10~18세 9년, 1,620만원 별도)"}]
  ]}
 };
-var SDN={"인천":"인천시 제도(천사지원금·아이 꿈 수당)는 군·구 구분 없이 인천시 전역에 적용됩니다. 두 제도 모두 현금이 아닌 인천e음 포인트(지역화폐)로 지급되고, 천사지원금은 2023.1.1. 이후 출생 아동, 아이 꿈 수당은 2024년 이후 출생 아동(8세부터 월 15만원) 기준입니다. 아이 꿈 수당의 금액·대상은 출생연도별로 단계 적용되므로 최신 공고 확인이 필요합니다."};
+var SDN={"인천":"인천시 제도(천사지원금·아이 꿈 수당)는 군·구 구분 없이 인천시 전역에 적용됩니다. 두 제도 모두 현금이 아닌 인천e음 포인트(지역화폐)로 지급되고, 천사지원금은 2023.1.1. 이후 출생 아동, 아이 꿈 수당은 2024년 이후 출생 아동(8~18세 월 15만원) 기준이며 시뮬레이션에는 9세까지 24개월만 반영하고 10~18세 분은 비고에 표시합니다. 아이 꿈 수당의 금액·대상은 출생연도별로 단계 적용되므로 최신 공고 확인이 필요합니다."};
 var SG={
  "서울":{"종로구":[0,0,0,0],"강동구":[0,0,0,0],"용산구":[0,0,200,400]},
  "경기":{},
@@ -1208,7 +1209,7 @@ function simRender(){
   $("#n1").textContent=(nl.length?nl.join("\n")+"\n":"")+CFG.n1;
   /* 목돈 만들기 */
   var rate=num("#sRate");
-  var xr=EX.map(function(x,i){return{nm:x.nm||("항목"+(i+1)),mon:x.mon,n:x.n,ag:x.ag,st:x.st||0};});
+  var xr=EX.map(function(x,i){return{nm:x.nm||("항목"+(i+1)),mon:x.mon,n:x.n,ag:x.ag,st:x.st||0,rm:x.rm||""};});
   var base=null;EX.forEach(function(x){if(!base&&x.nm==="아동수당"){base=x;}});if(!base){base=EX[0]||{mon:0,n:0};}
   var mon=base.mon||0,n=base.n||0,age=Math.round(n/12*10)/10,prin=mon*n;
   var covered=Math.min(mon,ad)*Math.min(n,NAT.adM);
@@ -1217,9 +1218,9 @@ function simRender(){
   $("#xu").textContent="※ 연 이자 "+rate+"%"+(isSimple()?"(단리)":"(복리)")+" 가정, 예상 수치임 (단위 : 만원, 개월, %)";
   var tp=0,tv=0;
   if(hasX){
-    var h='<thead><tr><th>적립 항목</th><th>월 적립액</th><th>기간</th><th>적립 원금</th><th>종료 시 평가액</th><th>수익률</th></tr></thead><tbody>';
-    xr.forEach(function(x){var pr=x.mon*x.n,vv=fvM(x.mon,x.n,rate);tp+=pr;tv+=vv;h+='<tr><td>'+esc(x.nm)+'</td><td>'+fm(x.mon)+'</td><td>'+x.n+'개월('+(x.ag!==undefined&&x.ag!==null?x.ag:(x.st?Math.floor(x.st/12):fm(x.n/12)))+'세)</td><td>'+fm(pr)+'</td><td>'+fm(vv)+'</td><td>'+pc(vv,pr)+'</td></tr>';});
-    if(xr.length>1){h+='<tr class="tt"><td>합계</td><td></td><td></td><td>'+fm(tp)+'</td><td>'+fm(tv)+'</td><td>'+pc(tv,tp)+'</td></tr>';}
+    var h='<thead><tr><th>적립 항목</th><th>월 적립액</th><th>기간</th><th>적립 원금</th><th>종료 시 평가액</th><th>수익률</th><th>비고</th></tr></thead><tbody>';
+    xr.forEach(function(x){var pr=x.mon*x.n,vv=fvM(x.mon,x.n,rate);tp+=pr;tv+=vv;h+='<tr><td>'+esc(x.nm)+'</td><td>'+fm(x.mon)+'</td><td>'+x.n+'개월('+(x.ag!==undefined&&x.ag!==null?x.ag:(x.st?Math.floor(x.st/12):fm(x.n/12)))+'세)</td><td>'+fm(pr)+'</td><td>'+fm(vv)+'</td><td>'+pc(vv,pr)+'</td><td class="rm">'+esc(x.rm)+'</td></tr>';});
+    if(xr.length>1){h+='<tr class="tt"><td>합계</td><td></td><td></td><td>'+fm(tp)+'</td><td>'+fm(tv)+'</td><td>'+pc(tv,tp)+'</td><td></td></tr>';}
     h+='</tbody>';
     $("#xt").innerHTML=h;
     $("#xs").innerHTML='<div class="cd">원금<b>'+fm(tp)+'만원</b></div><div class="cd t">적립 금액<b>'+fm(tv)+'만원</b></div><div class="cd">수익 금액<b>'+fm(tv-tp)+'만원</b></div><div class="cd">수익률<b>'+pc(tv,tp)+'%</b></div>';
@@ -1229,16 +1230,16 @@ function simRender(){
   function sumAt(y){var P=0,V=0;its.forEach(function(x){var t=atAge(x,y);P+=t[0];V+=t[1];});return[P,V];}
   var yrs=Math.max(1,Math.ceil(Math.max.apply(null,its.map(function(x){return x.n+x.st;}).concat([0]))/12)),a;
   CH={ys:[],P:[],I:[],V:[],R:[],on:its.length>0};
-  for(a=0;a<=yrs;a++){var t0=sumAt(a);CH.ys.push(a);CH.P.push(t0[0]);CH.V.push(t0[1]);CH.I.push(t0[1]-t0[0]);CH.R.push(t0[0]>0?(t0[1]-t0[0])/t0[0]*100:0);}
+  for(a=0;a<yrs;a++){var t0=sumAt(a+1);CH.ys.push(a);CH.P.push(t0[0]);CH.V.push(t0[1]);CH.I.push(t0[1]-t0[0]);CH.R.push(t0[0]>0?(t0[1]-t0[0])/t0[0]*100:0);}
   drawChart();
   $("#bnT").hidden=$("#bn").hidden=!its.length;
-  var a3=Math.min(3,yrs),t3=sumAt(a3);
+  var a3=Math.min(2,yrs-1),t3=sumAt(a3+1);
   $("#bn").textContent=its.length?(
     "① 막대 : 파랑 = 적립원금, 초록 = 수익금(가정). 막대 위 숫자는 총 적립액(원금 + 수익금)이며 단위는 만원입니다.\n"+
     "② 보라 점선(오른쪽 세로축) : 해당 나이까지의 누적 수익률(%) = 수익금 ÷ 적립원금 × 100 입니다.\n"+
-    "③ 가로축은 나이(0세 ~ 가장 긴 적립 항목의 종료 나이, 1년 단위)이며, 각 값은 그 나이가 되는 시점까지의 누적입니다.\n"+
+    "③ 가로축은 나이(0세 ~ 가장 긴 적립 항목이 끝나는 나이, 최대 9세, 1년 단위)이며, 각 값은 그 나이의 한 해가 끝나는 시점(예: 0세 = 출생 후 12개월째)까지의 누적입니다. 9세 이후에도 이어지는 제도는 표 비고란에 안내합니다.\n"+
     "④ 계산 방법 : 위 표의 적립 항목 전체("+its.map(function(x){return x.nm;}).join(", ")+")를 합산합니다. 항목마다 출생 후 매월 말 적립하고 각자의 적립 기간까지만 납입하며, 끝난 항목도 그 나이까지 같은 방식으로 불어납니다. "+(isSimple()?"단리는 납입금 1회마다 월 적립액 × 연 수익률 × 보유기간(년)만큼만 이자가 붙고 이자에는 이자가 붙지 않습니다.":"복리는 월 수익률 = (1 + 연 수익률)^(1/12) − 1로 환산해 월마다 이자에 이자가 붙습니다.")+" 수익률 0%이면 총 적립액 = 원금입니다.\n"+
-    "⑤ 예) 연 "+rate+"% 가정, 만 "+a3+"세 시점 : 원금 = "+its.map(function(x){return fm(x.mon)+"×"+Math.min(x.n,a3*12);}).join(" + ")+" = "+fm(t3[0])+"만원, 총 적립액 "+fm(t3[1])+"만원.\n"+
+    "⑤ 예) 연 "+rate+"% 가정, "+a3+"세 말(출생 후 "+(a3+1)*12+"개월) 시점 : 원금 = "+its.map(function(x){return fm(x.mon)+"×"+Math.max(0,Math.min(x.n,(a3+1)*12-x.st));}).join(" + ")+" = "+fm(t3[0])+"만원, 총 적립액 "+fm(t3[1])+"만원.\n"+
     "⑥ 표의 '종료 시 평가액'은 각 항목이 끝나는 시점 값이라 그래프의 같은 나이 값과 시점이 다를 수 있습니다."):"";
   $("#n2").textContent=String(CFG.n2).replace(/\{월적립\}/g,fm(mon)).replace(/\{종료나이\}/g,age).replace(/\{원금\}/g,fm(prin)).replace(/\{미충당\}/g,fm(Math.max(prin-covered,0)));
 }
@@ -1374,7 +1375,7 @@ function xRegFill(){
   if(sig===XRS){return;}XRS=sig;XRI=[];
   var pre=presetOf(si,sg),h='<option value="">지자체 항목 선택 ('+(si+(sg?" "+sg:""))+', '+RK[rk]+')</option>',a=[],b=[];
   if(!$("#sMan").checked){
-    pre.items.forEach(function(it){if(it[1][rk]>0){var o=it[2]||{};XRI.push({nm:o.s||it[0],mon:o.n?o.mon:it[1][rk],n:o.n||1,st:o.st||0});a.push('<option value="'+(XRI.length-1)+'">'+esc(o.s||it[0])+' ('+fm(it[1][rk])+'만원)</option>');}});
+    pre.items.forEach(function(it){if(it[1][rk]>0){var o=it[2]||{};XRI.push({nm:o.s||it[0],mon:o.n?o.mon:it[1][rk],n:o.n||1,st:o.st||0,rm:o.rm||""});a.push('<option value="'+(XRI.length-1)+'">'+esc(o.s||it[0])+' ('+fm(it[1][rk])+'만원)</option>');}});
     if(sg&&pre.sg[rk]>0){XRI.push({nm:sg+" 출산지원금",mon:pre.sg[rk],n:1,st:0});b.push('<option value="'+(XRI.length-1)+'">'+esc(sg)+' 출산지원금 ('+fm(pre.sg[rk])+'만원)</option>');}
   }
   if(a.length){h+='<optgroup label="'+esc(si)+' (시·도)">'+a.join("")+'</optgroup>';}
@@ -1384,7 +1385,7 @@ function xRegFill(){
 }
 $("#xReg").addEventListener("change",function(){
   var v=this.value;if(v===""||!XRI[v]){return;}var x=XRI[v];this.value="";
-  EX.push({nm:x.nm,mon:x.mon,n:x.n,ag:x.st?Math.floor(x.st/12):0,st:x.st});xList();simRender();
+  EX.push({nm:x.nm,mon:x.mon,n:x.n,ag:x.st?Math.floor(x.st/12):0,st:x.st,rm:x.rm});xList();simRender();
 });
 $("#xClr").addEventListener("click",function(){EX=[];xList();simRender();});
 function simEv(e){
