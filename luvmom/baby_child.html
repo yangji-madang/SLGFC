@@ -443,7 +443,10 @@ var U={
  ggdata:["경기데이터드림 시군별 출산장려 현황","https://data.gg.go.kr"],
  mohwPreg:["보건복지부 임신·출산 지원","https://www.mohw.go.kr/menu.es?mid=a10711020100"],
  snGov:["정부24 성남시 출산장려금(다자녀)","https://www.gov.kr/portal/rcvfvrSvc/dtlEx/378000000143"],
- snPp:["파이낸셜뉴스 성남시 산후조리비 추가 지원(2024.1.3)","https://www.fnnews.com/news/202401031011296978"]
+ snPp:["파이낸셜뉴스 성남시 산후조리비 추가 지원(2024.1.3)","https://www.fnnews.com/news/202401031011296978"],
+ asDt:["일간투데이 안산시 출생축하금 확대(2026.7.27)","https://www.dtoday.co.kr/news/articleView.html?idxno=783144"],
+ asSe:["서울신문 안산시 첫째아 출생축하금 200만 원(2026.7.27)","https://go.seoul.co.kr/news/newsView.php?id=20260727500038"],
+ asMd:["의약일보 안산시 출생축하금 2배↑(2026.7)","https://www.medicaldaily.co.kr/post/21480"]
 };
 function S(){var a=[];for(var i=0;i<arguments.length;i++){a.push(U[arguments[i]]);}return a;}
 
@@ -663,6 +666,14 @@ var DATA=[
  ch:"최근 제정된 「출산 축하·지원금 지원조례」 기반으로 지급(2026.3.18 보도)",
  fu:"",fd:"",
  src:S("pyeong"),rel:"보도",chk:false},
+{r:"경기",q:"안산시",n:"안산시 출생축하금",c:"수당·장려금(현금)",g:["임신·출산"],
+ a:"(2026년 출생) 첫째 100만원\n둘째 총 300만원\n셋째 이상 총 500만원",
+ p:"현행 지급방식은 보도상 미특정(시 공고 확인). 2027.1.1 이후 출생아부터 둘째 이상은 분할 지급",pf:["일시금","분할"],
+ w:"안산시 출산장려 지원 담당 부서·주소지 행정복지센터(시 공고 확인)",
+ d:"시 공고 확인(보도상 거주요건 미특정)",x:"시 공고 확인(보도상 미특정)",
+ ch:"2027.1.1 이후 출생아부터 첫째 100만 → 200만원(일시금), 둘째 300만원(150만+150만원 분할), 셋째 이상 500만원(150만+350만원 분할). 「안산시 출산장려 지원 등에 관한 조례」 개정",
+ fu:"첫째 200만원(일시금) / 둘째 총 300만원(150만원 지급 후 1년 뒤 안산시 거주요건 충족 시 150만원 자동 지급, 별도 신청 불필요) / 셋째 이상 총 500만원(150만원 + 350만원 분할)",fd:"2027.1.1 출생아부터(출생일 기준)",
+ src:S("asDt","asSe","asMd","ggdata"),rel:"보도",chk:false},
 {r:"인천",q:"인천시 전역(10개 군·구)",n:"인천 천사(1040) 지원금",c:"바우처·지역화폐",g:["영아(0~1세)","유아·아동(2세~)"],
  a:"1~7세 매년 120만원(총 840만원).\n출생 시 첫만남이용권 200만원 포함 시 1,040만원",
  p:"지역화폐(인천사랑상품권 인천e음 포인트) 1년분 일시 지급.\n지급일로부터 12개월 사용, 미사용분 소멸",pf:["지역화폐","일시금"],
@@ -805,6 +816,7 @@ function txt(d){
 }
 function ok(d){
   var m=$("#mode").value,reg=$("#reg").value,sub=$("#sub").value,inc=$("#inc").checked;
+  if(d.auto&&!((m==="loc"&&sub===d.q)||$("#kw").value.trim())){return false;}
   if(m==="nat"){if(d.r!=="전국")return false;}
   else if(m==="loc"){
     if(d.r==="전국"){if(!inc)return false;}
@@ -846,7 +858,7 @@ function row(d){
 function render(){
   var rows=DATA.filter(ok);
   $("#tb").innerHTML=rows.map(row).join("");
-  $("#cnt").textContent=rows.length+"건 / 전체 "+DATA.length+"건";
+  $("#cnt").textContent=rows.length+"건 / 전체 "+DATA.filter(function(d){return !d.auto;}).length+"건";
   $("#empty").hidden=rows.length>0;
   $("#res").scrollTop=0;
   setPT();supInfo();
@@ -1028,8 +1040,9 @@ function supInfo(){
   var m=$("#mode").value,reg=$("#reg").value,sub=$("#sub").value;
   if(m!=="loc"||!reg){el.className="";el.textContent="";return;}
   var R=REGM[reg],nm=R.n+(sub?" "+sub:""),cls="u",tt="미확인",body="",src="";
-  var rows=DATA.filter(function(d){return d.r!=="전국"&&rk(d)===reg;});
-  var spec=sub?rows.filter(function(d){return d.q===sub;}):rows;
+  var rowsA=DATA.filter(function(d){return d.r!=="전국"&&rk(d)===reg;});
+  var rows=rowsA.filter(function(d){return !d.auto;});
+  var spec=sub?rowsA.filter(function(d){return d.q===sub;}):rows;
   var wide=rows.filter(function(d){return !isSpec(d);});
   var names=function(a){return a.map(function(d){return "「"+d.n+"」";}).join(", ");};
   if(reg==="경기"&&sub&&GG[sub]){
@@ -1038,6 +1051,7 @@ function supInfo(){
     cls="y";tt="제도 있음";
     body=R.n+" "+sub+jo(sub)+" 자체 출산지원금 제도가 있습니다.\n"+t.join(" / ")+(v[5]?"\n"+v[5]:"");
     src="출처: "+GGN+" · 민간 정리본 경유이므로 「확인필요」, 신청 전 시·군 확인";
+    if(spec.length){body+="\n수록 제도 "+spec.length+"건: "+names(spec)+" (아래 표 참조)";}
   }else if(reg==="경기"&&!sub){
     cls="y";tt="제도 있음";body="경기도 31개 시·군 모두 자체 출산 지원 프로그램이 있는 것으로 확인됩니다(시·군별로 금액·조건이 다르며, 첫째 자녀 일반 출산지원금이 없는 곳: 김포·안성·부천·양주). 시·군을 선택하면 금액을 보여 드립니다.";
     src="출처: "+GGN+" · 민간 정리본 경유이므로 「확인필요」";
@@ -1068,13 +1082,14 @@ var SD={
   ["인천 아이(i) 꿈 수당 — 8~18세 월 15만원(2024년 이후 출생), 9세까지 24개월 반영, 인천e음 포인트(지역화폐)",[360,360,360,360],{s:"인천 아이 꿈 수당",f:"월 15×24개월(8~9세)",mon:15,n:24,st:96,rm:"18세까지 연 180만원 계속(10~18세 9년, 1,620만원 별도)"}]
  ]}
 };
-var SDN={"인천":"인천시 제도(천사지원금·아이 꿈 수당)는 군·구 구분 없이 인천시 전역에 적용됩니다. 두 제도 모두 현금이 아닌 인천e음 포인트(지역화폐)로 지급되고, 천사지원금은 2023.1.1. 이후 출생 아동, 아이 꿈 수당은 2024년 이후 출생 아동(8~18세 월 15만원) 기준이며 시뮬레이션에는 9세까지 24개월만 반영하고 10~18세 분은 비고에 표시합니다. 아이 꿈 수당의 금액·대상은 출생연도별로 단계 적용되므로 최신 공고 확인이 필요합니다."};
+var SDN={"경기":"경기도 산후조리비 50만원(지역화폐)은 2026.12.31 출생아까지만 지급이 확정되고 2027년 이후는 미정이며, 시·군 자료와 중복 여부도 확인되지 않아 합계에는 넣지 않았습니다. 출산(예정)일이 2026년이면 표의 「경기도 산후조리비 지원」을 확인해 「직접 입력」으로 반영하세요.","경남":"경남 도내 시·군 산모·신생아 건강관리지원 본인부담금 지원은 금액 산정표가 확인되지 않아 합계에서 제외했습니다(표 참조).","인천":"인천시 제도(천사지원금·아이 꿈 수당)는 군·구 구분 없이 인천시 전역에 적용됩니다. 두 제도 모두 현금이 아닌 인천e음 포인트(지역화폐)로 지급되고, 천사지원금은 2023.1.1. 이후 출생 아동, 아이 꿈 수당은 2024년 이후 출생 아동(8~18세 월 15만원) 기준이며 시뮬레이션에는 9세까지 24개월만 반영하고 10~18세 분은 비고에 표시합니다. 아이 꿈 수당의 금액·대상은 출생연도별로 단계 적용되므로 최신 공고 확인이 필요합니다."};
 var SG={
  "서울":{"종로구":[0,0,0,0],"강동구":[0,0,0,0],"용산구":[0,0,200,400]},
  "경기":{},
  "전북":{"김제시":[800,1300,1500,1700],"부안군":[130,130,130,130]}
 };
-var SGN={"전북|김제시":"김제시 출산지원금은 첫만남이용권을 포함한 금액(첫째 1,000 / 둘째 1,600 / 셋째 1,800 / 넷째 이상 1,700~2,000만원대 보도)에서 첫만남이용권을 뺀 값으로 계산했습니다. 2024.7 보도 기준이라 확인 필요.","전북|부안군":"부안군 산후조리비는 실비 최대 130만원 기준 상한값입니다. 확인 필요."};
+var SGU={"전남광주|해남군":[0,1,2,3],"인천|강화군":[0,1,2,3]};
+var SGN={"인천|강화군":"강화군 자체 출산 지원(보도상 합산 1,690만원)은 항목·출생순위별로 나눌 수 없어 합계에서 제외했습니다. 표의 강화군 제도를 확인해 「직접 입력」으로 반영하세요.","전남광주|해남군":"해남군 출산장려금은 표에 수록되어 있으나 자료마다 연도·금액이 달라(첫째 300 등) 확인 전이므로 합계에서 제외했습니다(확인 필요).","서울|종로구":"종로구 셋째 이상 건강보험료 지원은 현금 지급이 아니어서 합계에 넣지 않았습니다.","전북|김제시":"김제시 출산지원금은 첫만남이용권을 포함한 금액(첫째 1,000 / 둘째 1,600 / 셋째 1,800 / 넷째 이상 1,700~2,000만원대 보도)에서 첫만남이용권을 뺀 값으로 계산했습니다. 2024.7 보도 기준이라 확인 필요.","전북|부안군":"부안군 산후조리비는 실비 최대 130만원 기준 상한값입니다. 확인 필요."};
 /* 경기 시·군: 경기데이터드림 표(GG)에서 첫째~넷째 금액을 만원 단위로 변환(넷째 이상 칸은 '넷째' 금액 적용) */
 (function(){
   function g1(t){if(!t||/없음/.test(t)){return 0;}var m=String(t).replace(/,/g,"").match(/\d+(\.\d+)?/);return m?parseFloat(m[0]):0;}
@@ -1082,8 +1097,29 @@ var SGN={"전북|김제시":"김제시 출산지원금은 첫만남이용권을 
     var p=GG[k].split("|");
     SG["경기"][k]=[g1(p[0]),g1(p[1]),g1(p[2]),g1(p[3])];
     var nt=p.length>5?String(p[5]).replace(/^※\s*/,""):"";
+    if(!DATA.some(function(d){return d.r==="경기"&&d.q===k;})){
+      var lab=["첫째","둘째","셋째","넷째 이상","다섯째 이상"],al=[];
+      var fz=function(t){return t==="없음"?"지원 없음":t.replace(/^([\d,]+)/,"$1만원");};
+      for(var z=0;z<5;z++){al.push(lab[z]+" "+fz(p[z]));}
+      if(p[4]===p[3]){al.pop();}
+      al.push("※ 경기데이터드림 정리본 기준이며 해당 시·군 공식 확인 전이므로 「확인필요」(지급방식·요건·기한은 시 공고 확인)"+(p[5]?"\n"+String(p[5]).replace(/^※\s*/,"※ "):""));
+      DATA.push({r:"경기",q:k,n:k+" 출산지원금(시·군 정리본)",c:"수당·장려금(현금)",g:["임신·출산"],a:al.join("\n"),p:"시 공고 확인(분할·횟수는 금액 옆 괄호 표기)",pf:[],w:k+" 출산지원 담당 부서(시 공고 확인)",d:"시 공고 확인",x:"시 공고 확인",ch:"",fu:"",fd:"",src:S("ggdata"),rel:"참고",chk:true,auto:true});
+    }
     SGN["경기|"+k]="경기 시·군 출산지원금은 경기데이터드림 표 기준이며, 분할·지역화폐 지급분을 합산한 총액입니다. 넷째 이상은 '넷째' 금액을 적용했고 다섯째 이상은 다를 수 있습니다. 확인 필요."+(nt?" ("+nt+")":"");
   });
+  /* 자료 간 불일치로 합계에서 제외하는 항목: 0원이 「없음」이 아니라 「미확정」임을 알리기 위한 표시 */
+  SGU["경기|성남시"]=[0,1];
+  SG["경기"]["성남시"]=[0,0,100,200];
+  SGN["경기|성남시"]="성남시 출산장려금은 셋째 100 / 넷째 200 / 다섯째 이상 300만원(정부24 게시 기준)만 반영했습니다. 첫째·둘째 금액은 경기데이터드림 정리본(30·50만원)과 다른 자료가 있어 확인 전이라 합계에서 제외했습니다(확인 필요).";
+  ["부천시","의정부시","파주시"].forEach(function(c){
+    var pp=GG[c].split("|"),lb=["첫째","둘째","셋째","넷째 이상"],tx=[];
+    for(var y=0;y<4;y++){tx.push(lb[y]+" "+pp[y]);}
+    delete SG["경기"][c];SGU["경기|"+c]=[0,1,2,3];
+    SGN["경기|"+c]=c+" 출산지원금은 자료 간 금액이 맞지 않아 합계에서 제외했습니다(경기데이터드림 정리본: "+tx.join(" / ")+" — "+String(pp[5]).replace(/^※\s*/,"")+"). 시 공고 확인 후 「직접 입력」으로 반영하세요.";
+  });
+  SGN["경기|하남시"]="하남시 표 수록 제도는 산후조리비 총 100만원(지역화폐 50만원 + 추가 현금 50만원)이며, 시·군 금액은 경기데이터드림 정리본(첫째 50 / 둘째 100 / 셋째 200 / 넷째 1,000만원)입니다. 두 자료의 범위가 달라 중복·누락 여부를 하남시에 확인해야 합니다.";
+  SGN["경기|안산시"]="안산시 출생축하금: 2026년 출생 첫째 100 / 둘째 300 / 셋째 이상 500만원(출산(예정)일이 2027.1.1 이후면 첫째 200만원, 둘째·셋째 이상은 분할 지급·총액 동일). 안산시 발표(2026.7.27) 보도 3건 기준이며 지급방식·신청요건은 시 공고 확인 필요.";
+  if(typeof render==="function"){render();}
 })();
 function num(id){var v=parseFloat($(id).value);return(isNaN(v)||v<0)?0:v;}
 function fm(n){return(Math.round(n*10)/10).toLocaleString("ko-KR");}
@@ -1104,6 +1140,7 @@ function presetOf(si,sg){
   var sd=[0,0,0,0],items=[];
   if(SD[si]){SD[si].items.forEach(function(it){items.push(it);for(var j=0;j<4;j++){sd[j]+=it[1][j];}});}
   var g=(SG[si]&&SG[si][sg])?SG[si][sg].slice():[0,0,0,0];
+  if(si==="경기"&&sg==="안산시"){var dv2=($("#sDue")||{}).value;if(dv2&&dv2>="2027-01-01"){g[0]=200;}}
   return{sd:sd,sg:g,items:items};
 }
 function manFill(){
@@ -1216,9 +1253,9 @@ function simRender(){
     return nm+eun(nm)+(any?" "+RK[rk]+" 출생 기준 ":" ")+"자체 지원금이 없습니다.";
   }
   if(sdv[rk]>0){items.forEach(function(it){var o=it[2]||{};b+='<tr><td>'+(o.s||it[0])+'</td><td>'+(o.f||RK[rk])+'</td><td>'+fm(it[1][rk])+'</td></tr>';});}
-  else{nl.push(noSup(R.n,sdv,sdDone));}
+  else if(si!=="경기"){nl.push(noSup(R.n,sdv,sdDone));}
   if(sgv[rk]>0){b+='<tr><td>'+sgName+' 지원</td><td>'+RK[rk]+'</td><td>'+fm(sgv[rk])+'</td></tr>';}
-  else if(sg){nl.push(noSup(sg,sgv,sgDone));}
+  else if(sg&&!(SGU[si+"|"+sg]&&SGU[si+"|"+sg].indexOf(rk)>=0)){nl.push(noSup(sg,sgv,sgDone));}
   if(!man){if(SDN[si]){nl.push(SDN[si]);}if(sg&&SGN[si+"|"+sg]){nl.push(SGN[si+"|"+sg]);}}
   b+='<tr class="tt"><td>예상 합계</td><td></td><td>'+fm(tot[rk])+'</td></tr></tbody>';
   $("#brk").innerHTML=b;
@@ -1390,7 +1427,7 @@ $("#xP1").addEventListener("click",function(){xAdd("부모급여 1세",NAT.p1/12
 $("#xNew").addEventListener("click",function(){xAdd("",10,12);});
 var XRI=[],XRS="";
 function xRegFill(){
-  var si=$("#sSido").value,sg=$("#sSgg").value,rk=parseInt($("#sRank").value,10)||0,sig=si+"|"+sg+"|"+rk+"|"+($("#sMan").checked?1:0);
+  var si=$("#sSido").value,sg=$("#sSgg").value,rk=parseInt($("#sRank").value,10)||0,sig=si+"|"+sg+"|"+rk+"|"+($("#sMan").checked?1:0)+"|"+($("#sDue").value||"");
   if(sig===XRS){return;}XRS=sig;XRI=[];
   var pre=presetOf(si,sg),h='<option value="">지자체 항목 선택 ('+(si+(sg?" "+sg:""))+', '+RK[rk]+')</option>',a=[],b=[];
   if(!$("#sMan").checked){
