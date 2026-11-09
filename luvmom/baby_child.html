@@ -94,6 +94,7 @@ td a{color:#1d4ed8;word-break:break-all}
 #pgM{scroll-margin-top:34px;padding:8px;background:#fff;border-top:4px solid var(--navy);margin-top:6px}
 #sim{max-width:880px;margin:0 auto;font-size:13px}
 body{word-break:keep-all;overflow-wrap:break-word}
+@media screen{body{overflow-x:hidden}#sim,#sim .tw,#xt{max-width:100%}#sim .tw,#xw{overflow-x:auto}#sim td,#sim th{overflow-wrap:anywhere}#xt td:first-child{white-space:nowrap}}
 #n1,#n2,#bn,#sim .src{white-space:pre-wrap}
 #sim .src{overflow-wrap:anywhere}
 #sim .sh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;border-bottom:3px solid var(--navy);padding-bottom:4px;margin-bottom:6px}
@@ -1136,6 +1137,7 @@ function sggFill(){
   r.g.forEach(function(g){h+='<option value="'+g+'">'+g+'</option>';});
   $("#sSgg").innerHTML=h;
 }
+function nmS(it){var o=it[2]||{};return o.s||String(it[0]).replace(/\s*(—|\().*$/,"");}
 function presetOf(si,sg){
   var sd=[0,0,0,0],items=[];
   var z27=(si==="경기"&&($("#sDue")||{}).value>="2027-01-01");
@@ -1253,7 +1255,7 @@ function simRender(){
     var any=false,k;for(k=0;k<4;k++){if(arr[k]>0){any=true;}}
     return nm+eun(nm)+(any?" "+RK[rk]+" 출생 기준 ":" ")+"자체 지원금이 없습니다.";
   }
-  if(sdv[rk]>0){items.forEach(function(it){var o=it[2]||{};b+='<tr><td>'+(o.s||it[0])+'</td><td>'+(o.f||RK[rk])+'</td><td>'+fm(it[1][rk])+'</td></tr>';});}
+  if(sdv[rk]>0){items.forEach(function(it){var o=it[2]||{};b+='<tr><td>'+(nmS(it))+'</td><td>'+(o.f||RK[rk])+'</td><td>'+fm(it[1][rk])+'</td></tr>';});}
   else if(si!=="경기"){nl.push(noSup(R.n,sdv,sdDone));}
   if(sgv[rk]>0){b+='<tr><td>'+sgName+' 지원</td><td>'+RK[rk]+'</td><td>'+fm(sgv[rk])+'</td></tr>';}
   else if(sg&&!(SGU[si+"|"+sg]&&SGU[si+"|"+sg].indexOf(rk)>=0)){nl.push(noSup(sg,sgv,sgDone));}
@@ -1438,7 +1440,7 @@ function xRegFill(){
   if(sig===XRS){return;}XRS=sig;XRI=[];
   var pre=presetOf(si,sg),h='<option value="">지자체 항목 선택 ('+(si+(sg?" "+sg:""))+', '+RK[rk]+')</option>',a=[],b=[];
   if(!$("#sMan").checked){
-    pre.items.forEach(function(it){if(it[1][rk]>0){var o=it[2]||{};XRI.push({nm:o.s||it[0],mon:o.n?o.mon:it[1][rk],n:o.n||1,st:o.st||0,rm:o.rm||"",pm:o.pm||""});a.push('<option value="'+(XRI.length-1)+'">'+esc(o.s||it[0])+' ('+fm(it[1][rk])+'만원)</option>');}});
+    pre.items.forEach(function(it){if(it[1][rk]>0){var o=it[2]||{};XRI.push({nm:nmS(it),mon:o.n?o.mon:it[1][rk],n:o.n||1,st:o.st||0,rm:o.rm||"",pm:o.pm||""});a.push('<option value="'+(XRI.length-1)+'">'+esc(nmS(it))+' ('+fm(it[1][rk])+'만원)</option>');}});
     if(sg&&pre.sg[rk]>0){XRI.push({nm:sg+" 출산지원금",mon:pre.sg[rk],n:1,st:0});b.push('<option value="'+(XRI.length-1)+'">'+esc(sg)+' 출산지원금 ('+fm(pre.sg[rk])+'만원)</option>');}
   }
   if(a.length){h+='<optgroup label="'+esc(si)+' (시·도)">'+a.join("")+'</optgroup>';}
