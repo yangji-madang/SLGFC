@@ -89,7 +89,7 @@ td a{color:#1d4ed8;word-break:break-all}
 #ext .ec{font-size:12.5px;color:#1a1a1a}
 #ft{padding:3px 8px;font-size:11.5px;border-top:1px solid var(--bd);background:var(--bg2);color:#334155}
 .pg{display:block}
-.pt,.pn{display:none}
+.pt,.pnote{display:none}
 @media screen and (min-width:1000px){#sim{max-width:1180px}#simBody{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-items:stretch}}
 #pgM{scroll-margin-top:34px;padding:8px;background:#fff;border-top:4px solid var(--navy);margin-top:6px}
 #sim{max-width:880px;margin:0 auto;font-size:13px}
@@ -207,7 +207,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
  .pt #ptR,.pt #ptR2{position:absolute;right:0;top:50%;transform:translateY(-50%);margin-top:-1px;font-size:11px;font-weight:700;color:#334155;white-space:nowrap}
  #sim #sTitle{display:none}
  #sim .sh{border-bottom:0;padding-bottom:0;margin-bottom:0}
- .pn{display:block;text-align:right;font-size:9.5px;font-weight:400;color:#334155;margin:0 0 4px;line-height:1.3}
+ .pnote{display:block;text-align:right;font-size:9.5px;font-weight:400;color:#334155;margin:0 0 4px;line-height:1.3}
  #sim input[type=date]::-webkit-calendar-picker-indicator{display:none}
  #sim .sg label{white-space:nowrap}
  #sim .sg{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
@@ -276,7 +276,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <div class="pg" id="pgS">
 <div class="pt"><span id="ptL"></span><span id="ptR"></span></div>
-<div class="pn" id="pn1"></div>
+<div class="pnote" id="pn1"></div>
 <div id="ov"></div>
 
 <div id="flt">
@@ -316,7 +316,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <div class="pg" id="pgM">
 <div class="pt"><span id="ptL2"></span><span id="ptR2"></span></div>
-<div class="pn" id="pn2"></div>
+<div class="pnote" id="pn2"></div>
 <div id="sim">
   <div class="sh"><div><div class="st" id="sTitle"></div><div class="ss" id="sSub"></div></div><div class="sorg" id="sOrg"></div></div>
   <div id="simBody"><div id="simL">
