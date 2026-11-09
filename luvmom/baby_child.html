@@ -24,6 +24,7 @@ footer .cp .cr{font-weight:900;margin-left:auto;white-space:pre-wrap}
 s.oldv{color:#9ca3af;text-decoration:line-through;text-decoration-color:#9ca3af}
 #top small{font-size:11.5px;opacity:.95}
 #top button{font:inherit;font-size:12px;border:1px solid #fff;background:transparent;color:#fff;border-radius:4px;padding:1px 8px;cursor:pointer}
+#top #srcL{order:3;display:inline-flex;align-items:center;gap:3px;font-size:12px;white-space:nowrap;cursor:pointer}#top #srcL input{margin:0}
 #ov{padding:4px 8px;border-bottom:1px solid var(--bd);max-height:44vh;overflow:auto;background:#fff}
 #ov.off{display:none}
 .ovg{display:grid;grid-template-columns:var(--c1w) repeat(6,minmax(110px,1fr));gap:2px;min-width:780px}
@@ -88,7 +89,7 @@ td a{color:#1d4ed8;word-break:break-all}
 #ext .ec{font-size:12.5px;color:#1a1a1a}
 #ft{padding:3px 8px;font-size:11.5px;border-top:1px solid var(--bd);background:var(--bg2);color:#334155}
 .pg{display:block}
-.pt{display:none}
+.pt,.pn{display:none}
 @media screen and (min-width:1000px){#sim{max-width:1180px}#simBody{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-items:stretch}}
 #pgM{scroll-margin-top:34px;padding:8px;background:#fff;border-top:4px solid var(--navy);margin-top:6px}
 #sim{max-width:880px;margin:0 auto;font-size:13px}
@@ -190,6 +191,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
  #sim .sec{break-after:avoid;page-break-after:avoid}
  #sim .note,#sim #disc,#sim .src{break-inside:avoid;overflow-wrap:anywhere}
  #ext{border-top:1px solid #94a3b8}
+ body.nosrc #res th.w9,body.nosrc #res td[data-l="출처"],body.nosrc #sim .src{display:none!important}
  body.ps #pgS{display:none!important}
  body.pt #pgM{display:none!important}
  #sim #sgIn,#sim #sv{display:none!important}
@@ -201,9 +203,11 @@ body{word-break:keep-all;overflow-wrap:break-word}
  .pt{position:relative;display:block;text-align:center;border-bottom:2px solid var(--navy);padding-bottom:3px;margin-bottom:4px;min-height:34px}
  .pt #ptL,.pt #ptL2{display:inline-flex;flex-direction:column;align-items:center;line-height:1.15}
  .pt .ptt{display:inline-block;font-size:17px;font-weight:800;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,#14365d,#2c5f9e);padding:3px 26px;border-radius:999px;box-shadow:0 0 0 1.5px #fff,0 0 0 2.5px #14365d}
- .pt .pta{font-size:12px;font-weight:700;color:#14365d;margin-top:3px}
- .pt #ptR,.pt #ptR2{position:absolute;right:0;bottom:3px;font-size:11px;font-weight:700;color:#334155;white-space:nowrap}
+ .pt .pta{position:absolute;left:0;top:50%;transform:translateY(-50%);margin:0;font-size:12px;font-weight:700;color:#14365d;white-space:nowrap}
+ .pt #ptR,.pt #ptR2{position:absolute;right:0;top:50%;transform:translateY(-50%);margin-top:-1px;font-size:11px;font-weight:700;color:#334155;white-space:nowrap}
  #sim #sTitle{display:none}
+ #sim .sh{border-bottom:0;padding-bottom:0;margin-bottom:0}
+ .pn{display:block;text-align:right;font-size:9.5px;font-weight:400;color:#334155;margin:0 0 4px;line-height:1.3}
  #sim input[type=date]::-webkit-calendar-picker-indicator{display:none}
  #sim .sg label{white-space:nowrap}
  #sim .sg{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
@@ -266,11 +270,13 @@ body{word-break:keep-all;overflow-wrap:break-word}
   <button id="prtT" type="button" title="지원제도 표 + 지원금 시뮬레이션 전체 인쇄">전체 인쇄</button>
   <button id="prt" type="button" title="지원금(목돈 만들기 예시) 페이지만 인쇄">지원금만 인쇄</button>
   <button id="prtL" type="button" title="지원제도 표만 인쇄(현재 선택한 지역·조건)">제도만 인쇄</button>
+  <label id="srcL" title="체크하면 인쇄물에 출처(표의 출처 열, 시뮬레이션 하단 출처)를 포함하고, 해제하면 인쇄하지 않습니다"><input type="checkbox" id="prtSrc" checked>출처 인쇄</label>
   <button id="tgl" type="button">개요 접기</button>
 </div>
 
 <div class="pg" id="pgS">
 <div class="pt"><span id="ptL"></span><span id="ptR"></span></div>
+<div class="pn" id="pn1"></div>
 <div id="ov"></div>
 
 <div id="flt">
@@ -310,6 +316,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <div class="pg" id="pgM">
 <div class="pt"><span id="ptL2"></span><span id="ptR2"></span></div>
+<div class="pn" id="pn2"></div>
 <div id="sim">
   <div class="sh"><div><div class="st" id="sTitle"></div><div class="ss" id="sSub"></div></div><div class="sorg" id="sOrg"></div></div>
   <div id="simBody"><div id="simL">
@@ -921,7 +928,7 @@ function setPT(){
   if(si&&REGM[si]){n2=REGM[si].n+(sg?" "+sg:"");}
   $("#ptL").innerHTML='<b class="ptt">'+esc(t)+'</b>'+(n1?'<span class="pta">('+esc(n1)+')</span>':'');$("#ptR").textContent=r;
   $("#sDue").setAttribute("data-e",$("#sDue").value?"":"1");
-  $("#ptL2").innerHTML='<b class="ptt">'+esc(CFG.prtTitleSim||"우리 지역 출산·육아 지원금 예시")+'</b>'+(n2?'<span class="pta">('+esc(n2)+')</span>':'');$("#ptR2").textContent=r;
+  $("#ptL2").innerHTML='<b class="ptt">'+esc(CFG.prtTitleSim||"우리 지역 출산·육아 지원금 예시")+'</b>'+(n2?'<span class="pta">('+esc(n2)+')</span>':'');$("#ptR2").textContent=r;var pnT=CFG.prtNote||"※ 아래 내용은 기준일 시점이며 세부사항에 따라 실수령액이 달라질 수 있으니 정확한 내용은 담당부서를 통해 확인하시기 바랍니다.";$("#pn1").textContent=pnT;$("#pn2").textContent=pnT;
 }
 var T0=document.title;
 window.addEventListener("beforeprint",function(){setPT();T0=document.title||T0;document.title=" ";});
@@ -952,6 +959,13 @@ function applyCfg(){
 /* ===== 이동·인쇄 ===== */
 $("#goSim").addEventListener("click",function(){$("#pgM").scrollIntoView({behavior:"smooth",block:"start"});});
 window.addEventListener("afterprint",function(){document.title=T0;document.body.classList.remove("ps");document.body.classList.remove("pt");});
+(function(){
+  var c=$("#prtSrc"),k="babyChildSrc";
+  function ap(){document.body.classList.toggle("nosrc",!c.checked);}
+  try{if(localStorage.getItem(k)==="0"){c.checked=false;}}catch(e){}
+  ap();
+  c.addEventListener("change",function(){ap();try{localStorage.setItem(k,c.checked?"1":"0");}catch(e){}});
+})();
 $("#prtT").addEventListener("click",function(){document.body.classList.remove("ps");document.body.classList.remove("pt");setPT();window.print();});
 $("#prtL").addEventListener("click",function(){document.body.classList.remove("ps");document.body.classList.add("pt");setPT();window.print();});
 
@@ -1260,7 +1274,7 @@ function drawChart(){
   var W=PR?520:Math.max(box.clientWidth||520,L+R+n*need);
   var pw=W-L-R,st=pw/n,rot=st<need,bw=Math.min(st*0.62,34);
   var rowH=rot?Math.round(maxc*cw+8):Math.round(FS+(PR?5:7));
-  var RW=hasI?[["나이별 지원금",A1,"#1d4ed8"],["누적 원금",A2,"#334155"],["누적 적립액",A3,"#c2410c"],["수익률",A4,"#6d28d9"]]:[["나이별 지원금",A1,"#1d4ed8"],["누적 지원금",A3,"#c2410c"]];
+  var RW=hasI?[["나이별 지원금",A1,"#1d4ed8"],["누적 원금",A2,"#334155"],["누적 적립액",A3,"#c2410c"]]:[["나이별 지원금",A1,"#1d4ed8"],["누적 지원금",A3,"#c2410c"]];
   var T=Math.round(FS*2+20),ph=PR?92:Math.max(150,Math.min(250,Math.round(W*0.34)));
   var tickY=T+ph+FS+5,r0=T+ph+FS*2+12,H=r0+RW.length*rowH+4;
   var mxV=Math.max.apply(null,CH.V.concat(CH.Y,[1])),mxR=Math.max.apply(null,CH.R.concat([1]));
