@@ -499,36 +499,6 @@
   },
   {
    "cat": "종신정기",
-   "simple": "간편",
-   "name": "골든(1형기본형)",
-   "important": true,
-   "discontinued": false,
-   "lines": [
-    {
-     "label": "30~65",
-     "amin": 30,
-     "amax": 65,
-     "fetal": null
-    }
-   ]
-  },
-  {
-   "cat": "종신정기",
-   "simple": "간편",
-   "name": "골든(2형암보장형)",
-   "important": true,
-   "discontinued": false,
-   "lines": [
-    {
-     "label": "30~60",
-     "amin": 30,
-     "amax": 60,
-     "fetal": null
-    }
-   ]
-  },
-  {
-   "cat": "종신정기",
    "simple": "일반",
    "name": "골든1종(일정기간경과후보증형)1형",
    "important": true,
@@ -546,6 +516,23 @@
   },
   {
    "cat": "종신정기",
+   "simple": "간편",
+   "name": "골든1종(일정기간경과후보증형)1형",
+   "important": true,
+   "discontinued": false,
+   "lines": [
+    {
+     "label": "30~65",
+     "amin": 30,
+     "amax": 65,
+     "fetal": null,
+     "gender": "공통",
+     "pre": ""
+    }
+   ]
+  },
+  {
+   "cat": "종신정기",
    "simple": "일반",
    "name": "골든1종(일정기간경과후보증형)2형",
    "important": true,
@@ -554,6 +541,91 @@
     {
      "label": "15~60",
      "amin": 15,
+     "amax": 60,
+     "fetal": null,
+     "gender": "공통",
+     "pre": ""
+    }
+   ]
+  },
+  {
+   "cat": "종신정기",
+   "simple": "간편",
+   "name": "골든1종(일정기간경과후보증형)2형",
+   "important": true,
+   "discontinued": false,
+   "lines": [
+    {
+     "label": "30~60",
+     "amin": 30,
+     "amax": 60,
+     "fetal": null,
+     "gender": "공통",
+     "pre": ""
+    }
+   ]
+  },
+  {
+   "cat": "종신정기",
+   "simple": "일반",
+   "name": "골든2종(미보증형)1형",
+   "important": true,
+   "discontinued": false,
+   "lines": [
+    {
+     "label": "15~65",
+     "amin": 15,
+     "amax": 65,
+     "fetal": null,
+     "gender": "공통",
+     "pre": ""
+    }
+   ]
+  },
+  {
+   "cat": "종신정기",
+   "simple": "간편",
+   "name": "골든2종(미보증형)1형",
+   "important": true,
+   "discontinued": false,
+   "lines": [
+    {
+     "label": "30~65",
+     "amin": 30,
+     "amax": 65,
+     "fetal": null,
+     "gender": "공통",
+     "pre": ""
+    }
+   ]
+  },
+  {
+   "cat": "종신정기",
+   "simple": "일반",
+   "name": "골든2종(미보증형)2형",
+   "important": true,
+   "discontinued": false,
+   "lines": [
+    {
+     "label": "15~60",
+     "amin": 15,
+     "amax": 60,
+     "fetal": null,
+     "gender": "공통",
+     "pre": ""
+    }
+   ]
+  },
+  {
+   "cat": "종신정기",
+   "simple": "간편",
+   "name": "골든2종(미보증형)2형",
+   "important": true,
+   "discontinued": false,
+   "lines": [
+    {
+     "label": "30~60",
+     "amin": 30,
      "amax": 60,
      "fetal": null,
      "gender": "공통",
