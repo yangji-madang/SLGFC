@@ -278,3 +278,6 @@ body[data-vt=tb] #paneOv{display:none}
 .defpop .dpx2{display:flex;flex-wrap:wrap;gap:4px}
 @media print{.tpn,.selpop,.tptoast,.rgb{display:none!important}.trm{border-bottom:0!important;background:none!important}}
 @media(max-width:760px){.tpn{bottom:52px}.tpn .tpm{width:220px}}
+
+.ovtb{display:flex;gap:6px;margin:0 0 6px}
+.ovtb .chip{font-size:12px}

@@ -121,10 +121,10 @@ s.oldv{color:#b91c1c}
   <div class="scrh"><span id="sht"></span><span class="pa" id="sha"></span></div>
   <div id="ovbox"></div>
   <table class="ptb" id="mt">
-    <colgroup><col style="width:6.5%"><col style="width:10%"><col style="width:6.5%"><col style="width:7%"><col style="width:21%"><col style="width:14%"><col style="width:11.5%"><col style="width:11%"><col style="width:12.5%"></colgroup>
+    <colgroup><col style="width:5%"><col style="width:8%"><col style="width:7%"><col style="width:10%"><col style="width:6.5%"><col style="width:19%"><col style="width:13%"><col style="width:10.5%"><col style="width:9.5%"><col style="width:11.5%"></colgroup>
     <thead id="th"></thead>
     <tbody id="tb"></tbody>
-    <tfoot><tr><td colspan="9"></td></tr></tfoot>
+    <tfoot><tr><td colspan="10"></td></tr></tfoot>
   </table>
   <div class="notes"><p id="foot"></p><p id="disc"></p></div>
 </div></div>
@@ -152,9 +152,10 @@ s.oldv{color:#b91c1c}
     var relCls=it.rel==='공식'?'b-ok':(it.rel==='보도'?'b-nw':'b-rf');
     var lvc='b-lv'+Math.max(0,G.LV.indexOf(it.lv));
     var reg=(it.r&&it.r!=='전국')?(it.r+(it.q?' '+it.q:'')):'전국';
-    var c1='<span class="bd '+lvc+'">'+esc(it.lv)+'</span><div class="ln"><b>'+esc(reg)+'</b></div><div class="sm">'+esc(it.ag)+'</div>';
-    var c2='<div class="nm">'+esc(it.n)+'</div>'+(it.law?'<div class="sm">근거: '+esc(it.law)+'</div>':'');
-    var c3='<span class="lb">'+esc(it.cat)+'</span><div class="sm">'+esc((it.pf||[]).join(', '))+'</div>';
+    var c0='<b>'+esc(reg)+'</b>';
+    var c1='<span class="bd '+lvc+'">'+esc(it.lv)+'</span><div class="sm">'+esc(it.ag)+'</div>';
+    var c2='<span class="lb">'+esc(it.cat)+'</span><div class="sm">'+esc((it.pf||[]).join(', '))+'</div>';
+    var c3='<div class="nm">'+esc(it.n)+'</div>'+(it.law?'<div class="sm">근거: '+esc(it.law)+'</div>':'');
     var c4='<span class="lb">'+esc((it.tg||[]).join(', '))+'</span><div class="sm">업종: '+esc((it.ind||[]).join(', '))+'</div>';
     var c5=G.cv(it,'a',G.txt(it.a));
     var c6=((it.lt||[]).length?'<span class="ln"><span class="lb">유형:</span> '+esc(it.lt.join(', '))+'</span>':'')+G.cv(it,'lim',G.txt(it.lim));
@@ -165,8 +166,8 @@ s.oldv{color:#b91c1c}
     var c9='<span class="bd '+relCls+'">'+esc(it.rel)+'</span>'+(it.chk?'<span class="bd b-ck">확인필요</span>':'')+(it.end?'<span class="bd b-end">마감·종료 가능</span>':'');
     if(it.chk) c9+='<div class="ckr">'+esc(it.chk)+'</div>';
     c9+='<ol class="sr">'+(it.src||[]).map(function(s){var u=G.safeUrl(s[1]);return '<li>'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+esc(s[0])+'</a>':esc(s[0]))+'</li>';}).join('')+'</ol><div class="sm">확인일 '+esc(G.fmtD(it.v))+'</div>';
-    var cells=[c1,c2,c3,c4,c5,c6,c7,c8||'-',c9];
-    tr.innerHTML=cells.map(function(c,i){return '<td class="'+(i===0?'c1':'')+(i===7&&!c8?' emp':'')+'">'+c+'</td>';}).join('');
+    var cells=[c0,c1,c2,c3,c4,c5,c6,c7,c8||'-',c9];
+    tr.innerHTML=cells.map(function(c,i){return '<td class="'+(i<2?'c1':'')+(i===8&&!c8?' emp':'')+'">'+c+'</td>';}).join('');
     return tr;
   }
 
@@ -186,11 +187,11 @@ s.oldv{color:#b91c1c}
     if(F.lts.length)act.push('제한유형 '+F.lts.join('/')); if(F.lt)act.push('제한 입력 '+F.lt+am(F.ltm));
     if(F.cats.length)act.push('분류 '+F.cats.join('/')); if(F.pfs.length)act.push('형태 '+F.pfs.join('/')); if(F.rels.length)act.push('출처 '+F.rels.join('/'));
     if(F.chk)act.push('확인필요만'); if(F.hideEnd)act.push('마감 제외');
-    var cols=['구분(지급주체·지역·소관)','지원·정책명','분류·형태','대상 기업','지원 내용','제한조건','신청·문의·시기','변경·예정','확인·출처'];
-    $('th').innerHTML='<tr class="spc"><th colspan="9"></th></tr><tr>'+cols.map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+'</tr>';
+    var cols=['지역','주체·소관','분류','지원·정책명','대상 기업','지원 내용','제한조건','신청·문의·시기','변경·예정','확인·출처'];
+    $('th').innerHTML='<tr class="spc"><th colspan="10"></th></tr><tr>'+cols.map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+'</tr>';
     $('ovbox').innerHTML=overview(list,act);
     list.forEach(function(it){tb.appendChild(rowP(it));});
-    if(!list.length) tb.innerHTML='<tr><td colspan="9" class="emp" style="padding:14px">조건에 맞는 항목이 없습니다.</td></tr>';
+    if(!list.length) tb.innerHTML='<tr><td colspan="10" class="emp" style="padding:14px">조건에 맞는 항목이 없습니다.</td></tr>';
   }
   G.initFilterUI(F,render); render();
 })();

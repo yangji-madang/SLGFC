@@ -82,9 +82,9 @@
   G.row = function (it) {
     var tr = document.createElement('tr');
     var relCls = it.rel === '공식' ? 't-ok' : (it.rel === '보도' ? 't-nw' : 't-rf');
+    var c0 = tag('t-tg', (it.r && it.r !== '전국' ? it.r + (it.q ? ' ' + it.q : '') : '전국'));
+    var c1a = '<div>' + tag(G.lvCls(it.lv), it.lv) + '</div><div class="sm">' + esc(it.ag) + '</div>';
     var c1 = '<div class="nm">' + esc(it.n) + '</div>' +
-      '<div>' + tag(G.lvCls(it.lv), it.lv) + (it.r && it.r !== '전국' ? tag('t-tg', it.r + (it.q ? ' ' + it.q : '')) : tag('t-tg', '전국')) + '</div>' +
-      '<div class="sm">' + esc(it.ag) + '</div>' +
       (it.law ? '<div class="sm">근거: ' + esc(it.law) + '</div>' : '');
     var c2 = tag(G.catCls(it.cat), it.cat) + '<div>' + (it.pf || []).map(function (p) { return tag('t-pf', p); }).join('') + '</div>';
     var c3 = '<div>' + (it.tg || []).map(function (p) { return tag('t-tg', p); }).join('') + '</div>' +
@@ -101,12 +101,12 @@
       var u = G.safeUrl(s[1]);
       return '<li>' + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(s[0]) + '</a>' : esc(s[0])) + '</li>';
     }).join('') + '</ol><div class="sm">확인일 ' + esc(G.fmtD(it.v)) + '</div>';
-    var cells = [['지원·정책명 / 주체', c1], ['분류·형태', c2], ['대상 기업', c3], ['지원 내용', c4], ['제한조건', c5], ['신청·문의', c6], ['확인·출처', c7]];
+    var cells = [['지역', c0], ['주체·소관', c1a], ['분류', c2], ['지원·정책명', c1], ['대상 기업', c3], ['지원 내용', c4], ['제한조건', c5], ['신청·문의', c6], ['확인·출처', c7]];
     tr.innerHTML = cells.map(function (c, i) { return '<td data-l="' + esc(c[0]) + '">' + c[1] + '</td>'; }).join('');
     return tr;
   };
 
-  G.THEAD = '<tr><th style="min-width:200px">지원·정책명 / 주체</th><th style="min-width:110px">분류·형태</th><th style="min-width:150px">대상 기업</th><th style="min-width:330px">지원 내용</th><th style="min-width:270px">제한조건</th><th style="min-width:190px">신청·문의</th><th style="min-width:230px">확인·출처</th></tr>';
+  G.THEAD = '<tr><th style="min-width:80px">지역</th><th style="min-width:110px">주체·소관</th><th style="min-width:110px">분류</th><th style="min-width:200px">지원·정책명</th><th style="min-width:150px">대상 기업</th><th style="min-width:330px">지원 내용</th><th style="min-width:270px">제한조건</th><th style="min-width:190px">신청·문의</th><th style="min-width:230px">확인·출처</th></tr>';
 
   /* 필터 */
   G.F0 = function () { return { q: '', lv: '', tg: '', lt: '', lvm: 'or', tgm: 'or', ltm: 'or', qm: 'or', lvs: [], tgs: [], lts: [], cats: [], pfs: [], rels: [], chk: false, hideEnd: false, id: '', sido: '', sigun: '', nc: false }; };
@@ -165,7 +165,7 @@
   };
   G.REGION_HTML = function () {
     return '<div class="rgb" id="rgbar"><b class="rgt">내 지역 선택</b>' +
-      '<select id="rgsido" aria-label="광역자치단체"><option value="">광역 선택 안 함 (전체 지역)</option>' + G.REGIONS.map(function (g) { return '<option value="' + esc(g[1]) + '">' + esc(g[0]) + '</option>'; }).join('') + '</select>' +
+      '<select id="rgsido" aria-label="광역자치단체"><option value="">전체</option>' + G.REGIONS.slice().sort(function (x, y) { return x[0].localeCompare(y[0], 'ko'); }).map(function (g) { return '<option value="' + esc(g[1]) + '">' + esc(g[0]) + '</option>'; }).join('') + '</select>' +
       '<select id="rgsigun" aria-label="시·군·구" disabled><option value="">시·군·구 전체</option></select>' +
       '<label class="rgc"><input type="checkbox" id="rgcen" checked> 중앙정부·전국 제도 함께 보기</label>' +
       '<div class="rgs" id="rgsum"></div></div>';
@@ -295,7 +295,7 @@
     if (!a) return;
     a.value = F.sido || '';
     var g = G.sidoOf(F.sido), cities = g ? g[2] : [];
-    b.innerHTML = '<option value="">' + (g ? '시·군·구 전체 (광역 + 모든 시·군 제도)' : '시·군·구 전체') + '</option>' + cities.map(function (x) { return '<option>' + esc(x) + '</option>'; }).join('');
+    b.innerHTML = '<option value="">' + '전체' + '</option>' + cities.slice().sort(function (x, y) { return x.localeCompare(y, 'ko'); }).map(function (x) { return '<option>' + esc(x) + '</option>'; }).join('');
     b.disabled = !g || !cities.length; b.value = F.sigun || '';
     c.disabled = !F.sido; c.checked = !F.nc;
     if (s) { s.innerHTML = G.regionSummary(null, F); s.style.display = F.sido ? '' : 'none'; }

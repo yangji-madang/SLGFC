@@ -31,7 +31,7 @@ main{padding-bottom:70px}
 .tab.on{background:var(--navy);color:#fff}
 .prp{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px solid var(--bd);background:#fff;border-radius:8px;padding:4px 10px;font-size:13px}
 .prp label{display:flex;align-items:center;gap:4px;cursor:pointer}
-body[data-tab=view] #secMe{display:none}
+body[data-tab=view] #secMe,body[data-tab=view] #secEx{display:none}
 body[data-tab=me] #secView{display:none}
 /* 표 */
 .tw2{overflow:auto;max-height:calc(100vh - 150px);border:1px solid var(--bd);border-radius:8px;background:#fff}
@@ -69,6 +69,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 .cmp td{text-align:center;width:9%;word-break:keep-all;overflow-wrap:anywhere}
 .h3t{margin:10px 0 4px;font-size:14px;color:var(--navy);font-weight:800}
 .mtb .tot td{background:#fffbeb!important;font-weight:700;border-top:2px solid var(--navy)}
+.mtb .tgy td,.mtb .tgy td.sm,.mtb .tgy td.a{background:#facc15!important;color:#0b2a6f!important;font-weight:800}
 .mtb .tot2 td,.mtb .tot2 td .sm,.mtb .tot2 td.sm{background:#f1f5f9!important;font-weight:800}
 .mtb .tlb{font-weight:800;color:var(--navy)}
 .mtb td.a{text-align:right;word-break:keep-all;padding-right:8px}
@@ -123,8 +124,8 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
   #top,#fm,#tabsbar,#sumbar0,footer,.noprint{display:none!important}
   main{max-width:none;padding:0}
   .sec{border:0;padding:0;margin:0}
-  #secView,#secMe{display:block!important}
-  body[data-ps=view] #secMe{display:none!important}
+  #secView,#secMe,#secEx{display:block!important}
+  body[data-ps=view] #secMe,body[data-ps=view] #secEx{display:none!important}
   body[data-ps=me] #secView{display:none!important}
   body[data-ps=both] #secView{break-before:page;page-break-before:always}
   .fixh{display:flex;position:fixed;left:0;right:0;top:0;height:5.4mm;justify-content:space-between;align-items:flex-end;font-size:14px;font-weight:800;color:var(--navy);border-bottom:2px solid var(--navy);background:#fff;padding-bottom:1px}
@@ -157,6 +158,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
   <span id="asof">기준일 : -</span>
   <a class="lk" href="gov_support.html">전체 제도 보기</a>
   <a class="lk" href="gov_support_print.html">전체 인쇄</a>
+  <button type="button" class="lk" id="bPrint">내 회사 인쇄</button>
 </div>
 <div class="fixh"><span id="fht"></span><span class="pa" id="fha"></span></div>
 <div class="fixf"><div class="cpf"><span class="ct" id="fct"></span><span class="cr" id="fcr"></span></div></div>
@@ -169,13 +171,12 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
 
   <div id="sumbar0" class="sumbar"></div>
   <div class="tabs" id="tabsbar">
-    <button type="button" class="tab on" data-t="me">1. 내 회사 지원금액 예시</button>
-    <button type="button" class="tab" data-t="view">2. 검색 결과 (요약표·상세 사유)</button>
+    <button type="button" class="tab on" data-t="me">1. 지원금액 예시 · 2. 예시 결과</button>
+    <button type="button" class="tab" data-t="view">3. 검색 결과 (요약표·상세 사유)</button>
     <div class="prp"><b>인쇄 범위</b>
       <label><input type="radio" name="ps" value="me"> 내 회사 예시만</label>
       <label><input type="radio" name="ps" value="view"> 검색 결과만</label>
       <label><input type="radio" name="ps" value="both" checked> 둘 다 (인쇄: 예시 → 검색 결과 순)</label>
-      <button type="button" class="btn" id="bPrint">인쇄 화면으로</button>
     </div>
   </div>
 
@@ -184,25 +185,28 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
   <section class="sec" id="secMe">
     <h2>1. 내 회사 지원금액 예시 <span class="hint">입력하신 회사 정보로 계산한 추정 예시입니다(실제 지원액은 공고·심사·신고 결과에 따라 달라집니다).</span></h2>
     <table class="cmp" id="cmpM"></table>
-    <div class="h3t">1-1. 예시 결과</div>
-    <div class="tw2"><table class="mtb" data-fz="4" data-fzw="34,50,62,112"><colgroup><col style="width:3.5%"><col style="width:5%"><col style="width:7%"><col style="width:15%"><col style="width:17%"><col style="width:24%"><col style="width:16.5%"><col style="width:12%"></colgroup>
-      <thead><tr><th>No</th><th>판정</th><th>구분</th><th>지원·정책명</th><th>산출항목</th><th>산출근거</th><th>예상금액</th><th>비고</th></tr></thead>
+  </section>
+
+  <section class="sec" id="secEx">
+    <h2>2. 예시 결과</h2>
+    <div class="tw2"><table class="mtb" data-fz="4" data-fzw="62,44,50,112"><colgroup><col style="width:7%"><col style="width:5.5%"><col style="width:5%"><col style="width:15%"><col style="width:17%"><col style="width:23%"><col style="width:15.5%"><col style="width:12%"></colgroup>
+      <thead><tr><th>구분</th><th>제도No</th><th>판정</th><th>지원·정책명</th><th>산출항목</th><th>산출근거</th><th>예상금액</th><th>비고</th></tr></thead>
       <tbody id="tbM"></tbody></table></div>
     <ul class="warn" id="warn"></ul>
     <p class="disc" id="disc" style="margin-top:6px"></p>
   </section>
 
   <section class="sec" id="secView">
-    <h2>2. 검색 결과 <span class="hint">판정: 입력한 조건을 모두 충족 = 적합 / 입력 누락 = 확인필요 / 하나라도 미충족 = 비해당</span></h2>
+    <h2>3. 검색 결과 <span class="hint">판정: 입력한 조건을 모두 충족 = 적합 / 입력 누락 = 확인필요 / 하나라도 미충족 = 비해당</span></h2>
     <div class="ovrow noprint" id="vflt" style="margin:0 0 8px"></div>
     <table class="cmp" id="cmpV"></table>
-    <div class="h3t">2-1. 지원제도 요약표 (판정 · 지원금액 · 판정항목) 및 총액</div>
+    <div class="h3t">3-1. 지원제도 요약표 (판정 · 지원금액 · 판정항목) 및 총액</div>
     <div class="tw2"><table class="mtb" data-fz="3" data-fzw="34,50,118"><colgroup><col style="width:4%"><col style="width:7%"><col style="width:22%"><col style="width:35%"><col style="width:32%"></colgroup>
-      <thead><tr><th>No</th><th>판정</th><th>지원 정책명</th><th>지원금액 (내 회사 기준 예시)</th><th>비고 (판정 항목)</th></tr></thead>
+      <thead><tr><th>제도No</th><th>판정</th><th>지원 정책명</th><th>지원금액 (내 회사 기준 예시)</th><th>비고 (판정 항목)</th></tr></thead>
       <tbody id="tbS"></tbody></table></div>
-    <div class="h3t">2-2. 상세 : 어떤 이유로 지원되는지</div>
+    <div class="h3t">3-2. 상세 : 어떤 이유로 지원되는지</div>
     <div class="tw2"><table class="mtb" data-fz="3" data-fzw="34,50,118"><colgroup><col style="width:3.5%"><col style="width:6%"><col style="width:11%"><col style="width:20%"><col style="width:18%"><col style="width:18%"><col style="width:14%"><col style="width:9.5%"></colgroup>
-      <thead><tr><th>No</th><th>판정</th><th>지원·정책명</th><th>지원 내용</th><th>지원 사유 (조건별 판정)</th><th>지원금액 산출</th><th>신청·문의·시기</th><th>출처</th></tr></thead>
+      <thead><tr><th>제도No</th><th>판정</th><th>지원·정책명</th><th>지원 내용</th><th>지원 사유 (조건별 판정)</th><th>지원금액 산출</th><th>신청·문의·시기</th><th>출처</th></tr></thead>
       <tbody id="tbV"></tbody></table></div>
     <p class="note" id="foot" style="margin-top:6px"></p>
   </section>
@@ -276,7 +280,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
   function rgSync(rebuild){
     var sd=$('p_sido'), sg=$('p_sigun'), g=G.sidoOf(sd.value);
     if(rebuild){
-      sg.innerHTML='<option value="">'+(g&&g[2].length?'시·군·구 선택 (선택 안 하면 광역 기준)':'시·군·구 없음')+'</option>'+(g?g[2]:[]).map(function(x){return '<option>'+esc(x)+'</option>';}).join('');
+      sg.innerHTML='<option value="">'+(g&&g[2].length?'시·군·구 선택 (선택 안 하면 광역 기준)':'시·군·구 없음')+'</option>'+(g?g[2].slice().sort(function(x,y){return x.localeCompare(y,'ko');}):[]).map(function(x){return '<option>'+esc(x)+'</option>';}).join('');
       sg.disabled=!g||!g[2].length; sg.value='';
     }
     if(sd.value) legacyKey='';
@@ -381,7 +385,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       if(f.t==='res'){h+='<div class="rsc" id="rs_'+f.k+'" data-kind="'+f.kind+'"></div>'; return;}
       LBL[f.k]=f;
       if(f.rg){
-        h+='<div class="pf wide"><div class="lbr"><label for="p_sido">'+esc(f.l)+'</label></div><div class="in rgin"><select id="p_sido" data-x="sido"><option value="">광역 선택</option>'+G.REGIONS.map(function(g){return '<option value="'+esc(g[1])+'">'+esc(g[0])+'</option>';}).join('')+'</select><select id="p_sigun" data-x="sigun" disabled><option value="">시·군·구 선택</option></select></div><div class="hnt" id="n_region"></div>'+
+        h+='<div class="pf wide"><div class="lbr"><label for="p_sido">'+esc(f.l)+'</label></div><div class="in rgin"><select id="p_sido" data-x="sido"><option value="">광역 선택</option>'+G.REGIONS.slice().sort(function(x,y){return x[0].localeCompare(y[0],'ko');}).map(function(g){return '<option value="'+esc(g[1])+'">'+esc(g[0])+'</option>';}).join('')+'</select><select id="p_sigun" data-x="sigun" disabled><option value="">시·군·구 선택</option></select></div><div class="hnt" id="n_region"></div>'+
           '<select id="p_region" data-k="region" hidden>'+SEL.region.map(function(o){return '<option value="'+esc(o[0])+'">'+esc(o[1])+'</option>';}).join('')+'</select><input type="hidden" id="p_regionTxt" data-x="regionTxt"></div>';
         return;
       }
@@ -561,12 +565,12 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
     $('cmpV').innerHTML=cmpHTML(P);
     var list=res.filter(function(r){return VF[r.st];}).sort(function(a,b){return ORD[a.st]-ORD[b.st];});
 
-    /* 2-1 요약표 + 총액 */
+    /* 3-1 요약표 + 총액 */
     var T=totals(), sb=$('tbS'), s='';
     NO={}; res.slice().sort(function(x,y){return ORD[x.st]-ORD[y.st];}).forEach(function(r,i){NO[r.it.id]=i+1;});
     list.forEach(function(r){
       var it=r.it;
-      s+='<tr><td class="c" data-l="No">'+NO[it.id]+'</td><td class="c" data-l="판정">'+badge(r.st)+'</td><td data-l="지원 정책명"><div class="nm">'+esc(it.n)+'</div><div class="sm">'+esc(it.ag)+'</div></td><td data-l="지원금액">'+amtLines(r)+'</td><td data-l="비고(판정 항목)">'+noteHTML(r)+'</td></tr>';
+      s+='<tr><td class="c" data-l="제도No">'+NO[it.id]+'</td><td class="c" data-l="판정">'+badge(r.st)+'</td><td data-l="지원 정책명"><div class="nm">'+esc(it.n)+'</div><div class="sm">'+esc(it.ag)+'</div></td><td data-l="지원금액">'+amtLines(r)+'</td><td data-l="비고(판정 항목)">'+noteHTML(r)+'</td></tr>';
     });
     if(!list.length) s+='<tr><td colspan="5" style="text-align:center;padding:14px;color:#475569">표시할 제도가 없습니다. 위 ‘표시’ 버튼에서 항목을 선택하거나 회사 정보를 입력하세요.</td></tr>';
     s+='<tr class="tot"><td class="c tlb" colspan="3">총액 (1) 적합 제도 합계 (연)</td><td class="tlb">'+esc(rng(T.ta[0],T.ta[1]))+'</td><td class="sm">세금 절감 '+esc(rng(T.a.tax[0],T.a.tax[1]))+' + 지원금·이자 '+esc(rng(T.a.cash[0],T.a.cash[1]))+'</td></tr>'+
@@ -574,7 +578,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
        '<tr class="tot2"><td class="c" colspan="3">참고 (합계 제외) : 일회성 절세 · 융자 한도</td><td>일회성 절세 '+esc(T.b.once[1]?rng(T.a.once[0],T.a.once[1])+' (확인필요 포함 '+rng(T.b.once[0],T.b.once[1])+')':'-')+'<br>융자·보증 한도(제도별 최대) '+esc(T.b.loan?won(T.b.loan):'-')+'</td><td class="sm">한도·일회성 금액은 연간 합계에 합산하지 않음'+(T.b.cost[1]?' · 세 부담 증가(법인세율 환원) '+esc(rng(T.b.cost[0],T.b.cost[1]))+' 별도':'')+'</td></tr>';
     sb.innerHTML=s;
 
-    /* 2-2 상세 */
+    /* 3-2 상세 */
     var tb=$('tbV'); tb.innerHTML='';
     list.forEach(function(r){
       var it=r.it, tr=document.createElement('tr');
@@ -583,7 +587,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
         G.txt(it.a),condHTML(r),amtDetail(r),
         G.txt(it.w)+(it.d?'<span class="ln"><b>시기·기한</b> '+esc(it.d)+'</span>':''),
         (it.src||[]).slice(0,1).map(function(s){var u=G.safeUrl(s[1]);return u?'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+esc(s[0])+'</a>':esc(s[0]);}).join('')];
-      var lb=['No','판정','지원·정책명','지원 내용','지원 사유(조건별 판정)','지원금액 산출','신청·문의·시기','출처'];
+      var lb=['제도No','판정','지원·정책명','지원 내용','지원 사유(조건별 판정)','지원금액 산출','신청·문의·시기','출처'];
       tr.innerHTML=c.map(function(x,i){return '<td'+(i<2?' class="c"':'')+' data-l="'+lb[i]+'">'+x+'</td>';}).join('');
       tb.appendChild(tr);
     });
@@ -600,7 +604,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
       g.forEach(function(id){if(id!==best)skip[id]=true;});});
     var ta=[a.tax[0]+a.cash[0],a.tax[1]+a.cash[1]], tb=[b.tax[0]+b.cash[0],b.tax[1]+b.cash[1]];
     var KO=['tax','cash','loan','once','cost','info'], NT={loan:'합산하지 않음(제도별 한도)',once:'연간 합계 제외',cost:'연간 합계 제외',info:'참고'};
-    var out='<tr class="tot"><td class="c" colspan="6">통합계 (세금 절감 + 지원금·이자, 연) : 적합 제도 기준</td><td class="a">'+esc(rng(ta[0],ta[1]))+'</td><td class="sm">확인필요 포함 시 '+esc(rng(tb[0],tb[1]))+'</td></tr>';
+    var out='<tr class="tot tgy"><td class="c" colspan="6">통합계 (세금 절감 + 지원금·이자, 연) : 적합 제도 기준</td><td class="a">'+esc(rng(ta[0],ta[1]))+'</td><td class="sm">확인필요 포함 시 '+esc(rng(tb[0],tb[1]))+'</td></tr>';
     var any=false;
     KO.forEach(function(K){
       var items=[]; mb.slice().sort(function(x,y){return NO[x.it.id]-NO[y.it.id];}).forEach(function(r){r.rows.forEach(function(x){if(x.k===K)items.push([r,x]);});});
@@ -610,7 +614,7 @@ table.mtb{border-collapse:separate;border-spacing:0;border-top:1px solid var(--l
         if(r.st==='maybe') nt.push('확인필요');
         if(skip[it.id]&&x.k!=='info') nt.push('택일 제외(합계 미반영)');
         if(NT[K]) nt.push(NT[K]);
-        out+='<tr><td class="c">'+NO[it.id]+'</td><td class="c">'+badge(r.st)+'</td>'+(i===0?'<td class="c" rowspan="'+items.length+'"><span class="kd '+K+'">'+KN[K]+'</span></td>':'')+
+        out+='<tr>'+(i===0?'<td class="c" rowspan="'+items.length+'"><span class="kd '+K+'">'+KN[K]+'</span></td>':'')+'<td class="c">'+NO[it.id]+'</td><td class="c">'+badge(r.st)+'</td>'+
           '<td><div class="nm">'+esc(it.sn||it.n)+'</div></td><td>'+esc(x.l)+'</td><td class="sm">'+esc(x.f)+'</td><td class="a"><b>'+esc(rng(x.lo,x.hi))+'</b></td><td class="sm">'+esc(nt.join(' · '))+'</td></tr>';
       });
       if(K==='info') return;
