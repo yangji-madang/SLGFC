@@ -1108,7 +1108,7 @@ var SGN={"인천|강화군":"강화군 자체 출산 지원(보도상 합산 1,6
       al.push("※ 경기데이터드림 정리본 기준이며 해당 시·군 공식 확인 전이므로 「확인필요」(지급방식·요건·기한은 시 공고 확인)"+(p[5]?"\n"+String(p[5]).replace(/^※\s*/,"※ "):""));
       DATA.push({r:"경기",q:k,n:k+" 출산지원금(시·군 정리본)",c:"수당·장려금(현금)",g:["임신·출산"],a:al.join("\n"),p:"시 공고 확인(분할·횟수는 금액 옆 괄호 표기)",pf:[],w:k+" 출산지원 담당 부서(시 공고 확인)",d:"시 공고 확인",x:"시 공고 확인",ch:"",fu:"",fd:"",src:S("ggdata"),rel:"참고",chk:true,auto:true});
     }
-    SGN["경기|"+k]="경기 시·군 출산지원금은 경기데이터드림 표 기준이며, 분할·지역화폐 지급분을 합산한 총액입니다. 넷째 이상은 '넷째' 금액을 적용했고 다섯째 이상은 다를 수 있습니다. 확인 필요."+(nt?" ("+nt+")":"");
+    SGN["경기|"+k]="경기 시·군 출산지원금은 경기데이터드림 표 기준이며, 현금 또는 영수증 정산 항목 기준(분할 지급분 합산 총액)입니다. 넷째 이상은 '넷째' 금액을 적용했고 다섯째 이상은 다를 수 있습니다. 확인 필요."+(nt?" ("+nt+")":"");
   });
   /* 자료 간 불일치로 합계에서 제외하는 항목: 0원이 「없음」이 아니라 「미확정」임을 알리기 위한 표시 */
   SGU["경기|성남시"]=[0,1];
@@ -1259,7 +1259,7 @@ function simRender(){
   if(sdv[rk]>0){items.forEach(function(it){var o=it[2]||{};b+='<tr><td>'+(nmS(it))+'</td><td>'+(o.f||RK[rk])+'</td><td>'+fm(it[1][rk])+'</td></tr>';});}
   else if(!man&&pre.nc.length){nl.push(R.n+eun(R.n)+" 현금 지원이 없습니다(바우처·지역화폐 등 현금 외 지원은 제외: "+pre.nc.join(", ")+").");}
   else if(si!=="경기"){nl.push(noSup(R.n,sdv,sdDone));}
-  if(sgv[rk]>0){b+='<tr><td>'+sgName+' 지원</td><td>'+RK[rk]+'</td><td>'+fm(sgv[rk])+'</td></tr>';}
+  if(sgv[rk]>0){b+='<tr><td>'+sgName+' 지원</td><td>'+RK[rk]+' (현금 또는 영수증 정산)</td><td>'+fm(sgv[rk])+'</td></tr>';}
   else if(sg&&!(SGU[si+"|"+sg]&&SGU[si+"|"+sg].indexOf(rk)>=0)){nl.push(noSup(sg,sgv,sgDone));}
   if(!man){if(pre.nc.length&&sdv[rk]>0){nl.push("현금 외 지원(바우처·지역화폐 등)은 제외했습니다: "+pre.nc.join(", ")+".");}if(SDN[si]){nl.push(SDN[si]);}if(sg&&SGN[si+"|"+sg]){nl.push(SGN[si+"|"+sg]);}}
   b+='<tr class="tt"><td>예상 합계</td><td></td><td>'+fm(tot[rk])+'</td></tr></tbody>';
