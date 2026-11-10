@@ -872,7 +872,15 @@ function reset(){
 }
 build();
 ["#sub","#inc","#cat","#stg","#pay","#onlyCh","#onlyFu"].forEach(function(s){$(s).addEventListener("change",render);});
-$("#reg").addEventListener("change",function(){subFill();render();});
+$("#sub").addEventListener("change",topToSim);
+function topToSim(){
+  /* 상단 지역 선택 → 지원금 시뮬레이션(목돈 만들기 포함) 기본 지역으로 반영(이후 시뮬레이션에서 따로 바꿀 수 있음) */
+  if(!$("#sSido")||typeof pickRegion!=="function"||$("#mode").value!=="loc"){return;}
+  var rg=$("#reg").value,sb=$("#sub").value;if(!rg){return;}
+  var ok=false;[].forEach.call($("#sSido").options,function(o){if(o.value===rg){ok=true;}});
+  if(ok){pickRegion(rg,sb);}
+}
+$("#reg").addEventListener("change",function(){subFill();render();topToSim();});
 $("#mode").addEventListener("change",function(){modeUi();render();});
 $("#kw").addEventListener("input",render);
 $("#rst").addEventListener("click",reset);
