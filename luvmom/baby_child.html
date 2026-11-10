@@ -1425,7 +1425,7 @@ function xList(){
 function xAdd(nm,mon,n,ag,st){EX.push({nm:nm,mon:mon,n:n,ag:ag,st:st||0});xList();simRender();}
 $("#xl").addEventListener("input",function(e){
   var t=e.target,i=t.getAttribute("data-i");if(i===null||!EX[i]){return;}
-  var k=t.getAttribute("data-k");
+  var k=t.getAttribute("data-k");EX[i].rg=false;
   if(k==="nm"){EX[i].nm=t.value;}else{var v=parseFloat(t.value);v=(isNaN(v)||v<0)?0:v;EX[i][k]=(k==="n")?Math.min(360,Math.round(v)):v;EX[i].pm="";if(k==="mon"){EX[i].auto=false;}if(k==="n"){EX[i].ag=undefined;}}
 });
 $("#xl").addEventListener("click",function(e){var d=e.target.getAttribute("data-del");if(d!==null){EX.splice(+d,1);xList();simRender();}});
@@ -1449,6 +1449,10 @@ function xRegFill(){
   if(b.length){h+='<optgroup label="'+esc(sg)+' (시·군·구)">'+b.join("")+'</optgroup>';}
   if(!a.length&&!b.length){h+='<option value="" disabled>선택 가능한 지자체 항목 없음</option>';}
   $("#xReg").innerHTML=h;
+  /* 지역을 바꾸면 그 지역의 지자체 항목을 적립항목에 기본 반영(직접 수정·추가한 항목은 유지, 이후 자유롭게 편집) */
+  EX=EX.filter(function(x){return !x.rg;});
+  XRI.forEach(function(x){EX.push({nm:x.nm,mon:x.mon,n:x.n,ag:x.st?Math.floor(x.st/12):0,st:x.st,rm:x.rm,pm:x.pm,rg:true});});
+  if(typeof xList==="function"){xList();}
 }
 $("#xReg").addEventListener("change",function(){
   var v=this.value;if(v===""||!XRI[v]){return;}var x=XRI[v];this.value="";
