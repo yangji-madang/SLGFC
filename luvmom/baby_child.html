@@ -123,6 +123,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 #sim .cd.t b{color:#fff}
 #sim .sec.sc{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;column-gap:8px}
 #sim .sec .cn{margin-left:auto;font-size:11px;font-weight:400;color:#334155;white-space:nowrap}
+@media screen and (max-width:700px){#sim .sec .cn{white-space:normal;text-align:right}}
 #sim .sec{font-size:13.5px;font-weight:800;color:var(--navy);margin:8px 0 3px;border-left:4px solid var(--navy);padding-left:5px}
 #sim .tw{overflow-x:auto}
 #sim table{width:100%;min-width:0;table-layout:auto;border-collapse:collapse}
@@ -354,13 +355,13 @@ body{word-break:keep-all;overflow-wrap:break-word}
     </div>
   </div>
   <div class="cards" id="cards"></div>
-  <div class="sec sc"><span>출생순위별 예상 수령액 (단위: 만원)</span><span class="cn">※ 수령액은 현금지원항목만 표현합니다.</span></div>
+  <div class="sec sc"><span>출생순위별 예상 수령액 (단위: 만원)</span><span class="cn">※ 수령액은 조건없이 지급하는 현금성(현금, 영수증 정산 등) 지원항목만 표현합니다.</span></div>
   <div class="tw"><table id="t4"></table></div>
   <div class="sec">산출 내역 (선택한 출생순위 기준, 단위: 만원)</div>
   <div class="tw"><table id="brk"></table></div>
   <div class="note" id="n1"></div>
   </div><div id="simR">
-  <div class="sec sc"><span>💰 목돈 만들기 예시</span><span class="cn">※ 수령액은 현금지원항목만 표현합니다.</span></div>
+  <div class="sec sc"><span>💰 목돈 만들기 예시</span><span class="cn">※ 수령액은 조건없이 지급하는 현금성(현금, 영수증 정산 등) 지원항목만 표현합니다.</span></div>
   <div class="sg" id="sgIn">
     <label>연 수익률 가정(%)<input id="sRate" type="number" inputmode="decimal" min="0" max="20" step="0.5"></label>
     <label>이자 계산<select id="sMode"><option value="s" selected>단리</option><option value="c">복리(월 단위)</option></select></label>
