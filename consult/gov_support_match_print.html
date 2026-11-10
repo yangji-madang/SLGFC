@@ -283,7 +283,7 @@ body[data-ps=both] #blkA .cmpt{display:none}
       g.forEach(function(id){if(id!==best)skip[id]=true;});});
     var ta=[a.tax[0]+a.cash[0],a.tax[1]+a.cash[1]], tb=[b.tax[0]+b.cash[0],b.tax[1]+b.cash[1]];
     var KO=['tax','cash','loan','once','cost','info'], NT={loan:'합산하지 않음(제도별 한도)',once:'연간 합계 제외',cost:'연간 합계 제외',info:'참고'};
-    var out='<tr class="tot tgy"><td class="c" colspan="6">통합계 (세금 절감 + 지원금·이자, 연) : 적합 제도 기준</td><td class="a">'+esc(rng(ta[0],ta[1]))+'</td><td class="sm">확인필요 포함 시 '+esc(rng(tb[0],tb[1]))+'</td></tr>';
+    var out='<tr class="tot tgy"><td class="c" colspan="6">통합계 : 세금 절감 소계 + 지원금·이자 소계 (연, 적합 제도만)'+(function(){var ex=[];if(a.once[1])ex.push('일회성 절세 '+rng(a.once[0],a.once[1]));if(a.cost[1])ex.push('세 부담 증가 '+rng(a.cost[0],a.cost[1]));if(a.loan)ex.push('융자·보증 한도 '+won(a.loan));var sk=ok.filter(function(r){return skip[r.it.id]&&r.rows.some(function(x){return x.k==='tax'||x.k==='cash';});}).map(function(r){return (r.it.sn||r.it.n);});if(sk.length)ex.push('택일 제외 '+sk.join(', '));return ex.length?'<div class="sm" style="font-weight:400">합산 제외(별도 표시) : '+esc(ex.join(' · '))+'</div>':'';})()+'</td><td class="a">'+esc(rng(ta[0],ta[1]))+'</td><td class="sm">확인필요 포함 시 '+esc(rng(tb[0],tb[1]))+'</td></tr>';
     var any=false;
     KO.forEach(function(K){
       var items=[]; mb.slice().sort(function(x,y){return NO[x.it.id]-NO[y.it.id];}).forEach(function(r){r.rows.forEach(function(x){if(x.k===K)items.push([r,x]);});});
