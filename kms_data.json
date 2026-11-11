@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-06",
+ "updated": "2026-11-11",
  "sections": [
   {
    "title": "SLI GFC",
@@ -233,6 +233,12 @@
         "정책",
         "내회사"
        ],
+       "pin": true
+      },
+      {
+       "label": "정부지원제도별 필요서류",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support_doc.html",
+       "tags": [],
        "pin": true
       },
       {
