@@ -242,6 +242,10 @@
        "pin": true
       },
       {
+       "br": true,
+       "pin": true
+      },
+      {
        "label": "출산.육아지원제도",
        "url": "https://yangji-madang.github.io/SLGFC/luvmom/baby_child.html",
        "tags": [
