@@ -55,7 +55,10 @@ table.dt{border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:
 .dt td.ct{text-align:center;font-size:12px}
 .dt td.tx{font-size:12.5px;word-break:keep-all;overflow-wrap:anywhere;vertical-align:top}
 .dt td.tx.mid{vertical-align:middle}
-.dt tfoot td{background:#eef2f7!important;font-size:10.5px;text-align:center;line-height:1.25;padding:3px 0;border-top:2px solid var(--navy);vertical-align:middle;position:static}
+.dt tfoot td{background:#eef2f7!important;font-size:11px;text-align:center;line-height:1.25;padding:3px 0;vertical-align:middle;position:static}
+.dt tfoot tr.ft1 td{border-top:2px solid var(--navy)}
+.dt tfoot td.ftl{text-align:right;font-weight:700;padding-right:8px;white-space:nowrap}
+.dt tfoot td.ftl .mk1,.dt tfoot td.ftl .mk2,.dt tfoot td.ftl .mk3{font-size:13px}
 .dt td.fzl,.dt th.fzl{box-shadow:2px 0 0 #94a3b8}
 .dt th.fzc{z-index:7}
 .dt td.fzc{z-index:3}
@@ -327,13 +330,17 @@ table.dt{border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:
          '<td class="ct" data-ci="'+(FIX.length+n+1)+'">'+(p?'<span class="ev '+p.ev+'">'+p.ev+'</span>':'-')+'</td></tr>';
     });
     if(!V.items.length) b='<tr><td colspan="'+cols.length+'" style="padding:14px;text-align:center;color:#475569">조건에 맞는 제도가 없습니다. 검색어나 선택 조건을 바꿔 보세요.</td></tr>';
-    var f='<tr><td colspan="4" data-ci="0" style="text-align:right;font-weight:700;padding-right:8px">서류별 필요 제도 수 (●/▲/○)</td>';
-    V.docs.forEach(function(d,k){ var c={R:0,O:0,A:0}; V.items.forEach(function(x){var m=markOf(x.p,d.id); if(m) c[m]++;}); f+='<td data-c="'+d.id+'">'+c.R+'<br>'+c.O+'<br>'+c.A+'</td>'; });
-    f+='<td></td><td></td></tr>';
+    var cc={}; V.docs.forEach(function(d){ var c={R:0,O:0,A:0}; V.items.forEach(function(x){var m=markOf(x.p,d.id); if(m) c[m]++;}); cc[d.id]=c; });
+    var FR=[['R','mk1','필수'],['O','mk2','필요시'],['A','mk3','기관확인']], f='';
+    FR.forEach(function(r,ri){
+      f+='<tr class="'+(ri?'':'ft1')+'"><td colspan="4" data-ci="0" class="ftl"><span class="'+r[1]+'">'+MK[r[0]]+'</span> '+(ri?'':'서류별 필요 제도 수 : ')+r[2]+'</td>';
+      V.docs.forEach(function(d){ f+='<td data-c="'+d.id+'">'+cc[d.id][r[0]]+'</td>'; });
+      f+='<td></td><td></td></tr>';
+    });
     t.innerHTML='<thead>'+h1+h2+'</thead><tbody>'+b+'</tbody><tfoot>'+f+'</tfoot>';
     frame(t,'mx',cols,FIX.length);
-    /* tfoot 첫 셀은 colspan 4 → 열 고정 대상에서 제외하고 sticky 처리 */
-    var fc=t.querySelector('tfoot td[data-ci]'); if(fc){ fc.style.position='sticky'; fc.style.left='0px'; fc.style.zIndex=3; fc.style.width=t._acc[FIX.length]+'px'; }
+    /* tfoot 라벨 셀은 colspan 4 : 폭을 고정열 합계로 맞추고 sticky 처리 */
+    Array.prototype.forEach.call(t.querySelectorAll('tfoot td.ftl'),function(fc){ fc.style.position='sticky'; fc.style.left='0px'; fc.style.zIndex=3; fc.style.width=t._acc[FIX.length]+'px'; });
     addResizers(t); applyW(t);
   }
 
