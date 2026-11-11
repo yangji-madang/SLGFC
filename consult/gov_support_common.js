@@ -115,7 +115,7 @@
   G.REGIONS = window.GS_REGIONS || [];
   G.sidoOf = function (r) {
     r = String(r || '').trim(); if (!r || r === '전국') return null;
-    for (var i = 0; i < G.REGIONS.length; i++) { var g = G.REGIONS[i]; if (r === g[1] || r === g[0] || g[0].indexOf(r) === 0) return g; }
+    for (var i = 0; i < G.REGIONS.length; i++) { var g = G.REGIONS[i]; if (r === g[1] || r === g[0] || g[0].indexOf(r) === 0 || (g[3] && g[3].indexOf(r) >= 0)) return g; }
     return null;
   };
   G.regOf = function (it) {
