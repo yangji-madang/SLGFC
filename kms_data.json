@@ -238,7 +238,12 @@
       {
        "label": "정부지원제도별 필요서류",
        "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support_doc.html",
-       "tags": [],
+       "tags": [
+        "정부",
+        "지원",
+        "제도",
+        "서류"
+       ],
        "pin": true
       },
       {
