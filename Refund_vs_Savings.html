@@ -147,6 +147,16 @@ footer{display:flex;justify-content:flex-end;padding:8px 4px 4px}
       <button class="pri" id="saveRateBtn">저장(이 브라우저)</button>
       <button id="restoreBtn">초기값 복원</button>
     </div>
+    <div class="bar" id="ghBar" style="display:none;margin-top:6px;padding:8px;background:#F7F9FC;border:1px solid var(--line);border-radius:8px">
+      <b style="font-size:13.5px;color:var(--navy)">GitHub 반영 (rates.json)</b>
+      <input type="text" id="ghRepo" value="yangji-madang/SLGFC" style="width:190px" placeholder="저장소 owner/repo">
+      <input type="text" id="ghBranch" value="main" style="width:70px" placeholder="브랜치">
+      <input type="text" id="ghDir" value="" style="width:100px" placeholder="폴더(루트면 비움)">
+      <input type="password" id="ghTok" style="width:210px;border:1px solid #9AA9C2;border-radius:5px;padding:5px 7px;font:inherit" placeholder="GitHub 토큰(Contents 쓰기)" autocomplete="off">
+      <label class="chk"><input type="checkbox" id="ghRem"> 이 브라우저에 기억</label>
+      <button class="pri" id="ghPubBtn">GitHub에 반영</button>
+      <span id="ghMsg" style="font-size:13px;color:var(--ink-soft)"></span>
+    </div>
     <ul class="notes">
       <li>출처 : <span id="mSource"></span></li>
       <li>최고금리는 급여이체·카드 사용 등 우대조건을 모두 충족할 때의 금리이며, 상품별 가입대상·만기(대부분 1년)·월 납입한도가 있습니다. 장기(5~10년) 비교 시에는 만기 후 재가입을 가정한 참고값으로만 사용하세요.</li>
@@ -389,6 +399,7 @@ function renderRates(){
     tb.appendChild(tr);
   });
   $('editBar').style.display = editMode ? 'flex' : 'none';
+  $('ghBar').style.display = editMode ? 'flex' : 'none';
   $('editBtn').textContent = editMode ? '수정 취소' : '금리 직접 수정';
   $('asOfInput').value = rates.asOf;
 }
@@ -469,6 +480,57 @@ $('restoreBtn').onclick = function(){
   try { localStorage.removeItem(LS_KEY); } catch(e){}
   rates = JSON.parse(JSON.stringify(DEFAULT_RATES)); editMode = false; renderRates(); renderHeadMeta(); updateAll();
 };
+
+
+/* ---------- GitHub 반영 (rates.json 갱신) ---------- */
+var GH_KEY = 'slgfc_rates_gh';
+function b64(t){ var b = new TextEncoder().encode(t), x = ''; for (var i = 0; i < b.length; i++) x += String.fromCharCode(b[i]); return btoa(x); }
+function ghMsg(t){ $('ghMsg').textContent = t; }
+function ghApi(url, opt){
+  opt = opt || {};
+  opt.headers = Object.assign({'Accept':'application/vnd.github+json','Authorization':'Bearer ' + $('ghTok').value.trim(),'X-GitHub-Api-Version':'2022-11-28'}, opt.headers || {});
+  return fetch(url, opt).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){
+    if (!r.ok){ var e = new Error((j && j.message) || r.status); e.status = r.status; throw e; }
+    return j; }); });
+}
+$('ghPubBtn').onclick = function(){
+  var repo = $('ghRepo').value.trim(), br = $('ghBranch').value.trim() || 'main', dir = $('ghDir').value.trim().replace(/^\/+|\/+$/g, ''), tok = $('ghTok').value.trim();
+  if (!/^[\w.-]+\/[\w.-]+$/.test(repo)){ ghMsg('저장소 형식이 올바르지 않습니다. (예: yangji-madang/SLGFC)'); return; }
+  if (dir.indexOf('..') >= 0 || !/^[\w.\-\/]*$/.test(dir)){ ghMsg('폴더 이름이 올바르지 않습니다.'); return; }
+  if (!tok){ ghMsg('GitHub 액세스 토큰을 입력하세요.'); return; }
+  var v = $('asOfInput').value.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v)){ ghMsg('기준일은 YYYY-MM-DD 형식으로 입력해 주세요.'); return; }
+  var bad = rates.items.filter(function(it){ return !String(it.bank || '').trim() || !String(it.product || '').trim(); });
+  if (bad.length){ ghMsg('은행명·상품명이 비어 있는 행이 있습니다.'); return; }
+  if (!confirm('입력한 금리표를 GitHub의 rates.json에 반영합니다. 이 페이지와 별도 금리표 페이지에 모두 적용됩니다. 계속할까요?')) return;
+  rates.asOf = v;
+  var path = (dir ? dir + '/' : '') + 'rates.json';
+  var url = 'https://api.github.com/repos/' + repo + '/contents/' + path.split('/').map(encodeURIComponent).join('/');
+  var txt = JSON.stringify(rates, null, 2) + '\n';
+  $('ghPubBtn').disabled = true; ghMsg('GitHub에 반영하는 중입니다…');
+  ghApi(url + '?ref=' + encodeURIComponent(br)).then(function(cur){ return cur.sha; }, function(e){ if (e.status === 404) return null; throw e; })
+  .then(function(sha){
+    var body = {message: 'rates.json: 금리표 갱신 (' + v + ')', content: b64(txt), branch: br};
+    if (sha) body.sha = sha;
+    return ghApi(url, {method:'PUT', body: JSON.stringify(body)});
+  })
+  .then(function(){
+    try { localStorage.setItem(LS_KEY, JSON.stringify(rates)); } catch(e){}
+    try { if ($('ghRem').checked) localStorage.setItem(GH_KEY, JSON.stringify({repo:repo, branch:br, dir:dir, tok:tok})); else localStorage.removeItem(GH_KEY); } catch(e){}
+    editMode = false; renderRates(); renderHeadMeta(); updateAll();
+    ghMsg('반영했습니다. 다른 화면에는 약 1분 뒤 적용됩니다.');
+  })
+  .catch(function(e){
+    var h = e.status === 401 ? ' (토큰이 올바르지 않거나 만료됨)' : (e.status === 403 || e.status === 404) ? ' (토큰의 Contents 쓰기 권한·저장소 이름 확인)' : (e.status === 409 || e.status === 422) ? ' (다른 곳에서 먼저 수정됨 — 다시 시도)' : '';
+    ghMsg('반영 실패: ' + e.message + h);
+  })
+  .then(function(){ $('ghPubBtn').disabled = false; });
+};
+(function(){
+  try { var g = JSON.parse(localStorage.getItem(GH_KEY) || 'null');
+    if (g){ $('ghRepo').value = g.repo; $('ghBranch').value = g.branch; $('ghDir').value = g.dir; $('ghTok').value = g.tok || ''; $('ghRem').checked = !!g.tok; } } catch(e){}
+  $('ghRem').addEventListener('change', function(){ if (!this.checked){ try { localStorage.removeItem(GH_KEY); } catch(e){} } });
+})();
 
 function initState(){
   var p = newIns(); p.prem = '1,000,000'; p.years = '10';

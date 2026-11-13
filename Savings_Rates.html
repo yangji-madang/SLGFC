@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시중 주요 은행 적금금리표</title>
+<style>
+:root{--navy:#16223F;--navy-soft:#2B3557;--gold:#C6A15B;--paper:#F3F2EF;--line:#D5D9E2;--ink:#1E2433;--ink-soft:#566074;--warn:#B23A2C}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Malgun Gothic","맑은 고딕",system-ui,sans-serif;font-size:16px;line-height:1.5}
+.wrap{max-width:1100px;margin:0 auto;padding:14px 16px 10px}
+header{background:var(--navy);color:#fff;border-radius:10px;padding:14px 18px;border-bottom:4px solid var(--gold)}
+header h1{margin:0;font-size:26px;letter-spacing:-0.3px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{background:var(--navy-soft);border-radius:999px;padding:3px 12px;font-size:14px}
+.chip b{color:var(--gold)}
+.chip.stale{background:var(--warn)}
+.chip.stale b{color:#fff}
+section{background:#fff;border:1px solid var(--line);border-radius:10px;margin-top:12px;padding:12px 14px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:center;white-space:nowrap;font-size:15.5px}
+th{background:var(--navy);color:#fff;font-size:15px}
+td.l{text-align:left}
+td.n{font-variant-numeric:tabular-nums}
+td.mx{font-weight:700;color:#7A4A00;background:#FFF8EC}
+tbody tr:nth-child(even) td:not(.mx){background:#F7F9FC}
+.warnbox{background:#FDF0EE;border:1px solid #E8B9B2;color:var(--warn);border-radius:6px;padding:6px 10px;font-size:14px;margin:0 0 8px}
+.notes{font-size:14px;color:var(--ink-soft);margin:10px 0 0;padding-left:18px}
+.notes li{margin:3px 0}
+footer{display:flex;justify-content:flex-end;padding:8px 4px 4px}
+.copy{font-size:12.5px;color:var(--ink-soft)}
+.printbtn{font:inherit;font-size:14px;border:1px solid var(--navy);background:#fff;color:var(--navy);border-radius:6px;padding:4px 14px;cursor:pointer}
+.printbtn:hover{background:var(--navy);color:#fff}
+.bar{display:flex;justify-content:flex-end;margin:0 0 8px}
+@media(max-width:640px){header h1{font-size:21px}th,td{font-size:14px;padding:6px 7px}}
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  body{background:#fff;font-size:12pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .bar{display:none}
+  .wrap{max-width:none;padding:0}
+  section{border:none;padding:0;margin-top:8px}
+  th,td{font-size:11pt;padding:4px 6px}
+  .scroll{overflow:visible}
+  tr{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>시중 주요 은행 적금금리표</h1>
+  <div class="meta">
+    <span class="chip" id="asOfChip">기준일 <b id="asOfTxt"></b></span>
+    <span class="chip">조회일 <b id="todayTxt"></b></span>
+  </div>
+</header>
+<section>
+  <div class="bar"><button class="printbtn" onclick="window.print()">인쇄</button></div>
+  <div id="staleBox"></div>
+  <div class="scroll">
+  <table id="rateTbl">
+    <thead><tr><th>은행</th><th>상품명</th><th>기본금리(%)</th><th>최고금리(%)</th><th>상품 기준일</th><th>비고</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  </div>
+  <ul class="notes">
+    <li>출처 : <span id="mSource"></span></li>
+    <li>최고금리는 급여이체·카드 사용 등 우대조건을 모두 충족할 때의 금리이며, 상품별 가입대상·만기(대부분 1년)·월 납입한도가 있습니다.</li>
+    <li>금리는 수시로 변동되므로 이 표는 기준일 시점의 값입니다. 가입 전 각 은행 공시로 확인해 주세요.</li>
+  </ul>
+</section>
+<footer><span class="copy" id="copy"></span></footer>
+</div>
+<script>
+var rates = {
+ "asOf": "2026-10-30",
+ "source": "금융감독원 금융상품통합비교공시 기준 정기적금 비교(vyomakesa.com, 2026-10-30 표시 기준) / KB국민은행: 2026-07-22~24 보도자료 기준",
+ "items": [
+  {
+   "bank": "우리은행",
+   "product": "우리 사장님 성장 적금",
+   "base": 2.0,
+   "max": 6.0,
+   "date": "2026-10-30",
+   "note": ""
+  },
+  {
+   "bank": "하나은행",
+   "product": "급여하나 월복리 적금",
+   "base": 2.95,
+   "max": 5.25,
+   "date": "2026-10-30",
+   "note": "월복리"
+  },
+  {
+   "bank": "카카오뱅크",
+   "product": "카카오뱅크 AI 목표적금",
+   "base": 3.0,
+   "max": 5.0,
+   "date": "2026-10-30",
+   "note": ""
+  },
+  {
+   "bank": "부산은행",
+   "product": "부산이라 좋다 Big적금",
+   "base": 2.6,
+   "max": 4.8,
+   "date": "2026-10-30",
+   "note": ""
+  },
+  {
+   "bank": "경남은행",
+   "product": "BNK 위더스WithUs 자유적금",
+   "base": 2.3,
+   "max": 4.8,
+   "date": "2026-10-30",
+   "note": ""
+  },
+  {
+   "bank": "광주은행",
+   "product": "전남광주통합특별시 사랑적금",
+   "base": 2.7,
+   "max": 4.7,
+   "date": "2026-10-30",
+   "note": ""
+  },
+  {
+   "bank": "IBK기업은행",
+   "product": "IBK중기근로자우대적금",
+   "base": 2.5,
+   "max": 4.7,
+   "date": "2026-10-30",
+   "note": ""
+  },
+  {
+   "bank": "신한은행",
+   "product": "신한 플랫폼 적금(병역명문가)",
+   "base": 1.5,
+   "max": 4.5,
+   "date": "2026-10-30",
+   "note": "가입대상 제한 상품"
+  },
+  {
+   "bank": "제주은행",
+   "product": "탐이나요적금",
+   "base": 1.65,
+   "max": 4.35,
+   "date": "2026-10-30",
+   "note": ""
+  },
+  {
+   "bank": "케이뱅크",
+   "product": "주거래우대 자유적금",
+   "base": 3.7,
+   "max": 4.3,
+   "date": "2026-10-30",
+   "note": ""
+  },
+  {
+   "bank": "KB국민은행",
+   "product": "KB맑은하늘적금(1년)",
+   "base": null,
+   "max": 3.45,
+   "date": "2026-07-24",
+   "note": "기본금리 미확인 · 기준일 상이"
+  }
+ ]
+};
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function pad(n){ return ('0' + n).slice(-2); }
+function todayStr(){ var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function daysSince(s){
+  var p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+  if (!p) return null;
+  var d0 = new Date(+p[1], +p[2] - 1, +p[3]), t = new Date(); t.setHours(0, 0, 0, 0);
+  return Math.round((t - d0) / 86400000);
+}
+function render(){
+  var dd = daysSince(rates.asOf), chip = document.getElementById('asOfChip');
+  chip.className = 'chip' + (dd !== null && dd > 7 ? ' stale' : '');
+  chip.innerHTML = '기준일 <b>' + esc(rates.asOf) + '</b>' + (dd !== null ? (dd > 7 ? ' (' + dd + '일 경과 · 갱신 필요)' : ' (' + dd + '일 전)') : '');
+  document.getElementById('todayTxt').textContent = todayStr();
+  document.getElementById('mSource').textContent = rates.source;
+  document.getElementById('staleBox').innerHTML = (dd !== null && dd > 7) ? '<div class="warnbox">기준일로부터 ' + dd + '일이 지났습니다. 금리가 변동되었을 수 있으니 각 은행 공시로 확인해 주세요.</div>' : '';
+  var tb = document.querySelector('#rateTbl tbody'); tb.innerHTML = '';
+  rates.items.forEach(function(it){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td class="l"><b>' + esc(it.bank) + '</b></td><td class="l">' + esc(it.product) + '</td>' +
+      '<td class="n">' + (it.base == null ? '-' : it.base.toFixed(2)) + '</td>' +
+      '<td class="n mx">' + (it.max == null ? '-' : it.max.toFixed(2)) + '</td>' +
+      '<td>' + esc(it.date) + '</td><td class="l">' + esc(it.note) + '</td>';
+    tb.appendChild(tr);
+  });
+  document.getElementById('copy').textContent = '(C)' + new Date().getFullYear() + '. YOON HYUNCHUL, ALL RIGHT RESERVED.';
+}
+render();
+if (/^https?:/.test(location.protocol)){
+  fetch('rates.json?v=' + Date.now()).then(function(r){ return r.json(); }).then(function(j){
+    if (j && j.asOf && j.items){ rates = j; render(); }
+  }).catch(function(){});
+}
+</script>
+</body>
+</html>
