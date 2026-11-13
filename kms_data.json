@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-11",
+ "updated": "2026-11-13",
  "sections": [
   {
    "title": "SLI GFC",
@@ -279,6 +279,17 @@
        "url": "https://sslifefc.s-bluevery.com/",
        "tags": [
         "쇼핑"
+       ],
+       "pin": false
+      },
+      {
+       "label": "시중은행 금리표",
+       "url": "https://yangji-madang.github.io/SLGFC/Savings_Rates.html",
+       "tags": [
+        "금리",
+        "은행",
+        "적금",
+        "예금"
        ],
        "pin": false
       }
