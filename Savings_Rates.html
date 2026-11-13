@@ -56,7 +56,12 @@ footer{display:flex;justify-content:flex-end;padding:8px 4px 4px}
   </div>
 </header>
 <section>
-  <div class="bar"><button class="printbtn" onclick="window.print()">인쇄</button></div>
+  <div class="bar">
+    <span id="reloadMsg" style="font-size:13.5px;color:var(--ink-soft);align-self:center;margin-right:8px"></span>
+    <button class="printbtn" id="reloadBtn" style="margin-right:6px">최신 금리 불러오기</button>
+    <a href="https://github.com/yangji-madang/SLGFC/actions/workflows/update-rates.yml" target="_blank" rel="noopener" style="text-decoration:none;margin-right:6px"><button type="button" class="printbtn" style="background:var(--navy);color:#fff">금감원 공시로 자동 갱신 실행</button></a>
+    <button class="printbtn" onclick="window.print()">인쇄</button>
+  </div>
   <div id="staleBox"></div>
   <div class="scroll">
   <table id="rateTbl">
@@ -68,7 +73,7 @@ footer{display:flex;justify-content:flex-end;padding:8px 4px 4px}
     <li>출처 : <span id="mSource"></span></li>
     <li>최고금리는 급여이체·카드 사용 등 우대조건을 모두 충족할 때의 금리이며, 상품별 가입대상·만기(대부분 1년)·월 납입한도가 있습니다.</li>
     <li>금리는 수시로 변동되므로 이 표는 기준일 시점의 값입니다. 가입 전 각 은행 공시로 확인해 주세요.</li>
-    <li>이 표는 매주 월요일 금융감독원 「금융상품한눈에」 공시로 자동 갱신됩니다(자동 갱신이 설정된 경우).</li>
+    <li>이 표는 매주 월요일 금융감독원 「금융상품한눈에」 공시로 자동 갱신됩니다(인증키 등록 후). 지금 바로 갱신하려면 「자동 갱신 실행」을 눌러 GitHub 화면에서 Run workflow를 두 번 누르고, 1~2분 뒤 「최신 금리 불러오기」를 누르세요.</li>
   </ul>
 </section>
 <footer><span class="copy" id="copy"></span></footer>
@@ -195,6 +200,13 @@ function render(){
   });
   document.getElementById('copy').textContent = '(C)' + new Date().getFullYear() + '. YOON HYUNCHUL, ALL RIGHT RESERVED.';
 }
+document.getElementById('reloadBtn').onclick = function(){
+  var m = document.getElementById('reloadMsg'); m.textContent = '불러오는 중…';
+  fetch('rates.json?v=' + Date.now(), {cache:'no-store'}).then(function(r){ return r.json(); }).then(function(j){
+    if (!j || !j.asOf || !j.items) throw new Error('형식 오류');
+    rates = j; render(); m.textContent = '기준일 ' + j.asOf + ' 금리로 바꿨습니다.';
+  }).catch(function(){ m.textContent = '불러오지 못했습니다. 웹(GitHub Pages)에서 연 화면인지 확인하세요.'; });
+};
 render();
 if (/^https?:/.test(location.protocol)){
   fetch('rates.json?v=' + Date.now()).then(function(r){ return r.json(); }).then(function(j){
