@@ -157,6 +157,19 @@ footer{display:flex;justify-content:flex-end;padding:8px 4px 4px}
       <button class="pri" id="ghPubBtn">GitHub에 반영</button>
       <span id="ghMsg" style="font-size:13px;color:var(--ink-soft)"></span>
     </div>
+    <div id="autoBox" style="margin-top:8px;padding:9px 11px;background:#F7F9FC;border:1px solid var(--line);border-radius:8px;font-size:13.5px">
+      <b style="color:var(--navy)">금리 갱신 방법 (쉬운 설명)</b>
+      <div class="bar" style="margin:6px 0 4px">
+        <button id="reloadBtn">① 최신 금리 불러오기</button>
+        <a href="https://github.com/yangji-madang/SLGFC/actions/workflows/update-rates.yml" target="_blank" rel="noopener" style="text-decoration:none"><button type="button" class="pri">② 금감원 공시로 자동 갱신 실행</button></a>
+        <span id="reloadMsg" style="font-size:13px;color:var(--ink-soft)"></span>
+      </div>
+      <ol style="margin:4px 0 0;padding-left:20px;color:var(--ink-soft);line-height:1.6">
+        <li><b>자동</b> : 매주 월요일 아침에 금감원 「금융상품한눈에」 공시로 금리표가 저절로 바뀝니다(인증키 1회 등록 후).</li>
+        <li><b>지금 바로 갱신</b> : ②를 누르면 GitHub 화면이 열립니다. 오른쪽 <b>Run workflow</b> 버튼 → 초록색 <b>Run workflow</b>를 한 번 더 누르면 1~2분 뒤 갱신됩니다. 그 뒤 ①을 누르면 이 화면에 반영됩니다.</li>
+        <li><b>직접 고치기</b> : 위 「금리 직접 수정」으로 숫자를 바꾼 뒤 저장하면 이 브라우저에만 적용됩니다(다른 사람에게도 보이게 하려면 「GitHub에 반영」).</li>
+      </ol>
+    </div>
     <ul class="notes">
       <li>출처 : <span id="mSource"></span></li>
       <li>최고금리는 급여이체·카드 사용 등 우대조건을 모두 충족할 때의 금리이며, 상품별 가입대상·만기(대부분 1년)·월 납입한도가 있습니다. 장기(5~10년) 비교 시에는 만기 후 재가입을 가정한 참고값으로만 사용하세요.</li>
@@ -482,6 +495,16 @@ $('restoreBtn').onclick = function(){
 };
 
 
+
+$('reloadBtn').onclick = function(){
+  var m = $('reloadMsg'); m.textContent = '불러오는 중…';
+  fetch('rates.json?v=' + Date.now(), {cache:'no-store'}).then(function(r){ return r.json(); }).then(function(j){
+    if (!j || !j.asOf || !j.items) throw new Error('형식 오류');
+    try { localStorage.removeItem(LS_KEY); } catch(e){}
+    rates = j; editMode = false; renderRates(); renderHeadMeta(); updateAll();
+    m.textContent = '기준일 ' + j.asOf + ' 금리로 바꿨습니다.';
+  }).catch(function(){ m.textContent = '불러오지 못했습니다. 웹(GitHub Pages)에서 연 화면인지 확인하세요.'; });
+};
 /* ---------- GitHub 반영 (rates.json 갱신) ---------- */
 var GH_KEY = 'slgfc_rates_gh';
 function b64(t){ var b = new TextEncoder().encode(t), x = ''; for (var i = 0; i < b.length; i++) x += String.fromCharCode(b[i]); return btoa(x); }

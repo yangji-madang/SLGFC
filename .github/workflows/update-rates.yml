@@ -1,0 +1,27 @@
+name: 적금금리표 자동 갱신
+on:
+  schedule:
+    - cron: '0 23 * * 0'   # 매주 월요일 08:00(KST)
+  workflow_dispatch:        # Actions 화면의 'Run workflow' 버튼으로 즉시 실행
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: rates.json 갱신
+        env:
+          FINLIFE_KEY: ${{ secrets.FINLIFE_KEY }}
+        run: node scripts/update_rates.mjs
+      - name: 변경 사항 커밋
+        run: |
+          if git diff --quiet rates.json; then echo "변경 없음"; exit 0; fi
+          git config user.name "rates-bot"
+          git config user.email "rates-bot@users.noreply.github.com"
+          git add rates.json
+          git commit -m "rates.json: 적금금리 자동 갱신 $(date -u +%F)"
+          git push
