@@ -245,11 +245,10 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
 
 <!-- 5. 그래프 -->
 <section class="sec chart" id="sec-chart">
-  <h2><span class="no">5</span>경과기간별 환급률 · 은행 비교 <small>범례 클릭 시 해당 상품 숨김/표시</small></h2>
+  <h2><span class="no">5</span>경과기간별 환급률 · 은행 비교</h2>
   <div class="bd">
     <div class="row noprint" id="chOpt"></div>
     <div class="cb"><div id="chBody"></div><div class="tip" id="chTip"></div></div>
-    <div class="legend" id="chLegend"></div>
     <div class="basis" id="basis"></div>
   </div>
 </section>
@@ -668,7 +667,7 @@ function renderChart(animate) {
     <label>축 최대값 <input type="number" data-set="settings.ymax" placeholder="자동" style="width:72px"></label>
     <button class="sm" data-act="replay">▶ 다시 재생</button>`;
   const items = mkItems('G').filter(it => hasData(it));
-  if (!items.length) { $('#chBody').innerHTML = '<div class="muted" style="padding:8px">그래프로 표시할 데이터가 없습니다.</div>'; $('#chLegend').innerHTML = ''; renderBasis(); return; }
+  if (!items.length) { $('#chBody').innerHTML = '<div class="muted" style="padding:8px">그래프로 표시할 데이터가 없습니다.</div>'; renderBasis(); return; }
   const periods = periodsOf(items);
   const W = 1120, H = 660, L = 76, R = 236, Tp = 36, Bt = 80, px1 = W - R, n = periods.length;
   const xs = i => n === 1 ? (L + px1) / 2 : L + i * (px1 - L) / (n - 1);
@@ -723,10 +722,6 @@ function renderChart(animate) {
   });
   s += `<g clip-path="url(#cpA)">${gp}</g>${gl}<line id="gd" y1="${Tp}" y2="${plotB}" stroke="#1f3a5f" stroke-width="1.2" stroke-dasharray="4 3" style="display:none"/><rect class="ov" x="${L - 20}" y="${Tp}" width="${px1 - L + 40}" height="${plotB - Tp}" fill="transparent"/></svg>`;
   $('#chBody').innerHTML = s;
-  $('#chLegend').innerHTML = items.map(it => {
-    const dash = it.kind === 'b' ? '2 5' : DASH[Math.min(it.vi, 2)];
-    return `<div class="li" data-sid="${it.kind}${it.id}" data-act="legend" data-kind="${it.kind}" data-id="${it.id}" title="클릭: 그래프에서 숨기기 · 마우스 올리면 강조"><svg width="30" height="8"><line x1="0" y1="4" x2="30" y2="4" stroke="${it.color}" stroke-width="2.6" ${dash ? `stroke-dasharray="${dash}"` : ''}/></svg><span>${it.kind === 'b' ? '🏦 ' : ''}${esc(it.short)}</span></div>`;
-  }).join('');
   chartHover($('#chBody svg'), { periods, xs, items, W, age0 });
   if (animate) playWhenVisible();
   renderBasis();
