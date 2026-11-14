@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-13",
+ "updated": "2026-11-14",
  "sections": [
   {
    "title": "SLI GFC",
@@ -645,6 +645,29 @@
         "KCD",
         "진단코드",
         "코드"
+       ],
+       "pin": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "title": "봐야할 site",
+   "sort": false,
+   "pin": false,
+   "groups": [
+    {
+     "title": "GFC",
+     "pin": false,
+     "links": [
+      {
+       "label": "대수료TW",
+       "url": "https://youtube.com/channel/UCcsn3ncydF7KawpilLaSCCA?si=ozWEdCxWKJtV4x2L",
+       "tags": [
+        "법인",
+        "영업",
+        "대수"
        ],
        "pin": false
       }
