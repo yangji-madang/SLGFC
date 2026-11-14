@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>주요상품 환급률 비교 (관리)</title>
+<style>
+:root{--navy:#1f3a5f;--gold:#b8892b;--line:#b9c3cf;--head:#dce9f5;--txt:#1b2430;--muted:#5d6b7a;--blue:#0000ff}
+*{box-sizing:border-box}
+html{font-family:system-ui,-apple-system,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+body{margin:0;background:#eef1f5;color:var(--txt);font-size:14px;line-height:1.4;word-break:keep-all;overflow-wrap:break-word}
+.page{max-width:1320px;margin:0 auto;background:#fff;padding:8px 14px 10px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid #98a6b6;background:#f7f9fb;border-radius:4px;padding:3px 9px}
+button:hover{background:#e8eff7}
+button.pri{background:var(--navy);color:#fff;border-color:var(--navy)}
+button.pri:hover{background:#2c4f7e}
+button.dg{color:#b3261e;border-color:#d9a5a1}
+button.sm{padding:1px 6px;font-size:12px}
+input[type=text],input[type=number],select,textarea{border:1px solid #98a6b6;border-radius:4px;padding:3px 6px;background:#fff;min-width:0}
+input[type=number]{text-align:right}
+.muted{color:var(--muted)}
+/* 제목 */
+.hd{display:flex;align-items:baseline;gap:4px 12px;flex-wrap:wrap;border-bottom:2px solid var(--navy);padding-bottom:3px}
+.hd h1{margin:0;font-size:20px;color:var(--navy);white-space:nowrap}
+.hd .sub{font-size:13px;font-weight:600}
+.hd .ex{margin-left:auto;font-size:12px;font-weight:600;white-space:nowrap}
+.tb{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:5px 0}
+.tb .sp{flex:1}
+.tb label{display:inline-flex;gap:4px;align-items:center;white-space:nowrap}
+.nav a{margin-right:10px;color:var(--navy);font-weight:600;text-decoration:none;font-size:13px}
+/* 섹션 */
+.sec{margin:6px 0;border:1px solid #cfd7e0;border-radius:5px;overflow:hidden}
+.sec>h2{margin:0;padding:3px 10px;background:var(--navy);color:#fff;font-size:14px;display:flex;align-items:center;gap:8px}
+.sec>h2 .no{background:var(--gold);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+.sec>h2 small{font-weight:400;opacity:.85;margin-left:auto}
+.sec .bd{padding:6px 8px}
+.row{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:3px 0}
+.chip{display:inline-flex;align-items:center;gap:4px;border:1px solid #98a6b6;border-radius:12px;padding:1px 9px;background:#fff;cursor:pointer;font-size:13px;user-select:none}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip.ft{background:#fbf3df;border-color:#d9bd7a;color:#6b4e0f;cursor:default;font-size:12px;padding:0 7px}
+.chip .x{cursor:pointer;opacity:.7;margin-left:2px}
+.tag{display:inline-block;background:#fbf3df;border:1px solid #e0c98c;color:#6b4e0f;border-radius:8px;padding:0 6px;font-size:11px;margin:0 2px 1px 0}
+details.pn{border:1px solid #d5dce4;border-radius:4px;margin:5px 0;background:#fafbfd}
+details.pn>summary{cursor:pointer;padding:3px 8px;font-weight:700;color:var(--navy);font-size:13px}
+details.pn>.in{padding:4px 8px 6px}
+.tabs{display:flex;gap:2px;margin:4px 0 0}
+.tabs button{border-radius:4px 4px 0 0;border-bottom:none}
+.tabs button.on{background:var(--navy);color:#fff}
+/* 마스터 목록 */
+.mt{width:100%;border-collapse:collapse;font-size:12.5px}
+.mt th,.mt td{border:1px solid #cfd6de;padding:2px 4px;text-align:center;vertical-align:middle}
+.mt th{background:var(--head);white-space:nowrap}
+.mt td.l{text-align:left}
+.mt input[type=number]{width:96px}
+.sw{display:inline-block;width:14px;height:10px;border-radius:2px;vertical-align:middle}
+/* 요약 */
+.sumgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 14px}
+.qa{border-left:3px solid var(--gold);padding:1px 0 1px 8px;break-inside:avoid}
+.qa .q{font-weight:700;color:var(--navy);font-size:13.5px}
+.qa .a .s{display:block;font-size:13px;text-wrap:pretty}
+.memo{margin-top:4px;padding:3px 8px;background:#f6f8fb;border:1px dashed #b9c3cf;border-radius:4px}
+/* 표 */
+.tw{overflow:auto;max-height:74vh}
+table.rt{border-collapse:separate;border-spacing:0;width:100%;font-size:var(--fs,13px);border-top:1px solid var(--line);border-left:1px solid var(--line)}
+table.rt th,table.rt td{border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:var(--ch,2px) 6px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.rt thead th.pc,table.rt td.vv{min-width:var(--cw,48px)}
+table.rt td.nm,table.rt td.ty{min-width:var(--lw,90px)}
+table.rt thead th{position:sticky;z-index:3}
+table.rt thead th.cn{left:0;z-index:5}
+table.rt td.nm,table.rt td.ty,table.rt td.pl{position:sticky;z-index:2;background:#fff}
+.sizebar{font-size:12px;color:var(--muted)}
+.sizebar input[type=range]{width:90px;vertical-align:middle}
+table.rt thead th{background:var(--head);text-align:center;font-weight:600}
+table.rt thead tr.fl th{background:#fff;border:none!important;color:#d40000;font-size:12px;padding:0 2px;font-weight:700}
+table.rt td.nm,table.rt td.ty,table.rt td.pl,table.rt td.mo,table.rt td.it{text-align:center}
+table.rt td.nm{font-weight:700}
+table.rt td.it{color:var(--muted);font-size:12px}
+table.rt tr.v1 td.vv{color:var(--blue)}
+table.rt td.pl.v1{background:#fff2c6}
+table.rt td.hl{background:#ffff00;font-weight:700}
+table.rt td.fc,table.rt th.fc{border-left:2px solid #e00000;border-right:2px solid #e00000}
+table.rt th.fc.top{border-top:2px solid #e00000}
+table.rt td.fc.bot{border-bottom:2px solid #e00000}
+table.rt tr.bk td{background:#f1f6fb}
+table.rt tr.grp-first td{border-top:1.5px solid #6c7f93}
+table.rt tr.flash td{outline:2px solid var(--gold);outline-offset:-2px}
+.tnote{font-size:12px;color:var(--muted);margin:2px 0}
+/* 그래프 */
+.cb svg{width:100%;height:auto;display:block}
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1px 10px;font-size:12px;margin-top:2px}
+.legend .li{cursor:pointer;display:flex;align-items:center;gap:5px}
+.legend .li:hover{background:#eef3f9}
+.basis{font-size:11.5px;color:#34424f;margin-top:4px;line-height:1.45}
+.basis a{color:#0b5cad}
+.basis .s{display:block;text-wrap:pretty}
+/* 푸터 */
+.ft{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-top:6px;padding-top:3px;border-top:1px solid #cfd7e0}
+.ft .ct{font-size:12px;color:#34424f}
+.ft .cp{font-size:11.5px;margin-left:auto;text-align:right;white-space:nowrap;color:#34424f}
+/* 모달 */
+.modal{position:fixed;left:50%;top:4vh;transform:translateX(-50%);max-width:96vw;max-height:92vh;display:flex;flex-direction:column;background:#fff;border:1px solid #6c7f93;border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.modal .mh{background:var(--navy);color:#fff;padding:5px 10px;display:flex;justify-content:space-between;align-items:center;cursor:move;border-radius:5px 5px 0 0;user-select:none;touch-action:none}
+.modal .mh .x{background:transparent;color:#fff;border:none;font-size:16px;padding:0 4px}
+.modal .mb{padding:8px 10px;overflow:auto}
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px 10px}
+.fg label{display:flex;flex-direction:column;font-size:12px;color:var(--muted);gap:1px}
+.fg label input,.fg label select{color:var(--txt);font-size:13px;width:100%}
+.pg{border-collapse:collapse;margin-top:4px;font-size:12.5px}
+.pg th,.pg td{border:1px solid #cfd6de;padding:1px 3px;text-align:center}
+.pg th{background:var(--head)}
+.pg input{width:116px}
+.pg input.rt{width:80px}
+.ok{color:#117a3a}.er{color:#b3261e}
+/* 인쇄 */
+.admin-only{display:none}
+body.admin .admin-only{display:block}
+html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #btnMode{display:none!important}
+@page{size:A4 portrait;margin:8mm}
+@media print{
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ body{background:#fff;font-size:11px}
+ .noprint,.modal{display:none!important}
+ .admin-only,body.admin .admin-only{display:none!important}
+ .page{max-width:none;padding:0}
+ .sec{border:none;margin:3px 0}
+ .sec>h2{padding:1px 6px;font-size:11px}
+ .sec .bd{padding:3px 0}
+ .hd h1{font-size:17px}
+ table.rt{font-size:10px}
+ table.rt th,table.rt td{padding:1px 4px}
+ .qa .a .s,.qa .q{font-size:10px}
+ .cb svg{max-height:112mm}
+ .legend{font-size:9.5px;grid-template-columns:repeat(4,1fr)}
+ .basis{font-size:9px}
+ .tw{overflow:visible;max-height:none!important}
+ tr{break-inside:avoid}
+ .sec.tbl,.sec.chart{break-inside:avoid}
+ .ft .ct,.ft .cp{font-size:9.5px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="hd">
+  <h1>■ 주요상품 환급률 비교</h1>
+  <span class="sub" id="subTitle"></span>
+  <span class="ex" id="exLabel"></span>
+</header>
+
+<div class="tb noprint">
+  <span class="nav"><a href="#sec-search">① 검색</a><a href="#sec-master" class="admin-link" style="display:none">② MasterDB</a><a href="#sec-summary">③ 요약리뷰</a><a href="#sec-table">④ 환급률 표</a><a href="#sec-chart">⑤ 그래프</a></span>
+  <span class="sp"></span>
+  <label><input type="checkbox" data-set="settings.showContact"> 담당자정보 표시</label>
+  <button data-act="rates">🏦 은행 적금금리표</button>
+  <button class="pri" data-act="print">🖨 인쇄</button>
+  <button data-act="mode" id="btnMode">⚙ 관리모드</button>
+</div>
+
+<!-- 1. 검색 -->
+<section class="sec noprint" id="sec-search">
+  <h2><span class="no">1</span>검색 <small id="srCount"></small></h2>
+  <div class="bd">
+    <div class="row">
+      <input type="text" id="srQ" placeholder="상품명·유형·메모 검색 (공백=AND)" style="width:260px">
+      <label>핵심기능 조건
+        <select id="srMode"><option value="OR">하나라도 포함(OR)</option><option value="AND">모두 포함(AND)</option></select></label>
+      <label><input type="checkbox" id="srDisc"> 단종 상품 포함</label>
+      <button data-act="srClear">초기화</button>
+    </div>
+    <div class="row" id="srFeats"></div>
+    <div class="row" id="srRes"></div>
+  </div>
+</section>
+
+<!-- 2. MasterDB -->
+<section class="sec noprint admin-only" id="sec-master">
+  <h2><span class="no">2</span>Master DB 입력·관리 <small>※ 입력값은 이 브라우저에 자동 저장 · 공유는 'GitHub 반영' 또는 JSON 내보내기</small></h2>
+  <div class="bd" id="masterBody"></div>
+</section>
+
+<!-- 3. 요약 -->
+<section class="sec" id="sec-summary">
+  <h2><span class="no">3</span>요약 리뷰 <small id="sumBasis"></small></h2>
+  <div class="bd"><div id="sumBody"></div></div>
+</section>
+
+<!-- 4. 표 -->
+<section class="sec tbl" id="sec-table">
+  <h2><span class="no">4</span>환급률 표 <small id="tblUnit"></small></h2>
+  <div class="bd">
+    <div class="row noprint" id="tblOpt"></div>
+    <div class="row noprint sizebar">셀 크기 조절
+      <label>열 너비 <input type="range" min="34" max="120" data-pref="cw"></label>
+      <label>상품열 너비 <input type="range" min="60" max="200" data-pref="lw"></label>
+      <label>행 높이 <input type="range" min="0" max="12" data-pref="ch"></label>
+      <label>글자 <input type="range" min="10" max="18" data-pref="fs"></label>
+      <button class="sm" data-act="prefReset">기본값</button><span>· 상품·구분 열과 나이·경과기간 행은 스크롤 시 고정됩니다.</span></div>
+    <div class="tw" id="tblBody"></div>
+    <div class="tnote" id="tblNote"></div>
+  </div>
+</section>
+
+<!-- 5. 그래프 -->
+<section class="sec chart" id="sec-chart">
+  <h2><span class="no">5</span>경과기간별 환급률 · 은행 비교 <small>범례 클릭 시 해당 상품 숨김/표시</small></h2>
+  <div class="bd">
+    <div class="row noprint" id="chOpt"></div>
+    <div class="cb" id="chBody"></div>
+    <div class="legend" id="chLegend"></div>
+    <div class="basis" id="basis"></div>
+  </div>
+</section>
+
+<footer class="ft">
+  <div class="ct" id="ftContact"></div>
+  <div class="cp" id="ftCopy"></div>
+</footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+/* ===== 유틸 ===== */
+const VIEWER = document.documentElement.dataset.viewer === '1';
+const KEY = 'refund_master_v1', MODEKEY = 'refund_mode_v1';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = v => { if (v === null || v === undefined || v === '') return null; const n = Number(String(v).replace(/,/g, '')); return Number.isFinite(n) ? n : null; };
+const uid = () => 'p' + Math.random().toString(36).slice(2, 9);
+const clone = o => JSON.parse(JSON.stringify(o));
+const plabel = m => m < 12 ? m + '개월' : (m % 12 === 0 ? (m / 12) + '년' : m + '개월');
+const uniq = a => [...new Set(a)];
+const fmt1 = v => v.toFixed(1);
+const man = v => Math.round(v / 10000).toLocaleString('ko-KR');
+const fmtAmt = v => { if (v >= 10000) { const e = Math.floor(v / 10000), r = v % 10000; return e + '억' + (r ? ' ' + r.toLocaleString('ko-KR') + '만' : ''); } return v.toLocaleString('ko-KR') + '만원'; };
+const PALETTE = ['#1c2cf0','#e8212b','#f2b705','#12a150','#111111','#0b73c9','#7b2fa8','#e8731a','#0e9aa7','#a3478f','#6b8e23','#8b5a2b'];
+const DASH = ['', '7 4', '2 3'];
+const BANKCOL = ['#607d8b', '#8d6e63', '#00838f', '#7e57c2'];
+
+/* ===== 테스트 데이터 (첨부 화면: 52세·여·1억) ===== */
+const DEF_PERIODS = [3, 6, 12, 36, 60, 84, 120, 180, 240, 300, 360];
+const DEF_FEATURES = ['고환급', '연금전환', '연금선지급', '약관대출', '적립전환'];
+function testData() {
+  const Y = [1, 5, 8, 10, 15, 20, 25, 30, 35], N = null;
+  const rows = [
+    ['밸런스', '1종 보증형', 10, '', [21.5, 38.2, 100.0, 110.0, 127.5, 145.0, 152.5, 160.0, 162.5]],
+    ['밸런스', '1종 보증형', 20, '', [7.2, 35.6, 38.7, 100.0, 115.0, 130.0, 140.0, 150.0, 152.5]],
+    ['올백', '2종 암납입면제형', 10, '', [N, N, N, 100.0, 100.0, 100.7, 109.5, 118.1, 126.1]],
+    ['올백', '2종 암납입면제형', 20, '', [N, N, N, N, N, 100.0, 100.0, 106.1, 113.4]],
+    ['뉴스탠다드', '1종 보증형', 10, '', [34.7, 79.3, 92.2, 96.0, 102.4, 109.5, 117.1, 125.5, 135.2]],
+    ['뉴스탠다드', '1종 보증형', 20, '', [N, 75.2, 95.8, 100.2, 101.1, 103.1, 110.6, 119.0, 128.3]],
+    ['행복', '2형 체증형', 5, '', [31.3, 98.0, 104.5, 119.1, 125.9, 132.9, 140.1, 146.9, 153.1]],
+    ['행복', '2형 체증형', 10, '', [20.1, 39.0, 41.7, 113.4, 119.8, 126.3, 132.9, 139.0, 144.9]],
+    ['든든플', '보증형', 10, '', [15.8, 40.3, 43.5, 102.2, 110.8, 120.1, 130.2, 141.4, 154.2]],
+    ['든든플', '보증형', 20, '', [N, 36.8, 41.1, 42.2, 43.9, 104.4, 113.2, 122.7, 133.7]],
+    ['착한종신', '기본형', 10, '', [N, N, N, 47.1, 45.4, 43.0, 43.5, 41.0, 31.2]],
+    ['착한종신', '기본형', 20, '', [N, N, N, N, N, 45.1, 46.3, 45.2, 38.3]],
+    ['CEO보장정기', '', 0, '일반', [N, 75.7, 83.6, 84.9, 84.9, 83.7, 79.5, 67.7, 37.8]],
+    ['CEO보장정기', '', 0, '간편', [N, 77.6, 85.4, 86.8, 87.0, 86.2, 82.7, 72.6, 43.5]]
+  ];
+  const products = rows.map(r => {
+    const data = {};
+    r[4].forEach((v, i) => { if (v !== null) data[Y[i] * 12] = { rate: v }; });
+    return { id: uid(), name: r[0], type: r[1], label: r[3], pay: r[2], age: null, sex: '', amount: null, monthly: null,
+      features: [], active: true, showT: true, showG: true, note: '', data };
+  });
+  return {
+    v: 1, savedAt: 0,
+    periods: uniq([...DEF_PERIODS, 96, 420]).sort((a, b) => a - b),
+    features: [...DEF_FEATURES],
+    defaults: { age: 52, sex: '여', amount: 10000, pay: 10 },
+    products,
+    banks: [
+      { id: uid(), name: '은행 적금 3.0%', rate: 3.0, monthly: null, pay: 10, link: '', show: true, src: '테스트값: 카카오뱅크 AI 목표적금 기본금리 3.00% (rates.json 2026-10-30)' },
+      { id: uid(), name: '은행 적금 3.0%', rate: 3.0, monthly: null, pay: 20, link: '', show: true, src: '테스트값: 카카오뱅크 AI 목표적금 기본금리 3.00% (rates.json 2026-10-30)' }
+    ],
+    settings: { showMonthly: true, metrics: { paid: true, refund: true, rate: true }, hideEmpty: true, focus: [120, 240], hlMax: true,
+      labelMode: 'key', bankCalc: 'month', bankTax: false, showContact: true,
+      contactText: '삼성생명 GFC 법인영업 전문컨설턴트 윤현철', memo: '' }
+  };
+}
+
+/* ===== 상태 ===== */
+let S = null;
+const UI = { tab: 'active', sel: new Set() };
+const SR = { q: '', feats: new Set(), mode: 'OR', disc: false };
+let RATES = null;
+
+function load() {
+  if (VIEWER) return testData();
+  try { const t = localStorage.getItem(KEY); if (t) { const o = JSON.parse(t); if (o && o.products) return normalize(o); } } catch (e) {}
+  return testData();
+}
+function normalize(o) {
+  const t = testData();
+  o.settings = Object.assign({}, t.settings, o.settings || {});
+  o.settings.metrics = Object.assign({}, t.settings.metrics, o.settings.metrics || {});
+  o.defaults = Object.assign({}, t.defaults, o.defaults || {});
+  o.periods = (o.periods || t.periods).slice().sort((a, b) => a - b);
+  o.features = o.features || t.features;
+  o.banks = o.banks || [];
+  return o;
+}
+const persist = () => ({ v: 1, savedAt: S.savedAt, periods: S.periods, features: S.features, defaults: S.defaults, products: S.products, banks: S.banks, settings: S.settings });
+function commit() {
+  S.savedAt = Date.now();
+  if (!VIEWER) { try { localStorage.setItem(KEY, JSON.stringify(persist())); } catch (e) {} }
+  renderAll();
+}
+
+/* ===== 상품 계산 ===== */
+const ageOf = p => num(p.age) ?? S.defaults.age;
+const sexOf = p => p.sex || S.defaults.sex;
+const amtOf = p => num(p.amount) ?? S.defaults.amount;
+const payOf = p => (p.pay === null || p.pay === '' || p.pay === undefined) ? num(S.defaults.pay) : num(p.pay);
+const labelOf = p => p.label || (payOf(p) ? payOf(p) + '년납' : '');
+const shortOf = p => p.name + (labelOf(p) ? ' ' + labelOf(p) : '');
+function prodEff(p, m) {
+  const d = p.data[m] || {};
+  let paid = num(d.paid), refund = num(d.refund), rate = num(d.rate);
+  const pay = payOf(p), mon = num(p.monthly);
+  if (paid === null && mon && pay) paid = mon * Math.min(m, pay * 12);
+  if (rate === null && paid > 0 && refund !== null) rate = refund / paid * 100;
+  if (refund === null && paid > 0 && rate !== null) refund = paid * rate / 100;
+  return { paid, refund, rate };
+}
+function bankParams(b) {
+  if (b.link) { const p = S.products.find(x => x.id === b.link); if (p) return { monthly: num(p.monthly), pay: payOf(p) }; }
+  return { monthly: num(b.monthly), pay: num(b.pay) };
+}
+function bankEff(b, m) {
+  const { monthly, pay } = bankParams(b);
+  const n = (pay || 0) * 12; if (!n) return {};
+  const r = (num(b.rate) || 0) / 100, mode = S.settings.bankCalc;
+  const dep = Math.min(m, n); let val = 0;
+  for (let k = 1; k <= dep; k++) {
+    const t = m - k + 1;
+    val += mode === 'simple' ? 1 + r * t / 12 : mode === 'year' ? Math.pow(1 + r, t / 12) : Math.pow(1 + r / 12, t);
+  }
+  let interest = val - dep; if (S.settings.bankTax) interest *= (1 - 0.154);
+  const unit = dep + interest, rate = dep > 0 ? unit / dep * 100 : null;
+  if (monthly) return { paid: monthly * dep, refund: monthly * unit, rate };
+  return { rate };
+}
+const bankLabel = b => { const c = { month: '월복리', year: '연복리', simple: '단리' }[S.settings.bankCalc]; const bp = bankParams(b); return `${b.name}${bp.pay ? ' ' + bp.pay + '년납' : ''}`.trim() + ` (${c}${S.settings.bankTax ? '·세후' : ''})`; };
+
+/* ===== 검색 ===== */
+function matches(p) {
+  if (!p.active && !SR.disc) return false;
+  const q = SR.q.trim().toLowerCase();
+  if (q) { const text = (p.name + ' ' + p.type + ' ' + p.label + ' ' + p.features.join(' ') + ' ' + p.note).toLowerCase(); if (!q.split(/\s+/).every(w => text.includes(w))) return false; }
+  if (SR.feats.size) { const f = [...SR.feats]; const ok = SR.mode === 'AND' ? f.every(x => p.features.includes(x)) : f.some(x => p.features.includes(x)); if (!ok) return false; }
+  return true;
+}
+function groupIndex() { const m = new Map(); S.products.forEach(p => { const k = p.name + '|' + p.type; if (!m.has(k)) m.set(k, m.size); }); return m; }
+function mkItems(kind) {
+  const gi = groupIndex(), out = [];
+  S.products.forEach(p => {
+    if (!matches(p)) return;
+    if (!(kind === 'T' ? p.showT : p.showG)) return;
+    out.push({ kind: 'p', id: p.id, p, name: p.name, type: p.type, label: labelOf(p), short: shortOf(p), monthly: num(p.monthly),
+      color: PALETTE[gi.get(p.name + '|' + p.type) % PALETTE.length], get: m => prodEff(p, m) });
+  });
+  S.banks.forEach((b, i) => {
+    if (!b.show) return;
+    const bp = bankParams(b);
+    out.push({ kind: 'b', id: b.id, b, name: b.name, type: '적금 ' + (num(b.rate) ?? '-') + '%', label: bp.pay ? bp.pay + '년납' : '', short: bankLabel(b), monthly: bp.monthly,
+      color: BANKCOL[i % BANKCOL.length], get: m => bankEff(b, m) });
+  });
+  const seen = {};
+  out.forEach(it => { const k = it.kind + '|' + it.name + '|' + it.type; it.vi = seen[k] = (seen[k] === undefined ? 0 : seen[k] + 1); });
+  return out;
+}
+const hasData = (it, periods) => (periods || S.periods).some(m => { const e = it.get(m); return e.rate != null || e.paid != null || e.refund != null; });
+function periodsOf(items) {
+  let ps = S.periods.slice();
+  if (S.settings.hideEmpty) ps = ps.filter(m => items.some(it => it.kind === 'p' && (() => { const e = it.get(m); return e.rate != null || e.paid != null || e.refund != null; })()));
+  return ps;
+}
+
+/* ===== 렌더 ===== */
+function renderAll() {
+  applyPrefsOnce();
+  const T = mkItems('T').filter(it => hasData(it));
+  $('#subTitle').textContent = '※ 경과기간별 환급률 비교 (납입기간별 구분 · 기준: 설계서 예시값)';
+  $('#exLabel').textContent = exampleLabel(T);
+  renderSearch(); renderMaster(); renderSummary(T); renderTable(T); renderChart(); renderFooter(); syncBind();
+}
+let _pp = false; function applyPrefsOnce() { if (_pp) return; _pp = true; Object.entries(PREF).forEach(([k, v]) => $('#tblBody').style.setProperty('--' + k, v + (k === 'fs' || k === 'cw' || k === 'lw' || k === 'ch' ? 'px' : ''))); $$('[data-pref]').forEach(el => { el.value = PREF[el.dataset.pref]; }); }
+function exampleLabel(T) {
+  const ps = T.filter(i => i.kind === 'p').map(i => i.p); if (!ps.length) return '';
+  const a = uniq(ps.map(ageOf)), s = uniq(ps.map(sexOf)), m = uniq(ps.map(amtOf));
+  return '예시 : ' + [a.length === 1 ? a[0] + '세' : '나이 상이', s.length === 1 ? s[0] : '성별 상이', m.length === 1 ? '가입금액 ' + fmtAmt(m[0]) : '가입금액 상이'].join(', ');
+}
+function renderFooter() {
+  const c = $('#ftContact'); c.style.display = S.settings.showContact ? '' : 'none'; c.textContent = S.settings.contactText || '';
+  $('#ftCopy').textContent = 'ⓒ' + new Date().getFullYear() + '. YOON HYUNCHUL, ALL RIGHTS RESERVED.';
+}
+
+/* --- 검색 --- */
+function renderSearch() {
+  $('#srFeats').innerHTML = '<span class="muted">핵심기능</span>' + S.features.map(f => `<span class="chip ${SR.feats.has(f) ? 'on' : ''}" data-act="srFeat" data-v="${esc(f)}">${esc(f)}</span>`).join('');
+  const list = S.products.filter(matches);
+  $('#srCount').textContent = `검색결과 ${list.length}개 / 전체 ${S.products.filter(p => p.active).length}개`;
+  $('#srRes').innerHTML = list.map(p => `<span class="chip" data-act="srPick" data-id="${p.id}" title="${document.body.classList.contains('admin') ? '클릭: 수정' : '클릭: 표에서 위치 보기'}">${esc(shortOf(p))}${p.active ? '' : ' <small>(단종)</small>'} ${p.features.map(f => `<span class="tag">${esc(f)}</span>`).join('')}</span>`).join('') || '<span class="muted">검색 결과가 없습니다.</span>';
+}
+
+/* --- 요약 --- */
+function renderSummary(T) {
+  const items = T.filter(i => i.kind === 'p'), banks = T.filter(i => i.kind === 'b');
+  const periods = periodsOf(T);
+  $('#sumBasis').textContent = items.length ? `비교 대상 ${items.length}개 상품` : '';
+  if (!items.length) { $('#sumBody').innerHTML = '<div class="muted">조회 대상 상품 데이터가 없습니다.</div>'; return; }
+  const R = (it, m) => it.get(m).rate, f1 = v => fmt1(v) + '%', B = t => `<b>${esc(t)}</b>`;
+  const top = (m, n = 3) => items.map(it => ({ it, v: R(it, m) })).filter(x => x.v != null).sort((a, b) => b.v - a.v).slice(0, n);
+  const topTxt = a => a.map(x => `${B(x.it.short)} ${f1(x.v)}`).join(' &gt; ');
+  const blocks = [];
+  // 초기
+  const early = periods.filter(m => m <= 60 && items.some(it => R(it, m) != null));
+  if (early.length) {
+    const m = early[early.length - 1], t = top(m);
+    if (t.length) blocks.push(['Q. 가입 초기(' + plabel(m) + ' 이내)에 환급률이 높은 상품은?', [`${plabel(m)} 경과 시점 상위: ${topTxt(t)}`, `이 시점에 환급률 100% 이상인 상품은 ${items.filter(it => (R(it, m) ?? 0) >= 100).length}개입니다.`]]);
+  }
+  // 손익분기
+  const be = items.map(it => { const m = periods.find(x => (R(it, x) ?? -1) >= 100 - 1e-9); return { it, m, v: m != null ? R(it, m) : null }; });
+  const hit = be.filter(x => x.m != null).sort((a, b) => a.m - b.m || b.v - a.v);
+  blocks.push(['Q. 납입 원금(100%)을 가장 빨리 회복하는 상품은?', [
+    hit.length ? '빠른 순: ' + hit.slice(0, 3).map(x => `${B(x.it.short)} ${plabel(x.m)}(${f1(x.v)})`).join(' &gt; ') : '조회 기간 내 100%에 도달한 상품이 없습니다.',
+    `100% 도달 ${hit.length}개 / 미도달 ${items.length - hit.length}개 (조회 기간 내 기준)`]]);
+  // 10년·20년
+  const [f0, f1m] = S.settings.focus;
+  const mid = (m, title) => { if (!periods.includes(m)) return; const t = top(m); if (!t.length) return;
+    const n100 = items.filter(it => (R(it, m) ?? 0) >= 100).length, tot = items.filter(it => R(it, m) != null).length;
+    blocks.push([title, [`${plabel(m)} 경과 시점 상위: ${topTxt(t)}`, `100% 이상 ${n100}개 / 조회 ${tot}개`]]); };
+  mid(f0, 'Q. ' + plabel(f0) + ' 시점에 환급률이 높은 상품은?');
+  mid(f1m, 'Q. ' + plabel(f1m) + ' 이후 장기 환급률이 높은 상품은?');
+  const last = periods[periods.length - 1];
+  if (last > f1m) { const t = top(last); if (t.length) blocks.push(['Q. 최장 경과(' + plabel(last) + ')까지 유지하면?', [`${plabel(last)} 경과 시점 상위: ${topTxt(t)}`]]); }
+  // 미달/하락
+  const never = items.filter(it => { const v = periods.map(m => R(it, m)).filter(x => x != null); return v.length && Math.max(...v) < 100; });
+  if (never.length) blocks.push(['Q. 조회 기간 내 100%에 못 미치는 상품은?', [never.map(it => { const v = periods.map(m => R(it, m)).filter(x => x != null); return `${B(it.short)} (최고 ${f1(Math.max(...v))})`; }).join(', '), '보장 중심 설계 여부 등은 설계서·약관으로 별도 확인이 필요합니다.']]);
+  const drop = items.map(it => { const pts = periods.map(m => [m, R(it, m)]).filter(x => x[1] != null); if (pts.length < 3) return null; const mx = pts.reduce((a, b) => b[1] > a[1] ? b : a); const lt = pts[pts.length - 1]; return mx[1] - lt[1] >= 10 ? { it, mx, lt } : null; }).filter(Boolean);
+  if (drop.length) blocks.push(['Q. 오래 유지하면 환급률이 내려가는 상품은?', drop.map(d => `${B(d.it.short)}: 최고 ${f1(d.mx[1])}(${plabel(d.mx[0])}) → ${f1(d.lt[1])}(${plabel(d.lt[0])})`)]);
+  // 은행
+  if (banks.length) {
+    const lines = [];
+    [f0, f1m].forEach(m => {
+      if (!periods.includes(m)) return;
+      let over = 0, tot = 0, names = [];
+      items.forEach(it => {
+        const pay = payOf(it.p); const bk = banks.find(b => bankParams(b.b).pay === pay) || banks[0];
+        const pr = R(it, m), br = bk.get(m).rate; if (pr == null || br == null) return;
+        tot++; if (pr > br) { over++; names.push({ it, d: pr - br }); }
+      });
+      if (tot) { names.sort((a, b) => b.d - a.d); lines.push(`${plabel(m)} 경과: 은행 적금 수익률 대비 환급률이 높은 상품 ${over}/${tot}개` + (names.length ? ` (격차 상위 ${names.slice(0, 2).map(x => B(x.it.short) + ' +' + fmt1(x.d) + '%p').join(', ')})` : '')); }
+    });
+    if (lines.length) { lines.push('은행 비교는 납입기간이 같은 적금 항목 기준이며, 보장이 포함된 보험과 단순 비교에는 한계가 있습니다.'); blocks.push(['Q. 은행 적금과 비교하면?', lines]); }
+  }
+  const memo = (S.settings.memo || '').trim();
+  $('#sumBody').innerHTML = '<div class="sumgrid">' + blocks.map(b => `<div class="qa"><div class="q">${esc(b[0])}</div><div class="a">${b[1].map(s => `<span class="s">${s}</span>`).join('')}</div></div>`).join('') + '</div>' +
+    (memo ? `<div class="memo">${memo.split('\n').map(l => `<span class="s" style="display:block">${esc(l)}</span>`).join('')}</div>` : '');
+}
+
+/* --- 표 --- */
+function renderTable(T) {
+  const st = S.settings;
+  $('#tblOpt').innerHTML = `<span class="muted">표시</span>
+    <label><input type="checkbox" data-set="settings.showMonthly"> 월보험료</label>
+    <label><input type="checkbox" data-set="settings.metrics.paid"> 누적납입보험료</label>
+    <label><input type="checkbox" data-set="settings.metrics.refund"> 환급금</label>
+    <label><input type="checkbox" data-set="settings.metrics.rate"> 환급률</label>
+    <label><input type="checkbox" data-set="settings.hideEmpty"> 데이터 없는 기간 숨김</label>
+    <label><input type="checkbox" data-set="settings.hlMax"> 100% 미달 상품은 최고값 강조</label>
+    <label>강조 경과 <select data-set="settings.focus0">${S.periods.map(m => `<option value="${m}" ${st.focus[0] === m ? 'selected' : ''}>${plabel(m)}</option>`).join('')}</select>
+    <select data-set="settings.focus1">${S.periods.map(m => `<option value="${m}" ${st.focus[1] === m ? 'selected' : ''}>${plabel(m)}</option>`).join('')}</select></label>`;
+  const periods = periodsOf(T);
+  const items = T.filter(it => hasData(it, periods));
+  if (!items.length || !periods.length) { $('#tblBody').innerHTML = '<div class="muted" style="padding:8px">표시할 데이터가 없습니다.</div>'; $('#tblNote').textContent = ''; $('#tblUnit').textContent = ''; return; }
+  const hasM = st.showMonthly && items.some(it => it.monthly);
+  const metricDefs = [['paid', '누적납입'], ['refund', '환급금'], ['rate', '환급률']].filter(d => st.metrics[d[0]]);
+  // 항목별 표시 행
+  items.forEach(it => { it.rows = metricDefs.filter(d => periods.some(m => it.get(m)[d[0]] != null)); if (!it.rows.length) it.rows = [['rate', '환급률']]; });
+  const multi = items.some(it => it.rows.length > 1);
+  const left = 3 + (hasM ? 1 : 0) + (multi ? 1 : 0);
+  const refAge = (T.find(i => i.kind === 'p') ? ageOf(T.find(i => i.kind === 'p').p) : S.defaults.age);
+  const foc = new Set(st.focus);
+  let h = '<table class="rt"><thead>';
+  const pad = left > 3 ? `<th colspan="${left - 3}"></th>` : '';
+  h += `<tr class="fl"><th class="cn" colspan="3" style="background:#fff;border:none"></th>${pad}${periods.map(m => `<th class="pc">${foc.has(m) ? '↓ ' + plabel(m) + ' 경과' : ''}</th>`).join('')}</tr>`;
+  h += `<tr><th class="cn" colspan="3">나이</th>${pad}${periods.map(m => `<th class="pc ${foc.has(m) ? 'fc top' : ''}">${refAge + Math.floor(m / 12)}</th>`).join('')}</tr>`;
+  h += `<tr><th class="cn" colspan="3">경과기간</th>${pad}${periods.map(m => `<th class="pc ${foc.has(m) ? 'fc' : ''}" style="${foc.has(m) ? 'color:#d40000' : ''}">${plabel(m)}</th>`).join('')}</tr></thead><tbody>`;
+  // 그룹
+  const groups = []; items.forEach(it => { const k = it.kind + '|' + it.name + '|' + it.type; const g = groups[groups.length - 1]; if (g && g.k === k) g.its.push(it); else groups.push({ k, its: [it] }); });
+  const lastRowIdx = groups.reduce((a, g) => a + g.its.reduce((x, it) => x + it.rows.length, 0), 0) - 1;
+  let ri = 0;
+  groups.forEach((g, gi) => {
+    const gRows = g.its.reduce((a, it) => a + it.rows.length, 0);
+    g.its.forEach((it, ii) => {
+      const hl = new Set();
+      const pts = periods.map(m => [m, it.get(m).rate]).filter(x => x[1] != null);
+      const first = pts.find(x => x[1] >= 100 - 1e-9);
+      if (first) hl.add(first[0]); else if (st.hlMax && pts.length) { const mx = Math.max(...pts.map(x => x[1])); pts.filter(x => x[1] === mx).forEach(x => hl.add(x[0])); }
+      it.rows.forEach((rw, rj) => {
+        const [key, lab] = rw, isFirst = rj === 0, bk = it.kind === 'b';
+        let cls = (it.vi > 0 ? 'v1 ' : '') + (bk ? 'bk ' : '') + (ii === 0 && rj === 0 && gi > 0 ? 'grp-first' : '');
+        h += `<tr class="${cls}" data-pid="${it.id}">`;
+        if (ii === 0 && rj === 0) { h += `<td class="nm" rowspan="${gRows}">${bk ? '🏦 ' : ''}${esc(it.name)}</td><td class="ty" rowspan="${gRows}">${esc(it.type)}</td>`; }
+        if (isFirst) { h += `<td class="pl ${it.vi > 0 ? 'v1' : ''}" rowspan="${it.rows.length}">${esc(it.label)}</td>`; if (hasM) h += `<td class="mo" rowspan="${it.rows.length}">${it.monthly ? it.monthly.toLocaleString('ko-KR') : '-'}</td>`; }
+        if (multi) h += `<td class="it">${lab}</td>`;
+        periods.forEach(m => {
+          const v = it.get(m)[key];
+          let t = v == null ? '-' : key === 'rate' ? fmt1(v) : man(v);
+          const c = [(foc.has(m) ? 'fc ' : ''), (ri === lastRowIdx && foc.has(m) ? 'bot ' : ''), 'vv ', (key === 'rate' && hl.has(m) ? 'hl' : '')].join('');
+          h += `<td class="${c}">${t}</td>`;
+        });
+        h += '</tr>'; ri++;
+      });
+    });
+  });
+  h += '</tbody></table>';
+  $('#tblBody').innerHTML = h;
+  applyFreeze();
+  $('#tblUnit').textContent = multi ? '단위: 월보험료 원 · 누적납입/환급금 만원 · 환급률 %' : '단위: %';
+  const skipped = T.length - items.length;
+  $('#tblNote').innerHTML = '노랑: 환급률 100% 최초 도달 시점' + (st.hlMax ? '(100% 미달 상품은 최고값)' : '') + ' · 파랑 글자: 같은 상품의 두 번째 이후 구분 · 🏦: 은행 적금 비교항목' + (skipped ? ` · 데이터 미입력 ${skipped}건 제외` : '');
+}
+
+/* --- 그래프 --- */
+function renderChart() {
+  $('#chOpt').innerHTML = `<span class="muted">값 표시</span>
+    <select data-set="settings.labelMode"><option value="key" ${S.settings.labelMode === 'key' ? 'selected' : ''}>주요 시점만</option><option value="all" ${S.settings.labelMode === 'all' ? 'selected' : ''}>전체</option><option value="none" ${S.settings.labelMode === 'none' ? 'selected' : ''}>없음</option></select>`;
+  const items = mkItems('G').filter(it => hasData(it));
+  if (!items.length) { $('#chBody').innerHTML = '<div class="muted" style="padding:8px">그래프로 표시할 데이터가 없습니다.</div>'; $('#chLegend').innerHTML = ''; renderBasis(); return; }
+  const periods = periodsOf(items);
+  const W = 1000, H = 540, L = 46, Rr = 26, Tp = 16, Bt = 58;
+  let mx = 0; items.filter(it => it.kind === 'p').forEach(it => periods.forEach(m => { const v = it.get(m).rate; if (v != null) mx = Math.max(mx, v); }));
+  const ymax = Math.max(110, Math.ceil((mx + 4) / 10) * 10), step = ymax > 200 ? 20 : 10;
+  const n = periods.length, xs = i => n === 1 ? (L + W - Rr) / 2 : L + i * (W - L - Rr) / (n - 1), ys = v => Tp + (1 - v / ymax) * (H - Tp - Bt);
+  const foc = new Set(S.settings.focus);
+  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'Malgun Gothic',sans-serif"><defs><clipPath id="cp"><rect x="${L - 4}" y="${Tp - 8}" width="${W - L - Rr + 24}" height="${H - Tp - Bt + 8}"/></clipPath></defs>`;
+  for (let v = 0; v <= ymax; v += step) s += `<line x1="${L}" x2="${W - Rr}" y1="${ys(v)}" y2="${ys(v)}" stroke="${v === 100 ? '#777' : '#dfe4ea'}" stroke-width="${v === 100 ? 1.4 : 1}" ${v === 100 ? 'stroke-dasharray="5 3"' : ''}/><text x="${L - 6}" y="${ys(v) + 4}" text-anchor="end" font-size="12" fill="#444">${v}</text>`;
+  s += `<text x="${L + 4}" y="${ys(100) - 4}" font-size="11" fill="#777">원금 100%</text>`;
+  periods.forEach((m, i) => {
+    s += `<line x1="${xs(i)}" x2="${xs(i)}" y1="${Tp}" y2="${H - Bt}" stroke="${foc.has(m) ? '#e66' : '#e6eaef'}" stroke-width="${foc.has(m) ? 1.4 : 1}" ${foc.has(m) ? 'stroke-dasharray="4 3"' : ''}/>`;
+    s += `<text x="${xs(i)}" y="${H - Bt + 17}" text-anchor="middle" font-size="13" font-weight="700" fill="${foc.has(m) ? '#d40000' : '#222'}">${plabel(m)}</text>`;
+    const a = (items.find(x => x.kind === 'p') ? ageOf(items.find(x => x.kind === 'p').p) : S.defaults.age) + Math.floor(m / 12);
+    s += `<text x="${xs(i)}" y="${H - Bt + 31}" text-anchor="middle" font-size="11" fill="#666">(${a}세)</text>`;
+  });
+  s += `<text x="${W - Rr}" y="${H - 6}" text-anchor="end" font-size="11" fill="#666">경과기간 (나이는 기준 가입나이 + 경과년)</text>`;
+  s += '<g clip-path="url(#cp)">';
+  items.forEach((it, k) => {
+    const pts = periods.map((m, i) => ({ m, i, v: it.get(m).rate })).filter(p => p.v != null);
+    if (!pts.length) return;
+    const dash = it.kind === 'b' ? '2 4' : DASH[Math.min(it.vi, 2)];
+    const sw = it.kind === 'b' ? 2.2 : 2;
+    s += `<polyline fill="none" stroke="${it.color}" stroke-width="${sw}" ${dash ? `stroke-dasharray="${dash}"` : ''} points="${pts.map(p => xs(p.i).toFixed(1) + ',' + ys(p.v).toFixed(1)).join(' ')}"/>`;
+    const lm = S.settings.labelMode;
+    pts.forEach((p, j) => {
+      s += `<circle cx="${xs(p.i).toFixed(1)}" cy="${ys(p.v).toFixed(1)}" r="3" fill="${it.color}"><title>${esc(it.short)} · ${plabel(p.m)} · ${fmt1(p.v)}%</title></circle>`;
+      const show = lm === 'all' || (lm === 'key' && (foc.has(p.m) || j === pts.length - 1));
+      if (show) { const dy = (k % 2 ? 14 : -7); s += `<text x="${xs(p.i).toFixed(1)}" y="${(ys(p.v) + dy).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="${it.color}" stroke="#fff" stroke-width="3" paint-order="stroke">${fmt1(p.v)}</text>`; }
+    });
+  });
+  s += '</g></svg>';
+  $('#chBody').innerHTML = s;
+  $('#chLegend').innerHTML = items.map(it => {
+    const dash = it.kind === 'b' ? '2 4' : DASH[Math.min(it.vi, 2)];
+    return `<div class="li" data-act="legend" data-kind="${it.kind}" data-id="${it.id}" title="클릭: 그래프에서 숨기기"><svg width="30" height="8"><line x1="0" y1="4" x2="30" y2="4" stroke="${it.color}" stroke-width="2.4" ${dash ? `stroke-dasharray="${dash}"` : ''}/></svg><span>${it.kind === 'b' ? '🏦 ' : ''}${esc(it.short)}</span></div>`;
+  }).join('');
+  renderBasis();
+}
+function renderBasis() {
+  const L = (t, u) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
+  const calc = { month: '월복리', year: '연복리', simple: '단리' }[S.settings.bankCalc];
+  $('#basis').innerHTML = [
+    '※ 산출기준: 환급률(%) = 해지환급금 ÷ 누적납입보험료 × 100 (설계서 예시값 입력 기준, 월보험료·환급금만 입력한 경우 자동 계산).',
+    `※ 은행 비교: 수익률(%) = 평가금액 ÷ 누적납입원금 × 100 / 매월 초 동일 금액 적립, 납입 종료 후에도 동일 이율로 ${calc} 거치 가정${S.settings.bankTax ? ' / 이자소득세 15.4% 차감(세후)' : ' / 세전'}.`,
+    `※ 세금 참고: ${L('소득세법 제16조(이자소득)', 'https://www.law.go.kr/법령/소득세법/제16조')} · ${L('소득세법 제129조(원천징수세율)', 'https://www.law.go.kr/법령/소득세법/제129조')} · ${L('소득세법 시행령 제25조(저축성보험 보험차익 비과세)', 'https://www.law.go.kr/법령/소득세법시행령/제25조')}`,
+    '※ 보험은 보장(사망·질병 등)을 포함한 상품으로 은행 적금과 단순 비교에는 한계가 있으며, 실제 환급금은 가입 조건·설계서·약관을 기준으로 합니다.'
+  ].map(t => `<span class="s">${t}</span>`).join('');
+}
+
+/* --- Master --- */
+function renderMaster() {
+  const body = $('#masterBody'); if (!document.body.classList.contains('admin')) { body.innerHTML = ''; return; }
+  const d = S.defaults;
+  const active = S.products.filter(p => p.active), disc = S.products.filter(p => !p.active);
+  const list = UI.tab === 'active' ? active : disc;
+  let h = '';
+  // 기본값
+  h += `<details class="pn" open><summary>① 기본 가입조건 · 일괄적용</summary><div class="in">
+    <div class="row">
+      <label>가입나이 <input type="number" data-set="defaults.age" style="width:70px"></label>
+      <label>성별 <select data-set="defaults.sex"><option>여</option><option>남</option></select></label>
+      <label>가입금액(만원) <input type="number" data-set="defaults.amount" style="width:100px"></label>
+      <label>납입기간(년) <input type="number" data-set="defaults.pay" style="width:70px"></label>
+      <span class="muted">※ 상품별 값이 비어 있으면 기본값 적용</span></div>
+    <div class="row"><b>일괄적용</b>
+      <label><input type="checkbox" id="bkAge" checked> 나이</label><label><input type="checkbox" id="bkSex" checked> 성별</label>
+      <label><input type="checkbox" id="bkAmt" checked> 가입금액</label><label><input type="checkbox" id="bkPay"> 납입기간</label>
+      <label>월보험료 <input type="number" id="bkMon" placeholder="원(선택)" style="width:110px"></label>
+      <button data-act="bulkSel">선택 상품에 적용</button><button data-act="bulkAll">판매중 전체에 적용</button></div></div></details>`;
+  // 기간·기능
+  h += `<details class="pn"><summary>② 경과기간 · 핵심기능 항목</summary><div class="in">
+    <div class="row"><b>경과기간</b>${S.periods.map(m => `<span class="chip ft">${plabel(m)} <span class="x" data-act="perDel" data-v="${m}" title="삭제">✕</span></span>`).join('')}
+      <input type="number" id="perN" placeholder="숫자" style="width:70px"><select id="perU"><option value="y">년</option><option value="m">개월</option></select><button data-act="perAdd">추가</button></div>
+    <div class="row"><b>핵심기능</b>${S.features.map(f => `<span class="chip ft">${esc(f)} <span class="x" data-act="ftEdit" data-v="${esc(f)}" title="이름 수정">✎</span><span class="x" data-act="ftDel" data-v="${esc(f)}" title="삭제">✕</span></span>`).join('')}
+      <input type="text" id="ftN" placeholder="새 항목" style="width:110px"><button data-act="ftAdd">추가</button></div></div></details>`;
+  // 상품
+  h += `<details class="pn" open><summary>③ 상품 DB (${active.length} 판매중 / ${disc.length} 단종)</summary><div class="in">
+    <div class="row"><button class="pri" data-act="pAdd">＋ 상품 추가</button><button data-act="upload">📥 엑셀/CSV 업로드</button><button data-act="tpl">양식 받기(CSV)</button><button data-act="expCsv">현재 데이터 CSV</button>
+      <button data-act="expJson">JSON 내보내기</button><button data-act="impJson">JSON 불러오기</button><button data-act="gh">GitHub 반영</button><button class="dg" data-act="reset">테스트 데이터로 초기화</button>
+      <input type="file" id="fileUp" accept=".xlsx,.xls,.csv" style="display:none"><input type="file" id="fileJson" accept=".json" style="display:none"></div>
+    <div class="row"><span class="muted">표시 일괄</span><button class="sm" data-act="vis" data-k="showT" data-v="1">표 전체 보기</button><button class="sm" data-act="vis" data-k="showT" data-v="0">표 전체 숨김</button>
+      <button class="sm" data-act="vis" data-k="showG" data-v="1">그래프 전체 보기</button><button class="sm" data-act="vis" data-k="showG" data-v="0">그래프 전체 숨김</button></div>
+    <div class="tabs"><button class="${UI.tab === 'active' ? 'on' : ''}" data-act="tab" data-v="active">판매중 ${active.length}</button><button class="${UI.tab === 'disc' ? 'on' : ''}" data-act="tab" data-v="disc">단종 ${disc.length}</button></div>
+    <div class="tw"><table class="mt"><thead><tr><th><input type="checkbox" data-act="selAll"></th><th>표</th><th>그래프</th><th>색</th><th>상품명</th><th>유형</th><th>구분</th><th>나이</th><th>성별</th><th>가입금액</th><th>월보험료(원)</th><th>핵심기능</th><th>입력</th><th>관리</th></tr></thead><tbody>
+    ${list.map(p => `<tr><td><input type="checkbox" data-act="sel" data-id="${p.id}" ${UI.sel.has(p.id) ? 'checked' : ''}></td>
+      <td><input type="checkbox" data-act="pv" data-k="showT" data-id="${p.id}" ${p.showT ? 'checked' : ''}></td><td><input type="checkbox" data-act="pv" data-k="showG" data-id="${p.id}" ${p.showG ? 'checked' : ''}></td>
+      <td><span class="sw" style="background:${PALETTE[groupIndex().get(p.name + '|' + p.type) % PALETTE.length]}"></span></td>
+      <td class="l"><b>${esc(p.name)}</b></td><td class="l">${esc(p.type)}</td><td>${esc(labelOf(p))}</td><td>${ageOf(p)}${p.age == null ? '<small class="muted">*</small>' : ''}</td><td>${sexOf(p)}${p.sex ? '' : '<small class="muted">*</small>'}</td>
+      <td>${fmtAmt(amtOf(p))}${p.amount == null ? '<small class="muted">*</small>' : ''}</td>
+      <td><input type="number" data-act="mon" data-id="${p.id}" value="${p.monthly ?? ''}" placeholder="-"></td>
+      <td class="l">${p.features.map(f => `<span class="tag">${esc(f)}</span>`).join('')}</td>
+      <td>${Object.keys(p.data).length}/${S.periods.length}</td>
+      <td style="white-space:nowrap"><button class="sm" data-act="up" data-id="${p.id}">↑</button><button class="sm" data-act="dn" data-id="${p.id}">↓</button>
+        <button class="sm" data-act="pEdit" data-id="${p.id}">수정</button><button class="sm" data-act="pCopy" data-id="${p.id}">복제</button>
+        <button class="sm" data-act="pDisc" data-id="${p.id}">${p.active ? '단종' : '재판매'}</button><button class="sm dg" data-act="pDel" data-id="${p.id}">삭제</button></td></tr>`).join('') || '<tr><td colspan="14" class="muted">상품이 없습니다.</td></tr>'}
+    </tbody></table></div><div class="tnote">* 표시는 기본값 적용. 환급액·환급률 입력은 [수정] 창의 경과기간 표에서 합니다.</div></div></details>`;
+  // 은행
+  h += `<details class="pn" open><summary>④ 은행 비교항목 (월적립액 · 적용이율)</summary><div class="in">
+    <div class="row"><label>계산방식 <select data-set="settings.bankCalc"><option value="month">월복리</option><option value="year">연복리</option><option value="simple">단리</option></select></label>
+      <label><input type="checkbox" data-set="settings.bankTax"> 세후(이자소득세 15.4%)</label><button class="pri" data-act="bAdd">＋ 은행 비교 추가</button><button data-act="rates">🏦 금리표에서 선택</button></div>
+    <table class="mt"><thead><tr><th>표·그래프</th><th>명칭</th><th>적용이율(%)</th><th>월적립액(원)</th><th>납입(년)</th><th>상품 연동</th><th>출처/메모</th><th>관리</th></tr></thead><tbody>
+    ${S.banks.map(b => `<tr><td><input type="checkbox" data-act="bv" data-id="${b.id}" ${b.show ? 'checked' : ''}></td><td class="l">${esc(b.name)}</td><td>${b.rate ?? '-'}</td><td>${b.link ? '<span class="muted">연동</span>' : (b.monthly ?? '-')}</td><td>${b.link ? '<span class="muted">연동</span>' : (b.pay ?? '-')}</td>
+      <td class="l">${b.link ? esc(shortOf(S.products.find(p => p.id === b.link) || { name: '(삭제됨)', type: '', label: '', pay: 0, data: {} })) : '-'}</td><td class="l">${esc(b.src || '')}</td>
+      <td style="white-space:nowrap"><button class="sm" data-act="bEdit" data-id="${b.id}">수정</button><button class="sm dg" data-act="bDel" data-id="${b.id}">삭제</button></td></tr>`).join('') || '<tr><td colspan="8" class="muted">은행 비교항목이 없습니다.</td></tr>'}
+    </tbody></table></div></details>`;
+  // 문구
+  h += `<details class="pn"><summary>⑤ 요약 메모 · 담당자정보</summary><div class="in">
+    <div class="row"><label style="flex:1;min-width:280px">담당자정보 (푸터 좌측 · 상단 체크박스로 조회/인쇄 표시 선택)<input type="text" data-set="settings.contactText" style="width:100%"></label></div>
+    <div class="row"><label style="flex:1;min-width:280px">요약 하단 메모 (줄바꿈=문장 구분)<textarea data-set="settings.memo" rows="3" style="width:100%"></textarea></label></div></div></details>`;
+  body.innerHTML = h;
+}
+
+/* ===== 셀 크기 · 틀 고정 ===== */
+const PKEY = 'refund_view_prefs', PDEF = { cw: 48, lw: 90, ch: 2, fs: 13 };
+let PREF = Object.assign({}, PDEF); try { Object.assign(PREF, JSON.parse(localStorage.getItem(PKEY) || '{}')); } catch (e) {}
+function applyPrefs() {
+  const tw = $('#tblBody'); tw.style.setProperty('--cw', PREF.cw + 'px'); tw.style.setProperty('--lw', PREF.lw + 'px'); tw.style.setProperty('--ch', PREF.ch + 'px'); tw.style.setProperty('--fs', PREF.fs + 'px');
+  $$('[data-pref]').forEach(el => { el.value = PREF[el.dataset.pref]; });
+  applyFreeze();
+}
+function applyFreeze() {
+  const tb = $('#tblBody table'); if (!tb) return;
+  let top = 0; $$('thead tr', tb).forEach(tr => { $$('th', tr).forEach(th => { th.style.top = top + 'px'; }); top += tr.getBoundingClientRect().height; });
+  const r = $('tbody tr', tb); if (!r) return;
+  const nm = $('td.nm', r), ty = $('td.ty', r); if (!nm || !ty) return;
+  const w1 = nm.getBoundingClientRect().width, w2 = ty.getBoundingClientRect().width;
+  $$('td.nm', tb).forEach(c => { c.style.left = '0px'; }); $$('td.ty', tb).forEach(c => { c.style.left = w1 + 'px'; }); $$('td.pl', tb).forEach(c => { c.style.left = (w1 + w2) + 'px'; });
+}
+document.addEventListener('input', e => { const k = e.target.dataset && e.target.dataset.pref; if (!k) return; PREF[k] = +e.target.value; try { localStorage.setItem(PKEY, JSON.stringify(PREF)); } catch (er) {} applyPrefs(); });
+
+/* ===== 바인딩 ===== */
+function getPath(path) { if (path === 'settings.focus0') return S.settings.focus[0]; if (path === 'settings.focus1') return S.settings.focus[1]; return path.split('.').reduce((o, k) => o[k], S); }
+function setPath(path, v) {
+  if (path === 'settings.focus0') { S.settings.focus[0] = +v; return; } if (path === 'settings.focus1') { S.settings.focus[1] = +v; return; }
+  const ks = path.split('.'), last = ks.pop(); const o = ks.reduce((o, k) => o[k], S); o[last] = v;
+}
+function syncBind() {
+  $$('[data-set]').forEach(el => {
+    const v = getPath(el.dataset.set);
+    if (el.type === 'checkbox') el.checked = !!v; else if (document.activeElement !== el) el.value = v ?? '';
+  });
+}
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.dataset.set) {
+    let v = el.type === 'checkbox' ? el.checked : (el.type === 'number' ? num(el.value) : el.value);
+    if (el.dataset.set === 'settings.bankCalc' || el.dataset.set === 'settings.labelMode' || el.tagName === 'SELECT' && el.dataset.set.startsWith('settings.focus')) v = el.value;
+    setPath(el.dataset.set, v); commit(); return;
+  }
+  if (el.id === 'srMode') { SR.mode = el.value; renderAll(); return; }
+  if (el.id === 'srDisc') { SR.disc = el.checked; renderAll(); return; }
+  const a = el.dataset.act; if (!a) return;
+  const p = S.products.find(x => x.id === el.dataset.id);
+  if (a === 'pv' && p) { p[el.dataset.k] = el.checked; commit(); }
+  else if (a === 'mon' && p) { p.monthly = num(el.value); commit(); }
+  else if (a === 'bv') { const b = S.banks.find(x => x.id === el.dataset.id); if (b) { b.show = el.checked; commit(); } }
+  else if (a === 'sel') { el.checked ? UI.sel.add(el.dataset.id) : UI.sel.delete(el.dataset.id); }
+  else if (a === 'selAll') { const l = S.products.filter(x => (UI.tab === 'active') === x.active); l.forEach(x => el.checked ? UI.sel.add(x.id) : UI.sel.delete(x.id)); renderMaster(); }
+});
+$('#srQ').addEventListener('input', e => { SR.q = e.target.value; renderAll(); $('#srQ').focus(); });
+
+/* ===== 클릭 액션 ===== */
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]'); if (!t || t.tagName === 'INPUT') return;
+  const a = t.dataset.act, id = t.dataset.id, v = t.dataset.v;
+  const idx = S.products.findIndex(x => x.id === id), p = S.products[idx];
+  switch (a) {
+    case 'print': window.print(); break;
+    case 'prefReset': PREF = Object.assign({}, PDEF); try { localStorage.removeItem(PKEY); } catch (er) {} applyPrefs(); break;
+    case 'mode': { const on = !document.body.classList.contains('admin'); setMode(on); break; }
+    case 'rates': openRates(null); break;
+    case 'srClear': SR.q = ''; SR.feats.clear(); SR.disc = false; $('#srQ').value = ''; $('#srDisc').checked = false; renderAll(); break;
+    case 'srFeat': SR.feats.has(v) ? SR.feats.delete(v) : SR.feats.add(v); renderAll(); break;
+    case 'srPick': if (document.body.classList.contains('admin')) editProduct(id); else { const tr = $(`tr[data-pid="${id}"]`); if (tr) { tr.scrollIntoView({ behavior: 'smooth', block: 'center' }); tr.classList.add('flash'); setTimeout(() => tr.classList.remove('flash'), 1800); } } break;
+    case 'legend': if (t.dataset.kind === 'p') { const q = S.products.find(x => x.id === id); if (q) q.showG = false; } else { const b = S.banks.find(x => x.id === id); if (b) b.show = false; } commit(); break;
+    case 'tab': UI.tab = v; renderMaster(); break;
+    case 'pAdd': editProduct(null); break;
+    case 'pEdit': editProduct(id); break;
+    case 'pCopy': { const c = clone(p); c.id = uid(); c.label = c.label || ''; c.name = p.name; S.products.splice(idx + 1, 0, c); commit(); editProduct(c.id); break; }
+    case 'pDisc': p.active = !p.active; commit(); break;
+    case 'pDel': if (confirm(`'${shortOf(p)}' 상품을 삭제할까요? (복구 불가)`)) { S.products.splice(idx, 1); S.banks.forEach(b => { if (b.link === id) b.link = ''; }); commit(); } break;
+    case 'up': case 'dn': { const dir = a === 'up' ? -1 : 1; let j = idx + dir; while (j >= 0 && j < S.products.length && S.products[j].active !== p.active) j += dir; if (j >= 0 && j < S.products.length) { [S.products[idx], S.products[j]] = [S.products[j], S.products[idx]]; commit(); } break; }
+    case 'vis': S.products.filter(x => x.active).forEach(x => x[t.dataset.k] = v === '1'); commit(); break;
+    case 'bulkSel': case 'bulkAll': bulk(a === 'bulkAll'); break;
+    case 'perAdd': { const n = num($('#perN').value); if (!n || n <= 0) return alert('숫자를 입력하세요.'); const m = $('#perU').value === 'y' ? Math.round(n * 12) : Math.round(n); if (S.periods.includes(m)) return alert('이미 있는 경과기간입니다.'); S.periods.push(m); S.periods.sort((x, y) => x - y); commit(); break; }
+    case 'perDel': { const m = +v; const used = S.products.some(q => q.data[m]); if (confirm(`${plabel(m)} 항목을 삭제할까요?` + (used ? '\n(입력된 데이터도 함께 삭제됩니다)' : ''))) { S.periods = S.periods.filter(x => x !== m); S.products.forEach(q => delete q.data[m]); commit(); } break; }
+    case 'ftAdd': { const n = $('#ftN').value.trim(); if (!n) return; if (S.features.includes(n)) return alert('이미 있는 항목입니다.'); S.features.push(n); commit(); break; }
+    case 'ftEdit': { const n = (prompt('핵심기능 이름 수정', v) || '').trim(); if (!n || n === v) return; if (S.features.includes(n)) return alert('이미 있는 항목입니다.'); S.features = S.features.map(x => x === v ? n : x); S.products.forEach(q => q.features = q.features.map(x => x === v ? n : x)); if (SR.feats.delete(v)) SR.feats.add(n); commit(); break; }
+    case 'ftDel': if (confirm(`'${v}' 항목을 삭제할까요? 상품에 선택된 값도 제거됩니다.`)) { S.features = S.features.filter(x => x !== v); S.products.forEach(q => q.features = q.features.filter(x => x !== v)); SR.feats.delete(v); commit(); } break;
+    case 'bAdd': editBank(null); break;
+    case 'bEdit': editBank(id); break;
+    case 'bDel': if (confirm('은행 비교항목을 삭제할까요?')) { S.banks = S.banks.filter(x => x.id !== id); commit(); } break;
+    case 'upload': $('#fileUp').click(); break;
+    case 'tpl': downloadText('refund_upload_template.csv', templateCsv()); break;
+    case 'expCsv': downloadText('refund_data.csv', exportCsv()); break;
+    case 'expJson': downloadText('refund_data.json', JSON.stringify(persist(), null, 1), 'application/json'); break;
+    case 'impJson': $('#fileJson').click(); break;
+    case 'gh': ghPush(); break;
+    case 'reset': if (confirm('모든 입력 데이터를 지우고 첨부 테스트 데이터로 되돌릴까요?')) { S = testData(); UI.sel.clear(); commit(); } break;
+  }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'fileUp' && e.target.files[0]) { handleUpload(e.target.files[0]); e.target.value = ''; }
+  if (e.target.id === 'fileJson' && e.target.files[0]) { const f = e.target.files[0]; f.text().then(t => { try { S = normalize(JSON.parse(t)); commit(); alert('불러오기 완료'); } catch (er) { alert('JSON 형식 오류: ' + er.message); } }); e.target.value = ''; }
+});
+function setMode(on) { document.body.classList.toggle('admin', on); $('#btnMode').textContent = on ? '👁 조회모드' : '⚙ 관리모드'; $$('.admin-link').forEach(a => a.style.display = on ? '' : 'none'); try { localStorage.setItem(MODEKEY, on ? '1' : '0'); } catch (e) {} renderAll(); }
+function bulk(all) {
+  const ids = all ? S.products.filter(p => p.active).map(p => p.id) : [...UI.sel];
+  if (!ids.length) return alert('적용할 상품을 선택하세요. (상품 목록 왼쪽 체크박스)');
+  const d = S.defaults, mon = num($('#bkMon').value);
+  S.products.forEach(p => { if (!ids.includes(p.id)) return;
+    if ($('#bkAge').checked) p.age = d.age; if ($('#bkSex').checked) p.sex = d.sex; if ($('#bkAmt').checked) p.amount = d.amount; if ($('#bkPay').checked) p.pay = d.pay; if (mon) p.monthly = mon; });
+  commit(); alert(`${ids.length}개 상품에 적용했습니다.`);
+}
+
+/* ===== 모달 ===== */
+let zTop = 1000;
+function openModal(title, node, w = 760) {
+  const m = document.createElement('div'); m.className = 'modal'; m.style.width = w + 'px'; m.style.zIndex = ++zTop;
+  m.innerHTML = `<div class="mh"><span>${esc(title)}</span><button class="x" data-close>✕</button></div><div class="mb"></div>`;
+  $('.mb', m).append(node); document.body.append(m);
+  m.addEventListener('mousedown', () => { m.style.zIndex = ++zTop; });
+  $('[data-close]', m).addEventListener('click', () => m.remove());
+  const hd = $('.mh', m); let sx, sy, ox, oy, drag = false;
+  hd.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; drag = true; const r = m.getBoundingClientRect(); m.style.transform = 'none'; m.style.left = r.left + 'px'; m.style.top = r.top + 'px'; sx = e.clientX; sy = e.clientY; ox = r.left; oy = r.top; hd.setPointerCapture(e.pointerId); });
+  hd.addEventListener('pointermove', e => { if (!drag) return; m.style.left = Math.max(0, ox + e.clientX - sx) + 'px'; m.style.top = Math.max(0, oy + e.clientY - sy) + 'px'; });
+  hd.addEventListener('pointerup', () => { drag = false; });
+  return m;
+}
+
+/* --- 상품 편집 --- */
+function editProduct(id) {
+  const src = id ? S.products.find(x => x.id === id) : null;
+  const p = src ? clone(src) : { id: uid(), name: '', type: '', label: '', pay: null, age: null, sex: '', amount: null, monthly: null, features: [], active: true, showT: true, showG: true, note: '', data: {} };
+  const box = document.createElement('div');
+  box.innerHTML = `<div class="fg">
+    <label>상품명<input type="text" data-f="name" value="${esc(p.name)}"></label>
+    <label>유형(예: 1종 보증형)<input type="text" data-f="type" value="${esc(p.type)}"></label>
+    <label>구분 표시(비우면 N년납)<input type="text" data-f="label" value="${esc(p.label)}" placeholder="예: 일반 / 간편"></label>
+    <label>납입기간(년) · 0=미지정<input type="number" data-f="pay" value="${p.pay ?? ''}" placeholder="기본 ${S.defaults.pay}"></label>
+    <label>가입나이<input type="number" data-f="age" value="${p.age ?? ''}" placeholder="기본 ${S.defaults.age}"></label>
+    <label>성별<select data-f="sex"><option value="">기본(${S.defaults.sex})</option><option ${p.sex === '남' ? 'selected' : ''}>남</option><option ${p.sex === '여' ? 'selected' : ''}>여</option></select></label>
+    <label>가입금액(만원)<input type="number" data-f="amount" value="${p.amount ?? ''}" placeholder="기본 ${S.defaults.amount}"></label>
+    <label>월보험료(원)<input type="number" data-f="monthly" value="${p.monthly ?? ''}"></label></div>
+    <div class="row" style="margin-top:6px"><b>핵심기능</b>${S.features.map(f => `<label><input type="checkbox" data-ft="${esc(f)}" ${p.features.includes(f) ? 'checked' : ''}> ${esc(f)}</label>`).join('')}</div>
+    <div class="row"><label style="flex:1">메모<input type="text" data-f="note" value="${esc(p.note)}" style="width:100%"></label></div>
+    <div class="row"><b>경과기간별 입력</b>
+      <button class="sm" data-calc="paid">누적보험료 자동(월보험료×납입개월)</button><button class="sm" data-calc="rate">환급률 자동(환급액÷누적)</button><button class="sm" data-calc="refund">환급액 자동(누적×환급률)</button><button class="sm dg" data-calc="clear">전체 지우기</button></div>
+    <div class="tw"><table class="pg"><thead><tr><th>경과기간</th><th>누적보험료(원)</th><th>환급액(원)</th><th>환급률(%)</th></tr></thead><tbody>
+    ${S.periods.map(m => { const d = p.data[m] || {}; return `<tr><td>${plabel(m)}</td><td><input type="number" data-pm="${m}" data-pf="paid" value="${d.paid ?? ''}"></td><td><input type="number" data-pm="${m}" data-pf="refund" value="${d.refund ?? ''}"></td><td><input class="rt" type="number" step="0.1" data-pm="${m}" data-pf="rate" value="${d.rate ?? ''}"></td></tr>`; }).join('')}
+    </tbody></table></div>
+    <div class="row" style="margin-top:8px"><button class="pri" data-save>저장</button><button data-cancel>취소</button><span class="er" id="edErr"></span></div>`;
+  const m = openModal(src ? '상품 수정 · ' + shortOf(src) : '상품 추가', box, 720);
+  const read = () => {
+    const g = k => $(`[data-f="${k}"]`, box).value;
+    p.name = g('name').trim(); p.type = g('type').trim(); p.label = g('label').trim(); p.pay = num(g('pay')); p.age = num(g('age')); p.sex = g('sex'); p.amount = num(g('amount')); p.monthly = num(g('monthly')); p.note = g('note').trim();
+    p.features = $$('[data-ft]', box).filter(c => c.checked).map(c => c.dataset.ft);
+    p.data = {}; S.periods.forEach(pm => { const d = {}; ['paid', 'refund', 'rate'].forEach(f => { const v = num($(`[data-pm="${pm}"][data-pf="${f}"]`, box).value); if (v !== null) d[f] = v; }); if (Object.keys(d).length) p.data[pm] = d; });
+  };
+  const write = () => S.periods.forEach(pm => { const d = p.data[pm] || {}; ['paid', 'refund', 'rate'].forEach(f => { $(`[data-pm="${pm}"][data-pf="${f}"]`, box).value = d[f] ?? ''; }); });
+  box.addEventListener('click', e => {
+    const c = e.target.closest('[data-calc]');
+    if (c) {
+      read(); const pay = payOf(p), mon = p.monthly;
+      S.periods.forEach(pm => { const d = p.data[pm] = p.data[pm] || {};
+        if (c.dataset.calc === 'paid') { if (mon && pay) d.paid = mon * Math.min(pm, pay * 12); }
+        else if (c.dataset.calc === 'rate') { if (d.paid > 0 && d.refund != null) d.rate = Math.round(d.refund / d.paid * 1000) / 10; }
+        else if (c.dataset.calc === 'refund') { if (d.paid > 0 && d.rate != null) d.refund = Math.round(d.paid * d.rate / 100); }
+        else if (c.dataset.calc === 'clear') { delete p.data[pm]; } });
+      write(); return;
+    }
+    if (e.target.closest('[data-cancel]')) m.remove();
+    if (e.target.closest('[data-save]')) {
+      read(); if (!p.name) { $('#edErr').textContent = '상품명을 입력하세요.'; return; }
+      if (src) S.products[S.products.findIndex(x => x.id === src.id)] = p; else S.products.push(p);
+      m.remove(); commit();
+    }
+  });
+}
+
+/* --- 은행 편집 + 금리표 --- */
+function editBank(id) {
+  const src = id ? S.banks.find(x => x.id === id) : null;
+  const b = src ? clone(src) : { id: uid(), name: '은행 적금', rate: 3.0, monthly: null, pay: 10, link: '', show: true, src: '' };
+  const box = document.createElement('div');
+  box.innerHTML = `<div class="fg">
+    <label>명칭<input type="text" data-f="name" value="${esc(b.name)}"></label>
+    <label>적용이율(연 %)<input type="number" step="0.01" data-f="rate" value="${b.rate ?? ''}"></label>
+    <label>월적립액(원)<input type="number" data-f="monthly" value="${b.monthly ?? ''}"></label>
+    <label>적립(납입)기간(년)<input type="number" data-f="pay" value="${b.pay ?? ''}"></label>
+    <label>상품 연동(월적립액·납입기간 따름)<select data-f="link"><option value="">연동 안 함</option>${S.products.map(p => `<option value="${p.id}" ${b.link === p.id ? 'selected' : ''}>${esc(shortOf(p))}</option>`).join('')}</select></label>
+    <label>출처/메모<input type="text" data-f="src" value="${esc(b.src)}"></label></div>
+    <div class="row" style="margin-top:8px"><button data-pickrate>🏦 금리표에서 이율 선택</button><button class="pri" data-save>저장</button><button data-cancel>취소</button></div>`;
+  const m = openModal(src ? '은행 비교항목 수정' : '은행 비교항목 추가', box, 560);
+  box.addEventListener('click', e => {
+    if (e.target.closest('[data-pickrate]')) openRates(({ rate, label }) => { $('[data-f="rate"]', box).value = rate; $('[data-f="src"]', box).value = label; if (!$('[data-f="name"]', box).value || $('[data-f="name"]', box).value === '은행 적금') $('[data-f="name"]', box).value = '은행 적금 ' + rate + '%'; });
+    if (e.target.closest('[data-cancel]')) m.remove();
+    if (e.target.closest('[data-save]')) {
+      const g = k => $(`[data-f="${k}"]`, box).value;
+      b.name = g('name').trim() || '은행 적금'; b.rate = num(g('rate')); b.monthly = num(g('monthly')); b.pay = num(g('pay')); b.link = g('link'); b.src = g('src').trim();
+      if (src) S.banks[S.banks.findIndex(x => x.id === src.id)] = b; else S.banks.push(b);
+      m.remove(); commit();
+    }
+  });
+}
+const RATES_FALLBACK = { asOf: '2026-10-30', source: '금융감독원 금융상품통합비교공시 기준 정기적금 비교 / KB국민은행: 2026-07-22~24 보도자료 기준', items: [
+  { bank: '우리은행', product: '우리 사장님 성장 적금', base: 2.00, max: 6.00, date: '2026-10-30', note: '' },
+  { bank: '하나은행', product: '급여하나 월복리 적금', base: 2.95, max: 5.25, date: '2026-10-30', note: '월복리' },
+  { bank: '카카오뱅크', product: '카카오뱅크 AI 목표적금', base: 3.00, max: 5.00, date: '2026-10-30', note: '' },
+  { bank: '부산은행', product: '부산이라 좋다 Big적금', base: 2.60, max: 4.80, date: '2026-10-30', note: '' },
+  { bank: '경남은행', product: 'BNK 위더스WithUs 자유적금', base: 2.30, max: 4.80, date: '2026-10-30', note: '' },
+  { bank: '광주은행', product: '전남광주통합특별시 사랑적금', base: 2.70, max: 4.70, date: '2026-10-30', note: '' },
+  { bank: 'IBK기업은행', product: 'IBK중기근로자우대적금', base: 2.50, max: 4.70, date: '2026-10-30', note: '' },
+  { bank: '신한은행', product: '신한 플랫폼 적금(병역명문가)', base: 1.50, max: 4.50, date: '2026-10-30', note: '가입대상 제한 상품' },
+  { bank: '제주은행', product: '탐이나요적금', base: 1.65, max: 4.35, date: '2026-10-30', note: '' },
+  { bank: '케이뱅크', product: '주거래우대 자유적금', base: 3.70, max: 4.30, date: '2026-10-30', note: '' },
+  { bank: 'KB국민은행', product: 'KB맑은하늘적금(1년)', base: null, max: 3.45, date: '2026-07-24', note: '기본금리 미확인 · 기준일 상이' }] };
+async function loadRates() {
+  if (RATES) return RATES;
+  for (const u of ['../rates.json', 'https://raw.githubusercontent.com/yangji-madang/SLGFC/main/rates.json']) {
+    try { const r = await fetch(u, { cache: 'no-store' }); if (r.ok) { RATES = await r.json(); return RATES; } } catch (e) {}
+  }
+  RATES = RATES_FALLBACK; return RATES;
+}
+async function openRates(onPick) {
+  const R = await loadRates();
+  const box = document.createElement('div');
+  const f = v => v == null ? '-' : v.toFixed(2);
+  box.innerHTML = `<div class="tnote">기준일 ${esc(R.asOf)} · ${esc(R.source)}</div>
+    <table class="mt"><thead><tr><th>은행</th><th>상품</th><th>기본(%)</th><th>최고(%)</th><th>기준일</th><th>비고</th>${onPick ? '<th>적용</th>' : ''}</tr></thead><tbody>
+    ${R.items.map((it, i) => `<tr><td>${esc(it.bank)}</td><td class="l">${esc(it.product)}</td><td>${f(it.base)}</td><td>${f(it.max)}</td><td>${esc(it.date)}</td><td class="l">${esc(it.note || '')}</td>
+      ${onPick ? `<td style="white-space:nowrap">${it.base != null ? `<button class="sm" data-i="${i}" data-k="base">기본</button>` : ''}<button class="sm" data-i="${i}" data-k="max">최고</button></td>` : ''}</tr>`).join('')}</tbody></table>
+    <div class="row" style="margin-top:6px"><a href="../Savings_Rates.html" target="_blank" rel="noopener"><button>시중은행 적금금리표 페이지 열기 ↗</button></a><span class="muted">※ 적금 최고금리는 우대조건·가입기간 제한이 있어 장기(10년 이상) 비교에는 기본금리 사용을 권장합니다.</span></div>`;
+  const m = openModal('시중은행 적금금리표', box, 760);
+  box.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b || !onPick) return; const it = R.items[+b.dataset.i]; const rate = it[b.dataset.k]; onPick({ rate, label: `${it.bank} ${it.product} ${b.dataset.k === 'base' ? '기본' : '최고'}금리 ${rate.toFixed(2)}% (${it.date})` }); m.remove(); });
+}
+
+/* ===== 업로드/내보내기 ===== */
+function downloadText(name, text, mime = 'text/csv') { const bl = new Blob([mime === 'text/csv' ? '﻿' + text : text], { type: mime + ';charset=utf-8' }); const a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = name; document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+const CSVH = ['상품명', '유형', '납입기간(년)', '구분', '가입나이', '성별', '가입금액(만원)', '월보험료(원)', '핵심기능', '경과기간', '누적보험료(원)', '환급액(원)', '환급률(%)'];
+const csvCell = v => { v = v == null ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+function templateCsv() {
+  return [CSVH, ['예시상품', '1종 보증형', 10, '', 52, '여', 10000, 500000, '고환급;연금전환', '10년', 60000000, 66000000, 110],
+    ['예시상품', '1종 보증형', 10, '', 52, '여', 10000, 500000, '고환급;연금전환', '20년', 60000000, 87000000, 145],
+    ['※ 환급률만 입력하는 가로형도 가능: 상품명,유형,납입기간(년),구분 + 1년,5년,10년… 열', '', '', '', '', '', '', '', '', '', '', '', '']].map(r => r.map(csvCell).join(',')).join('\r\n');
+}
+function exportCsv() {
+  const rows = [CSVH];
+  S.products.forEach(p => S.periods.forEach(m => { const d = p.data[m]; if (!d) return; rows.push([p.name, p.type, p.pay ?? '', p.label, p.age ?? '', p.sex, p.amount ?? '', p.monthly ?? '', p.features.join(';'), plabel(m), d.paid ?? '', d.refund ?? '', d.rate ?? '']); }));
+  return rows.map(r => r.map(csvCell).join(',')).join('\r\n');
+}
+function parseCsv(t) {
+  t = t.replace(/^﻿/, ''); const rows = []; let row = [], cur = '', q = false;
+  for (let i = 0; i < t.length; i++) { const c = t[i];
+    if (q) { if (c === '"') { if (t[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += c; }
+    else if (c === '"') q = true; else if (c === ',') { row.push(cur); cur = ''; } else if (c === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; } else if (c !== '\r') cur += c; }
+  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+  return rows;
+}
+function loadSheetJS() { return new Promise((res, rej) => { if (window.XLSX) return res(); const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'; s.onload = res; s.onerror = () => rej(new Error('엑셀 라이브러리 로드 실패(인터넷 연결 확인). CSV로 저장 후 업로드하세요.')); document.head.append(s); }); }
+async function handleUpload(file) {
+  try {
+    let rows;
+    if (/\.csv$/i.test(file.name)) rows = parseCsv(await file.text());
+    else { await loadSheetJS(); const wb = XLSX.read(await file.arrayBuffer(), { type: 'array' }); rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: '', raw: true }); }
+    const msg = importRows(rows); commit(); alert(msg);
+  } catch (e) { alert('업로드 실패: ' + e.message); }
+}
+const normH = h => String(h ?? '').replace(/\s|\(.*?\)|（.*?）/g, '');
+function parsePeriod(v) { if (typeof v === 'number') return Math.round(v * 12); const s = String(v).trim(); let m; if ((m = s.match(/^(\d+(?:\.\d+)?)\s*개월$/))) return Math.round(+m[1]); if ((m = s.match(/^(\d+(?:\.\d+)?)\s*년?$/))) return Math.round(+m[1] * 12); return null; }
+function importRows(rows) {
+  rows = rows.filter(r => r.some(c => String(c ?? '').trim() !== '')); if (rows.length < 2) throw new Error('데이터 행이 없습니다.');
+  const hdr = rows[0].map(normH), col = n => hdr.indexOf(n);
+  const ci = { name: col('상품명'), type: col('유형'), pay: col('납입기간'), label: col('구분'), age: col('가입나이'), sex: col('성별'), amt: col('가입금액'), mon: col('월보험료'), feat: col('핵심기능'), per: col('경과기간'), paid: col('누적보험료'), refund: Math.max(col('환급액'), col('환급금')), rate: col('환급률') };
+  if (ci.name < 0) throw new Error("'상품명' 열을 찾을 수 없습니다.");
+  const wide = hdr.map((h, i) => ({ i, m: parsePeriod(h) })).filter(x => x.m && !Object.values(ci).includes(x.i) && /^\d/.test(hdr[x.i]));
+  let added = 0, upd = 0, cells = 0;
+  const find = (name, type, pay, label) => S.products.find(p => p.name === name && p.type === type && (label ? p.label === label : String(p.pay ?? '') === String(pay ?? '')));
+  const addPeriod = m => { if (!S.periods.includes(m)) { S.periods.push(m); S.periods.sort((a, b) => a - b); } };
+  const touched = new Set();
+  rows.slice(1).forEach(r => {
+    const g = i => i >= 0 ? r[i] : '';
+    const name = String(g(ci.name)).trim(); if (!name || name.startsWith('※')) return;
+    const type = String(g(ci.type)).trim(), pay = num(g(ci.pay)), label = String(g(ci.label)).trim();
+    let p = find(name, type, pay, label);
+    if (!p) { p = { id: uid(), name, type, label, pay, age: null, sex: '', amount: null, monthly: null, features: [], active: true, showT: true, showG: true, note: '', data: {} }; S.products.push(p); added++; touched.add(p.id); }
+    else if (!touched.has(p.id)) { upd++; touched.add(p.id); }
+    if (ci.age >= 0 && num(g(ci.age)) !== null) p.age = num(g(ci.age));
+    if (ci.sex >= 0 && ['남', '여'].includes(String(g(ci.sex)).trim())) p.sex = String(g(ci.sex)).trim();
+    if (ci.amt >= 0 && num(g(ci.amt)) !== null) p.amount = num(g(ci.amt));
+    if (ci.mon >= 0 && num(g(ci.mon)) !== null) p.monthly = num(g(ci.mon));
+    if (ci.feat >= 0 && String(g(ci.feat)).trim()) { const fs = String(g(ci.feat)).split(/[;,/、]/).map(x => x.trim()).filter(Boolean); fs.forEach(f => { if (!S.features.includes(f)) S.features.push(f); }); p.features = uniq([...p.features, ...fs]); }
+    if (ci.per >= 0 && String(g(ci.per)).trim() !== '') {
+      const m = parsePeriod(g(ci.per)); if (m) { addPeriod(m); const d = p.data[m] = p.data[m] || {}; [['paid', ci.paid], ['refund', ci.refund], ['rate', ci.rate]].forEach(([k, i]) => { const v = i >= 0 ? num(g(i)) : null; if (v !== null) { d[k] = v; cells++; } }); }
+    }
+    wide.forEach(w => { const v = num(r[w.i]); if (v !== null) { addPeriod(w.m); (p.data[w.m] = p.data[w.m] || {}).rate = v; cells++; } });
+  });
+  return `업로드 완료: 신규 ${added}개 · 갱신 ${upd}개 상품, 입력값 ${cells}건`;
+}
+
+/* ===== GitHub 반영 / 원격 로드 ===== */
+async function ghPush() {
+  let tok = sessionStorage.getItem('gh_tok') || prompt('GitHub 토큰(repo 권한)을 입력하세요. 이 탭에서만 임시 보관됩니다.'); if (!tok) return;
+  sessionStorage.setItem('gh_tok', tok);
+  const api = 'https://api.github.com/repos/yangji-madang/SLGFC/contents/Prod/refund_data.json', hd = { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json' };
+  try {
+    let sha; const g = await fetch(api, { headers: hd }); if (g.ok) sha = (await g.json()).sha; else if (g.status === 401) { sessionStorage.removeItem('gh_tok'); return alert('토큰이 올바르지 않습니다.'); }
+    S.savedAt = Date.now();
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(persist(), null, 1))));
+    const r = await fetch(api, { method: 'PUT', headers: hd, body: JSON.stringify({ message: 'refund_data 갱신 ' + new Date().toISOString().slice(0, 10), content, sha }) });
+    alert(r.ok ? 'GitHub(SLGFC/Prod/refund_data.json)에 반영했습니다. 조회 페이지는 잠시 후 갱신됩니다.' : '반영 실패: ' + r.status + ' ' + (await r.text()).slice(0, 200));
+  } catch (e) { alert('반영 실패: ' + e.message); }
+}
+async function loadRemote() {
+  try { const r = await fetch('refund_data.json', { cache: 'no-store' }); if (!r.ok) return; const o = await r.json(); if (o && o.products && (VIEWER || (o.savedAt || 0) > (S.savedAt || 0))) { S = normalize(o); if (!VIEWER) { try { localStorage.setItem(KEY, JSON.stringify(persist())); } catch (e) {} } renderAll(); } } catch (e) {}
+}
+
+/* ===== 시작 ===== */
+S = load();
+let mode = false; try { mode = localStorage.getItem(MODEKEY) === '1'; } catch (e) {}
+if (VIEWER) renderAll(); else setMode(mode);
+loadRemote();
+window.addEventListener('resize', applyFreeze);
+window.addEventListener('beforeprint', () => { $$('.modal').forEach(m => m.remove()); });
+})();
+</script>
+</body>
+</html>

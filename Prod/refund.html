@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-viewer="1">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -61,11 +61,18 @@ details.pn>.in{padding:4px 8px 6px}
 .qa .a .s{display:block;font-size:13px;text-wrap:pretty}
 .memo{margin-top:4px;padding:3px 8px;background:#f6f8fb;border:1px dashed #b9c3cf;border-radius:4px}
 /* 표 */
-.tw{overflow-x:auto}
-table.rt{border-collapse:collapse;width:100%;font-size:13px}
-table.rt th,table.rt td{border:1px solid var(--line);padding:2px 6px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tw{overflow:auto;max-height:74vh}
+table.rt{border-collapse:separate;border-spacing:0;width:100%;font-size:var(--fs,13px);border-top:1px solid var(--line);border-left:1px solid var(--line)}
+table.rt th,table.rt td{border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:var(--ch,2px) 6px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.rt thead th.pc,table.rt td.vv{min-width:var(--cw,48px)}
+table.rt td.nm,table.rt td.ty{min-width:var(--lw,90px)}
+table.rt thead th{position:sticky;z-index:3}
+table.rt thead th.cn{left:0;z-index:5}
+table.rt td.nm,table.rt td.ty,table.rt td.pl{position:sticky;z-index:2;background:#fff}
+.sizebar{font-size:12px;color:var(--muted)}
+.sizebar input[type=range]{width:90px;vertical-align:middle}
 table.rt thead th{background:var(--head);text-align:center;font-weight:600}
-table.rt thead tr.fl th{background:#fff;border:none;color:#d40000;font-size:12px;padding:0 2px;font-weight:700}
+table.rt thead tr.fl th{background:#fff;border:none!important;color:#d40000;font-size:12px;padding:0 2px;font-weight:700}
 table.rt td.nm,table.rt td.ty,table.rt td.pl,table.rt td.mo,table.rt td.it{text-align:center}
 table.rt td.nm{font-weight:700}
 table.rt td.it{color:var(--muted);font-size:12px}
@@ -108,6 +115,7 @@ table.rt tr.flash td{outline:2px solid var(--gold);outline-offset:-2px}
 /* 인쇄 */
 .admin-only{display:none}
 body.admin .admin-only{display:block}
+html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #btnMode{display:none!important}
 @page{size:A4 portrait;margin:8mm}
 @media print{
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -125,7 +133,7 @@ body.admin .admin-only{display:block}
  .cb svg{max-height:112mm}
  .legend{font-size:9.5px;grid-template-columns:repeat(4,1fr)}
  .basis{font-size:9px}
- .tw{overflow:visible}
+ .tw{overflow:visible;max-height:none!important}
  tr{break-inside:avoid}
  .sec.tbl,.sec.chart{break-inside:avoid}
  .ft .ct,.ft .cp{font-size:9.5px}
@@ -183,6 +191,12 @@ body.admin .admin-only{display:block}
   <h2><span class="no">4</span>환급률 표 <small id="tblUnit"></small></h2>
   <div class="bd">
     <div class="row noprint" id="tblOpt"></div>
+    <div class="row noprint sizebar">셀 크기 조절
+      <label>열 너비 <input type="range" min="34" max="120" data-pref="cw"></label>
+      <label>상품열 너비 <input type="range" min="60" max="200" data-pref="lw"></label>
+      <label>행 높이 <input type="range" min="0" max="12" data-pref="ch"></label>
+      <label>글자 <input type="range" min="10" max="18" data-pref="fs"></label>
+      <button class="sm" data-act="prefReset">기본값</button><span>· 상품·구분 열과 나이·경과기간 행은 스크롤 시 고정됩니다.</span></div>
     <div class="tw" id="tblBody"></div>
     <div class="tnote" id="tblNote"></div>
   </div>
@@ -209,6 +223,7 @@ body.admin .admin-only{display:block}
 (() => {
 'use strict';
 /* ===== 유틸 ===== */
+const VIEWER = document.documentElement.dataset.viewer === '1';
 const KEY = 'refund_master_v1', MODEKEY = 'refund_mode_v1';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -275,6 +290,7 @@ const SR = { q: '', feats: new Set(), mode: 'OR', disc: false };
 let RATES = null;
 
 function load() {
+  if (VIEWER) return testData();
   try { const t = localStorage.getItem(KEY); if (t) { const o = JSON.parse(t); if (o && o.products) return normalize(o); } } catch (e) {}
   return testData();
 }
@@ -291,7 +307,7 @@ function normalize(o) {
 const persist = () => ({ v: 1, savedAt: S.savedAt, periods: S.periods, features: S.features, defaults: S.defaults, products: S.products, banks: S.banks, settings: S.settings });
 function commit() {
   S.savedAt = Date.now();
-  try { localStorage.setItem(KEY, JSON.stringify(persist())); } catch (e) {}
+  if (!VIEWER) { try { localStorage.setItem(KEY, JSON.stringify(persist())); } catch (e) {} }
   renderAll();
 }
 
@@ -367,11 +383,13 @@ function periodsOf(items) {
 
 /* ===== 렌더 ===== */
 function renderAll() {
+  applyPrefsOnce();
   const T = mkItems('T').filter(it => hasData(it));
   $('#subTitle').textContent = '※ 경과기간별 환급률 비교 (납입기간별 구분 · 기준: 설계서 예시값)';
   $('#exLabel').textContent = exampleLabel(T);
   renderSearch(); renderMaster(); renderSummary(T); renderTable(T); renderChart(); renderFooter(); syncBind();
 }
+let _pp = false; function applyPrefsOnce() { if (_pp) return; _pp = true; Object.entries(PREF).forEach(([k, v]) => $('#tblBody').style.setProperty('--' + k, v + (k === 'fs' || k === 'cw' || k === 'lw' || k === 'ch' ? 'px' : ''))); $$('[data-pref]').forEach(el => { el.value = PREF[el.dataset.pref]; }); }
 function exampleLabel(T) {
   const ps = T.filter(i => i.kind === 'p').map(i => i.p); if (!ps.length) return '';
   const a = uniq(ps.map(ageOf)), s = uniq(ps.map(sexOf)), m = uniq(ps.map(amtOf));
@@ -470,9 +488,10 @@ function renderTable(T) {
   const refAge = (T.find(i => i.kind === 'p') ? ageOf(T.find(i => i.kind === 'p').p) : S.defaults.age);
   const foc = new Set(st.focus);
   let h = '<table class="rt"><thead>';
-  h += `<tr class="fl"><th colspan="${left}" style="background:#fff;border:none"></th>${periods.map(m => `<th class="${foc.has(m) ? '' : ''}">${foc.has(m) ? '↓ ' + plabel(m) + ' 경과' : ''}</th>`).join('')}</tr>`;
-  h += `<tr><th colspan="${left}">나이</th>${periods.map(m => `<th class="${foc.has(m) ? 'fc top' : ''}">${refAge + Math.floor(m / 12)}</th>`).join('')}</tr>`;
-  h += `<tr><th colspan="${left}">경과기간</th>${periods.map(m => `<th class="${foc.has(m) ? 'fc' : ''}" style="${foc.has(m) ? 'color:#d40000' : ''}">${plabel(m)}</th>`).join('')}</tr></thead><tbody>`;
+  const pad = left > 3 ? `<th colspan="${left - 3}"></th>` : '';
+  h += `<tr class="fl"><th class="cn" colspan="3" style="background:#fff;border:none"></th>${pad}${periods.map(m => `<th class="pc">${foc.has(m) ? '↓ ' + plabel(m) + ' 경과' : ''}</th>`).join('')}</tr>`;
+  h += `<tr><th class="cn" colspan="3">나이</th>${pad}${periods.map(m => `<th class="pc ${foc.has(m) ? 'fc top' : ''}">${refAge + Math.floor(m / 12)}</th>`).join('')}</tr>`;
+  h += `<tr><th class="cn" colspan="3">경과기간</th>${pad}${periods.map(m => `<th class="pc ${foc.has(m) ? 'fc' : ''}" style="${foc.has(m) ? 'color:#d40000' : ''}">${plabel(m)}</th>`).join('')}</tr></thead><tbody>`;
   // 그룹
   const groups = []; items.forEach(it => { const k = it.kind + '|' + it.name + '|' + it.type; const g = groups[groups.length - 1]; if (g && g.k === k) g.its.push(it); else groups.push({ k, its: [it] }); });
   const lastRowIdx = groups.reduce((a, g) => a + g.its.reduce((x, it) => x + it.rows.length, 0), 0) - 1;
@@ -503,6 +522,7 @@ function renderTable(T) {
   });
   h += '</tbody></table>';
   $('#tblBody').innerHTML = h;
+  applyFreeze();
   $('#tblUnit').textContent = multi ? '단위: 월보험료 원 · 누적납입/환급금 만원 · 환급률 %' : '단위: %';
   const skipped = T.length - items.length;
   $('#tblNote').innerHTML = '노랑: 환급률 100% 최초 도달 시점' + (st.hlMax ? '(100% 미달 상품은 최고값)' : '') + ' · 파랑 글자: 같은 상품의 두 번째 이후 구분 · 🏦: 은행 적금 비교항목' + (skipped ? ` · 데이터 미입력 ${skipped}건 제외` : '');
@@ -626,6 +646,24 @@ function renderMaster() {
   body.innerHTML = h;
 }
 
+/* ===== 셀 크기 · 틀 고정 ===== */
+const PKEY = 'refund_view_prefs', PDEF = { cw: 48, lw: 90, ch: 2, fs: 13 };
+let PREF = Object.assign({}, PDEF); try { Object.assign(PREF, JSON.parse(localStorage.getItem(PKEY) || '{}')); } catch (e) {}
+function applyPrefs() {
+  const tw = $('#tblBody'); tw.style.setProperty('--cw', PREF.cw + 'px'); tw.style.setProperty('--lw', PREF.lw + 'px'); tw.style.setProperty('--ch', PREF.ch + 'px'); tw.style.setProperty('--fs', PREF.fs + 'px');
+  $$('[data-pref]').forEach(el => { el.value = PREF[el.dataset.pref]; });
+  applyFreeze();
+}
+function applyFreeze() {
+  const tb = $('#tblBody table'); if (!tb) return;
+  let top = 0; $$('thead tr', tb).forEach(tr => { $$('th', tr).forEach(th => { th.style.top = top + 'px'; }); top += tr.getBoundingClientRect().height; });
+  const r = $('tbody tr', tb); if (!r) return;
+  const nm = $('td.nm', r), ty = $('td.ty', r); if (!nm || !ty) return;
+  const w1 = nm.getBoundingClientRect().width, w2 = ty.getBoundingClientRect().width;
+  $$('td.nm', tb).forEach(c => { c.style.left = '0px'; }); $$('td.ty', tb).forEach(c => { c.style.left = w1 + 'px'; }); $$('td.pl', tb).forEach(c => { c.style.left = (w1 + w2) + 'px'; });
+}
+document.addEventListener('input', e => { const k = e.target.dataset && e.target.dataset.pref; if (!k) return; PREF[k] = +e.target.value; try { localStorage.setItem(PKEY, JSON.stringify(PREF)); } catch (er) {} applyPrefs(); });
+
 /* ===== 바인딩 ===== */
 function getPath(path) { if (path === 'settings.focus0') return S.settings.focus[0]; if (path === 'settings.focus1') return S.settings.focus[1]; return path.split('.').reduce((o, k) => o[k], S); }
 function setPath(path, v) {
@@ -664,6 +702,7 @@ document.addEventListener('click', e => {
   const idx = S.products.findIndex(x => x.id === id), p = S.products[idx];
   switch (a) {
     case 'print': window.print(); break;
+    case 'prefReset': PREF = Object.assign({}, PDEF); try { localStorage.removeItem(PKEY); } catch (er) {} applyPrefs(); break;
     case 'mode': { const on = !document.body.classList.contains('admin'); setMode(on); break; }
     case 'rates': openRates(null); break;
     case 'srClear': SR.q = ''; SR.feats.clear(); SR.disc = false; $('#srQ').value = ''; $('#srDisc').checked = false; renderAll(); break;
@@ -909,14 +948,15 @@ async function ghPush() {
   } catch (e) { alert('반영 실패: ' + e.message); }
 }
 async function loadRemote() {
-  try { const r = await fetch('refund_data.json', { cache: 'no-store' }); if (!r.ok) return; const o = await r.json(); if (o && o.products && (o.savedAt || 0) > (S.savedAt || 0)) { S = normalize(o); try { localStorage.setItem(KEY, JSON.stringify(persist())); } catch (e) {} renderAll(); } } catch (e) {}
+  try { const r = await fetch('refund_data.json', { cache: 'no-store' }); if (!r.ok) return; const o = await r.json(); if (o && o.products && (VIEWER || (o.savedAt || 0) > (S.savedAt || 0))) { S = normalize(o); if (!VIEWER) { try { localStorage.setItem(KEY, JSON.stringify(persist())); } catch (e) {} } renderAll(); } } catch (e) {}
 }
 
 /* ===== 시작 ===== */
 S = load();
 let mode = false; try { mode = localStorage.getItem(MODEKEY) === '1'; } catch (e) {}
-setMode(mode);
+if (VIEWER) renderAll(); else setMode(mode);
 loadRemote();
+window.addEventListener('resize', applyFreeze);
 window.addEventListener('beforeprint', () => { $$('.modal').forEach(m => m.remove()); });
 })();
 </script>
