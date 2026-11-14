@@ -88,6 +88,11 @@ table.rt td.ft .tag{margin:1px 2px 1px 0}
 .cb svg .fade{opacity:0;animation:fi .7s ease 1.7s forwards}
 @keyframes fi{to{opacity:1}}
 .legend .li.on{background:#eef3f9}
+.adm-btn{display:none}
+body.admin .adm-btn{display:inline-block}
+html[data-viewer] .adm-btn{display:none!important}
+button.gh{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:700}
+button.gh:hover{background:#9c7420}
 .pbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .pf{border-radius:16px;padding:4px 14px;font-weight:700;border:1px solid var(--navy);background:#fff;color:var(--navy)}
 .pf.on{background:var(--navy);color:#fff}
@@ -183,6 +188,7 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
   <button data-act="rates">🏦 은행 적금금리표</button>
   <button class="pri" id="prt" data-act="print">🖨 인쇄</button>
   <button data-act="mode" id="btnMode">⚙ 관리모드</button>
+  <button class="gh adm-btn" data-act="gh" id="btnGh">⬆ GitHub 반영</button>
 </div>
 
 <!-- 1. 검색 -->
@@ -337,6 +343,7 @@ function normalize(o) {
   o.periods = (o.periods || t.periods).slice().sort((a, b) => a - b);
   o.features = o.features || t.features;
   o.banks = o.banks || [];
+  o.products.forEach(p => { if (p.bpay === undefined) p.bpay = p.pay ?? null; if (p.blabel === undefined) p.blabel = p.label || ''; });
   if (!o.profiles || !o.profiles.length) {
     const d = o.defaults, pf = { id: 'pf1', code: '', label: Math.floor(d.age / 10) * 10 + '대 ' + d.sex + '자', age: d.age, sex: d.sex, amount: d.amount, pay: d.pay, notice: DEFNOTICE, snap: snapOf(o.products), bsnap: {} };
     o.banks.forEach(b => { if (b.monthly != null) pf.bsnap[b.id] = b.monthly; });
@@ -346,7 +353,7 @@ function normalize(o) {
   return o;
 }
 /* ===== 고객 프로필 : 화면용 products 값 = 선택된 프로필의 값 / 나머지는 profile.snap 에 보관 ===== */
-function snapOf(products) { const r = {}; products.forEach(p => { if (p.monthly != null || Object.keys(p.data || {}).length || p.age != null || p.sex || p.amount != null) r[p.id] = { monthly: p.monthly ?? null, data: clone(p.data || {}), age: p.age ?? null, sex: p.sex || '', amount: p.amount ?? null }; }); return r; }
+function snapOf(products) { const r = {}; products.forEach(p => { r[p.id] = { monthly: p.monthly ?? null, data: clone(p.data || {}), age: p.age ?? null, sex: p.sex || '', amount: p.amount ?? null, pay: p.pay ?? null, label: p.label || '', on: p.on !== false }; }); return r; }
 const curProf = (o = S) => o.profiles.find(x => x.id === o.curPid) || o.profiles[0];
 function snapCur(o = S) {
   const pf = curProf(o); pf.snap = snapOf(o.products); pf.bsnap = {};
@@ -355,7 +362,7 @@ function snapCur(o = S) {
 }
 function applyProf(o, pid) {
   const pf = o.profiles.find(x => x.id === pid) || o.profiles[0]; o.curPid = pf.id;
-  o.products.forEach(p => { const sn = pf.snap[p.id]; p.monthly = sn ? sn.monthly : null; p.data = sn ? clone(sn.data) : {}; p.age = sn ? sn.age : null; p.sex = sn ? sn.sex : ''; p.amount = sn ? sn.amount : null; });
+  o.products.forEach(p => { const sn = pf.snap[p.id]; p.monthly = sn ? sn.monthly : null; p.data = sn ? clone(sn.data) : {}; p.age = sn ? sn.age : null; p.sex = sn ? sn.sex : ''; p.amount = sn ? sn.amount : null; p.pay = sn && 'pay' in sn ? sn.pay : (p.bpay ?? null); p.label = sn && 'label' in sn ? sn.label : (p.blabel || ''); p.on = sn && 'on' in sn ? sn.on : true; });
   o.banks.forEach(b => { b.monthly = pf.bsnap && pf.bsnap[b.id] != null ? pf.bsnap[b.id] : null; });
   o.defaults = { age: pf.age, sex: pf.sex, amount: pf.amount, pay: pf.pay };
 }
@@ -421,6 +428,7 @@ const bankLabel = b => { const c = { month: '월복리', year: '연복리', simp
 function matches(p) {
   if (!p.active && !SR.disc) return false;
   if (SR.excl.has(p.id)) return false;
+  if (p.on === false) return false;
   const q = SR.q.trim().toLowerCase();
   if (q) { const text = (p.name + ' ' + p.type + ' ' + p.label + ' ' + p.features.join(' ') + ' ' + p.note).toLowerCase(); if (!q.split(/\s+/).every(w => text.includes(w))) return false; }
   if (SR.feats.size) { const f = [...SR.feats]; const ok = SR.mode === 'AND' ? f.every(x => p.features.includes(x)) : f.some(x => p.features.includes(x)); if (!ok) return false; }
@@ -477,7 +485,7 @@ function renderFooter() {
 /* --- 검색 --- */
 function renderSearch() {
   $('#srFeats').innerHTML = S.features.map(f => `<span class="chip ${SR.feats.has(f) ? 'on' : ''}" data-act="srFeat" data-v="${esc(f)}">${esc(f)}</span>`).join('');
-  const ps = sortProds(S.products.filter(p => p.active || SR.disc));
+  const ps = sortProds(S.products.filter(p => (p.active || SR.disc) && p.on !== false));
   $('#srProds').innerHTML = ps.map(p => `<span class="chip ${SR.excl.has(p.id) ? '' : 'on'}" data-act="srProd" data-id="${p.id}">${esc(shortOf(p))}${p.active ? '' : ' (단종)'}</span>`).join('') || '<span class="muted">상품 없음</span>';
   $('#srCount').textContent = `조회 ${S.products.filter(matches).length}개 / 전체 ${S.products.filter(p => p.active).length}개`;
 }
@@ -799,13 +807,13 @@ function renderMaster() {
   // 상품
   h += `<details class="pn" open><summary>③ 상품 DB (${active.length} 판매중 / ${disc.length} 단종)</summary><div class="in">
     <div class="row"><button class="pri" data-act="pAdd">＋ 상품 추가</button><button data-act="upload">📥 엑셀/CSV 업로드</button><button data-act="tpl">양식 받기(CSV)</button><button data-act="expCsv">현재 데이터 CSV</button>
-      <button data-act="expJson">JSON 내보내기</button><button data-act="impJson">JSON 불러오기</button><button data-act="gh">GitHub 반영</button><button class="dg" data-act="reset">테스트 데이터로 초기화</button>
+      <button data-act="expJson">JSON 내보내기</button><button data-act="impJson">JSON 불러오기</button><button class="dg" data-act="reset">테스트 데이터로 초기화</button>
       <input type="file" id="fileUp" accept=".xlsx,.xls,.csv" style="display:none"><input type="file" id="fileJson" accept=".json" style="display:none"></div>
     <div class="row"><span class="muted">표시 일괄</span><button class="sm" data-act="vis" data-k="showT" data-v="1">표 전체 보기</button><button class="sm" data-act="vis" data-k="showT" data-v="0">표 전체 숨김</button>
       <button class="sm" data-act="vis" data-k="showG" data-v="1">그래프 전체 보기</button><button class="sm" data-act="vis" data-k="showG" data-v="0">그래프 전체 숨김</button></div>
     <div class="tabs"><button class="${UI.tab === 'active' ? 'on' : ''}" data-act="tab" data-v="active">판매중 ${active.length}</button><button class="${UI.tab === 'disc' ? 'on' : ''}" data-act="tab" data-v="disc">단종 ${disc.length}</button></div>
-    <div class="tw"><table class="mt"><thead><tr><th><input type="checkbox" data-act="selAll"></th><th>표</th><th>그래프</th><th>색</th><th>상품명</th><th>유형</th><th>구분</th><th>나이</th><th>성별</th><th>가입금액</th><th>월보험료(원)</th><th>핵심기능</th><th>입력</th><th>관리</th></tr></thead><tbody>
-    ${list.map(p => `<tr><td><input type="checkbox" data-act="sel" data-id="${p.id}" ${UI.sel.has(p.id) ? 'checked' : ''}></td>
+    <div class="tw"><table class="mt"><thead><tr><th><input type="checkbox" data-act="selAll"></th><th>사용</th><th>표</th><th>그래프</th><th>색</th><th>상품명</th><th>유형</th><th>구분</th><th>나이</th><th>성별</th><th>가입금액</th><th>월보험료(원)</th><th>핵심기능</th><th>입력</th><th>관리</th></tr></thead><tbody>
+    ${list.map(p => `<tr style="${p.on === false ? 'opacity:.45' : ''}"><td><input type="checkbox" data-act="sel" data-id="${p.id}" ${UI.sel.has(p.id) ? 'checked' : ''}></td><td><input type="checkbox" data-act="pon" data-id="${p.id}" ${p.on !== false ? 'checked' : ''} title="이 프로필에서 사용"></td>
       <td><input type="checkbox" data-act="pv" data-k="showT" data-id="${p.id}" ${p.showT ? 'checked' : ''}></td><td><input type="checkbox" data-act="pv" data-k="showG" data-id="${p.id}" ${p.showG ? 'checked' : ''}></td>
       <td><span class="sw" style="background:${PALETTE[groupIndex().get(p.name + '|' + p.type) % PALETTE.length]}"></span></td>
       <td class="l"><b>${esc(p.name)}</b></td><td class="l">${esc(p.type)}</td><td>${esc(labelOf(p))}</td><td>${ageOf(p)}${p.age == null ? '<small class="muted">*</small>' : ''}</td><td>${sexOf(p)}${p.sex ? '' : '<small class="muted">*</small>'}</td>
@@ -815,8 +823,8 @@ function renderMaster() {
       <td>${Object.keys(p.data).length}/${S.periods.length}</td>
       <td style="white-space:nowrap"><button class="sm" data-act="up" data-id="${p.id}">↑</button><button class="sm" data-act="dn" data-id="${p.id}">↓</button>
         <button class="sm" data-act="pEdit" data-id="${p.id}">수정</button><button class="sm" data-act="pCopy" data-id="${p.id}">복제</button>
-        <button class="sm" data-act="pDisc" data-id="${p.id}">${p.active ? '단종' : '재판매'}</button><button class="sm dg" data-act="pDel" data-id="${p.id}">삭제</button></td></tr>`).join('') || '<tr><td colspan="14" class="muted">상품이 없습니다.</td></tr>'}
-    </tbody></table></div><div class="tnote">* 표시는 기본값 적용. 환급액·환급률 입력은 [수정] 창의 경과기간 표에서 합니다.</div></div></details>`;
+        <button class="sm" data-act="pDisc" data-id="${p.id}">${p.active ? '단종' : '재판매'}</button><button class="sm dg" data-act="pDel" data-id="${p.id}">삭제</button></td></tr>`).join('') || '<tr><td colspan="15" class="muted">상품이 없습니다.</td></tr>'}
+    </tbody></table></div><div class="tnote">* 표시는 기본값 적용. '사용' 체크 해제 = 현재 프로필에서 숨김(프로필마다 상품 구성 다르게).  환급액·환급률 입력은 [수정] 창의 경과기간 표에서 합니다.</div></div></details>`;
   // 은행
   h += `<details class="pn" open><summary>④ 은행 비교항목 (월적립액 · 적용이율)</summary><div class="in">
     <div class="row"><label>계산방식 <select data-set="settings.bankCalc"><option value="month">월복리</option><option value="year">연복리</option><option value="simple">단리</option></select></label>
@@ -870,7 +878,8 @@ document.addEventListener('change', e => {
   if (el.id === 'srDisc') { SR.disc = el.checked; renderAll(); return; }
   const a = el.dataset.act; if (!a) return;
   const p = S.products.find(x => x.id === el.dataset.id);
-  if (a === 'pv' && p) { p[el.dataset.k] = el.checked; commit(); }
+  if (a === 'pon' && p) { p.on = el.checked; commit(); }
+  else if (a === 'pv' && p) { p[el.dataset.k] = el.checked; commit(); }
   else if (a === 'mon' && p) { p.monthly = num(el.value); commit(); }
   else if (a === 'bv') { const b = S.banks.find(x => x.id === el.dataset.id); if (b) { b.show = el.checked; commit(); } }
   else if (a === 'sel') { el.checked ? UI.sel.add(el.dataset.id) : UI.sel.delete(el.dataset.id); }
@@ -962,7 +971,8 @@ function editProduct(id) {
   const p = src ? clone(src) : { id: uid(), name: '', type: '', label: '', pay: null, age: null, sex: '', amount: null, monthly: null, features: [], active: true, showT: true, showG: true, note: '', data: {} };
   const box = document.createElement('div');
   const build = () => {
-    box.innerHTML = `<div class="fg">
+    box.innerHTML = `<div class="tnote">※ 납입기간·구분·사용 여부·월보험료·환급 데이터는 현재 프로필(<b>${esc(curProf().label)}</b>)에만 적용됩니다.</div>
+    <div class="fg">
     <label>상품명<input type="text" data-f="name" value="${esc(p.name)}"></label>
     <label>유형(예: 1종 보증형)<input type="text" data-f="type" value="${esc(p.type)}"></label>
     <label>구분 표시(비우면 N년납)<input type="text" data-f="label" value="${esc(p.label)}" placeholder="예: 일반 / 간편"></label>
@@ -970,7 +980,8 @@ function editProduct(id) {
     <label>가입나이<input type="number" data-f="age" value="${p.age ?? ''}" placeholder="기본 ${S.defaults.age}"></label>
     <label>성별<select data-f="sex"><option value="">기본(${S.defaults.sex})</option><option ${p.sex === '남' ? 'selected' : ''}>남</option><option ${p.sex === '여' ? 'selected' : ''}>여</option></select></label>
     <label>가입금액(만원)<input type="number" data-f="amount" value="${p.amount ?? ''}" placeholder="기본 ${S.defaults.amount}"></label>
-    <label>월보험료(원)<input type="number" data-f="monthly" value="${p.monthly ?? ''}"></label></div>
+    <label>월보험료(원)<input type="number" data-f="monthly" value="${p.monthly ?? ''}"></label>
+    <label style="flex-direction:row;align-items:center;gap:5px;color:var(--txt)"><input type="checkbox" data-f="on" ${p.on !== false ? 'checked' : ''} style="width:auto"> 이 프로필에서 사용</label></div>
     <div class="row" style="margin-top:6px"><b>핵심기능</b>${S.features.map(f => `<label><input type="checkbox" data-ft="${esc(f)}" ${p.features.includes(f) ? 'checked' : ''}> ${esc(f)}</label>`).join('')}
       <input type="text" id="edFt" placeholder="새 핵심기능" style="width:110px"><button class="sm" data-addft>＋ 항목 추가</button></div>
     <div class="row"><label style="flex:1">메모<input type="text" data-f="note" value="${esc(p.note)}" style="width:100%"></label></div>
@@ -986,7 +997,7 @@ function editProduct(id) {
   const m = openModal(src ? '상품 수정 · ' + shortOf(src) : '상품 추가', box, 720);
   const read = () => {
     const g = k => $(`[data-f="${k}"]`, box).value;
-    p.name = g('name').trim(); p.type = g('type').trim(); p.label = g('label').trim(); p.pay = num(g('pay')); p.age = num(g('age')); p.sex = g('sex'); p.amount = num(g('amount')); p.monthly = num(g('monthly')); p.note = g('note').trim();
+    p.name = g('name').trim(); p.type = g('type').trim(); p.label = g('label').trim(); p.pay = num(g('pay')); p.age = num(g('age')); p.sex = g('sex'); p.amount = num(g('amount')); p.monthly = num(g('monthly')); p.note = g('note').trim(); p.on = $('[data-f="on"]', box).checked;
     p.features = $$('[data-ft]', box).filter(c => c.checked).map(c => c.dataset.ft);
     p.data = {}; S.periods.forEach(pm => { const d = {}; ['paid', 'refund', 'rate'].forEach(f => { const el = $(`[data-pm="${pm}"][data-pf="${f}"]`, box); const v = el ? num(el.value) : null; if (v !== null) d[f] = v; }); if (Object.keys(d).length) p.data[pm] = d; });
   };
@@ -1015,6 +1026,7 @@ function editProduct(id) {
     if (e.target.closest('[data-cancel]')) m.remove();
     if (e.target.closest('[data-save]')) {
       read(); if (!p.name) { $('#edErr', box).textContent = '상품명을 입력하세요.'; return; }
+      if (!src) { p.bpay = p.pay ?? null; p.blabel = p.label; }
       const ix = S.products.findIndex(x => x.id === p.id); if (ix >= 0) S.products[ix] = p; else S.products.push(p);
       m.remove(); commit();
     }
@@ -1125,13 +1137,14 @@ function importCore(hdr, body, skipDemo) {
     const name = String(g(ci.name)).trim(); if (!name || name.startsWith('※')) return;
     const type = String(g(ci.type)).trim(), pay = num(g(ci.pay)), label = String(g(ci.label)).trim();
     let p = find(name, type, pay, label);
-    if (!p) { p = { id: uid(), name, type, label, pay, age: null, sex: '', amount: null, monthly: null, features: [], active: true, showT: true, showG: true, note: '', data: {} }; S.products.push(p); added++; touched.add(p.id); }
+    if (!p) { p = { id: uid(), bpay: pay, blabel: label, on: true, name, type, label, pay, age: null, sex: '', amount: null, monthly: null, features: [], active: true, showT: true, showG: true, note: '', data: {} }; S.products.push(p); added++; touched.add(p.id); }
     else if (!touched.has(p.id)) { upd++; touched.add(p.id); }
     if (!skipDemo) {
       if (ci.age >= 0 && num(g(ci.age)) !== null) p.age = num(g(ci.age));
       if (ci.sex >= 0 && ['남', '여'].includes(String(g(ci.sex)).trim())) p.sex = String(g(ci.sex)).trim();
       if (ci.amt >= 0 && num(g(ci.amt)) !== null) p.amount = num(g(ci.amt));
     }
+    p.on = true;
     if (ci.mon >= 0 && num(g(ci.mon)) !== null) p.monthly = num(g(ci.mon));
     if (ci.feat >= 0 && String(g(ci.feat)).trim()) { const fs = String(g(ci.feat)).split(/[;,/、]/).map(x => x.trim()).filter(Boolean); fs.forEach(f => { if (!S.features.includes(f)) S.features.push(f); }); p.features = uniq([...p.features, ...fs]); }
     if (ci.per >= 0 && String(g(ci.per)).trim() !== '') {
