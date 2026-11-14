@@ -62,13 +62,32 @@ details.pn>.in{padding:4px 8px 6px}
 .memo{margin-top:4px;padding:3px 8px;background:#f6f8fb;border:1px dashed #b9c3cf;border-radius:4px}
 /* 표 */
 .tw{overflow:auto;max-height:74vh}
-table.rt{border-collapse:separate;border-spacing:0;width:100%;font-size:var(--fs,13px);border-top:1px solid var(--line);border-left:1px solid var(--line)}
+table.rt{table-layout:fixed;border-collapse:separate;border-spacing:0;font-size:var(--fs,13px);border-top:1px solid var(--line);border-left:1px solid var(--line)}
 table.rt th,table.rt td{border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:var(--ch,2px) 6px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-table.rt thead th.pc,table.rt td.vv{min-width:var(--cw,48px)}
-table.rt td.nm,table.rt td.ty{min-width:var(--lw,90px)}
-table.rt thead th{position:sticky;z-index:3}
-table.rt thead th.cn{left:0;z-index:5}
-table.rt td.nm,table.rt td.ty,table.rt td.pl{position:sticky;z-index:2;background:#fff}
+table.rt thead th{position:sticky;z-index:4;overflow:hidden;text-overflow:ellipsis}
+table.rt thead th.lc,table.rt thead th.cn{z-index:6}
+table.rt thead th.cn{left:0}
+table.rt td.nm,table.rt td.ft,table.rt td.ty,table.rt td.pl,table.rt td.it{position:sticky;z-index:2;background:#fff;overflow:hidden;text-overflow:ellipsis}
+table.rt td.ft{white-space:normal;text-align:left;line-height:1.25;font-size:.92em}
+table.rt td.ft .tag{margin:1px 2px 1px 0}
+.rzc{position:absolute;top:0;right:-3px;width:8px;height:100%;cursor:col-resize;z-index:8;touch-action:none}
+.rzr{position:absolute;left:0;bottom:-3px;height:8px;width:100%;cursor:row-resize;z-index:8;touch-action:none}
+.rzc:hover,.rzr:hover{background:rgba(31,58,95,.28)}
+.sgrp{display:flex;gap:5px 7px;flex-wrap:wrap;align-items:center;margin:4px 0;padding:3px 7px;border:1px solid #e1e6ec;border-radius:5px;background:#fafbfd}
+.sgrp b{min-width:58px;color:var(--navy)}
+.sgrp .chips{display:contents}
+.cb{position:relative}
+.tip{display:none;position:absolute;top:8px;z-index:20;background:rgba(255,255,255,.97);border:1px solid #9fb0c3;border-radius:6px;padding:5px 8px;box-shadow:0 4px 14px rgba(20,40,70,.22);font-size:12.5px;pointer-events:none;max-width:330px}
+.tip .th{font-weight:700;color:var(--navy);border-bottom:1px solid #dde3ea;margin-bottom:2px;padding-bottom:1px}
+.tip .tr{display:flex;align-items:center;gap:6px;line-height:1.55}
+.tip .tr i{width:10px;height:10px;border-radius:50%;flex:none}
+.tip .tr span{flex:1;white-space:nowrap}
+.cb svg .sr{transition:opacity .2s}
+.cb svg.hl .sr{opacity:.13}
+.cb svg.hl .sr.on{opacity:1}
+.cb svg .fade{opacity:0;animation:fi .7s ease 1.7s forwards}
+@keyframes fi{to{opacity:1}}
+.legend .li.on{background:#eef3f9}
 .sizebar{font-size:12px;color:var(--muted)}
 .sizebar input[type=range]{width:90px;vertical-align:middle}
 table.rt thead th{background:var(--head);text-align:center;font-weight:600}
@@ -84,6 +103,7 @@ table.rt th.fc.top{border-top:2px solid #e00000}
 table.rt td.fc.bot{border-bottom:2px solid #e00000}
 table.rt tr.bk td{background:#f1f6fb}
 table.rt tr.grp-first td{border-top:1.5px solid #6c7f93}
+table.rt tr td.hl{background:#ffff00!important}
 table.rt tr.flash td{outline:2px solid var(--gold);outline-offset:-2px}
 .tnote{font-size:12px;color:var(--muted);margin:2px 0}
 /* 그래프 */
@@ -116,7 +136,7 @@ table.rt tr.flash td{outline:2px solid var(--gold);outline-offset:-2px}
 .admin-only{display:none}
 body.admin .admin-only{display:block}
 html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #btnMode{display:none!important}
-@page{size:A4 portrait;margin:8mm}
+@page{size:A4 landscape;margin:8mm}
 @media print{
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  body{background:#fff;font-size:11px}
@@ -130,12 +150,16 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
  table.rt{font-size:10px}
  table.rt th,table.rt td{padding:1px 4px}
  .qa .a .s,.qa .q{font-size:10px}
- .cb svg{max-height:112mm}
- .legend{font-size:9.5px;grid-template-columns:repeat(4,1fr)}
+ .cb svg{max-height:150mm}
+ .rzc,.rzr,.tip{display:none!important}
+ table.rt{width:100%!important}
+ .sumgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .sec.chart{break-before:page}
+ .legend{font-size:10px;grid-template-columns:repeat(5,1fr)}
  .basis{font-size:9px}
  .tw{overflow:visible;max-height:none!important}
  tr{break-inside:avoid}
- .sec.tbl,.sec.chart{break-inside:avoid}
+ .sec.chart{break-inside:avoid}
  .ft .ct,.ft .cp{font-size:9.5px}
 }
 </style>
@@ -150,11 +174,9 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
 </header>
 
 <div class="tb noprint">
-  <span class="nav"><a href="#sec-search">① 검색</a><a href="#sec-master" class="admin-link" style="display:none">② MasterDB</a><a href="#sec-summary">③ 요약리뷰</a><a href="#sec-table">④ 환급률 표</a><a href="#sec-chart">⑤ 그래프</a></span>
   <span class="sp"></span>
-  <label><input type="checkbox" data-set="settings.showContact"> 담당자정보 표시</label>
   <button data-act="rates">🏦 은행 적금금리표</button>
-  <button class="pri" data-act="print">🖨 인쇄</button>
+  <button class="pri" id="prt" data-act="print">🖨 인쇄</button>
   <button data-act="mode" id="btnMode">⚙ 관리모드</button>
 </div>
 
@@ -164,13 +186,18 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
   <div class="bd">
     <div class="row">
       <input type="text" id="srQ" placeholder="상품명·유형·메모 검색 (공백=AND)" style="width:260px">
-      <label>핵심기능 조건
-        <select id="srMode"><option value="OR">하나라도 포함(OR)</option><option value="AND">모두 포함(AND)</option></select></label>
       <label><input type="checkbox" id="srDisc"> 단종 상품 포함</label>
-      <button data-act="srClear">초기화</button>
+      <button data-act="srClear">전체 초기화</button>
     </div>
-    <div class="row" id="srFeats"></div>
-    <div class="row" id="srRes"></div>
+    <div class="sgrp"><b>핵심기능</b>
+      <select id="srMode"><option value="OR">하나라도 포함(OR)</option><option value="AND">모두 포함(AND)</option></select>
+      <button class="sm" data-act="srFeatAll">전체선택</button><button class="sm" data-act="srFeatNone">선택해제</button>
+      <span class="chips" id="srFeats"></span>
+      <span class="muted" style="font-size:12px">※ 선택 없음 = 조건 없음</span></div>
+    <div class="sgrp"><b>상품</b>
+      <button class="sm" data-act="srProdAll">전체선택</button><button class="sm" data-act="srProdNone">전체해제</button>
+      <span class="chips" id="srProds"></span>
+      <span class="muted" style="font-size:12px">※ 중복 선택 가능 · 선택한 상품만 표·그래프에 표시</span></div>
   </div>
 </section>
 
@@ -191,12 +218,12 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
   <h2><span class="no">4</span>환급률 표 <small id="tblUnit"></small></h2>
   <div class="bd">
     <div class="row noprint" id="tblOpt"></div>
-    <div class="row noprint sizebar">셀 크기 조절
-      <label>열 너비 <input type="range" min="34" max="120" data-pref="cw"></label>
-      <label>상품열 너비 <input type="range" min="60" max="200" data-pref="lw"></label>
+    <div class="row noprint sizebar">셀 크기
+      <label>기본 열 너비 <input type="range" min="34" max="140" data-pref="cw"></label>
       <label>행 높이 <input type="range" min="0" max="12" data-pref="ch"></label>
       <label>글자 <input type="range" min="10" max="18" data-pref="fs"></label>
-      <button class="sm" data-act="prefReset">기본값</button><span>· 상품·구분 열과 나이·경과기간 행은 스크롤 시 고정됩니다.</span></div>
+      <button class="sm" data-act="prefReset">개별 조정 초기화</button>
+      <span>· 머리글 경계선(열)과 구분/항목 칸 아래 경계선(행)을 드래그하면 칸별로 조절, 더블클릭하면 초기화 · 상품 열과 나이 행은 고정됩니다.</span></div>
     <div class="tw" id="tblBody"></div>
     <div class="tnote" id="tblNote"></div>
   </div>
@@ -207,14 +234,14 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
   <h2><span class="no">5</span>경과기간별 환급률 · 은행 비교 <small>범례 클릭 시 해당 상품 숨김/표시</small></h2>
   <div class="bd">
     <div class="row noprint" id="chOpt"></div>
-    <div class="cb" id="chBody"></div>
+    <div class="cb"><div id="chBody"></div><div class="tip" id="chTip"></div></div>
     <div class="legend" id="chLegend"></div>
     <div class="basis" id="basis"></div>
   </div>
 </section>
 
 <footer class="ft">
-  <div class="ct" id="ftContact"></div>
+  <div class="ct"><span data-ct></span></div>
   <div class="cp" id="ftCopy"></div>
 </footer>
 </div>
@@ -277,16 +304,17 @@ function testData() {
       { id: uid(), name: '은행 적금 3.0%', rate: 3.0, monthly: null, pay: 10, link: '', show: true, src: '테스트값: 카카오뱅크 AI 목표적금 기본금리 3.00% (rates.json 2026-10-30)' },
       { id: uid(), name: '은행 적금 3.0%', rate: 3.0, monthly: null, pay: 20, link: '', show: true, src: '테스트값: 카카오뱅크 AI 목표적금 기본금리 3.00% (rates.json 2026-10-30)' }
     ],
-    settings: { showMonthly: true, metrics: { paid: true, refund: true, rate: true }, hideEmpty: true, focus: [120, 240], hlMax: true,
-      labelMode: 'key', bankCalc: 'month', bankTax: false, showContact: true,
-      contactText: '삼성생명 GFC 법인영업 전문컨설턴트 윤현철', memo: '' }
+    settings: { showMonthly: true, metrics: { paid: true, refund: true, rate: true }, hideEmpty: true, focus: [120, 240],
+      labelMode: 'end', bankCalc: 'month', bankTax: false, smooth: true, anim: true, ymax: null, memo: '' }
   };
 }
 
 /* ===== 상태 ===== */
 let S = null;
 const UI = { tab: 'active', sel: new Set() };
-const SR = { q: '', feats: new Set(), mode: 'OR', disc: false };
+const SR = { q: '', feats: new Set(), excl: new Set(), mode: 'OR', disc: false };
+const ko = (a, b) => String(a || '').localeCompare(String(b || ''), 'ko');
+const sortProds = arr => arr.slice().sort((a, b) => ko(a.name, b.name) || ko(a.type, b.type) || ((payOf(a) || 0) - (payOf(b) || 0)));
 let RATES = null;
 
 function load() {
@@ -350,6 +378,7 @@ const bankLabel = b => { const c = { month: '월복리', year: '연복리', simp
 /* ===== 검색 ===== */
 function matches(p) {
   if (!p.active && !SR.disc) return false;
+  if (SR.excl.has(p.id)) return false;
   const q = SR.q.trim().toLowerCase();
   if (q) { const text = (p.name + ' ' + p.type + ' ' + p.label + ' ' + p.features.join(' ') + ' ' + p.note).toLowerCase(); if (!q.split(/\s+/).every(w => text.includes(w))) return false; }
   if (SR.feats.size) { const f = [...SR.feats]; const ok = SR.mode === 'AND' ? f.every(x => p.features.includes(x)) : f.some(x => p.features.includes(x)); if (!ok) return false; }
@@ -358,7 +387,7 @@ function matches(p) {
 function groupIndex() { const m = new Map(); S.products.forEach(p => { const k = p.name + '|' + p.type; if (!m.has(k)) m.set(k, m.size); }); return m; }
 function mkItems(kind) {
   const gi = groupIndex(), out = [];
-  S.products.forEach(p => {
+  sortProds(S.products).forEach(p => {
     if (!matches(p)) return;
     if (!(kind === 'T' ? p.showT : p.showG)) return;
     out.push({ kind: 'p', id: p.id, p, name: p.name, type: p.type, label: labelOf(p), short: shortOf(p), monthly: num(p.monthly),
@@ -374,20 +403,20 @@ function mkItems(kind) {
   out.forEach(it => { const k = it.kind + '|' + it.name + '|' + it.type; it.vi = seen[k] = (seen[k] === undefined ? 0 : seen[k] + 1); });
   return out;
 }
+const curT = () => mkItems('T').filter(it => hasData(it));
 const hasData = (it, periods) => (periods || S.periods).some(m => { const e = it.get(m); return e.rate != null || e.paid != null || e.refund != null; });
 function periodsOf(items) {
   let ps = S.periods.slice();
-  if (S.settings.hideEmpty) ps = ps.filter(m => items.some(it => it.kind === 'p' && (() => { const e = it.get(m); return e.rate != null || e.paid != null || e.refund != null; })()));
+  if (S.settings.hideEmpty && items.some(it => it.kind === 'p')) ps = ps.filter(m => items.some(it => it.kind === 'p' && (() => { const e = it.get(m); return e.rate != null || e.paid != null || e.refund != null; })()));
   return ps;
 }
 
 /* ===== 렌더 ===== */
 function renderAll() {
-  applyPrefsOnce();
   const T = mkItems('T').filter(it => hasData(it));
   $('#subTitle').textContent = '※ 경과기간별 환급률 비교 (납입기간별 구분 · 기준: 설계서 예시값)';
   $('#exLabel').textContent = exampleLabel(T);
-  renderSearch(); renderMaster(); renderSummary(T); renderTable(T); renderChart(); renderFooter(); syncBind();
+  renderSearch(); renderMaster(); renderSummary(T); renderTable(T); renderChart(CH.first); CH.first = false; renderFooter(); syncBind();
 }
 let _pp = false; function applyPrefsOnce() { if (_pp) return; _pp = true; Object.entries(PREF).forEach(([k, v]) => $('#tblBody').style.setProperty('--' + k, v + (k === 'fs' || k === 'cw' || k === 'lw' || k === 'ch' ? 'px' : ''))); $$('[data-pref]').forEach(el => { el.value = PREF[el.dataset.pref]; }); }
 function exampleLabel(T) {
@@ -396,16 +425,15 @@ function exampleLabel(T) {
   return '예시 : ' + [a.length === 1 ? a[0] + '세' : '나이 상이', s.length === 1 ? s[0] : '성별 상이', m.length === 1 ? '가입금액 ' + fmtAmt(m[0]) : '가입금액 상이'].join(', ');
 }
 function renderFooter() {
-  const c = $('#ftContact'); c.style.display = S.settings.showContact ? '' : 'none'; c.textContent = S.settings.contactText || '';
   $('#ftCopy').textContent = 'ⓒ' + new Date().getFullYear() + '. YOON HYUNCHUL, ALL RIGHTS RESERVED.';
 }
 
 /* --- 검색 --- */
 function renderSearch() {
-  $('#srFeats').innerHTML = '<span class="muted">핵심기능</span>' + S.features.map(f => `<span class="chip ${SR.feats.has(f) ? 'on' : ''}" data-act="srFeat" data-v="${esc(f)}">${esc(f)}</span>`).join('');
-  const list = S.products.filter(matches);
-  $('#srCount').textContent = `검색결과 ${list.length}개 / 전체 ${S.products.filter(p => p.active).length}개`;
-  $('#srRes').innerHTML = list.map(p => `<span class="chip" data-act="srPick" data-id="${p.id}" title="${document.body.classList.contains('admin') ? '클릭: 수정' : '클릭: 표에서 위치 보기'}">${esc(shortOf(p))}${p.active ? '' : ' <small>(단종)</small>'} ${p.features.map(f => `<span class="tag">${esc(f)}</span>`).join('')}</span>`).join('') || '<span class="muted">검색 결과가 없습니다.</span>';
+  $('#srFeats').innerHTML = S.features.map(f => `<span class="chip ${SR.feats.has(f) ? 'on' : ''}" data-act="srFeat" data-v="${esc(f)}">${esc(f)}</span>`).join('');
+  const ps = sortProds(S.products.filter(p => p.active || SR.disc));
+  $('#srProds').innerHTML = ps.map(p => `<span class="chip ${SR.excl.has(p.id) ? '' : 'on'}" data-act="srProd" data-id="${p.id}">${esc(shortOf(p))}${p.active ? '' : ' (단종)'}</span>`).join('') || '<span class="muted">상품 없음</span>';
+  $('#srCount').textContent = `조회 ${S.products.filter(matches).length}개 / 전체 ${S.products.filter(p => p.active).length}개`;
 }
 
 /* --- 요약 --- */
@@ -465,118 +493,221 @@ function renderSummary(T) {
 }
 
 /* --- 표 --- */
+const DEFW = { nm: 96, ft: 120, ty: 120, pl: 64, it: 84, mo: 84 };
+const FROZEN = new Set(['nm', 'ft', 'ty', 'pl', 'it']);
+const LTITLE = { nm: '상품명', ft: '주요특징', ty: '유형', pl: '구분', it: '항목', mo: '월보험료' };
 function renderTable(T) {
   const st = S.settings;
   $('#tblOpt').innerHTML = `<span class="muted">표시</span>
     <label><input type="checkbox" data-set="settings.showMonthly"> 월보험료</label>
-    <label><input type="checkbox" data-set="settings.metrics.paid"> 누적납입보험료</label>
-    <label><input type="checkbox" data-set="settings.metrics.refund"> 환급금</label>
+    <label><input type="checkbox" data-set="settings.metrics.paid"> 누적보험료</label>
+    <label><input type="checkbox" data-set="settings.metrics.refund"> 환급액</label>
     <label><input type="checkbox" data-set="settings.metrics.rate"> 환급률</label>
     <label><input type="checkbox" data-set="settings.hideEmpty"> 데이터 없는 기간 숨김</label>
-    <label><input type="checkbox" data-set="settings.hlMax"> 100% 미달 상품은 최고값 강조</label>
-    <label>강조 경과 <select data-set="settings.focus0">${S.periods.map(m => `<option value="${m}" ${st.focus[0] === m ? 'selected' : ''}>${plabel(m)}</option>`).join('')}</select>
+    <label>요약·그래프 기준 경과 <select data-set="settings.focus0">${S.periods.map(m => `<option value="${m}" ${st.focus[0] === m ? 'selected' : ''}>${plabel(m)}</option>`).join('')}</select>
     <select data-set="settings.focus1">${S.periods.map(m => `<option value="${m}" ${st.focus[1] === m ? 'selected' : ''}>${plabel(m)}</option>`).join('')}</select></label>`;
+  const tw = $('#tblBody'); tw.style.setProperty('--ch', PREF.ch + 'px'); tw.style.setProperty('--fs', PREF.fs + 'px');
   const periods = periodsOf(T);
   const items = T.filter(it => hasData(it, periods));
-  if (!items.length || !periods.length) { $('#tblBody').innerHTML = '<div class="muted" style="padding:8px">표시할 데이터가 없습니다.</div>'; $('#tblNote').textContent = ''; $('#tblUnit').textContent = ''; return; }
+  if (!items.length || !periods.length) { tw.innerHTML = '<div class="muted" style="padding:8px">표시할 데이터가 없습니다.</div>'; $('#tblNote').textContent = ''; $('#tblUnit').textContent = ''; return; }
   const hasM = st.showMonthly && items.some(it => it.monthly);
-  const metricDefs = [['paid', '누적납입'], ['refund', '환급금'], ['rate', '환급률']].filter(d => st.metrics[d[0]]);
-  // 항목별 표시 행
-  items.forEach(it => { it.rows = metricDefs.filter(d => periods.some(m => it.get(m)[d[0]] != null)); if (!it.rows.length) it.rows = [['rate', '환급률']]; });
-  const multi = items.some(it => it.rows.length > 1);
-  const left = 3 + (hasM ? 1 : 0) + (multi ? 1 : 0);
-  const refAge = (T.find(i => i.kind === 'p') ? ageOf(T.find(i => i.kind === 'p').p) : S.defaults.age);
-  const foc = new Set(st.focus);
-  let h = '<table class="rt"><thead>';
-  const pad = left > 3 ? `<th colspan="${left - 3}"></th>` : '';
-  h += `<tr class="fl"><th class="cn" colspan="3" style="background:#fff;border:none"></th>${pad}${periods.map(m => `<th class="pc">${foc.has(m) ? '↓ ' + plabel(m) + ' 경과' : ''}</th>`).join('')}</tr>`;
-  h += `<tr><th class="cn" colspan="3">나이</th>${pad}${periods.map(m => `<th class="pc ${foc.has(m) ? 'fc top' : ''}">${refAge + Math.floor(m / 12)}</th>`).join('')}</tr>`;
-  h += `<tr><th class="cn" colspan="3">경과기간</th>${pad}${periods.map(m => `<th class="pc ${foc.has(m) ? 'fc' : ''}" style="${foc.has(m) ? 'color:#d40000' : ''}">${plabel(m)}</th>`).join('')}</tr></thead><tbody>`;
-  // 그룹
+  const metricDefs = [['paid', '누적보험료'], ['refund', '환급액'], ['rate', '환급률']].filter(d => st.metrics[d[0]]);
+  if (!metricDefs.length) metricDefs.push(['rate', '환급률']);
+  const multi = metricDefs.length > 1;
+  const lk = ['nm', 'ft', 'ty', 'pl'].concat(multi ? ['it'] : []), fz = lk.length;
+  const lkAll = lk.concat(hasM ? ['mo'] : []);
+  const keys = lkAll.concat(periods.map(m => 'c' + m));
+  const W = k => PREF.cols[k] ?? (k[0] === 'c' ? PREF.cw : DEFW[k]);
+  const total = keys.reduce((a, k) => a + W(k), 0);
+  const firstP = T.find(i => i.kind === 'p'), refAge = firstP ? ageOf(firstP.p) : S.defaults.age;
+  let h = `<table class="rt" style="width:${total}px"><colgroup>${keys.map(k => `<col data-ck="${k}" style="width:${W(k)}px">`).join('')}</colgroup><thead>`;
+  h += `<tr class="ha"><th class="cn" colspan="${fz}" data-ck="*">나이</th>${hasM ? '<th></th>' : ''}${periods.map(m => `<th>${refAge + Math.floor(m / 12)}</th>`).join('')}</tr>`;
+  h += `<tr class="hb">${lkAll.map(k => `<th class="${FROZEN.has(k) ? 'lc' : ''}" data-ck="${k}">${LTITLE[k]}<i class="rzc" data-rz="${k}"></i></th>`).join('')}${periods.map(m => `<th data-ck="c${m}">${plabel(m)}<i class="rzc" data-rz="c${m}"></i></th>`).join('')}</tr></thead><tbody>`;
   const groups = []; items.forEach(it => { const k = it.kind + '|' + it.name + '|' + it.type; const g = groups[groups.length - 1]; if (g && g.k === k) g.its.push(it); else groups.push({ k, its: [it] }); });
-  const lastRowIdx = groups.reduce((a, g) => a + g.its.reduce((x, it) => x + it.rows.length, 0), 0) - 1;
-  let ri = 0;
   groups.forEach((g, gi) => {
-    const gRows = g.its.reduce((a, it) => a + it.rows.length, 0);
+    const gRows = g.its.length * metricDefs.length;
+    const feats = uniq(g.its.flatMap(it => it.kind === 'p' ? it.p.features : []));
     g.its.forEach((it, ii) => {
-      const hl = new Set();
-      const pts = periods.map(m => [m, it.get(m).rate]).filter(x => x[1] != null);
-      const first = pts.find(x => x[1] >= 100 - 1e-9);
-      if (first) hl.add(first[0]); else if (st.hlMax && pts.length) { const mx = Math.max(...pts.map(x => x[1])); pts.filter(x => x[1] === mx).forEach(x => hl.add(x[0])); }
-      it.rows.forEach((rw, rj) => {
-        const [key, lab] = rw, isFirst = rj === 0, bk = it.kind === 'b';
-        let cls = (it.vi > 0 ? 'v1 ' : '') + (bk ? 'bk ' : '') + (ii === 0 && rj === 0 && gi > 0 ? 'grp-first' : '');
-        h += `<tr class="${cls}" data-pid="${it.id}">`;
-        if (ii === 0 && rj === 0) { h += `<td class="nm" rowspan="${gRows}">${bk ? '🏦 ' : ''}${esc(it.name)}</td><td class="ty" rowspan="${gRows}">${esc(it.type)}</td>`; }
-        if (isFirst) { h += `<td class="pl ${it.vi > 0 ? 'v1' : ''}" rowspan="${it.rows.length}">${esc(it.label)}</td>`; if (hasM) h += `<td class="mo" rowspan="${it.rows.length}">${it.monthly ? it.monthly.toLocaleString('ko-KR') : '-'}</td>`; }
-        if (multi) h += `<td class="it">${lab}</td>`;
+      const hlm = periods.find(m => (it.get(m).rate ?? -1) >= 100 - 1e-9);
+      metricDefs.forEach(([key, lab], rj) => {
+        const rk = it.kind + ':' + it.id + ':' + key, bk = it.kind === 'b', ht = PREF.rows[rk];
+        const cls = (it.vi > 0 ? 'v1 ' : '') + (bk ? 'bk ' : '') + (ii === 0 && rj === 0 && gi > 0 ? 'grp-first' : '');
+        const hnd = `<i class="rzr" data-rz="r:${rk}"></i>`;
+        h += `<tr class="${cls}" data-pid="${it.id}"${ht ? ` style="height:${ht}px"` : ''}>`;
+        if (ii === 0 && rj === 0) h += `<td class="nm" data-ck="nm" rowspan="${gRows}">${bk ? '🏦 ' : ''}${esc(it.name)}</td><td class="ft" data-ck="ft" rowspan="${gRows}">${feats.map(f => `<span class="tag">${esc(f)}</span>`).join('')}</td><td class="ty" data-ck="ty" rowspan="${gRows}">${esc(it.type)}</td>`;
+        if (rj === 0) { h += `<td class="pl ${it.vi > 0 ? 'v1' : ''}" data-ck="pl" rowspan="${metricDefs.length}">${esc(it.label)}${multi ? '' : hnd}</td>`; }
+        if (multi) h += `<td class="it" data-ck="it">${lab}${hnd}</td>`;
+        if (rj === 0 && hasM) h += `<td class="mo" rowspan="${metricDefs.length}">${it.monthly ? it.monthly.toLocaleString('ko-KR') : '-'}</td>`;
         periods.forEach(m => {
           const v = it.get(m)[key];
-          let t = v == null ? '-' : key === 'rate' ? fmt1(v) : man(v);
-          const c = [(foc.has(m) ? 'fc ' : ''), (ri === lastRowIdx && foc.has(m) ? 'bot ' : ''), 'vv ', (key === 'rate' && hl.has(m) ? 'hl' : '')].join('');
-          h += `<td class="${c}">${t}</td>`;
+          const t = v == null ? '-' : key === 'rate' ? fmt1(v) : man(v);
+          h += `<td class="vv${m === hlm && v != null ? ' hl' : ''}">${t}</td>`;
         });
-        h += '</tr>'; ri++;
+        h += '</tr>';
       });
     });
   });
   h += '</tbody></table>';
-  $('#tblBody').innerHTML = h;
-  applyFreeze();
-  $('#tblUnit').textContent = multi ? '단위: 월보험료 원 · 누적납입/환급금 만원 · 환급률 %' : '단위: %';
+  tw.innerHTML = h; applyLayout();
+  $('#tblUnit').textContent = multi ? '단위: 월보험료 원 · 누적보험료/환급액 만원 · 환급률 %' : '단위: %';
   const skipped = T.length - items.length;
-  $('#tblNote').innerHTML = '노랑: 환급률 100% 최초 도달 시점' + (st.hlMax ? '(100% 미달 상품은 최고값)' : '') + ' · 파랑 글자: 같은 상품의 두 번째 이후 구분 · 🏦: 은행 적금 비교항목' + (skipped ? ` · 데이터 미입력 ${skipped}건 제외` : '');
+  $('#tblNote').innerHTML = '노랑: 환급률 100% 최초 도달 시점 · 파랑 글자: 같은 상품의 두 번째 이후 구분 · 🏦: 은행 적금 비교항목 · 상품명은 가나다순' + (skipped ? ` · 데이터 미입력 ${skipped}건 제외` : '');
 }
+function applyLayout() {
+  const tb = $('#tblBody table'); if (!tb) return;
+  const lefts = {}; let acc = 0, total = 0;
+  $$('col', tb).forEach(c => { const k = c.dataset.ck, w = parseFloat(c.style.width); if (FROZEN.has(k)) lefts[k] = acc; acc += w; total += w; });
+  tb.style.width = total + 'px';
+  $$('td[data-ck],th[data-ck]', tb).forEach(el => { const k = el.dataset.ck; if (k === '*') el.style.left = '0px'; else if (k in lefts) el.style.left = lefts[k] + 'px'; });
+  const ha = $('thead tr.ha', tb), hh = ha.getBoundingClientRect().height;
+  $$('thead tr.ha th', tb).forEach(th => { th.style.top = '0px'; }); $$('thead tr.hb th', tb).forEach(th => { th.style.top = hh + 'px'; });
+}
+document.addEventListener('pointerdown', e => {
+  const hd = e.target.closest('.rzc,.rzr'); if (!hd) return; e.preventDefault(); e.stopPropagation();
+  const rz = hd.dataset.rz;
+  if (hd.classList.contains('rzc')) {
+    const col = $(`col[data-ck="${rz}"]`), w0 = parseFloat(col.style.width), x0 = e.clientX;
+    const mv = ev => { const w = Math.max(30, Math.round(w0 + ev.clientX - x0)); PREF.cols[rz] = w; col.style.width = w + 'px'; applyLayout(); };
+    const up = () => { document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', up); savePref(); };
+    document.addEventListener('pointermove', mv); document.addEventListener('pointerup', up);
+  } else {
+    const key = rz.slice(2), tr = hd.closest('tr'), h0 = tr.getBoundingClientRect().height, y0 = e.clientY;
+    const mv = ev => { const v = Math.max(16, Math.round(h0 + ev.clientY - y0)); PREF.rows[key] = v; tr.style.height = v + 'px'; };
+    const up = () => { document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', up); savePref(); };
+    document.addEventListener('pointermove', mv); document.addEventListener('pointerup', up);
+  }
+});
+document.addEventListener('dblclick', e => {
+  const hd = e.target.closest('.rzc,.rzr'); if (!hd) return; const rz = hd.dataset.rz;
+  if (hd.classList.contains('rzc')) delete PREF.cols[rz]; else delete PREF.rows[rz.slice(2)];
+  savePref(); renderTable(curT());
+});
 
 /* --- 그래프 --- */
-function renderChart() {
+const CH = { first: true, obs: null };
+const lbl = it => it.kind === 'b' ? (it.name + ' ' + it.label).trim() : it.short;
+function mono(p) {
+  const n = p.length, f = a => a.toFixed(1);
+  if (n < 3) return 'M' + p.map(q => f(q.x) + ',' + f(q.y)).join('L');
+  const dx = [], m = [], t = [];
+  for (let i = 0; i < n - 1; i++) { dx[i] = p[i + 1].x - p[i].x; m[i] = (p[i + 1].y - p[i].y) / dx[i]; }
+  t[0] = m[0]; t[n - 1] = m[n - 2];
+  for (let i = 1; i < n - 1; i++) t[i] = m[i - 1] * m[i] <= 0 ? 0 : (m[i - 1] + m[i]) / 2;
+  for (let i = 0; i < n - 1; i++) {
+    if (m[i] === 0) { t[i] = 0; t[i + 1] = 0; continue; }
+    const a = t[i] / m[i], b = t[i + 1] / m[i], q = a * a + b * b;
+    if (q > 9) { const k = 3 / Math.sqrt(q); t[i] = k * a * m[i]; t[i + 1] = k * b * m[i]; }
+  }
+  let d = 'M' + f(p[0].x) + ',' + f(p[0].y);
+  for (let i = 0; i < n - 1; i++) d += `C${f(p[i].x + dx[i] / 3)},${f(p[i].y + t[i] * dx[i] / 3)},${f(p[i + 1].x - dx[i] / 3)},${f(p[i + 1].y - t[i + 1] * dx[i] / 3)},${f(p[i + 1].x)},${f(p[i + 1].y)}`;
+  return d;
+}
+function renderChart(animate) {
+  const sm = S.settings; animate = !!animate && sm.anim;
   $('#chOpt').innerHTML = `<span class="muted">값 표시</span>
-    <select data-set="settings.labelMode"><option value="key" ${S.settings.labelMode === 'key' ? 'selected' : ''}>주요 시점만</option><option value="all" ${S.settings.labelMode === 'all' ? 'selected' : ''}>전체</option><option value="none" ${S.settings.labelMode === 'none' ? 'selected' : ''}>없음</option></select>`;
+    <select data-set="settings.labelMode"><option value="end" ${sm.labelMode === 'end' ? 'selected' : ''}>선 끝(상품명+값)만</option><option value="key" ${sm.labelMode === 'key' ? 'selected' : ''}>+ 기준 경과 시점</option><option value="all" ${sm.labelMode === 'all' ? 'selected' : ''}>전체 시점</option><option value="none" ${sm.labelMode === 'none' ? 'selected' : ''}>선 끝 이름만</option></select>
+    <label><input type="checkbox" data-set="settings.smooth"> 부드러운 곡선</label>
+    <label><input type="checkbox" data-set="settings.anim"> 애니메이션</label>
+    <label>축 최대값 <input type="number" data-set="settings.ymax" placeholder="자동" style="width:72px"></label>
+    <button class="sm" data-act="replay">▶ 다시 재생</button>`;
   const items = mkItems('G').filter(it => hasData(it));
   if (!items.length) { $('#chBody').innerHTML = '<div class="muted" style="padding:8px">그래프로 표시할 데이터가 없습니다.</div>'; $('#chLegend').innerHTML = ''; renderBasis(); return; }
   const periods = periodsOf(items);
-  const W = 1000, H = 540, L = 46, Rr = 26, Tp = 16, Bt = 58;
-  let mx = 0; items.filter(it => it.kind === 'p').forEach(it => periods.forEach(m => { const v = it.get(m).rate; if (v != null) mx = Math.max(mx, v); }));
-  const ymax = Math.max(110, Math.ceil((mx + 4) / 10) * 10), step = ymax > 200 ? 20 : 10;
-  const n = periods.length, xs = i => n === 1 ? (L + W - Rr) / 2 : L + i * (W - L - Rr) / (n - 1), ys = v => Tp + (1 - v / ymax) * (H - Tp - Bt);
-  const foc = new Set(S.settings.focus);
-  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'Malgun Gothic',sans-serif"><defs><clipPath id="cp"><rect x="${L - 4}" y="${Tp - 8}" width="${W - L - Rr + 24}" height="${H - Tp - Bt + 8}"/></clipPath></defs>`;
-  for (let v = 0; v <= ymax; v += step) s += `<line x1="${L}" x2="${W - Rr}" y1="${ys(v)}" y2="${ys(v)}" stroke="${v === 100 ? '#777' : '#dfe4ea'}" stroke-width="${v === 100 ? 1.4 : 1}" ${v === 100 ? 'stroke-dasharray="5 3"' : ''}/><text x="${L - 6}" y="${ys(v) + 4}" text-anchor="end" font-size="12" fill="#444">${v}</text>`;
-  s += `<text x="${L + 4}" y="${ys(100) - 4}" font-size="11" fill="#777">원금 100%</text>`;
+  const W = 1120, H = 660, L = 76, R = 236, Tp = 36, Bt = 80, px1 = W - R, n = periods.length;
+  const xs = i => n === 1 ? (L + px1) / 2 : L + i * (px1 - L) / (n - 1);
+  let mx = 0; items.forEach(it => periods.forEach(m => { const v = it.get(m).rate; if (v != null) mx = Math.max(mx, v); }));
+  const man_ = num(sm.ymax) > 0 ? num(sm.ymax) : null;
+  const step = (man_ || mx) <= 130 ? 10 : (man_ || mx) <= 260 ? 20 : 50;
+  const ymax = man_ || Math.max(110, Math.ceil((mx + step * 0.35) / step) * step);
+  const ys = v => Tp + (1 - v / ymax) * (H - Tp - Bt), plotB = H - Bt;
+  const foc = new Set(sm.focus), age0 = (items.find(x => x.kind === 'p') ? ageOf(items.find(x => x.kind === 'p').p) : S.defaults.age);
+  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,'Malgun Gothic',sans-serif">
+    <defs><linearGradient id="bgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8fafd"/><stop offset="1" stop-color="#ffffff"/></linearGradient>
+    <clipPath id="cpA"><rect id="cpR" x="0" y="${Tp - 10}" width="${animate ? 0 : W}" height="${H - Tp - Bt + 20}">${animate ? `<animate id="anA" attributeName="width" from="0" to="${W}" dur="2.2s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.3 0 0.2 1"/>` : ''}</rect></clipPath></defs>
+    <rect x="${L}" y="${Tp}" width="${px1 - L}" height="${plotB - Tp}" rx="6" fill="url(#bgG)"/>`;
+  for (let v = 0; v <= ymax + 1e-9; v += step) s += `<line x1="${L}" x2="${px1}" y1="${ys(v)}" y2="${ys(v)}" stroke="${v === 100 ? '#1f3a5f' : '#e3e9f0'}" stroke-width="${v === 100 ? 1.6 : 1}" ${v === 100 ? 'stroke-dasharray="6 4"' : ''}/><text x="${L - 10}" y="${ys(v) + 5}" text-anchor="end" font-size="15" font-weight="600" fill="#33414f">${v}</text>`;
+  s += `<text x="${L + 8}" y="${ys(100) - 7}" font-size="13" font-weight="700" fill="#1f3a5f">원금 100%</text><text x="${L - 10}" y="${Tp - 14}" text-anchor="end" font-size="13" fill="#5d6b7a">환급률(%)</text>`;
   periods.forEach((m, i) => {
-    s += `<line x1="${xs(i)}" x2="${xs(i)}" y1="${Tp}" y2="${H - Bt}" stroke="${foc.has(m) ? '#e66' : '#e6eaef'}" stroke-width="${foc.has(m) ? 1.4 : 1}" ${foc.has(m) ? 'stroke-dasharray="4 3"' : ''}/>`;
-    s += `<text x="${xs(i)}" y="${H - Bt + 17}" text-anchor="middle" font-size="13" font-weight="700" fill="${foc.has(m) ? '#d40000' : '#222'}">${plabel(m)}</text>`;
-    const a = (items.find(x => x.kind === 'p') ? ageOf(items.find(x => x.kind === 'p').p) : S.defaults.age) + Math.floor(m / 12);
-    s += `<text x="${xs(i)}" y="${H - Bt + 31}" text-anchor="middle" font-size="11" fill="#666">(${a}세)</text>`;
+    if (foc.has(m)) s += `<line x1="${xs(i)}" x2="${xs(i)}" y1="${Tp}" y2="${plotB}" stroke="#b9c4d1" stroke-width="1.2" stroke-dasharray="3 4"/>`;
+    s += `<line x1="${xs(i)}" x2="${xs(i)}" y1="${plotB}" y2="${plotB + 6}" stroke="#8a97a6"/><text x="${xs(i)}" y="${plotB + 25}" text-anchor="middle" font-size="16" font-weight="800" fill="#1b2430">${plabel(m)}</text><text x="${xs(i)}" y="${plotB + 44}" text-anchor="middle" font-size="13" fill="#5d6b7a">${age0 + Math.floor(m / 12)}세</text>`;
   });
-  s += `<text x="${W - Rr}" y="${H - 6}" text-anchor="end" font-size="11" fill="#666">경과기간 (나이는 기준 가입나이 + 경과년)</text>`;
-  s += '<g clip-path="url(#cp)">';
-  items.forEach((it, k) => {
+  s += `<text x="${px1}" y="${H - 8}" text-anchor="end" font-size="13" fill="#5d6b7a">경과기간 (나이 = 기준 가입나이 + 경과년)</text>`;
+  const placed = [], lab = [];
+  let gl = '', gp = '';
+  items.forEach(it => {
     const pts = periods.map((m, i) => ({ m, i, v: it.get(m).rate })).filter(p => p.v != null);
     if (!pts.length) return;
-    const dash = it.kind === 'b' ? '2 4' : DASH[Math.min(it.vi, 2)];
-    const sw = it.kind === 'b' ? 2.2 : 2;
-    s += `<polyline fill="none" stroke="${it.color}" stroke-width="${sw}" ${dash ? `stroke-dasharray="${dash}"` : ''} points="${pts.map(p => xs(p.i).toFixed(1) + ',' + ys(p.v).toFixed(1)).join(' ')}"/>`;
-    const lm = S.settings.labelMode;
-    pts.forEach((p, j) => {
-      s += `<circle cx="${xs(p.i).toFixed(1)}" cy="${ys(p.v).toFixed(1)}" r="3" fill="${it.color}"><title>${esc(it.short)} · ${plabel(p.m)} · ${fmt1(p.v)}%</title></circle>`;
-      const show = lm === 'all' || (lm === 'key' && (foc.has(p.m) || j === pts.length - 1));
-      if (show) { const dy = (k % 2 ? 14 : -7); s += `<text x="${xs(p.i).toFixed(1)}" y="${(ys(p.v) + dy).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="${it.color}" stroke="#fff" stroke-width="3" paint-order="stroke">${fmt1(p.v)}</text>`; }
-    });
+    const dash = it.kind === 'b' ? '2 6' : DASH[Math.min(it.vi, 2)], sw = it.kind === 'b' ? 2.6 : 2.8;
+    const xy = pts.map(p => ({ x: xs(p.i), y: ys(p.v) }));
+    const d = sm.smooth ? mono(xy) : 'M' + xy.map(q => q.x.toFixed(1) + ',' + q.y.toFixed(1)).join('L');
+    gp += `<g class="sr" data-sid="${it.kind}${it.id}"><path d="${d}" fill="none" stroke="${it.color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" ${dash ? `stroke-dasharray="${dash}"` : ''}/>`;
+    pts.forEach((p, j) => { const last = j === pts.length - 1; gp += `<circle cx="${xy[j].x.toFixed(1)}" cy="${xy[j].y.toFixed(1)}" r="${last ? 5 : 3.8}" fill="${last ? it.color : '#fff'}" stroke="${it.color}" stroke-width="2"/>`; });
+    gp += '</g>';
+    const lp = pts[pts.length - 1]; lab.push({ it, x: xy[xy.length - 1].x, y: xy[xy.length - 1].y, v: lp.v });
+    const lm = sm.labelMode;
+    if (lm === 'key' || lm === 'all') {
+      let vl = '';
+      pts.forEach((p, j) => {
+        if (j === pts.length - 1) return;
+        if (lm === 'key' && !foc.has(p.m)) return;
+        const t = fmt1(p.v), w = t.length * 7.4 + 4, x = xy[j].x, y = xy[j].y;
+        for (const dy of [-11, 20]) { const r = { x1: x - w / 2, x2: x + w / 2, y1: y + dy - 12, y2: y + dy + 3 }; if (!placed.some(q => r.x1 < q.x2 && r.x2 > q.x1 && r.y1 < q.y2 && r.y2 > q.y1)) { placed.push(r); vl += `<text x="${x.toFixed(1)}" y="${(y + dy).toFixed(1)}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${it.color}" stroke="#fff" stroke-width="3.5" paint-order="stroke">${t}</text>`; break; } }
+      });
+      gp += `<g class="sr ${animate ? 'fade' : ''}" data-sid="${it.kind}${it.id}">${vl}</g>`;
+    }
   });
-  s += '</g></svg>';
+  // 오른쪽 이름표 (겹침 해소)
+  lab.sort((a, b) => a.y - b.y); const gap = 17, x0 = px1 + 22;
+  let prev = Tp - gap; lab.forEach(l => { l.ly = Math.max(l.y, prev + gap); prev = l.ly; });
+  for (let i = lab.length - 1; i >= 0; i--) { const lim = i === lab.length - 1 ? plotB + 4 : lab[i + 1].ly - gap; if (lab[i].ly > lim) lab[i].ly = lim; }
+  lab.forEach(l => {
+    const c = l.it.color;
+    gl += `<g class="sr ${animate ? 'fade' : ''}" data-sid="${l.it.kind}${l.it.id}"><path d="M${(l.x + 7).toFixed(1)},${l.y.toFixed(1)}L${px1 + 10},${l.y.toFixed(1)}L${x0 - 6},${l.ly.toFixed(1)}" fill="none" stroke="${c}" stroke-width="1" stroke-opacity=".55"/><circle cx="${x0 - 4}" cy="${l.ly.toFixed(1)}" r="3" fill="${c}"/><text x="${x0 + 4}" y="${(l.ly + 4.5).toFixed(1)}" font-size="13" font-weight="700" fill="${c}">${esc(lbl(l.it))}${sm.labelMode === 'none' ? '' : ` <tspan font-weight="800">${fmt1(l.v)}</tspan>`}</text></g>`;
+  });
+  s += `<g clip-path="url(#cpA)">${gp}</g>${gl}<line id="gd" y1="${Tp}" y2="${plotB}" stroke="#1f3a5f" stroke-width="1.2" stroke-dasharray="4 3" style="display:none"/><rect class="ov" x="${L - 20}" y="${Tp}" width="${px1 - L + 40}" height="${plotB - Tp}" fill="transparent"/></svg>`;
   $('#chBody').innerHTML = s;
   $('#chLegend').innerHTML = items.map(it => {
-    const dash = it.kind === 'b' ? '2 4' : DASH[Math.min(it.vi, 2)];
-    return `<div class="li" data-act="legend" data-kind="${it.kind}" data-id="${it.id}" title="클릭: 그래프에서 숨기기"><svg width="30" height="8"><line x1="0" y1="4" x2="30" y2="4" stroke="${it.color}" stroke-width="2.4" ${dash ? `stroke-dasharray="${dash}"` : ''}/></svg><span>${it.kind === 'b' ? '🏦 ' : ''}${esc(it.short)}</span></div>`;
+    const dash = it.kind === 'b' ? '2 5' : DASH[Math.min(it.vi, 2)];
+    return `<div class="li" data-sid="${it.kind}${it.id}" data-act="legend" data-kind="${it.kind}" data-id="${it.id}" title="클릭: 그래프에서 숨기기 · 마우스 올리면 강조"><svg width="30" height="8"><line x1="0" y1="4" x2="30" y2="4" stroke="${it.color}" stroke-width="2.6" ${dash ? `stroke-dasharray="${dash}"` : ''}/></svg><span>${it.kind === 'b' ? '🏦 ' : ''}${esc(it.short)}</span></div>`;
   }).join('');
+  chartHover($('#chBody svg'), { periods, xs, items, W, age0 });
+  if (animate) playWhenVisible();
   renderBasis();
 }
+function playWhenVisible() {
+  const box = $('#chBody'); if (CH.obs) CH.obs.disconnect();
+  const go = () => { const a = $('#anA'); if (a && a.beginElement) a.beginElement(); else { const r = $('#cpR'); if (r) r.setAttribute('width', 1120); } };
+  const r = box.getBoundingClientRect();
+  if (r.top < innerHeight * 0.8 && r.bottom > 0) { go(); return; }
+  CH.obs = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { go(); CH.obs.disconnect(); } }, { threshold: 0.25 }); CH.obs.observe(box);
+}
+function chartHover(svg, c) {
+  const tip = $('#chTip'), gd = $('#gd', svg), ov = $('.ov', svg); if (!ov) return;
+  ov.addEventListener('mousemove', e => {
+    const r = svg.getBoundingClientRect(), k = c.W / r.width, vx = (e.clientX - r.left) * k;
+    let best = 0, bd = 1e9; c.periods.forEach((m, i) => { const d = Math.abs(c.xs(i) - vx); if (d < bd) { bd = d; best = i; } });
+    const m = c.periods[best];
+    gd.setAttribute('x1', c.xs(best)); gd.setAttribute('x2', c.xs(best)); gd.style.display = '';
+    const rows = c.items.map(it => ({ it, e: it.get(m) })).filter(x => x.e.rate != null).sort((a, b) => b.e.rate - a.e.rate);
+    tip.innerHTML = `<div class="th">${plabel(m)} 경과 · ${c.age0 + Math.floor(m / 12)}세</div>` + rows.map(x => `<div class="tr"><i style="background:${x.it.color}"></i><span>${esc(lbl(x.it))}</span><b>${fmt1(x.e.rate)}%</b></div>`).join('');
+    tip.style.display = 'block';
+    const px = c.xs(best) / k, tw = tip.offsetWidth;
+    tip.style.left = Math.max(0, (px + 16 + tw > r.width ? px - tw - 16 : px + 16)) + 'px';
+  });
+  ov.addEventListener('mouseleave', () => { tip.style.display = 'none'; gd.style.display = 'none'; });
+}
+document.addEventListener('mouseover', e => {
+  const t = e.target.closest('[data-sid]'); const svg = $('#chBody svg'); if (!svg) return;
+  $$('.sr.on,.li.on').forEach(x => x.classList.remove('on'));
+  if (!t) { svg.classList.remove('hl'); return; }
+  svg.classList.add('hl'); $$(`[data-sid="${t.dataset.sid}"]`).forEach(x => x.classList.add('on'));
+});
+document.addEventListener('mouseout', e => { if (!e.relatedTarget || !e.relatedTarget.closest || !e.relatedTarget.closest('[data-sid]')) { const svg = $('#chBody svg'); if (svg) svg.classList.remove('hl'); $$('.sr.on,.li.on').forEach(x => x.classList.remove('on')); } });
 function renderBasis() {
   const L = (t, u) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
   const calc = { month: '월복리', year: '연복리', simple: '단리' }[S.settings.bankCalc];
   $('#basis').innerHTML = [
-    '※ 산출기준: 환급률(%) = 해지환급금 ÷ 누적납입보험료 × 100 (설계서 예시값 입력 기준, 월보험료·환급금만 입력한 경우 자동 계산).',
+    '※ 산출기준: 환급률(%) = 환급액 ÷ 누적보험료 × 100 (설계서 예시값 입력 기준, 월보험료·환급률만 입력한 경우 누적보험료·환급액은 자동 계산).',
     `※ 은행 비교: 수익률(%) = 평가금액 ÷ 누적납입원금 × 100 / 매월 초 동일 금액 적립, 납입 종료 후에도 동일 이율로 ${calc} 거치 가정${S.settings.bankTax ? ' / 이자소득세 15.4% 차감(세후)' : ' / 세전'}.`,
     `※ 세금 참고: ${L('소득세법 제16조(이자소득)', 'https://www.law.go.kr/법령/소득세법/제16조')} · ${L('소득세법 제129조(원천징수세율)', 'https://www.law.go.kr/법령/소득세법/제129조')} · ${L('소득세법 시행령 제25조(저축성보험 보험차익 비과세)', 'https://www.law.go.kr/법령/소득세법시행령/제25조')}`,
     '※ 보험은 보장(사망·질병 등)을 포함한 상품으로 은행 적금과 단순 비교에는 한계가 있으며, 실제 환급금은 가입 조건·설계서·약관을 기준으로 합니다.'
@@ -640,29 +771,19 @@ function renderMaster() {
       <td style="white-space:nowrap"><button class="sm" data-act="bEdit" data-id="${b.id}">수정</button><button class="sm dg" data-act="bDel" data-id="${b.id}">삭제</button></td></tr>`).join('') || '<tr><td colspan="8" class="muted">은행 비교항목이 없습니다.</td></tr>'}
     </tbody></table></div></details>`;
   // 문구
-  h += `<details class="pn"><summary>⑤ 요약 메모 · 담당자정보</summary><div class="in">
-    <div class="row"><label style="flex:1;min-width:280px">담당자정보 (푸터 좌측 · 상단 체크박스로 조회/인쇄 표시 선택)<input type="text" data-set="settings.contactText" style="width:100%"></label></div>
+  h += `<details class="pn"><summary>⑤ 요약 메모</summary><div class="in">
     <div class="row"><label style="flex:1;min-width:280px">요약 하단 메모 (줄바꿈=문장 구분)<textarea data-set="settings.memo" rows="3" style="width:100%"></textarea></label></div></div></details>`;
   body.innerHTML = h;
 }
 
-/* ===== 셀 크기 · 틀 고정 ===== */
-const PKEY = 'refund_view_prefs', PDEF = { cw: 48, lw: 90, ch: 2, fs: 13 };
-let PREF = Object.assign({}, PDEF); try { Object.assign(PREF, JSON.parse(localStorage.getItem(PKEY) || '{}')); } catch (e) {}
-function applyPrefs() {
-  const tw = $('#tblBody'); tw.style.setProperty('--cw', PREF.cw + 'px'); tw.style.setProperty('--lw', PREF.lw + 'px'); tw.style.setProperty('--ch', PREF.ch + 'px'); tw.style.setProperty('--fs', PREF.fs + 'px');
-  $$('[data-pref]').forEach(el => { el.value = PREF[el.dataset.pref]; });
-  applyFreeze();
-}
-function applyFreeze() {
-  const tb = $('#tblBody table'); if (!tb) return;
-  let top = 0; $$('thead tr', tb).forEach(tr => { $$('th', tr).forEach(th => { th.style.top = top + 'px'; }); top += tr.getBoundingClientRect().height; });
-  const r = $('tbody tr', tb); if (!r) return;
-  const nm = $('td.nm', r), ty = $('td.ty', r); if (!nm || !ty) return;
-  const w1 = nm.getBoundingClientRect().width, w2 = ty.getBoundingClientRect().width;
-  $$('td.nm', tb).forEach(c => { c.style.left = '0px'; }); $$('td.ty', tb).forEach(c => { c.style.left = w1 + 'px'; }); $$('td.pl', tb).forEach(c => { c.style.left = (w1 + w2) + 'px'; });
-}
-document.addEventListener('input', e => { const k = e.target.dataset && e.target.dataset.pref; if (!k) return; PREF[k] = +e.target.value; try { localStorage.setItem(PKEY, JSON.stringify(PREF)); } catch (er) {} applyPrefs(); });
+/* ===== 셀 크기 (전체 기본값 + 개별 드래그) ===== */
+const PKEY = 'refund_view_prefs', PDEF = { cw: 64, ch: 2, fs: 13 };
+let PREF = Object.assign({ cols: {}, rows: {} }, PDEF);
+try { const o = JSON.parse(localStorage.getItem(PKEY) || '{}'); Object.assign(PREF, o); } catch (e) {}
+PREF.cols = PREF.cols || {}; PREF.rows = PREF.rows || {};
+const savePref = () => { try { localStorage.setItem(PKEY, JSON.stringify(PREF)); } catch (e) {} };
+function syncPref() { $$('[data-pref]').forEach(el => { el.value = PREF[el.dataset.pref]; }); }
+document.addEventListener('input', e => { const k = e.target.dataset && e.target.dataset.pref; if (!k) return; PREF[k] = +e.target.value; savePref(); renderTable(curT()); });
 
 /* ===== 바인딩 ===== */
 function getPath(path) { if (path === 'settings.focus0') return S.settings.focus[0]; if (path === 'settings.focus1') return S.settings.focus[1]; return path.split('.').reduce((o, k) => o[k], S); }
@@ -702,12 +823,17 @@ document.addEventListener('click', e => {
   const idx = S.products.findIndex(x => x.id === id), p = S.products[idx];
   switch (a) {
     case 'print': window.print(); break;
-    case 'prefReset': PREF = Object.assign({}, PDEF); try { localStorage.removeItem(PKEY); } catch (er) {} applyPrefs(); break;
+    case 'prefReset': PREF = Object.assign({ cols: {}, rows: {} }, PDEF); savePref(); syncPref(); renderTable(curT()); break;
+    case 'replay': renderChart(true); break;
     case 'mode': { const on = !document.body.classList.contains('admin'); setMode(on); break; }
     case 'rates': openRates(null); break;
-    case 'srClear': SR.q = ''; SR.feats.clear(); SR.disc = false; $('#srQ').value = ''; $('#srDisc').checked = false; renderAll(); break;
+    case 'srClear': SR.q = ''; SR.feats.clear(); SR.excl.clear(); SR.disc = false; $('#srQ').value = ''; $('#srDisc').checked = false; renderAll(); break;
     case 'srFeat': SR.feats.has(v) ? SR.feats.delete(v) : SR.feats.add(v); renderAll(); break;
-    case 'srPick': if (document.body.classList.contains('admin')) editProduct(id); else { const tr = $(`tr[data-pid="${id}"]`); if (tr) { tr.scrollIntoView({ behavior: 'smooth', block: 'center' }); tr.classList.add('flash'); setTimeout(() => tr.classList.remove('flash'), 1800); } } break;
+    case 'srFeatAll': S.features.forEach(f => SR.feats.add(f)); renderAll(); break;
+    case 'srFeatNone': SR.feats.clear(); renderAll(); break;
+    case 'srProd': SR.excl.has(id) ? SR.excl.delete(id) : SR.excl.add(id); renderAll(); break;
+    case 'srProdAll': SR.excl.clear(); renderAll(); break;
+    case 'srProdNone': S.products.filter(p => p.active || SR.disc).forEach(p => SR.excl.add(p.id)); renderAll(); break;
     case 'legend': if (t.dataset.kind === 'p') { const q = S.products.find(x => x.id === id); if (q) q.showG = false; } else { const b = S.banks.find(x => x.id === id); if (b) b.show = false; } commit(); break;
     case 'tab': UI.tab = v; renderMaster(); break;
     case 'pAdd': editProduct(null); break;
@@ -769,7 +895,8 @@ function editProduct(id) {
   const src = id ? S.products.find(x => x.id === id) : null;
   const p = src ? clone(src) : { id: uid(), name: '', type: '', label: '', pay: null, age: null, sex: '', amount: null, monthly: null, features: [], active: true, showT: true, showG: true, note: '', data: {} };
   const box = document.createElement('div');
-  box.innerHTML = `<div class="fg">
+  const build = () => {
+    box.innerHTML = `<div class="fg">
     <label>상품명<input type="text" data-f="name" value="${esc(p.name)}"></label>
     <label>유형(예: 1종 보증형)<input type="text" data-f="type" value="${esc(p.type)}"></label>
     <label>구분 표시(비우면 N년납)<input type="text" data-f="label" value="${esc(p.label)}" placeholder="예: 일반 / 간편"></label>
@@ -778,22 +905,25 @@ function editProduct(id) {
     <label>성별<select data-f="sex"><option value="">기본(${S.defaults.sex})</option><option ${p.sex === '남' ? 'selected' : ''}>남</option><option ${p.sex === '여' ? 'selected' : ''}>여</option></select></label>
     <label>가입금액(만원)<input type="number" data-f="amount" value="${p.amount ?? ''}" placeholder="기본 ${S.defaults.amount}"></label>
     <label>월보험료(원)<input type="number" data-f="monthly" value="${p.monthly ?? ''}"></label></div>
-    <div class="row" style="margin-top:6px"><b>핵심기능</b>${S.features.map(f => `<label><input type="checkbox" data-ft="${esc(f)}" ${p.features.includes(f) ? 'checked' : ''}> ${esc(f)}</label>`).join('')}</div>
+    <div class="row" style="margin-top:6px"><b>핵심기능</b>${S.features.map(f => `<label><input type="checkbox" data-ft="${esc(f)}" ${p.features.includes(f) ? 'checked' : ''}> ${esc(f)}</label>`).join('')}
+      <input type="text" id="edFt" placeholder="새 핵심기능" style="width:110px"><button class="sm" data-addft>＋ 항목 추가</button></div>
     <div class="row"><label style="flex:1">메모<input type="text" data-f="note" value="${esc(p.note)}" style="width:100%"></label></div>
     <div class="row"><b>경과기간별 입력</b>
       <button class="sm" data-calc="paid">누적보험료 자동(월보험료×납입개월)</button><button class="sm" data-calc="rate">환급률 자동(환급액÷누적)</button><button class="sm" data-calc="refund">환급액 자동(누적×환급률)</button><button class="sm dg" data-calc="clear">전체 지우기</button></div>
-    <div class="tw"><table class="pg"><thead><tr><th>경과기간</th><th>누적보험료(원)</th><th>환급액(원)</th><th>환급률(%)</th></tr></thead><tbody>
+    <div class="row"><span class="muted">경과기간 추가</span><input type="number" id="edPn" placeholder="숫자" style="width:70px"><select id="edPu"><option value="y">년</option><option value="m">개월</option></select><button class="sm" data-addper>＋ 추가</button></div>
+    <div class="tw" style="max-height:46vh"><table class="pg"><thead><tr><th>경과기간</th><th>누적보험료(원)</th><th>환급액(원)</th><th>환급률(%)</th></tr></thead><tbody>
     ${S.periods.map(m => { const d = p.data[m] || {}; return `<tr><td>${plabel(m)}</td><td><input type="number" data-pm="${m}" data-pf="paid" value="${d.paid ?? ''}"></td><td><input type="number" data-pm="${m}" data-pf="refund" value="${d.refund ?? ''}"></td><td><input class="rt" type="number" step="0.1" data-pm="${m}" data-pf="rate" value="${d.rate ?? ''}"></td></tr>`; }).join('')}
     </tbody></table></div>
     <div class="row" style="margin-top:8px"><button class="pri" data-save>저장</button><button data-cancel>취소</button><span class="er" id="edErr"></span></div>`;
+  };
+  build();
   const m = openModal(src ? '상품 수정 · ' + shortOf(src) : '상품 추가', box, 720);
   const read = () => {
     const g = k => $(`[data-f="${k}"]`, box).value;
     p.name = g('name').trim(); p.type = g('type').trim(); p.label = g('label').trim(); p.pay = num(g('pay')); p.age = num(g('age')); p.sex = g('sex'); p.amount = num(g('amount')); p.monthly = num(g('monthly')); p.note = g('note').trim();
     p.features = $$('[data-ft]', box).filter(c => c.checked).map(c => c.dataset.ft);
-    p.data = {}; S.periods.forEach(pm => { const d = {}; ['paid', 'refund', 'rate'].forEach(f => { const v = num($(`[data-pm="${pm}"][data-pf="${f}"]`, box).value); if (v !== null) d[f] = v; }); if (Object.keys(d).length) p.data[pm] = d; });
+    p.data = {}; S.periods.forEach(pm => { const d = {}; ['paid', 'refund', 'rate'].forEach(f => { const el = $(`[data-pm="${pm}"][data-pf="${f}"]`, box); const v = el ? num(el.value) : null; if (v !== null) d[f] = v; }); if (Object.keys(d).length) p.data[pm] = d; });
   };
-  const write = () => S.periods.forEach(pm => { const d = p.data[pm] || {}; ['paid', 'refund', 'rate'].forEach(f => { $(`[data-pm="${pm}"][data-pf="${f}"]`, box).value = d[f] ?? ''; }); });
   box.addEventListener('click', e => {
     const c = e.target.closest('[data-calc]');
     if (c) {
@@ -803,12 +933,23 @@ function editProduct(id) {
         else if (c.dataset.calc === 'rate') { if (d.paid > 0 && d.refund != null) d.rate = Math.round(d.refund / d.paid * 1000) / 10; }
         else if (c.dataset.calc === 'refund') { if (d.paid > 0 && d.rate != null) d.refund = Math.round(d.paid * d.rate / 100); }
         else if (c.dataset.calc === 'clear') { delete p.data[pm]; } });
-      write(); return;
+      build(); return;
+    }
+    if (e.target.closest('[data-addft]')) {
+      read(); const n = $('#edFt', box).value.trim(); if (!n) return;
+      if (!S.features.includes(n)) S.features.push(n); if (!p.features.includes(n)) p.features.push(n);
+      commit(); build(); return;
+    }
+    if (e.target.closest('[data-addper]')) {
+      read(); const v = num($('#edPn', box).value); if (!v || v <= 0) { $('#edErr', box).textContent = '경과기간 숫자를 입력하세요.'; return; }
+      const mm = $('#edPu', box).value === 'y' ? Math.round(v * 12) : Math.round(v);
+      if (S.periods.includes(mm)) { $('#edErr', box).textContent = '이미 있는 경과기간입니다.'; return; }
+      S.periods.push(mm); S.periods.sort((a, b) => a - b); commit(); build(); return;
     }
     if (e.target.closest('[data-cancel]')) m.remove();
     if (e.target.closest('[data-save]')) {
-      read(); if (!p.name) { $('#edErr').textContent = '상품명을 입력하세요.'; return; }
-      if (src) S.products[S.products.findIndex(x => x.id === src.id)] = p; else S.products.push(p);
+      read(); if (!p.name) { $('#edErr', box).textContent = '상품명을 입력하세요.'; return; }
+      const ix = S.products.findIndex(x => x.id === p.id); if (ix >= 0) S.products[ix] = p; else S.products.push(p);
       m.remove(); commit();
     }
   });
@@ -956,9 +1097,10 @@ S = load();
 let mode = false; try { mode = localStorage.getItem(MODEKEY) === '1'; } catch (e) {}
 if (VIEWER) renderAll(); else setMode(mode);
 loadRemote();
-window.addEventListener('resize', applyFreeze);
-window.addEventListener('beforeprint', () => { $$('.modal').forEach(m => m.remove()); });
+syncPref();
+window.addEventListener('beforeprint', () => { $$('.modal').forEach(m => m.remove()); renderChart(false); });
 })();
 </script>
+<script src="../contacts.js"></script>
 </body>
 </html>
