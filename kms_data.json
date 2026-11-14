@@ -50,6 +50,14 @@
      "pin": false,
      "links": [
       {
+       "label": "환급률 비교",
+       "url": "https://yangji-madang.github.io/SLGFC/Prod/refund.html",
+       "tags": [
+        "환급률"
+       ],
+       "pin": true
+      },
+      {
        "label": "환급률 VS 적금비교",
        "url": "https://yangji-madang.github.io/SLGFC/Refund_vs_Savings.html",
        "tags": [],
