@@ -68,8 +68,8 @@ table.rt thead th{position:sticky;z-index:4;overflow:hidden;text-overflow:ellips
 table.rt thead th.lc,table.rt thead th.cn{z-index:6}
 table.rt thead th.cn{left:0}
 table.rt td.nm,table.rt td.ft,table.rt td.ty,table.rt td.pl,table.rt td.it{position:sticky;z-index:2;background:#fff;overflow:hidden;text-overflow:ellipsis}
-table.rt td.ft{white-space:normal;text-align:left;line-height:1.25;font-size:.92em}
-table.rt td.ft .tag{margin:1px 2px 1px 0}
+table.rt td.ft{white-space:normal;word-break:keep-all;overflow-wrap:break-word;text-align:left;line-height:1.3;font-size:.92em;text-overflow:clip}
+table.rt td.ft .tag{display:inline-block;max-width:100%;white-space:normal;word-break:keep-all;overflow-wrap:break-word;margin:1px 2px 1px 0;vertical-align:top}
 .rzc{position:absolute;top:0;right:-3px;width:8px;height:100%;cursor:col-resize;z-index:8;touch-action:none}
 .rzr{position:absolute;left:0;bottom:-3px;height:8px;width:100%;cursor:row-resize;z-index:8;touch-action:none}
 .rzc:hover,.rzr:hover{background:rgba(31,58,95,.28)}
@@ -124,9 +124,9 @@ table.rt tr.flash td{outline:2px solid var(--gold);outline-offset:-2px}
 .basis a{color:#0b5cad}
 .basis .s{display:block;text-wrap:pretty}
 /* 푸터 */
-.ft{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-top:6px;padding-top:3px;border-top:1px solid #cfd7e0}
-.ft .ct{font-size:12px;color:#34424f}
-.ft .cp{font-size:11.5px;margin-left:auto;text-align:right;white-space:nowrap;color:#34424f}
+.pgft{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-top:6px;padding-top:3px;border-top:1px solid #cfd7e0}
+.pgft .ct{font-size:12px;color:#34424f}
+.pgft .cp{font-size:11.5px;margin-left:auto;text-align:right;white-space:nowrap;color:#34424f}
 /* 모달 */
 .modal{position:fixed;left:50%;top:4vh;transform:translateX(-50%);max-width:96vw;max-height:92vh;display:flex;flex-direction:column;background:#fff;border:1px solid #6c7f93;border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
 .modal .mh{background:var(--navy);color:#fff;padding:5px 10px;display:flex;justify-content:space-between;align-items:center;cursor:move;border-radius:5px 5px 0 0;user-select:none;touch-action:none}
@@ -169,7 +169,7 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
  .tw{overflow:visible;max-height:none!important}
  tr{break-inside:avoid}
  .sec.chart{break-inside:avoid}
- .ft .ct,.ft .cp{font-size:9.5px}
+ .pgft .ct,.pgft .cp{font-size:9.5px}
 }
 /*GH-POS*/
 @media screen{html body{padding-top:40px!important}#btnGh{position:fixed!important;top:6px!important;right:12px!important;left:auto!important;bottom:auto!important;z-index:99999!important;margin:0!important;font-size:13px!important;padding:6px 14px!important;border-radius:4px!important;background:#b8860b!important;border:1px solid #8a6508!important;color:#fff!important;font-weight:700!important;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.3)}}
@@ -191,6 +191,7 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
   <button data-act="rates">🏦 은행 적금금리표</button>
   <button class="pri" id="prt" data-act="print">🖨 인쇄</button>
   <button data-act="mode" id="btnMode">⚙ 관리모드</button>
+  <button class="adm-btn" data-act="tok" id="btnTok">🔑 토큰 설정</button>
   <button class="gh adm-btn" data-act="gh" id="btnGh">⬆ GitHub 반영</button>
 </div>
 
@@ -253,7 +254,7 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
   </div>
 </section>
 
-<footer class="ft">
+<footer class="pgft">
   <div class="ct"><span data-ct></span></div>
   <div class="cp" id="ftCopy"></div>
 </footer>
@@ -590,7 +591,7 @@ function renderTable(T) {
         const cls = (it.vi > 0 ? 'v1 ' : '') + (bk ? 'bk ' : '') + (ii === 0 && rj === 0 && gi > 0 ? 'grp-first' : '');
         const hnd = `<i class="rzr" data-rz="r:${rk}"></i>`;
         h += `<tr class="${cls}" data-pid="${it.id}"${ht ? ` style="height:${ht}px"` : ''}>`;
-        if (ii === 0 && rj === 0) h += `<td class="nm" data-ck="nm" rowspan="${gRows}">${bk ? '🏦 ' : ''}${esc(it.name)}</td><td class="ft" data-ck="ft" rowspan="${gRows}">${feats.map(f => `<span class="tag">${esc(f)}</span>`).join('')}</td><td class="ty" data-ck="ty" rowspan="${gRows}">${esc(it.type)}</td>`;
+        if (ii === 0 && rj === 0) h += `<td class="nm" data-ck="nm" rowspan="${gRows}">${bk ? '🏦 ' : ''}${esc(it.name)}</td><td class="ft" data-ck="ft" rowspan="${gRows}">${feats.map(f => `<span class="tag">${esc(f)}</span>`).join(' ')}</td><td class="ty" data-ck="ty" rowspan="${gRows}">${esc(it.type)}</td>`;
         if (rj === 0) { h += `<td class="pl ${it.vi > 0 ? 'v1' : ''}" data-ck="pl" rowspan="${metricDefs.length}">${esc(it.label)}${multi ? '' : hnd}</td>`; }
         if (multi) h += `<td class="it" data-ck="it">${lab}${hnd}</td>`;
         if (rj === 0 && hasM) h += `<td class="mo" rowspan="${metricDefs.length}">${it.monthly ? it.monthly.toLocaleString('ko-KR') : '-'}</td>`;
@@ -931,6 +932,7 @@ document.addEventListener('click', e => {
     case 'expJson': downloadText('refund_data.json', JSON.stringify(persist(), null, 1), 'application/json'); break;
     case 'impJson': $('#fileJson').click(); break;
     case 'gh': ghPush(); break;
+    case 'tok': tokDlg(); break;
     case 'reset': if (confirm('모든 입력 데이터를 지우고 첨부 테스트 데이터로 되돌릴까요?')) { S = testData(); UI.sel.clear(); commit(); } break;
   }
 });
@@ -1174,16 +1176,58 @@ function importRows(rows) {
 }
 
 /* ===== GitHub 반영 / 원격 로드 ===== */
+const GHK = 'refund_gh_cfg_v1';
+function ghCfg() {
+  let c = {}; try { c = JSON.parse(localStorage.getItem(GHK) || '{}'); } catch (e) { }
+  if (!c.tok) { const old = sessionStorage.getItem('gh_tok'); if (old) c.tok = old; }
+  return { tok: c.tok || '', repo: c.repo || 'yangji-madang/SLGFC', path: c.path || 'Prod/refund_data.json', branch: c.branch || 'main' };
+}
+function ghSave(c) { try { localStorage.setItem(GHK, JSON.stringify(c)); } catch (e) { alert('이 브라우저에 저장하지 못했습니다(저장소 사용 불가).'); } }
+function tokMask(t) { return t ? t.slice(0, 4) + '…' + t.slice(-4) + ' (' + t.length + '자)' : '저장된 토큰 없음'; }
+function tokDlg() {
+  const c = ghCfg(), box = document.createElement('div');
+  box.innerHTML = `<div class="tnote">※ 토큰은 <b>이 브라우저(localStorage)에만</b> 저장되며 화면·파일·GitHub에는 기록되지 않습니다. 공용 PC에서는 사용 후 [삭제]하세요.<br>※ 필요 권한: 대상 저장소 Contents <b>Read and write</b> (fine-grained 토큰 권장). 입력값은 영문·숫자·기호만 허용됩니다.</div>
+  <div class="fg">
+    <label style="grid-column:1/-1">액세스 토큰 <input type="password" id="tkIn" autocomplete="off" placeholder="github_pat_… / ghp_…" style="width:100%"></label>
+    <label>저장소(소유자/이름)<input type="text" id="tkRepo" value="${esc(c.repo)}"></label>
+    <label>브랜치<input type="text" id="tkBr" value="${esc(c.branch)}"></label>
+    <label style="grid-column:1/-1">저장 파일 경로<input type="text" id="tkPath" value="${esc(c.path)}"></label>
+  </div>
+  <div class="row"><span>현재 상태 : <b id="tkSt">${esc(tokMask(c.tok))}</b></span><label style="margin-left:auto"><input type="checkbox" id="tkShow"> 입력값 보기</label></div>
+  <div class="row" id="tkMsg" style="min-height:18px"></div>
+  <div class="row"><button class="sm" id="tkSave">저장</button><button class="sm" id="tkTest">연결 테스트</button><button class="sm" id="tkDel">토큰 삭제</button><button class="sm" id="tkClose" style="margin-left:auto">닫기</button></div>`;
+  const m = openModal('GitHub 토큰 설정', box, 520), q = id => $(id, box);
+  const msg = (t, ok) => { q('#tkMsg').style.color = ok ? '#17803d' : '#b3261e'; q('#tkMsg').textContent = t; };
+  const read = () => { const o = ghCfg(); const t = q('#tkIn').value.trim(); return { tok: t || o.tok, repo: q('#tkRepo').value.trim(), path: q('#tkPath').value.trim().replace(/^\/+/, ''), branch: q('#tkBr').value.trim() || 'main' }; };
+  const check = n => { if (!n.tok) { msg('토큰을 입력해 주세요.'); return false; } if (/[^\x21-\x7e]/.test(n.tok)) { msg('토큰에 공백·한글 등 사용할 수 없는 문자가 있습니다. 영문·숫자만 다시 붙여넣어 주세요.'); return false; } if (!/^[\w.-]+\/[\w.-]+$/.test(n.repo)) { msg('저장소는 "소유자/이름" 형식으로 입력하세요.'); return false; } if (!n.path) { msg('저장 파일 경로를 입력하세요.'); return false; } return true; };
+  q('#tkShow').addEventListener('change', e => { q('#tkIn').type = e.target.checked ? 'text' : 'password'; });
+  q('#tkSave').addEventListener('click', () => { const n = read(); if (!check(n)) return; ghSave(n); q('#tkIn').value = ''; q('#tkSt').textContent = tokMask(n.tok); msg('저장했습니다.', true); });
+  q('#tkDel').addEventListener('click', () => { if (!confirm('이 브라우저에 저장된 GitHub 토큰을 삭제합니다.')) return; const n = ghCfg(); n.tok = ''; ghSave(n); try { sessionStorage.removeItem('gh_tok'); } catch (e) { } q('#tkIn').value = ''; q('#tkSt').textContent = tokMask(''); msg('토큰을 삭제했습니다.', true); });
+  q('#tkTest').addEventListener('click', async () => {
+    const n = read(); if (!check(n)) return; msg('연결 확인 중…', true);
+    try {
+      const r = await fetch(`https://api.github.com/repos/${n.repo}`, { headers: { Authorization: 'Bearer ' + n.tok, Accept: 'application/vnd.github+json' } });
+      if (r.status === 401) return msg('토큰이 올바르지 않거나 만료되었습니다(401).');
+      if (r.status === 404) return msg('저장소를 찾을 수 없거나 토큰에 접근 권한이 없습니다(404).');
+      if (!r.ok) return msg('확인 실패 (' + r.status + ')');
+      const j = await r.json(), w = j.permissions ? (j.permissions.push ? '쓰기 가능' : '읽기 전용(쓰기 권한 없음)') : '권한 정보 없음(fine-grained 토큰은 실제 반영 시 확인)';
+      msg(`연결 성공 : ${j.full_name} · ${w}`, !!(j.permissions ? j.permissions.push : true));
+    } catch (e) { msg('GitHub에 연결하지 못했습니다. 인터넷 연결을 확인하세요.'); }
+  });
+  q('#tkClose').addEventListener('click', () => m.remove());
+}
 async function ghPush() {
-  let tok = sessionStorage.getItem('gh_tok') || prompt('GitHub 토큰(repo 권한)을 입력하세요. 이 탭에서만 임시 보관됩니다.'); if (!tok) return;
-  sessionStorage.setItem('gh_tok', tok);
-  const api = 'https://api.github.com/repos/yangji-madang/SLGFC/contents/Prod/refund_data.json', hd = { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json' };
+  const c = ghCfg(); if (!c.tok) { alert('GitHub 토큰이 설정되어 있지 않습니다. 토큰 설정 창을 엽니다.'); return tokDlg(); }
+  if (/[^\x21-\x7e]/.test(c.tok)) { alert('저장된 토큰에 사용할 수 없는 문자가 있습니다. 토큰을 다시 설정해 주세요.'); return tokDlg(); }
+  const api = `https://api.github.com/repos/${c.repo}/contents/${c.path.split('/').map(encodeURIComponent).join('/')}`, hd = { Authorization: 'Bearer ' + c.tok, Accept: 'application/vnd.github+json' };
   try {
-    let sha; const g = await fetch(api, { headers: hd }); if (g.ok) sha = (await g.json()).sha; else if (g.status === 401) { sessionStorage.removeItem('gh_tok'); return alert('토큰이 올바르지 않습니다.'); }
+    let sha; const g = await fetch(api + '?ref=' + encodeURIComponent(c.branch), { headers: hd });
+    if (g.ok) sha = (await g.json()).sha; else if (g.status === 401) { alert('토큰이 올바르지 않거나 만료되었습니다. 토큰을 다시 설정해 주세요.'); return tokDlg(); } else if (g.status !== 404) return alert('GitHub 확인 실패: ' + g.status);
     S.savedAt = Date.now();
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(persist(), null, 1))));
-    const r = await fetch(api, { method: 'PUT', headers: hd, body: JSON.stringify({ message: 'refund_data 갱신 ' + new Date().toISOString().slice(0, 10), content, sha }) });
-    alert(r.ok ? 'GitHub(SLGFC/Prod/refund_data.json)에 반영했습니다. 조회 페이지는 잠시 후 갱신됩니다.' : '반영 실패: ' + r.status + ' ' + (await r.text()).slice(0, 200));
+    const body = { message: 'refund_data 갱신 ' + new Date().toISOString().slice(0, 10), content, branch: c.branch }; if (sha) body.sha = sha;
+    const r = await fetch(api, { method: 'PUT', headers: hd, body: JSON.stringify(body) });
+    alert(r.ok ? `GitHub(${c.repo}/${c.path})에 반영했습니다. 조회 페이지는 잠시 후 갱신됩니다.` : (r.status === 403 || r.status === 404 ? '반영 실패(' + r.status + '): 토큰의 저장소 쓰기(Contents) 권한을 확인해 주세요.' : '반영 실패: ' + r.status + ' ' + (await r.text()).slice(0, 200)));
   } catch (e) { alert('반영 실패: ' + e.message); }
 }
 async function loadRemote() {
