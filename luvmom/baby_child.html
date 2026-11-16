@@ -51,13 +51,14 @@ s.oldv{color:#9ca3af;text-decoration:line-through;text-decoration-color:#9ca3af}
 #regNote{flex:0 0 100%;font-size:11px;color:#334155;white-space:pre-wrap;line-height:1.3}
 #regNote:empty{display:none}
 #flt [hidden]{display:none!important}
-#sup{flex:0 0 100%;font-size:12px;line-height:1.4;border:1px solid #94a3b8;border-left:4px solid #64748b;border-radius:4px;padding:4px 8px;background:#fff;white-space:pre-wrap}
+#sup,#psup{flex:0 0 100%;font-size:12px;line-height:1.4;border:1px solid #94a3b8;border-left:4px solid #64748b;border-radius:4px;padding:4px 8px;background:#fff;white-space:pre-wrap}
 #sup:empty{display:none}
-#sup.y{border-left-color:#15803d;background:#f0fdf4}
-#sup.n{border-left-color:#b45309;background:#fffbeb}
-#sup.u{border-left-color:#b91c1c;background:#fef2f2}
-#sup b.t{margin-right:4px}
-#sup .s{font-size:11px;color:#334155}
+#psup{display:none}
+#sup.y,#psup.y{border-left-color:#15803d;background:#f0fdf4}
+#sup.n,#psup.n{border-left-color:#b45309;background:#fffbeb}
+#sup.u,#psup.u{border-left-color:#b91c1c;background:#fef2f2}
+#sup b.t,#psup b.t{margin-right:4px}
+#sup .s,#psup .s{font-size:11px;color:#334155}
 #flt button{font:inherit;font-size:12px;height:24px;padding:0 10px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
 #cnt{font-weight:700;color:var(--navy);margin-left:auto;font-size:12.5px}
 #res{height:62vh;min-height:300px;overflow:auto;position:relative}
@@ -195,7 +196,9 @@ body{word-break:keep-all;overflow-wrap:break-word}
  #sim .note,#sim #disc,#sim .src{break-inside:avoid;overflow-wrap:anywhere}
  #ext{border-top:1px solid #94a3b8}
  body.nosrc #res th.w9,body.nosrc #res td[data-l="출처"],body.nosrc #sim .src{display:none!important}
- body.ps #pgS{display:none!important}
+ body.ps #pgS,body.ps #psup{display:none!important}
+ #psup:not(:empty){display:block;text-align:left;font-size:10.5px;line-height:1.35;margin:0 0 5px;padding:3px 8px;break-inside:avoid}
+ #psup a{display:none}
  body.pt #pgM{display:none!important}
  #sim #sgIn,#sim #sv{display:none!important}
  #sim #xw.xs{display:block!important}
@@ -280,6 +283,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 <div class="pg" id="pgS">
 <div class="pt"><span id="ptL"></span><span id="ptR"></span></div>
 <div class="pnote" id="pn1"></div>
+<div id="psup"></div>
 <div id="ov"></div>
 
 <div id="flt">
@@ -1057,7 +1061,8 @@ function jo(t){var c=t.charCodeAt(t.length-1)-44032;return(c>=0&&c%28!==0)?"은"
 function supInfo(){
   var el=$("#sup");if(!el||!window.__rr){return;}
   var m=$("#mode").value,reg=$("#reg").value,sub=$("#sub").value;
-  if(m!=="loc"||!reg){el.className="";el.textContent="";return;}
+  var ps=$("#psup");
+  if(m!=="loc"||!reg){el.className="";el.textContent="";if(ps){ps.className="";ps.innerHTML="";}return;}
   var R=REGM[reg],nm=R.n+(sub?" "+sub:""),cls="u",tt="미확인",body="",src="";
   var rowsA=DATA.filter(function(d){return d.r!=="전국"&&rk(d)===reg;});
   var rows=rowsA.filter(function(d){return !d.auto;});
@@ -1089,6 +1094,7 @@ function supInfo(){
   else if(wide.length&&reg==="경기"){body+="\n경기도 공통 수록 제도 "+wide.length+"건: "+names(wide);}
   el.className=cls;
   el.innerHTML='<b class="t">['+esc(tt)+']</b>'+esc(body).replace(/\n/g,"<br>")+(src?'<div class="s">'+esc(src)+(reg==="경기"&&GG[sub||""]||reg==="경기"?' <a href="'+GGU+'" target="_blank" rel="noopener noreferrer">원문 보기</a>':'')+'</div>':'');
+  if(ps){ps.className=cls;ps.innerHTML=el.innerHTML;}
 }
 regInit();
 /* 조사 반영분: 시·도 지원(SD), 시·군·구 지원(SG). 없는 지역은 조사 전이므로 0원으로 계산하고 직접 입력으로 보정 */
