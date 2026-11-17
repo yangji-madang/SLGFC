@@ -1,6 +1,6 @@
 {
  "v": 2,
- "savedAt": 1794883051101,
+ "savedAt": 1794884370541,
  "curPid": "pf1",
  "profiles": [
   {
@@ -57,6 +57,16 @@
      "label": "",
      "on": true
     },
+    "p58zmzry": {
+     "monthly": 200000,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": null,
+     "label": "20년납",
+     "on": true
+    },
     "piay200v": {
      "monthly": 300000,
      "data": {
@@ -98,16 +108,6 @@
      "sex": "",
      "amount": null,
      "pay": 20,
-     "label": "",
-     "on": true
-    },
-    "pif1bdti": {
-     "monthly": 200000,
-     "data": {},
-     "age": null,
-     "sex": "",
-     "amount": null,
-     "pay": null,
      "label": "",
      "on": true
     },
@@ -757,6 +757,33 @@
    "kd": "일반"
   },
   {
+   "id": "p58zmzry",
+   "name": "밸런스",
+   "kd": "일반",
+   "type": "1종 보증형",
+   "label": "20년납",
+   "pay": null,
+   "age": null,
+   "sex": "",
+   "amount": null,
+   "monthly": 200000,
+   "features": [
+    "고환급",
+    "연금전환",
+    "연금선지급",
+    "암납면",
+    "뇌심납면"
+   ],
+   "active": true,
+   "showT": true,
+   "showG": true,
+   "note": "",
+   "data": {},
+   "on": true,
+   "bpay": null,
+   "blabel": "20년납"
+  },
+  {
    "id": "piay200v",
    "name": "밸런스",
    "type": "1종 보증형",
@@ -815,32 +842,6 @@
    "blabel": "",
    "on": true,
    "kd": "간편"
-  },
-  {
-   "id": "pif1bdti",
-   "name": "밸런스",
-   "kd": "일반",
-   "type": "2종",
-   "label": "",
-   "pay": null,
-   "age": null,
-   "sex": "",
-   "amount": null,
-   "monthly": 200000,
-   "features": [
-    "고환급",
-    "연금전환",
-    "연금선지급",
-    "적립전환"
-   ],
-   "active": true,
-   "showT": true,
-   "showG": true,
-   "note": "",
-   "data": {},
-   "on": true,
-   "bpay": null,
-   "blabel": ""
   },
   {
    "id": "pajcryey",
@@ -1424,6 +1425,7 @@
   "memo": "",
   "hlMax": true,
   "showContact": true,
-  "contactText": "삼성생명 GFC 법인영업 전문컨설턴트 윤현철"
+  "contactText": "삼성생명 GFC 법인영업 전문컨설턴트 윤현철",
+  "sortMode": "custom"
  }
 }
