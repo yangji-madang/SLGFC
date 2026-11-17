@@ -114,7 +114,8 @@ table.rt td.fc,table.rt th.fc{border-left:2px solid #e00000;border-right:2px sol
 table.rt th.fc.top{border-top:2px solid #e00000}
 table.rt td.fc.bot{border-bottom:2px solid #e00000}
 table.rt tr.bk td{background:#f1f6fb}
-table.rt tr.grp-first td{border-top:1.5px solid #6c7f93}
+table.rt tr.grp-first td{border-top:2px solid #2f4257}
+table.rt tr.sub-first td{border-top:1px solid #8796a8}
 table.rt tr td.hl{background:#ffff00!important}
 table.rt tr.flash td{outline:2px solid var(--gold);outline-offset:-2px}
 .tnote{font-size:12px;color:var(--muted);margin:2px 0}
@@ -581,10 +582,11 @@ function renderTable(T) {
   const periods = periodsOf(T);
   let items = T.filter(it => hasData(it, periods));
   if (!items.length || !periods.length) { tw.innerHTML = '<div class="muted" style="padding:8px">표시할 데이터가 없습니다.</div>'; $('#tblNote').textContent = ''; $('#tblUnit').textContent = ''; return; }
-  { // 상품 > 일반/간편 순으로 묶기 (같은 상품은 첫 등장 위치에 모으고, 일반 → 간편 → 기타 → 미지정)
-    const gk = it => it.kind + '|' + it.name + '|' + it.type, rk = k => k === '일반' ? 0 : k === '간편' ? 1 : k ? 2 : 3, first = new Map();
-    items.forEach((it, i) => { if (!first.has(gk(it))) first.set(gk(it), i); });
-    items = items.map((it, i) => ({ it, i })).sort((a, b) => first.get(gk(a.it)) - first.get(gk(b.it)) || rk(a.it.kd) - rk(b.it.kd) || a.i - b.i).map(x => x.it);
+  { // 묶음 순서: 상품명(굵은선) > 일반/간편 > 유형 > 납기(가는선). 같은 상품은 첫 등장 위치로 모음
+    const gk = it => it.kind + '|' + it.name, rk = k => k === '일반' ? 0 : k === '간편' ? 1 : k ? 2 : 3, first = new Map(), tfirst = new Map();
+    items.forEach((it, i) => { if (!first.has(gk(it))) first.set(gk(it), i); const tk = gk(it) + '|' + rk(it.kd) + '|' + (it.kd || '') + '|' + it.type; if (!tfirst.has(tk)) tfirst.set(tk, i); });
+    const tkOf = it => tfirst.get(gk(it) + '|' + rk(it.kd) + '|' + (it.kd || '') + '|' + it.type);
+    items = items.map((it, i) => ({ it, i })).sort((a, b) => first.get(gk(a.it)) - first.get(gk(b.it)) || rk(a.it.kd) - rk(b.it.kd) || (a.it.kd || '').localeCompare(b.it.kd || '') || tkOf(a.it) - tkOf(b.it) || a.i - b.i).map(x => x.it);
   }
   const hasM = st.showMonthly && items.some(it => it.monthly);
   const metricDefs = [['paid', '누적보험료'], ['refund', '환급액'], ['rate', '환급률']].filter(d => st.metrics[d[0]]);
@@ -599,21 +601,22 @@ function renderTable(T) {
   let h = `<table class="rt" style="width:${total}px"><colgroup>${keys.map(k => `<col data-ck="${k}" style="width:${W(k)}px">`).join('')}</colgroup><thead>`;
   h += `<tr class="ha"><th class="cn" colspan="${fz}" data-ck="*">나이</th>${hasM ? '<th></th>' : ''}${periods.map(m => `<th>${refAge + Math.floor(m / 12)}</th>`).join('')}</tr>`;
   h += `<tr class="hb">${lkAll.map(k => `<th class="${FROZEN.has(k) ? 'lc' : ''}" data-ck="${k}">${LTITLE[k]}<i class="rzc" data-rz="${k}"></i></th>`).join('')}${periods.map(m => `<th data-ck="c${m}">${plabel(m)}<i class="rzc" data-rz="c${m}"></i></th>`).join('')}</tr></thead><tbody>`;
-  const groups = []; items.forEach(it => { const k = it.kind + '|' + it.name + '|' + it.type; const g = groups[groups.length - 1]; if (g && g.k === k) g.its.push(it); else groups.push({ k, its: [it] }); });
+  const groups = []; items.forEach(it => { const k = it.kind + '|' + it.name; const g = groups[groups.length - 1]; if (g && g.k === k) g.its.push(it); else groups.push({ k, its: [it] }); });
   groups.forEach((g, gi) => {
     const gRows = g.its.length * metricDefs.length;
     const feats = uniq(g.its.flatMap(it => it.kind === 'p' ? it.p.features : []));
     g.its.forEach((it, ii) => {
       const hlm = periods.find(m => (it.get(m).rate ?? -1) >= 100 - 1e-9);
-      const kdStart = ii === 0 || g.its[ii - 1].kd !== it.kd; let kdN = 0; if (kdStart) { for (let q = ii; q < g.its.length && g.its[q].kd === it.kd; q++) kdN++; }
+      const kdStart = ii === 0 || g.its[ii - 1].kd !== it.kd; let kdN = 0, tyN = 0; if (kdStart) { for (let q = ii; q < g.its.length && g.its[q].kd === it.kd; q++) kdN++; }
+      const tyStart = kdStart || g.its[ii - 1].type !== it.type; if (tyStart) { for (let q = ii; q < g.its.length && g.its[q].kd === it.kd && g.its[q].type === it.type; q++) tyN++; }
       metricDefs.forEach(([key, lab], rj) => {
         const rk = it.kind + ':' + it.id + ':' + key, bk = it.kind === 'b', ht = PREF.rows[rk];
-        const cls = (it.vi > 0 ? 'v1 ' : '') + (bk ? 'bk ' : '') + (ii === 0 && rj === 0 && gi > 0 ? 'grp-first' : '');
+        const cls = (it.vi > 0 ? 'v1 ' : '') + (bk ? 'bk ' : '') + (ii === 0 && rj === 0 && gi > 0 ? 'grp-first' : (ii > 0 && rj === 0 && tyStart ? 'sub-first' : ''));
         const hnd = `<i class="rzr" data-rz="r:${rk}"></i>`;
         h += `<tr class="${cls}" data-pid="${it.id}"${ht ? ` style="height:${ht}px"` : ''}>`;
         if (ii === 0 && rj === 0) h += `<td class="nm" data-ck="nm" rowspan="${gRows}">${bk ? '🏦 ' : ''}${esc(it.name)}</td>`;
         if (rj === 0 && kdStart) h += `<td class="kd" data-ck="kd" rowspan="${kdN * metricDefs.length}">${esc(it.kd || '-')}</td>`;
-        if (ii === 0 && rj === 0) h += `<td class="ty" data-ck="ty" rowspan="${gRows}">${esc(it.type)}</td>`;
+        if (rj === 0 && tyStart) h += `<td class="ty" data-ck="ty" rowspan="${tyN * metricDefs.length}">${esc(it.type)}</td>`;
         if (rj === 0) h += `<td class="pl ${it.vi > 0 ? 'v1' : ''}" data-ck="pl" rowspan="${metricDefs.length}">${esc(it.label || '-')}${multi ? '' : hnd}</td>`;
         if (ii === 0 && rj === 0) h += `<td class="ft" data-ck="ft" rowspan="${gRows}">${feats.map(f => `<span class="tag">${esc(f)}</span>`).join(' ')}</td>`;
         if (multi) h += `<td class="it" data-ck="it">${lab}${hnd}</td>`;
