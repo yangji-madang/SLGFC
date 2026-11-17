@@ -579,8 +579,13 @@ function renderTable(T) {
     <select data-set="settings.focus1">${S.periods.map(m => `<option value="${m}" ${st.focus[1] === m ? 'selected' : ''}>${plabel(m)}</option>`).join('')}</select></label>`;
   const tw = $('#tblBody'); tw.style.setProperty('--ch', PREF.ch + 'px'); tw.style.setProperty('--fs', PREF.fs + 'px');
   const periods = periodsOf(T);
-  const items = T.filter(it => hasData(it, periods));
+  let items = T.filter(it => hasData(it, periods));
   if (!items.length || !periods.length) { tw.innerHTML = '<div class="muted" style="padding:8px">표시할 데이터가 없습니다.</div>'; $('#tblNote').textContent = ''; $('#tblUnit').textContent = ''; return; }
+  { // 상품 > 일반/간편 순으로 묶기 (같은 상품은 첫 등장 위치에 모으고, 일반 → 간편 → 기타 → 미지정)
+    const gk = it => it.kind + '|' + it.name + '|' + it.type, rk = k => k === '일반' ? 0 : k === '간편' ? 1 : k ? 2 : 3, first = new Map();
+    items.forEach((it, i) => { if (!first.has(gk(it))) first.set(gk(it), i); });
+    items = items.map((it, i) => ({ it, i })).sort((a, b) => first.get(gk(a.it)) - first.get(gk(b.it)) || rk(a.it.kd) - rk(b.it.kd) || a.i - b.i).map(x => x.it);
+  }
   const hasM = st.showMonthly && items.some(it => it.monthly);
   const metricDefs = [['paid', '누적보험료'], ['refund', '환급액'], ['rate', '환급률']].filter(d => st.metrics[d[0]]);
   if (!metricDefs.length) metricDefs.push(['rate', '환급률']);
@@ -600,13 +605,14 @@ function renderTable(T) {
     const feats = uniq(g.its.flatMap(it => it.kind === 'p' ? it.p.features : []));
     g.its.forEach((it, ii) => {
       const hlm = periods.find(m => (it.get(m).rate ?? -1) >= 100 - 1e-9);
+      const kdStart = ii === 0 || g.its[ii - 1].kd !== it.kd; let kdN = 0; if (kdStart) { for (let q = ii; q < g.its.length && g.its[q].kd === it.kd; q++) kdN++; }
       metricDefs.forEach(([key, lab], rj) => {
         const rk = it.kind + ':' + it.id + ':' + key, bk = it.kind === 'b', ht = PREF.rows[rk];
         const cls = (it.vi > 0 ? 'v1 ' : '') + (bk ? 'bk ' : '') + (ii === 0 && rj === 0 && gi > 0 ? 'grp-first' : '');
         const hnd = `<i class="rzr" data-rz="r:${rk}"></i>`;
         h += `<tr class="${cls}" data-pid="${it.id}"${ht ? ` style="height:${ht}px"` : ''}>`;
         if (ii === 0 && rj === 0) h += `<td class="nm" data-ck="nm" rowspan="${gRows}">${bk ? '🏦 ' : ''}${esc(it.name)}</td>`;
-        if (rj === 0) h += `<td class="kd" data-ck="kd" rowspan="${metricDefs.length}">${esc(it.kd || '-')}</td>`;
+        if (rj === 0 && kdStart) h += `<td class="kd" data-ck="kd" rowspan="${kdN * metricDefs.length}">${esc(it.kd || '-')}</td>`;
         if (ii === 0 && rj === 0) h += `<td class="ty" data-ck="ty" rowspan="${gRows}">${esc(it.type)}</td>`;
         if (rj === 0) h += `<td class="pl ${it.vi > 0 ? 'v1' : ''}" data-ck="pl" rowspan="${metricDefs.length}">${esc(it.label || '-')}${multi ? '' : hnd}</td>`;
         if (ii === 0 && rj === 0) h += `<td class="ft" data-ck="ft" rowspan="${gRows}">${feats.map(f => `<span class="tag">${esc(f)}</span>`).join(' ')}</td>`;
