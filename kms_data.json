@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-16",
+ "updated": "2026-11-17",
  "sections": [
   {
    "title": "SLI GFC",
@@ -49,14 +49,6 @@
      "title": "상품정보",
      "pin": false,
      "links": [
-      {
-       "label": "환급률 비교",
-       "url": "https://yangji-madang.github.io/SLGFC/Prod/refund.html",
-       "tags": [
-        "환급률"
-       ],
-       "pin": true
-      },
       {
        "label": "환급률 VS 적금비교",
        "url": "https://yangji-madang.github.io/SLGFC/Refund_vs_Savings.html",
