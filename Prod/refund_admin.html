@@ -106,6 +106,7 @@ table.rt td.nm{font-weight:700;white-space:normal;word-break:keep-all;overflow-w
 table.rt td.it{color:var(--muted);font-size:12px}
 table.rt tr.v1 td.vv{color:var(--blue)}
 table.rt td.pl.v1{background:#fff2c6}
+table.mt tr.dg-over td{border-top:2px solid #c0392b}table.mt tr.dg-src{opacity:.4}.dh{cursor:grab;color:#888;user-select:none}
 input.auto{background:#eef2f7!important;color:#555}
 table.rt td.hl{background:#ffff00;font-weight:700}
 table.rt td.fc,table.rt th.fc{border-left:2px solid #e00000;border-right:2px solid #e00000}
@@ -330,7 +331,7 @@ const UI = { tab: 'active', sel: new Set() };
 const SR = { q: '', feats: new Set(), excl: new Set(), mode: 'OR', view: 'active' };
 const inView = p => !!p.active === (SR.view === 'active');
 const ko = (a, b) => String(a || '').localeCompare(String(b || ''), 'ko');
-const sortProds = arr => arr.slice().sort((a, b) => ko(a.name, b.name) || ko(a.type, b.type) || ((payOf(a) || 0) - (payOf(b) || 0)));
+const sortProds = arr => S.settings.sortMode === 'custom' ? arr.slice() : arr.slice().sort((a, b) => ko(a.name, b.name) || ko(a.type, b.type) || ((payOf(a) || 0) - (payOf(b) || 0)));
 let RATES = null;
 
 const testData = () => normalize(rawTest());
@@ -619,7 +620,7 @@ function renderTable(T) {
   tw.innerHTML = h; applyLayout();
   $('#tblUnit').textContent = multi ? '단위: 월보험료 원 · 누적보험료/환급액 만원 · 환급률 %' : '단위: %';
   const skipped = T.length - items.length;
-  $('#tblNote').innerHTML = '노랑: 환급률 100% 최초 도달 시점 · 파랑 글자: 같은 상품의 두 번째 이후 구분 · 🏦: 은행 적금 비교항목 · 상품명은 가나다순' + (skipped ? ` · 데이터 미입력 ${skipped}건 제외` : '');
+  $('#tblNote').innerHTML = '노랑: 환급률 100% 최초 도달 시점 · 파랑 글자: 같은 상품의 두 번째 이후 구분 · 🏦: 은행 적금 비교항목 · ' + (S.settings.sortMode === 'custom' ? '상품 순서는 관리모드 상품 DB의 지정 순서' : '상품명은 가나다순') + (skipped ? ` · 데이터 미입력 ${skipped}건 제외` : '');
 }
 function applyLayout() {
   const tb = $('#tblBody table'); if (!tb) return;
@@ -823,8 +824,9 @@ function renderMaster() {
     <div class="row"><span class="muted">표시 일괄</span><button class="sm" data-act="vis" data-k="showT" data-v="1">표 전체 보기</button><button class="sm" data-act="vis" data-k="showT" data-v="0">표 전체 숨김</button>
       <button class="sm" data-act="vis" data-k="showG" data-v="1">그래프 전체 보기</button><button class="sm" data-act="vis" data-k="showG" data-v="0">그래프 전체 숨김</button></div>
     <div class="tabs"><button class="${UI.tab === 'active' ? 'on' : ''}" data-act="tab" data-v="active">판매중 ${active.length}</button><button class="${UI.tab === 'disc' ? 'on' : ''}" data-act="tab" data-v="disc">단종 ${disc.length}</button></div>
+    <div class="row" style="margin:4px 0"><label>표·그래프 상품 순서 <select data-set="settings.sortMode"><option value="name" ${S.settings.sortMode !== 'custom' ? 'selected' : ''}>가나다순(자동)</option><option value="custom" ${S.settings.sortMode === 'custom' ? 'selected' : ''}>지정 순서(아래 목록 순서)</option></select></label><span class="muted">☰ 를 끌어 놓거나 ↑↓ 로 순서를 바꾸면 자동으로 '지정 순서'가 됩니다. 조회페이지에도 동일 적용.</span></div>
     <div class="tw"><table class="mt"><thead><tr><th><input type="checkbox" data-act="selAll"></th><th>사용</th><th>표</th><th>그래프</th><th>색</th><th>상품명</th><th>일반/간편</th><th>유형</th><th>납기</th><th>나이</th><th>성별</th><th>가입금액</th><th>월보험료(원)</th><th>핵심기능</th><th>입력</th><th>관리</th></tr></thead><tbody>
-    ${list.map(p => `<tr style="${p.on === false ? 'opacity:.45' : ''}"><td><input type="checkbox" data-act="sel" data-id="${p.id}" ${UI.sel.has(p.id) ? 'checked' : ''}></td><td><input type="checkbox" data-act="pon" data-id="${p.id}" ${p.on !== false ? 'checked' : ''} title="이 프로필에서 사용"></td>
+    ${list.map(p => `<tr draggable="true" data-rid="${p.id}" style="${p.on === false ? 'opacity:.45' : ''}"><td><span class="dh" title="끌어서 순서 변경">☰</span> <input type="checkbox" data-act="sel" data-id="${p.id}" ${UI.sel.has(p.id) ? 'checked' : ''}></td><td><input type="checkbox" data-act="pon" data-id="${p.id}" ${p.on !== false ? 'checked' : ''} title="이 프로필에서 사용"></td>
       <td><input type="checkbox" data-act="pv" data-k="showT" data-id="${p.id}" ${p.showT ? 'checked' : ''}></td><td><input type="checkbox" data-act="pv" data-k="showG" data-id="${p.id}" ${p.showG ? 'checked' : ''}></td>
       <td><span class="sw" style="background:${PALETTE[groupIndex().get(p.name + '|' + p.type) % PALETTE.length]}"></span></td>
       <td class="l"><b>${esc(p.name)}</b>${p.on === false ? ' <small style="color:#b3261e;font-weight:700">(미사용)</small>' : ''}</td><td>${esc(p.kd || "-")}</td><td class="l">${esc(p.type)}</td><td>${esc(labelOf(p))}</td><td>${ageOf(p)}${p.age == null ? '<small class="muted">*</small>' : ''}</td><td>${sexOf(p)}${p.sex ? '' : '<small class="muted">*</small>'}</td>
@@ -927,7 +929,7 @@ document.addEventListener('click', e => {
     case 'pCopy': { const c = clone(p); c.id = uid(); c.label = c.label || ''; c.name = p.name; S.products.splice(idx + 1, 0, c); commit(); editProduct(c.id); break; }
     case 'pDisc': p.active = !p.active; commit(); break;
     case 'pDel': if (confirm(`'${shortOf(p)}' 상품을 삭제할까요? (복구 불가)`)) { S.products.splice(idx, 1); S.banks.forEach(b => { if (b.link === id) b.link = ''; }); commit(); } break;
-    case 'up': case 'dn': { const dir = a === 'up' ? -1 : 1; let j = idx + dir; while (j >= 0 && j < S.products.length && S.products[j].active !== p.active) j += dir; if (j >= 0 && j < S.products.length) { [S.products[idx], S.products[j]] = [S.products[j], S.products[idx]]; commit(); } break; }
+    case 'up': case 'dn': { S.settings.sortMode = 'custom'; const dir = a === 'up' ? -1 : 1; let j = idx + dir; while (j >= 0 && j < S.products.length && S.products[j].active !== p.active) j += dir; if (j >= 0 && j < S.products.length) { [S.products[idx], S.products[j]] = [S.products[j], S.products[idx]]; commit(); } break; }
     case 'vis': S.products.filter(x => x.active).forEach(x => x[t.dataset.k] = v === '1'); commit(); break;
     case 'bulkSel': case 'bulkAll': bulk(a === 'bulkAll'); break;
     case 'perAdd': { const n = num($('#perN').value); if (!n || n <= 0) return alert('숫자를 입력하세요.'); const m = $('#perU').value === 'y' ? Math.round(n * 12) : Math.round(n); if (S.periods.includes(m)) return alert('이미 있는 경과기간입니다.'); S.periods.push(m); S.periods.sort((x, y) => x - y); commit(); break; }
@@ -952,6 +954,21 @@ document.addEventListener('change', e => {
   if (e.target.id === 'fileUp' && e.target.files[0]) { handleUpload(e.target.files[0]); e.target.value = ''; }
   if (e.target.id === 'fileJson' && e.target.files[0]) { const f = e.target.files[0]; f.text().then(t => { try { S = normalize(JSON.parse(t)); commit(); alert('불러오기 완료'); } catch (er) { alert('JSON 형식 오류: ' + er.message); } }); e.target.value = ''; }
 });
+(function () {
+  let src = null;
+  const row = e => e.target.closest && e.target.closest('table.mt tr[data-rid]');
+  document.addEventListener('dragstart', e => { const r = row(e); if (!r) return; src = r.dataset.rid; r.classList.add('dg-src'); try { e.dataTransfer.setData('text/plain', src); e.dataTransfer.effectAllowed = 'move'; } catch (x) { } });
+  document.addEventListener('dragover', e => { const r = row(e); if (!r || !src) return; e.preventDefault(); $$('table.mt tr.dg-over').forEach(x => x.classList.remove('dg-over')); if (r.dataset.rid !== src) r.classList.add('dg-over'); });
+  document.addEventListener('dragend', () => { src = null; $$('table.mt tr.dg-over,table.mt tr.dg-src').forEach(x => x.classList.remove('dg-over', 'dg-src')); });
+  document.addEventListener('drop', e => {
+    const r = row(e); if (!r || !src) return; e.preventDefault();
+    const to = r.dataset.rid, from = src; src = null; if (to === from) return;
+    const i = S.products.findIndex(x => x.id === from); if (i < 0) return;
+    const [m] = S.products.splice(i, 1); const j = S.products.findIndex(x => x.id === to);
+    S.products.splice(j < 0 ? S.products.length : j, 0, m);
+    S.settings.sortMode = 'custom'; commit();
+  });
+})();
 function setMode(on) { document.body.classList.toggle('admin', on); $('#btnMode').textContent = on ? '👁 조회페이지' : '⚙ 관리모드'; $$('.admin-link').forEach(a => a.style.display = on ? '' : 'none'); try { localStorage.setItem(MODEKEY, on ? '1' : '0'); } catch (e) {} renderAll(); }
 function bulk(all) {
   const ids = all ? S.products.filter(p => p.active).map(p => p.id) : [...UI.sel];
