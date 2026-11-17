@@ -68,7 +68,7 @@ table.rt th,table.rt td{border:0;border-right:1px solid var(--line);border-botto
 table.rt thead th{position:sticky;z-index:4;overflow:hidden;text-overflow:ellipsis}
 table.rt thead th.lc,table.rt thead th.cn{z-index:6}
 table.rt thead th.cn{left:0}
-table.rt td.nm,table.rt td.kd,table.rt td.ft,table.rt td.ty,table.rt td.pl,table.rt td.it{position:sticky;z-index:2;background:#fff;overflow:hidden;text-overflow:ellipsis}
+table.rt td.nm,table.rt td.kd,table.rt td.ft,table.rt td.ty,table.rt td.am,table.rt td.pl,table.rt td.mo,table.rt td.it{position:sticky;z-index:2;background:#fff;overflow:hidden;text-overflow:ellipsis}
 table.rt td.ft{white-space:normal;word-break:keep-all;overflow-wrap:break-word;text-align:left;line-height:1.3;font-size:.92em;text-overflow:clip}
 table.rt td.ft .tag{display:inline-block;max-width:100%;white-space:normal;word-break:keep-all;overflow-wrap:break-word;margin:1px 2px 1px 0;vertical-align:top}
 .rzc{position:absolute;top:0;right:-3px;width:8px;height:100%;cursor:col-resize;z-index:8;touch-action:none}
@@ -102,7 +102,7 @@ button.gh:hover{background:#9c7420}
 .sizebar input[type=range]{width:90px;vertical-align:middle}
 table.rt thead th{background:var(--head);text-align:center;font-weight:600}
 table.rt thead tr.fl th{background:#fff;border:none!important;color:#d40000;font-size:12px;padding:0 2px;font-weight:700}
-table.rt td.nm,table.rt td.kd,table.rt td.ty,table.rt td.pl,table.rt td.mo,table.rt td.it{text-align:center}
+table.rt td.nm,table.rt td.kd,table.rt td.ty,table.rt td.am,table.rt td.pl,table.rt td.mo,table.rt td.it{text-align:center}
 table.rt td.nm{font-weight:700;white-space:normal;word-break:keep-all;overflow-wrap:break-word;text-overflow:clip;line-height:1.25;padding-left:3px;padding-right:3px}
 table.rt td.it{color:var(--muted);font-size:12px}
 table.rt tr.v1 td.vv{color:var(--blue)}
@@ -454,13 +454,13 @@ function mkItems(kind) {
   sortProds(S.products).forEach(p => {
     if (!matches(p)) return;
     if (!(kind === 'T' ? p.showT : p.showG)) return;
-    out.push({ kind: 'p', id: p.id, p, name: p.name, kd: p.kd || '', type: p.type, label: labelOf(p), short: shortOf(p), monthly: num(p.monthly),
+    out.push({ kind: 'p', id: p.id, p, name: p.name, amt: amtOf(p), kd: p.kd || '', type: p.type, label: labelOf(p), short: shortOf(p), monthly: num(p.monthly),
       color: PALETTE[gi.get(p.name + '|' + p.type) % PALETTE.length], get: m => prodEff(p, m) });
   });
   S.banks.forEach((b, i) => {
     if (!b.show) return;
     const bp = bankParams(b);
-    out.push({ kind: 'b', id: b.id, b, name: bName(b), kd: '', type: '적금 ' + (num(b.rate) ?? '-') + '%', label: bp.pay ? bp.pay + '년납' : '', short: bankLabel(b), monthly: bp.monthly,
+    out.push({ kind: 'b', id: b.id, b, name: bName(b), amt: null, kd: '', type: '적금 ' + (num(b.rate) ?? '-') + '%', label: bp.pay ? bp.pay + '년납' : '', short: bankLabel(b), monthly: bp.monthly,
       color: BANKCOL[i % BANKCOL.length], get: m => bankEff(b, m) });
   });
   const seen = {};
@@ -482,7 +482,7 @@ function renderAll() {
   const nt = $('#notice'); nt.textContent = cp.notice || ''; nt.style.display = cp.notice ? '' : 'none';
   const pb = $('#pbar'); pb.style.display = (S.profiles.length < 2 && VIEWER) ? 'none' : '';
   pb.innerHTML = S.profiles.map(pf => `<button class="pf ${pf.id === S.curPid ? 'on' : ''}" data-act="pfSel" data-id="${pf.id}">${esc(pf.label)}</button>`).join('');
-  $('#exLabel').textContent = exampleLabel();
+  $('#exLabel').textContent = exampleLabel(T);
   renderSearch(); renderMaster(); renderSummary(T); renderTable(T); renderChart(CH.first); CH.first = false; renderFooter(); syncBind();
 }
 let _pp = false; function applyPrefsOnce() { if (_pp) return; _pp = true; Object.entries(PREF).forEach(([k, v]) => $('#tblBody').style.setProperty('--' + k, v + (k === 'fs' || k === 'cw' || k === 'lw' || k === 'ch' ? 'px' : ''))); $$('[data-pref]').forEach(el => { el.value = PREF[el.dataset.pref]; }); }
@@ -491,11 +491,11 @@ const amtKr = v => { // 만원 단위 → 1억 / 1억 5천만원 / 5천만원 / 
   const low = (c ? c + '천' : '') + (h ? h + '백' : '') + (t ? t : '');
   return (e ? e + '억' : '') + (e && low ? ' ' : '') + (low ? low + '만원' : '') || '-';
 };
-function exampleLabel() { // 현재 프로필(S.defaults) 기준
-  const d = S.defaults, a = [];
+function exampleLabel(T) { // 현재 프로필(S.defaults) 기준, 가입금액은 표시 상품이 모두 같을 때만 금액 표시
+  const d = S.defaults, a = [], am = uniq(((T || []).filter(i => i.kind === 'p')).map(i => i.amt));
   if (d.sex) a.push(d.sex + '자');
   if (num(d.age) != null) a.push(num(d.age) + '세');
-  if (num(d.amount)) a.push('가입금액 ' + amtKr(d.amount));
+  if (am.length > 1) a.push('가입금액은 상품별로 다름'); else if (am.length === 1 ? am[0] : num(d.amount)) a.push('가입금액 ' + amtKr(am.length === 1 ? am[0] : d.amount));
   if (num(d.pay)) a.push(num(d.pay) + '년납');
   return a.length ? '※ 예시 : ' + a.join(', ') : '';
 }
@@ -571,9 +571,9 @@ function renderSummary(T) {
 }
 
 /* --- 표 --- */
-const DEFW = { nm: 96, kd: 70, ft: 120, ty: 120, pl: 64, it: 84, mo: 84 };
-const FROZEN = new Set(['nm', 'kd', 'ty', 'pl', 'ft', 'it']);
-const LTITLE = { nm: '상품명', kd: '일반/간편', ft: '주요특징', ty: '유형', pl: '납기', it: '환급내용', mo: '월보험료' };
+const DEFW = { nm: 96, am: 72, kd: 70, ft: 120, ty: 120, pl: 64, it: 84, mo: 84 };
+const FROZEN = new Set(['nm', 'kd', 'ty', 'ft', 'am', 'pl', 'mo', 'it']);
+const LTITLE = { nm: '상품명', am: '가입금액', kd: '일반/간편', ft: '주요특징', ty: '유형', pl: '납기', it: '환급내용', mo: '월보험료' };
 function renderTable(T) {
   const st = S.settings;
   $('#tblOpt').innerHTML = `<span class="muted">표시</span>
@@ -598,14 +598,13 @@ function renderTable(T) {
   const metricDefs = [['paid', '누적보험료'], ['refund', '환급액'], ['rate', '환급률']].filter(d => st.metrics[d[0]]);
   if (!metricDefs.length) metricDefs.push(['rate', '환급률']);
   const multi = metricDefs.length > 1;
-  const lk = ['nm', 'kd', 'ty', 'pl', 'ft'].concat(multi ? ['it'] : []), fz = lk.length;
-  const lkAll = lk.concat(hasM ? ['mo'] : []);
+  const lkAll = ['nm', 'kd', 'ty', 'ft', 'am', 'pl'].concat(hasM ? ['mo'] : []).concat(multi ? ['it'] : []), fz = lkAll.length;
   const keys = lkAll.concat(periods.map(m => 'c' + m));
   const W = k => PREF.cols[k] ?? (k[0] === 'c' ? PREF.cw : DEFW[k]);
   const total = keys.reduce((a, k) => a + W(k), 0);
   const firstP = T.find(i => i.kind === 'p'), refAge = firstP ? ageOf(firstP.p) : S.defaults.age;
   let h = `<table class="rt" style="width:${total}px"><colgroup>${keys.map(k => `<col data-ck="${k}" style="width:${W(k)}px">`).join('')}</colgroup><thead>`;
-  h += `<tr class="ha"><th class="cn" colspan="${fz}" data-ck="*">나이</th>${hasM ? '<th></th>' : ''}${periods.map(m => `<th>${refAge + Math.floor(m / 12)}</th>`).join('')}</tr>`;
+  h += `<tr class="ha"><th class="cn" colspan="${fz}" data-ck="*">나이</th>${periods.map(m => `<th>${refAge + Math.floor(m / 12)}</th>`).join('')}</tr>`;
   h += `<tr class="hb">${lkAll.map(k => `<th class="${FROZEN.has(k) ? 'lc' : ''}" data-ck="${k}">${LTITLE[k]}<i class="rzc" data-rz="${k}"></i></th>`).join('')}${periods.map(m => `<th data-ck="c${m}">${plabel(m)}<i class="rzc" data-rz="c${m}"></i></th>`).join('')}</tr></thead><tbody>`;
   const groups = []; items.forEach(it => { const k = it.kind + '|' + it.name; const g = groups[groups.length - 1]; if (g && g.k === k) g.its.push(it); else groups.push({ k, its: [it] }); });
   groups.forEach((g, gi) => {
@@ -616,6 +615,7 @@ function renderTable(T) {
     g.its.forEach((it, ii) => {
       const hlm = periods.find(m => (it.get(m).rate ?? -1) >= 100 - 1e-9);
       const kdStart = ii === 0 || g.its[ii - 1].kd !== it.kd; let kdN = 0, tyN = 0; if (kdStart) { for (let q = ii; q < g.its.length && g.its[q].kd === it.kd; q++) kdN++; }
+      const amStart = kdStart || g.its[ii - 1].type !== it.type || g.its[ii - 1].amt !== it.amt; let amN = 0; if (amStart) { for (let q = ii; q < g.its.length && g.its[q].kd === it.kd && g.its[q].type === it.type && g.its[q].amt === it.amt; q++) amN++; }
       const tyStart = kdStart || g.its[ii - 1].type !== it.type; if (tyStart) { for (let q = ii; q < g.its.length && g.its[q].kd === it.kd && g.its[q].type === it.type; q++) tyN++; }
       metricDefs.forEach(([key, lab], rj) => {
         const rk = it.kind + ':' + it.id + ':' + key, bk = it.kind === 'b', ht = PREF.rows[rk];
@@ -625,11 +625,12 @@ function renderTable(T) {
         if (ii === 0 && rj === 0) h += `<td class="nm" data-ck="nm" rowspan="${gRows}">${bk ? '🏦 ' : ''}${esc(it.name)}</td>`;
         if (rj === 0 && kdStart) h += `<td class="kd" data-ck="kd" rowspan="${kdN * metricDefs.length}">${esc(it.kd || '-')}</td>`;
         if (rj === 0 && tyStart) h += `<td class="ty" data-ck="ty" rowspan="${tyN * metricDefs.length}">${esc(it.type)}</td>`;
-        if (rj === 0) h += `<td class="pl ${it.vi > 0 ? 'v1' : ''}" data-ck="pl" rowspan="${metricDefs.length}">${esc(it.label || '-')}${multi ? '' : hnd}</td>`;
         if (!ftSplit && ii === 0 && rj === 0) h += `<td class="ft" data-ck="ft" rowspan="${gRows}">${feats.map(f => `<span class="tag">${esc(f)}</span>`).join(' ')}</td>`;
         if (ftSplit && rj === 0 && kdStart) h += `<td class="ft" data-ck="ft" rowspan="${kdN * metricDefs.length}">${fOf(g.its.filter(x => x.kd === it.kd)).map(f => `<span class="tag">${esc(f)}</span>`).join(' ')}</td>`;
+        if (rj === 0 && amStart) h += `<td class="am" data-ck="am" rowspan="${amN * metricDefs.length}">${it.amt ? amtKr(it.amt) : '-'}</td>`;
+        if (rj === 0) h += `<td class="pl" data-ck="pl" rowspan="${metricDefs.length}">${esc(it.label || '-')}${multi ? '' : hnd}</td>`;
+        if (rj === 0 && hasM) h += `<td class="mo" data-ck="mo" rowspan="${metricDefs.length}">${it.monthly ? it.monthly.toLocaleString('ko-KR') : '-'}</td>`;
         if (multi) h += `<td class="it" data-ck="it">${lab}${hnd}</td>`;
-        if (rj === 0 && hasM) h += `<td class="mo" rowspan="${metricDefs.length}">${it.monthly ? it.monthly.toLocaleString('ko-KR') : '-'}</td>`;
         periods.forEach(m => {
           const v = it.get(m)[key];
           const t = v == null ? '-' : key === 'rate' ? fmt1(v) : man(v);
