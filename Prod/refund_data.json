@@ -1,6 +1,6 @@
 {
  "v": 2,
- "savedAt": 1794878591891,
+ "savedAt": 1794880782219,
  "curPid": "pf1",
  "profiles": [
   {
@@ -52,10 +52,16 @@
      "on": true
     },
     "piay200v": {
-     "monthly": null,
+     "monthly": 300000,
      "data": {
+      "3": {
+       "refund": 450000
+      },
+      "6": {
+       "refund": 1500000
+      },
       "12": {
-       "rate": 7.2
+       "refund": 3300000
       },
       "60": {
        "rate": 35.6
@@ -87,7 +93,7 @@
      "amount": null,
      "pay": 20,
      "label": "",
-     "on": true
+     "on": false
     },
     "pajcryey": {
      "monthly": null,
@@ -447,7 +453,7 @@
      "sex": "",
      "amount": null,
      "pay": 0,
-     "label": "일반",
+     "label": "",
      "on": true
     },
     "ps1bighs": {
@@ -482,7 +488,7 @@
      "sex": "",
      "amount": null,
      "pay": 0,
-     "label": "간편",
+     "label": "",
      "on": true
     }
    },
@@ -625,7 +631,7 @@
      "sex": "",
      "amount": null,
      "pay": 0,
-     "label": "일반",
+     "label": "",
      "on": true
     },
     "ps1bighs": {
@@ -635,7 +641,7 @@
      "sex": "",
      "amount": null,
      "pay": 0,
-     "label": "간편",
+     "label": "",
      "on": true
     }
    },
@@ -721,7 +727,8 @@
    },
    "bpay": 10,
    "blabel": "",
-   "on": true
+   "on": true,
+   "kd": "일반"
   },
   {
    "id": "piay200v",
@@ -732,7 +739,7 @@
    "age": null,
    "sex": "",
    "amount": null,
-   "monthly": null,
+   "monthly": 300000,
    "features": [
     "고환급",
     "연금전환",
@@ -744,8 +751,14 @@
    "showG": true,
    "note": "",
    "data": {
+    "3": {
+     "refund": 450000
+    },
+    "6": {
+     "refund": 1500000
+    },
     "12": {
-     "rate": 7.2
+     "refund": 3300000
     },
     "60": {
      "rate": 35.6
@@ -774,7 +787,8 @@
    },
    "bpay": 20,
    "blabel": "",
-   "on": true
+   "on": false,
+   "kd": "간편"
   },
   {
    "id": "pajcryey",
@@ -813,7 +827,8 @@
    },
    "bpay": 10,
    "blabel": "",
-   "on": true
+   "on": true,
+   "kd": ""
   },
   {
    "id": "ps4seqme",
@@ -846,7 +861,8 @@
    },
    "bpay": 20,
    "blabel": "",
-   "on": true
+   "on": true,
+   "kd": ""
   },
   {
    "id": "pca4vk68",
@@ -894,7 +910,8 @@
    },
    "bpay": 10,
    "blabel": "",
-   "on": true
+   "on": true,
+   "kd": ""
   },
   {
    "id": "p60j8on4",
@@ -939,7 +956,8 @@
    },
    "bpay": 20,
    "blabel": "",
-   "on": true
+   "on": true,
+   "kd": ""
   },
   {
    "id": "p7qyq2ij",
@@ -992,7 +1010,8 @@
    },
    "bpay": 5,
    "blabel": "",
-   "on": true
+   "on": true,
+   "kd": ""
   },
   {
    "id": "pvmbt2v3",
@@ -1045,7 +1064,8 @@
    },
    "bpay": 10,
    "blabel": "",
-   "on": true
+   "on": true,
+   "kd": ""
   },
   {
    "id": "p5r3ah0v",
@@ -1093,7 +1113,8 @@
    },
    "bpay": 10,
    "blabel": "",
-   "on": true
+   "on": true,
+   "kd": ""
   },
   {
    "id": "p3x7q9z5",
@@ -1138,7 +1159,8 @@
    },
    "bpay": 20,
    "blabel": "",
-   "on": true
+   "on": true,
+   "kd": ""
   },
   {
    "id": "p3ysizz9",
@@ -1177,7 +1199,8 @@
    },
    "bpay": 10,
    "blabel": "",
-   "on": true
+   "on": true,
+   "kd": ""
   },
   {
    "id": "po4cg3xw",
@@ -1210,13 +1233,14 @@
    },
    "bpay": 20,
    "blabel": "",
-   "on": true
+   "on": true,
+   "kd": ""
   },
   {
    "id": "p6t9yb6a",
    "name": "CEO보장정기",
    "type": "",
-   "label": "일반",
+   "label": "",
    "pay": 0,
    "age": null,
    "sex": "",
@@ -1254,14 +1278,15 @@
     }
    },
    "bpay": 0,
-   "blabel": "일반",
-   "on": true
+   "blabel": "",
+   "on": true,
+   "kd": "일반"
   },
   {
    "id": "ps1bighs",
    "name": "CEO보장정기",
    "type": "",
-   "label": "간편",
+   "label": "",
    "pay": 0,
    "age": null,
    "sex": "",
@@ -1299,8 +1324,9 @@
     }
    },
    "bpay": 0,
-   "blabel": "간편",
-   "on": true
+   "blabel": "",
+   "on": true,
+   "kd": "간편"
   }
  ],
  "banks": [
