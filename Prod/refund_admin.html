@@ -604,7 +604,9 @@ function renderTable(T) {
   const groups = []; items.forEach(it => { const k = it.kind + '|' + it.name; const g = groups[groups.length - 1]; if (g && g.k === k) g.its.push(it); else groups.push({ k, its: [it] }); });
   groups.forEach((g, gi) => {
     const gRows = g.its.length * metricDefs.length;
-    const feats = uniq(g.its.flatMap(it => it.kind === 'p' ? it.p.features : []));
+    const fOf = its => uniq(its.flatMap(it => it.kind === 'p' ? it.p.features : []));
+    const feats = fOf(g.its), kdKeys = [...new Set(g.its.map(it => it.kd))], fk = k => fOf(g.its.filter(it => it.kd === k)).slice().sort().join('|');
+    const ftSplit = kdKeys.length > 1 && kdKeys.some(k => fk(k) !== fk(kdKeys[0]));   // 일반/간편별로 주요특징이 다르면 구분 표시
     g.its.forEach((it, ii) => {
       const hlm = periods.find(m => (it.get(m).rate ?? -1) >= 100 - 1e-9);
       const kdStart = ii === 0 || g.its[ii - 1].kd !== it.kd; let kdN = 0, tyN = 0; if (kdStart) { for (let q = ii; q < g.its.length && g.its[q].kd === it.kd; q++) kdN++; }
@@ -618,7 +620,8 @@ function renderTable(T) {
         if (rj === 0 && kdStart) h += `<td class="kd" data-ck="kd" rowspan="${kdN * metricDefs.length}">${esc(it.kd || '-')}</td>`;
         if (rj === 0 && tyStart) h += `<td class="ty" data-ck="ty" rowspan="${tyN * metricDefs.length}">${esc(it.type)}</td>`;
         if (rj === 0) h += `<td class="pl ${it.vi > 0 ? 'v1' : ''}" data-ck="pl" rowspan="${metricDefs.length}">${esc(it.label || '-')}${multi ? '' : hnd}</td>`;
-        if (ii === 0 && rj === 0) h += `<td class="ft" data-ck="ft" rowspan="${gRows}">${feats.map(f => `<span class="tag">${esc(f)}</span>`).join(' ')}</td>`;
+        if (!ftSplit && ii === 0 && rj === 0) h += `<td class="ft" data-ck="ft" rowspan="${gRows}">${feats.map(f => `<span class="tag">${esc(f)}</span>`).join(' ')}</td>`;
+        if (ftSplit && rj === 0 && kdStart) h += `<td class="ft" data-ck="ft" rowspan="${kdN * metricDefs.length}">${fOf(g.its.filter(x => x.kd === it.kd)).map(f => `<span class="tag">${esc(f)}</span>`).join(' ')}</td>`;
         if (multi) h += `<td class="it" data-ck="it">${lab}${hnd}</td>`;
         if (rj === 0 && hasM) h += `<td class="mo" rowspan="${metricDefs.length}">${it.monthly ? it.monthly.toLocaleString('ko-KR') : '-'}</td>`;
         periods.forEach(m => {
@@ -1083,8 +1086,8 @@ function editProduct(id) {
     if (e.target.closest('[data-cancel]')) m.remove();
     if (e.target.closest('[data-save]')) {
       read(); if (!p.name) { $('#edErr', box).textContent = '상품명을 입력하세요.'; return; }
-      { const same = S.products.filter(x => x.id !== p.id && x.name === p.name), key = a => [...a].sort().join('|'), diff = same.filter(x => key(x.features) !== key(p.features));
-        if (diff.length && !confirm(`⚠ 같은 상품명 '${p.name}'인데 주요특징이 서로 다릅니다.\n\n· 이 상품: ${p.features.join(', ') || '(없음)'}\n` + diff.slice(0, 4).map(x => `· ${shortOf(x)}: ${x.features.join(', ') || '(없음)'}`).join('\n') + `\n\n주요특징은 상품 단위로 같아야 합니다(표에는 합쳐서 표시됩니다).\n그대로 저장할까요? [취소]를 누르면 수정 창으로 돌아갑니다.`)) return; }
+      { const same = S.products.filter(x => x.id !== p.id && x.name === p.name && (x.kd || '') === (p.kd || '')), key = a => [...a].sort().join('|'), diff = same.filter(x => key(x.features) !== key(p.features));
+        if (diff.length && !confirm(`⚠ 같은 상품명·구분('${p.name}${p.kd ? ' ' + p.kd : ''}')인데 주요특징이 서로 다릅니다.\n\n· 이 상품: ${p.features.join(', ') || '(없음)'}\n` + diff.slice(0, 4).map(x => `· ${shortOf(x)}: ${x.features.join(', ') || '(없음)'}`).join('\n') + `\n\n같은 상품·같은 구분이면 주요특징도 같아야 합니다(표에는 합쳐서 표시됩니다). 일반/간편 사이의 차이는 구분해서 표시되므로 괜찮습니다.\n그대로 저장할까요? [취소]를 누르면 수정 창으로 돌아갑니다.`)) return; }
       if (!src) { p.bpay = p.pay ?? null; p.blabel = p.label; }
       const ix = S.products.findIndex(x => x.id === p.id); if (ix >= 0) S.products[ix] = p; else S.products.push(p);
       m.remove(); commit();
