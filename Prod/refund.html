@@ -106,7 +106,7 @@ table.rt td.nm,table.rt td.kd,table.rt td.ty,table.rt td.pl,table.rt td.mo,table
 table.rt td.nm{font-weight:700;white-space:normal;word-break:keep-all;overflow-wrap:break-word;text-overflow:clip;line-height:1.25;padding-left:3px;padding-right:3px}
 table.rt td.it{color:var(--muted);font-size:12px}
 table.rt tr.v1 td.vv{color:var(--blue)}
-table.rt td.pl.v1{background:#fff2c6}
+
 table.mt tr.dg-over td{border-top:2px solid #c0392b}table.mt tr.dg-src{opacity:.4}.dh{cursor:grab;color:#888;user-select:none}
 input.auto{background:#eef2f7!important;color:#555}
 table.rt td.hl{background:#ffff00;font-weight:700}
@@ -1083,6 +1083,8 @@ function editProduct(id) {
     if (e.target.closest('[data-cancel]')) m.remove();
     if (e.target.closest('[data-save]')) {
       read(); if (!p.name) { $('#edErr', box).textContent = '상품명을 입력하세요.'; return; }
+      { const same = S.products.filter(x => x.id !== p.id && x.name === p.name), key = a => [...a].sort().join('|'), diff = same.filter(x => key(x.features) !== key(p.features));
+        if (diff.length && !confirm(`⚠ 같은 상품명 '${p.name}'인데 주요특징이 서로 다릅니다.\n\n· 이 상품: ${p.features.join(', ') || '(없음)'}\n` + diff.slice(0, 4).map(x => `· ${shortOf(x)}: ${x.features.join(', ') || '(없음)'}`).join('\n') + `\n\n주요특징은 상품 단위로 같아야 합니다(표에는 합쳐서 표시됩니다).\n그대로 저장할까요? [취소]를 누르면 수정 창으로 돌아갑니다.`)) return; }
       if (!src) { p.bpay = p.pay ?? null; p.blabel = p.label; }
       const ix = S.products.findIndex(x => x.id === p.id); if (ix >= 0) S.products[ix] = p; else S.products.push(p);
       m.remove(); commit();
