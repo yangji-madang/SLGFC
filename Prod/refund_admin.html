@@ -202,7 +202,7 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
   <div class="bd">
     <div class="row">
       <input type="text" id="srQ" placeholder="상품명·유형·메모 검색 (공백=AND)" style="width:260px">
-      <label><input type="checkbox" id="srDisc"> 단종 상품 포함</label>
+      <span class="tabs" id="srTabs"></span>
       <button data-act="srClear">전체 초기화</button>
     </div>
     <div class="sgrp"><b>핵심기능</b>
@@ -327,7 +327,8 @@ function rawTest() {
 /* ===== 상태 ===== */
 let S = null;
 const UI = { tab: 'active', sel: new Set() };
-const SR = { q: '', feats: new Set(), excl: new Set(), mode: 'OR', disc: false };
+const SR = { q: '', feats: new Set(), excl: new Set(), mode: 'OR', view: 'active' };
+const inView = p => !!p.active === (SR.view === 'active');
 const ko = (a, b) => String(a || '').localeCompare(String(b || ''), 'ko');
 const sortProds = arr => arr.slice().sort((a, b) => ko(a.name, b.name) || ko(a.type, b.type) || ((payOf(a) || 0) - (payOf(b) || 0)));
 let RATES = null;
@@ -434,7 +435,7 @@ const bankLabel = b => { const c = { month: '월복리', year: '연복리', simp
 
 /* ===== 검색 ===== */
 function matches(p) {
-  if (!p.active && !SR.disc) return false;
+  if (!inView(p)) return false;
   if (SR.excl.has(p.id)) return false;
   if (p.on === false) return false;
   const q = SR.q.trim().toLowerCase();
@@ -493,9 +494,11 @@ function renderFooter() {
 /* --- 검색 --- */
 function renderSearch() {
   $('#srFeats').innerHTML = S.features.map(f => `<span class="chip ${SR.feats.has(f) ? 'on' : ''}" data-act="srFeat" data-v="${esc(f)}">${esc(f)}</span>`).join('');
-  const ps = sortProds(S.products.filter(p => (p.active || SR.disc) && p.on !== false));
+  const nAct = S.products.filter(p => p.active && p.on !== false).length, nDis = S.products.filter(p => !p.active && p.on !== false).length;
+  $('#srTabs').innerHTML = `<button class="${SR.view === 'active' ? 'on' : ''}" data-act="srView" data-v="active">판매중 ${nAct}</button><button class="${SR.view === 'disc' ? 'on' : ''}" data-act="srView" data-v="disc">단종 ${nDis}</button>`;
+  const ps = sortProds(S.products.filter(p => inView(p) && p.on !== false));
   $('#srProds').innerHTML = ps.map(p => `<span class="chip ${SR.excl.has(p.id) ? '' : 'on'}" data-act="srProd" data-id="${p.id}">${esc(shortOf(p))}${p.active ? '' : ' (단종)'}</span>`).join('') || '<span class="muted">상품 없음</span>';
-  $('#srCount').textContent = `조회 ${S.products.filter(matches).length}개 / 전체 ${S.products.filter(p => p.active).length}개`;
+  $('#srCount').textContent = `${SR.view === 'disc' ? '[단종 상품] ' : ''}조회 ${S.products.filter(matches).length}개 / 전체 ${S.products.filter(p => inView(p) && p.on !== false).length}개`;
 }
 
 /* --- 요약 --- */
@@ -777,6 +780,7 @@ function renderBasis() {
 
 /* --- Master --- */
 function renderMaster() {
+  UI.tab = SR.view;
   const body = $('#masterBody'); if (!document.body.classList.contains('admin')) { body.innerHTML = ''; return; }
   const d = S.defaults;
   const active = S.products.filter(p => p.active), disc = S.products.filter(p => !p.active);
@@ -823,7 +827,7 @@ function renderMaster() {
     ${list.map(p => `<tr style="${p.on === false ? 'opacity:.45' : ''}"><td><input type="checkbox" data-act="sel" data-id="${p.id}" ${UI.sel.has(p.id) ? 'checked' : ''}></td><td><input type="checkbox" data-act="pon" data-id="${p.id}" ${p.on !== false ? 'checked' : ''} title="이 프로필에서 사용"></td>
       <td><input type="checkbox" data-act="pv" data-k="showT" data-id="${p.id}" ${p.showT ? 'checked' : ''}></td><td><input type="checkbox" data-act="pv" data-k="showG" data-id="${p.id}" ${p.showG ? 'checked' : ''}></td>
       <td><span class="sw" style="background:${PALETTE[groupIndex().get(p.name + '|' + p.type) % PALETTE.length]}"></span></td>
-      <td class="l"><b>${esc(p.name)}</b></td><td>${esc(p.kd || "-")}</td><td class="l">${esc(p.type)}</td><td>${esc(labelOf(p))}</td><td>${ageOf(p)}${p.age == null ? '<small class="muted">*</small>' : ''}</td><td>${sexOf(p)}${p.sex ? '' : '<small class="muted">*</small>'}</td>
+      <td class="l"><b>${esc(p.name)}</b>${p.on === false ? ' <small style="color:#b3261e;font-weight:700">(미사용)</small>' : ''}</td><td>${esc(p.kd || "-")}</td><td class="l">${esc(p.type)}</td><td>${esc(labelOf(p))}</td><td>${ageOf(p)}${p.age == null ? '<small class="muted">*</small>' : ''}</td><td>${sexOf(p)}${p.sex ? '' : '<small class="muted">*</small>'}</td>
       <td>${fmtAmt(amtOf(p))}${p.amount == null ? '<small class="muted">*</small>' : ''}</td>
       <td><input type="number" data-act="mon" data-id="${p.id}" value="${p.monthly ?? ''}" placeholder="-"></td>
       <td class="l">${p.features.map(f => `<span class="tag">${esc(f)}</span>`).join('')}</td>
@@ -882,7 +886,6 @@ document.addEventListener('change', e => {
     setPath(el.dataset.set, v); commit(); return;
   }
   if (el.id === 'srMode') { SR.mode = el.value; renderAll(); return; }
-  if (el.id === 'srDisc') { SR.disc = el.checked; renderAll(); return; }
   const a = el.dataset.act; if (!a) return;
   const p = S.products.find(x => x.id === el.dataset.id);
   if (a === 'pon' && p) { p.on = el.checked; commit(); }
@@ -909,15 +912,16 @@ document.addEventListener('click', e => {
     case 'replay': renderChart(true); break;
     case 'mode': { if (document.body.classList.contains('admin')) { const pf = curProf(); window.open('refund.html?p=' + encodeURIComponent(pf.code || pf.id), '_blank'); } else setMode(true); break; }
     case 'rates': openRates(null); break;
-    case 'srClear': SR.q = ''; SR.feats.clear(); SR.excl.clear(); SR.disc = false; $('#srQ').value = ''; $('#srDisc').checked = false; renderAll(); break;
+    case 'srClear': SR.q = ''; SR.feats.clear(); SR.excl.clear(); SR.view = 'active'; $('#srQ').value = ''; renderAll(); break;
+    case 'srView': SR.view = v; UI.tab = v; renderAll(); break;
     case 'srFeat': SR.feats.has(v) ? SR.feats.delete(v) : SR.feats.add(v); renderAll(); break;
     case 'srFeatAll': S.features.forEach(f => SR.feats.add(f)); renderAll(); break;
     case 'srFeatNone': SR.feats.clear(); renderAll(); break;
     case 'srProd': SR.excl.has(id) ? SR.excl.delete(id) : SR.excl.add(id); renderAll(); break;
     case 'srProdAll': SR.excl.clear(); renderAll(); break;
-    case 'srProdNone': S.products.filter(p => p.active || SR.disc).forEach(p => SR.excl.add(p.id)); renderAll(); break;
+    case 'srProdNone': S.products.filter(p => inView(p)).forEach(p => SR.excl.add(p.id)); renderAll(); break;
     case 'legend': if (t.dataset.kind === 'p') { const q = S.products.find(x => x.id === id); if (q) q.showG = false; } else { const b = S.banks.find(x => x.id === id); if (b) b.show = false; } commit(); break;
-    case 'tab': UI.tab = v; renderMaster(); break;
+    case 'tab': UI.tab = v; SR.view = v; renderAll(); break;
     case 'pAdd': editProduct(null); break;
     case 'pEdit': editProduct(id); break;
     case 'pCopy': { const c = clone(p); c.id = uid(); c.label = c.label || ''; c.name = p.name; S.products.splice(idx + 1, 0, c); commit(); editProduct(c.id); break; }
