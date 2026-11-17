@@ -1,6 +1,6 @@
 {
  "v": 2,
- "savedAt": 1794878492109,
+ "savedAt": 1794878591891,
  "curPid": "pf1",
  "profiles": [
   {
@@ -1339,7 +1339,7 @@
   ],
   "labelMode": "key",
   "bankCalc": "simple",
-  "bankTax": false,
+  "bankTax": true,
   "smooth": true,
   "anim": true,
   "ymax": null,
