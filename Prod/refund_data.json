@@ -1,6 +1,6 @@
 {
  "v": 2,
- "savedAt": 1794635150016,
+ "savedAt": 1794878492109,
  "curPid": "pf1",
  "profiles": [
   {
@@ -497,7 +497,148 @@
    "amount": 10000,
    "pay": 10,
    "notice": "※ 정확한 가입나이·가입 가능 여부는 반드시 설계화면에서 확인하세요.",
-   "snap": {},
+   "snap": {
+    "pp4c9t5c": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 10,
+     "label": "",
+     "on": true
+    },
+    "piay200v": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 20,
+     "label": "",
+     "on": true
+    },
+    "pajcryey": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 10,
+     "label": "",
+     "on": true
+    },
+    "ps4seqme": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 20,
+     "label": "",
+     "on": true
+    },
+    "pca4vk68": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 10,
+     "label": "",
+     "on": true
+    },
+    "p60j8on4": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 20,
+     "label": "",
+     "on": true
+    },
+    "p7qyq2ij": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 5,
+     "label": "",
+     "on": true
+    },
+    "pvmbt2v3": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 10,
+     "label": "",
+     "on": true
+    },
+    "p5r3ah0v": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 10,
+     "label": "",
+     "on": true
+    },
+    "p3x7q9z5": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 20,
+     "label": "",
+     "on": true
+    },
+    "p3ysizz9": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 10,
+     "label": "",
+     "on": true
+    },
+    "po4cg3xw": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 20,
+     "label": "",
+     "on": true
+    },
+    "p6t9yb6a": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 0,
+     "label": "일반",
+     "on": true
+    },
+    "ps1bighs": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 0,
+     "label": "간편",
+     "on": true
+    }
+   },
    "bsnap": {}
   }
  ],
@@ -1165,23 +1306,23 @@
  "banks": [
   {
    "id": "pi4jql67",
-   "name": "은행 적금 3.0%",
-   "rate": 3,
+   "name": "은행 적금 2.0%",
+   "rate": 2,
    "monthly": null,
    "pay": 10,
    "link": "",
    "show": true,
-   "src": "테스트값: 카카오뱅크 AI 목표적금 기본금리 3.00% (rates.json 2026-10-30)"
+   "src": "우리은행 우리 사장님 성장 적금 기본금리 2.00% (2026-10-30)"
   },
   {
    "id": "p75tn6k4",
    "name": "은행 적금 3.0%",
-   "rate": 3,
+   "rate": 2,
    "monthly": null,
    "pay": 20,
    "link": "",
    "show": true,
-   "src": "테스트값: 카카오뱅크 AI 목표적금 기본금리 3.00% (rates.json 2026-10-30)"
+   "src": "우리은행 우리 사장님 성장 적금 기본금리 2.00% (2026-10-30)"
   }
  ],
  "settings": {
