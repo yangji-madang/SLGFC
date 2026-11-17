@@ -1,6 +1,6 @@
 {
  "v": 2,
- "savedAt": 1794882801196,
+ "savedAt": 1794883051101,
  "curPid": "pf1",
  "profiles": [
   {
@@ -16,8 +16,14 @@
     "pp4c9t5c": {
      "monthly": 100000,
      "data": {
+      "3": {
+       "refund": 200000
+      },
+      "6": {
+       "refund": 500000
+      },
       "12": {
-       "rate": 21.5
+       "refund": 1000000
       },
       "60": {
        "rate": 38.2
@@ -95,6 +101,16 @@
      "label": "",
      "on": true
     },
+    "pif1bdti": {
+     "monthly": 200000,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": null,
+     "label": "",
+     "on": true
+    },
     "pajcryey": {
      "monthly": null,
      "data": {
@@ -121,29 +137,6 @@
      "sex": "",
      "amount": null,
      "pay": 10,
-     "label": "",
-     "on": true
-    },
-    "ps4seqme": {
-     "monthly": null,
-     "data": {
-      "240": {
-       "rate": 100
-      },
-      "300": {
-       "rate": 100
-      },
-      "360": {
-       "rate": 106.1
-      },
-      "420": {
-       "rate": 113.4
-      }
-     },
-     "age": null,
-     "sex": "",
-     "amount": null,
-     "pay": 20,
      "label": "",
      "on": true
     },
@@ -220,6 +213,29 @@
      "label": "",
      "on": true
     },
+    "ps4seqme": {
+     "monthly": null,
+     "data": {
+      "240": {
+       "rate": 100
+      },
+      "300": {
+       "rate": 100
+      },
+      "360": {
+       "rate": 106.1
+      },
+      "420": {
+       "rate": 113.4
+      }
+     },
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 20,
+     "label": "",
+     "on": true
+    },
     "p7qyq2ij": {
      "monthly": null,
      "data": {
@@ -255,44 +271,6 @@
      "sex": "",
      "amount": null,
      "pay": 5,
-     "label": "",
-     "on": true
-    },
-    "pvmbt2v3": {
-     "monthly": null,
-     "data": {
-      "12": {
-       "rate": 20.1
-      },
-      "60": {
-       "rate": 39
-      },
-      "96": {
-       "rate": 41.7
-      },
-      "120": {
-       "rate": 113.4
-      },
-      "180": {
-       "rate": 119.8
-      },
-      "240": {
-       "rate": 126.3
-      },
-      "300": {
-       "rate": 132.9
-      },
-      "360": {
-       "rate": 139
-      },
-      "420": {
-       "rate": 144.9
-      }
-     },
-     "age": null,
-     "sex": "",
-     "amount": null,
-     "pay": 10,
      "label": "",
      "on": true
     },
@@ -366,6 +344,44 @@
      "sex": "",
      "amount": null,
      "pay": 20,
+     "label": "",
+     "on": true
+    },
+    "pvmbt2v3": {
+     "monthly": null,
+     "data": {
+      "12": {
+       "rate": 20.1
+      },
+      "60": {
+       "rate": 39
+      },
+      "96": {
+       "rate": 41.7
+      },
+      "120": {
+       "rate": 113.4
+      },
+      "180": {
+       "rate": 119.8
+      },
+      "240": {
+       "rate": 126.3
+      },
+      "300": {
+       "rate": 132.9
+      },
+      "360": {
+       "rate": 139
+      },
+      "420": {
+       "rate": 144.9
+      }
+     },
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 10,
      "label": "",
      "on": true
     },
@@ -701,8 +717,14 @@
    "showG": true,
    "note": "",
    "data": {
+    "3": {
+     "refund": 200000
+    },
+    "6": {
+     "refund": 500000
+    },
     "12": {
-     "rate": 21.5
+     "refund": 1000000
     },
     "60": {
      "rate": 38.2
@@ -795,6 +817,32 @@
    "kd": "간편"
   },
   {
+   "id": "pif1bdti",
+   "name": "밸런스",
+   "kd": "일반",
+   "type": "2종",
+   "label": "",
+   "pay": null,
+   "age": null,
+   "sex": "",
+   "amount": null,
+   "monthly": 200000,
+   "features": [
+    "고환급",
+    "연금전환",
+    "연금선지급",
+    "적립전환"
+   ],
+   "active": true,
+   "showT": true,
+   "showG": true,
+   "note": "",
+   "data": {},
+   "on": true,
+   "bpay": null,
+   "blabel": ""
+  },
+  {
    "id": "pajcryey",
    "name": "올백",
    "type": "2종 암납입면제형",
@@ -830,40 +878,6 @@
     }
    },
    "bpay": 10,
-   "blabel": "",
-   "on": true,
-   "kd": ""
-  },
-  {
-   "id": "ps4seqme",
-   "name": "올백",
-   "type": "2종 암납입면제형",
-   "label": "",
-   "pay": 20,
-   "age": null,
-   "sex": "",
-   "amount": null,
-   "monthly": null,
-   "features": [],
-   "active": true,
-   "showT": true,
-   "showG": true,
-   "note": "",
-   "data": {
-    "240": {
-     "rate": 100
-    },
-    "300": {
-     "rate": 100
-    },
-    "360": {
-     "rate": 106.1
-    },
-    "420": {
-     "rate": 113.4
-    }
-   },
-   "bpay": 20,
    "blabel": "",
    "on": true,
    "kd": ""
@@ -964,6 +978,40 @@
    "kd": ""
   },
   {
+   "id": "ps4seqme",
+   "name": "올백",
+   "type": "2종 암납입면제형",
+   "label": "",
+   "pay": 20,
+   "age": null,
+   "sex": "",
+   "amount": null,
+   "monthly": null,
+   "features": [],
+   "active": true,
+   "showT": true,
+   "showG": true,
+   "note": "",
+   "data": {
+    "240": {
+     "rate": 100
+    },
+    "300": {
+     "rate": 100
+    },
+    "360": {
+     "rate": 106.1
+    },
+    "420": {
+     "rate": 113.4
+    }
+   },
+   "bpay": 20,
+   "blabel": "",
+   "on": true,
+   "kd": ""
+  },
+  {
    "id": "p7qyq2ij",
    "name": "행복",
    "type": "2형 체증형",
@@ -1013,60 +1061,6 @@
     }
    },
    "bpay": 5,
-   "blabel": "",
-   "on": true,
-   "kd": ""
-  },
-  {
-   "id": "pvmbt2v3",
-   "name": "행복",
-   "type": "2형 체증형",
-   "label": "",
-   "pay": 10,
-   "age": null,
-   "sex": "",
-   "amount": null,
-   "monthly": null,
-   "features": [
-    "고환급",
-    "연금전환",
-    "연금선지급",
-    "약관대출"
-   ],
-   "active": true,
-   "showT": true,
-   "showG": true,
-   "note": "",
-   "data": {
-    "12": {
-     "rate": 20.1
-    },
-    "60": {
-     "rate": 39
-    },
-    "96": {
-     "rate": 41.7
-    },
-    "120": {
-     "rate": 113.4
-    },
-    "180": {
-     "rate": 119.8
-    },
-    "240": {
-     "rate": 126.3
-    },
-    "300": {
-     "rate": 132.9
-    },
-    "360": {
-     "rate": 139
-    },
-    "420": {
-     "rate": 144.9
-    }
-   },
-   "bpay": 10,
    "blabel": "",
    "on": true,
    "kd": ""
@@ -1162,6 +1156,60 @@
     }
    },
    "bpay": 20,
+   "blabel": "",
+   "on": true,
+   "kd": ""
+  },
+  {
+   "id": "pvmbt2v3",
+   "name": "행복",
+   "type": "2형 체증형",
+   "label": "",
+   "pay": 10,
+   "age": null,
+   "sex": "",
+   "amount": null,
+   "monthly": null,
+   "features": [
+    "고환급",
+    "연금전환",
+    "연금선지급",
+    "약관대출"
+   ],
+   "active": true,
+   "showT": true,
+   "showG": true,
+   "note": "",
+   "data": {
+    "12": {
+     "rate": 20.1
+    },
+    "60": {
+     "rate": 39
+    },
+    "96": {
+     "rate": 41.7
+    },
+    "120": {
+     "rate": 113.4
+    },
+    "180": {
+     "rate": 119.8
+    },
+    "240": {
+     "rate": 126.3
+    },
+    "300": {
+     "rate": 132.9
+    },
+    "360": {
+     "rate": 139
+    },
+    "420": {
+     "rate": 144.9
+    }
+   },
+   "bpay": 10,
    "blabel": "",
    "on": true,
    "kd": ""
