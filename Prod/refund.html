@@ -188,7 +188,6 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
 
 <header class="hd">
   <h1>■ 주요상품 환급률 비교<span id="viewTag" class="prtonly"></span></h1>
-  <span class="sub" id="subTitle"></span>
   <span class="ex" id="exLabel"></span>
 </header>
 
@@ -480,18 +479,25 @@ function periodsOf(items) {
 function renderAll() {
   const T = mkItems('T').filter(it => hasData(it));
   const cp = curProf();
-  $('#subTitle').textContent = `※ ${cp.label} 기준 · 경과기간별 환급률 비교 (납입기간별 구분 · 설계서 예시값)`;
   const nt = $('#notice'); nt.textContent = cp.notice || ''; nt.style.display = cp.notice ? '' : 'none';
   const pb = $('#pbar'); pb.style.display = (S.profiles.length < 2 && VIEWER) ? 'none' : '';
   pb.innerHTML = S.profiles.map(pf => `<button class="pf ${pf.id === S.curPid ? 'on' : ''}" data-act="pfSel" data-id="${pf.id}">${esc(pf.label)}</button>`).join('');
-  $('#exLabel').textContent = exampleLabel(T);
+  $('#exLabel').textContent = exampleLabel();
   renderSearch(); renderMaster(); renderSummary(T); renderTable(T); renderChart(CH.first); CH.first = false; renderFooter(); syncBind();
 }
 let _pp = false; function applyPrefsOnce() { if (_pp) return; _pp = true; Object.entries(PREF).forEach(([k, v]) => $('#tblBody').style.setProperty('--' + k, v + (k === 'fs' || k === 'cw' || k === 'lw' || k === 'ch' ? 'px' : ''))); $$('[data-pref]').forEach(el => { el.value = PREF[el.dataset.pref]; }); }
-function exampleLabel(T) {
-  const ps = T.filter(i => i.kind === 'p').map(i => i.p); if (!ps.length) return '';
-  const a = uniq(ps.map(ageOf)), s = uniq(ps.map(sexOf)), m = uniq(ps.map(amtOf));
-  return '예시 : ' + [a.length === 1 ? a[0] + '세' : '나이 상이', s.length === 1 ? s[0] : '성별 상이', m.length === 1 ? '가입금액 ' + fmtAmt(m[0]) : '가입금액 상이'].join(', ');
+const amtKr = v => { // 만원 단위 → 1억 / 1억 5천만원 / 5천만원 / 3백만원
+  v = Math.round(num(v) || 0); const e = Math.floor(v / 10000), r = v % 10000, c = Math.floor(r / 1000), h = Math.floor((r % 1000) / 100), t = r % 100;
+  const low = (c ? c + '천' : '') + (h ? h + '백' : '') + (t ? t : '');
+  return (e ? e + '억' : '') + (e && low ? ' ' : '') + (low ? low + '만원' : '') || '-';
+};
+function exampleLabel() { // 현재 프로필(S.defaults) 기준
+  const d = S.defaults, a = [];
+  if (d.sex) a.push(d.sex + '자');
+  if (num(d.age) != null) a.push(num(d.age) + '세');
+  if (num(d.amount)) a.push('가입금액 ' + amtKr(d.amount));
+  if (num(d.pay)) a.push(num(d.pay) + '년납');
+  return a.length ? '※ 예시 : ' + a.join(', ') : '';
 }
 function renderFooter() {
   $('#ftCopy').textContent = 'ⓒ' + new Date().getFullYear() + '. YOON HYUNCHUL, ALL RIGHTS RESERVED.';
