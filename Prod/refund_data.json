@@ -1,6 +1,6 @@
 {
  "v": 2,
- "savedAt": 1794880782219,
+ "savedAt": 1794880899194,
  "curPid": "pf1",
  "profiles": [
   {
@@ -14,7 +14,7 @@
    "notice": "※ 정확한 가입나이·가입 가능 여부는 반드시 설계화면에서 확인하세요.",
    "snap": {
     "pp4c9t5c": {
-     "monthly": null,
+     "monthly": 100000,
      "data": {
       "12": {
        "rate": 21.5
@@ -686,7 +686,7 @@
    "age": null,
    "sex": "",
    "amount": null,
-   "monthly": null,
+   "monthly": 100000,
    "features": [
     "고환급",
     "연금전환",
