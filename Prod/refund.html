@@ -32,6 +32,7 @@ input[type=number]{text-align:right}
 /* 섹션 */
 .sec{margin:6px 0;border:1px solid #cfd7e0;border-radius:5px;overflow:hidden}
 .sec>h2{margin:0;padding:3px 10px;background:var(--navy);color:#fff;font-size:14px;display:flex;align-items:center;gap:8px}
+.prtonly{display:none}
 .sec>h2 .no{background:var(--gold);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
 .sec>h2 small{font-weight:400;opacity:.85;margin-left:auto}
 .sec .bd{padding:6px 8px}
@@ -156,6 +157,9 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
  .page{max-width:none;padding:0}
  .sec{border:none;margin:3px 0}
  .sec>h2{padding:1px 6px;font-size:11px}
+ .prtonly{display:inline}
+ .sec>h2 .no{background:none!important;width:auto;height:auto;border-radius:0;font-size:0;color:var(--gold)}
+ .sec>h2 .no::before{content:'▶';font-size:11px;margin-right:2px}
  .sec .bd{padding:3px 0}
  .hd h1{font-size:17px}
  table.rt{font-size:10px}
@@ -182,7 +186,7 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
 <div class="page">
 
 <header class="hd">
-  <h1>■ 주요상품 환급률 비교</h1>
+  <h1>■ 주요상품 환급률 비교<span id="viewTag" class="prtonly"></span></h1>
   <span class="sub" id="subTitle"></span>
   <span class="ex" id="exLabel"></span>
 </header>
@@ -497,6 +501,7 @@ function renderSearch() {
   $('#srFeats').innerHTML = S.features.map(f => `<span class="chip ${SR.feats.has(f) ? 'on' : ''}" data-act="srFeat" data-v="${esc(f)}">${esc(f)}</span>`).join('');
   const nAct = S.products.filter(p => p.active && p.on !== false).length, nDis = S.products.filter(p => !p.active && p.on !== false).length;
   $('#srTabs').innerHTML = `<button class="${SR.view === 'active' ? 'on' : ''}" data-act="srView" data-v="active">판매중 ${nAct}</button><button class="${SR.view === 'disc' ? 'on' : ''}" data-act="srView" data-v="disc">단종 ${nDis}</button>`;
+  $('#viewTag').textContent = SR.view === 'disc' ? ' (단종)' : ' (판매중)';
   const ps = sortProds(S.products.filter(p => inView(p) && p.on !== false));
   $('#srProds').innerHTML = ps.map(p => `<span class="chip ${SR.excl.has(p.id) ? '' : 'on'}" data-act="srProd" data-id="${p.id}">${esc(shortOf(p))}${p.active ? '' : ' (단종)'}</span>`).join('') || '<span class="muted">상품 없음</span>';
   $('#srCount').textContent = `${SR.view === 'disc' ? '[단종 상품] ' : ''}조회 ${S.products.filter(matches).length}개 / 전체 ${S.products.filter(p => inView(p) && p.on !== false).length}개`;
