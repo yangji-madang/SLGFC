@@ -1,6 +1,6 @@
 {
  "v": 2,
- "savedAt": 1794880899194,
+ "savedAt": 1794882801196,
  "curPid": "pf1",
  "profiles": [
   {
@@ -93,7 +93,7 @@
      "amount": null,
      "pay": 20,
      "label": "",
-     "on": false
+     "on": true
     },
     "pajcryey": {
      "monthly": null,
@@ -668,7 +668,9 @@
   "연금전환",
   "연금선지급",
   "약관대출",
-  "적립전환"
+  "적립전환",
+  "암납면",
+  "뇌심납면"
  ],
  "defaults": {
   "age": 52,
@@ -690,7 +692,9 @@
    "features": [
     "고환급",
     "연금전환",
-    "연금선지급"
+    "연금선지급",
+    "암납면",
+    "뇌심납면"
    ],
    "active": true,
    "showT": true,
@@ -787,7 +791,7 @@
    },
    "bpay": 20,
    "blabel": "",
-   "on": false,
+   "on": true,
    "kd": "간편"
   },
   {
