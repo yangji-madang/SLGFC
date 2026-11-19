@@ -149,7 +149,7 @@ table.rt tr.flash td{outline:2px solid var(--gold);outline-offset:-2px}
 .admin-only{display:none}
 body.admin .admin-only{display:block}
 html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #btnMode{display:none!important}
-@page{size:A4 landscape;margin:8mm}
+@page{size:A4 landscape;margin:6mm 6mm 10mm 6mm;@bottom-center{content:"- " counter(page) " -";font-size:9px;color:#34424f}}
 @media print{
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  body{background:#fff;font-size:11px}
@@ -166,10 +166,12 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
  table.rt{font-size:10px}
  table.rt th,table.rt td{padding:1px 4px}
  .qa .a .s,.qa .q{font-size:10px}
- .cb svg{max-height:84mm;width:100%}
+ .cb svg{max-height:none;width:100%}
+ table.rt th,table.rt td{position:static!important}
+ .pgft{margin-top:2px;padding-top:2px}
  .basis{line-height:1.25;margin-top:2px}
  .rzc,.rzr,.tip{display:none!important}
- table.rt{width:100%!important}
+ table.rt{margin:0 auto}
  .sumgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
  .sec.tbl{break-before:page}
  .legend{font-size:10px;grid-template-columns:repeat(5,1fr)}
@@ -498,8 +500,12 @@ function exampleLabel(T) { // 현재 프로필(S.defaults) 기준, 가입금액�
   const d = S.defaults, a = [], am = uniq(((T || []).filter(i => i.kind === 'p')).map(i => i.amt));
   if (d.sex) a.push(d.sex + '자');
   if (num(d.age) != null) a.push(num(d.age) + '세');
-  if (am.length > 1) a.push('가입금액은 상품별로 다름'); else if (am.length === 1 ? am[0] : num(d.amount)) a.push('가입금액 ' + amtKr(am.length === 1 ? am[0] : d.amount));
-  if (num(d.pay)) a.push(num(d.pay) + '년납');
+  const pays = uniq(((T || []).filter(i => i.kind === 'p')).map(i => payOf(i.p)));
+  if (am.length > 1 && pays.length > 1) a.push('가입금액 및 납기는 아래 참고');
+  else {
+    if (am.length > 1) a.push('가입금액은 아래 참고'); else if (am.length === 1 ? am[0] : num(d.amount)) a.push('가입금액 ' + amtKr(am.length === 1 ? am[0] : d.amount));
+    if (pays.length > 1) a.push('납기는 아래 참고'); else if (pays.length === 1 ? pays[0] : num(d.pay)) a.push((pays.length === 1 ? pays[0] : num(d.pay)) + '년납');
+  }
   return a.length ? '※ 예시 : ' + a.join(', ') : '';
 }
 function renderFooter() {
@@ -511,7 +517,7 @@ function renderSearch() {
   $('#srFeats').innerHTML = S.features.map(f => `<span class="chip ${SR.feats.has(f) ? 'on' : ''}" data-act="srFeat" data-v="${esc(f)}">${esc(f)}</span>`).join('');
   const nAct = S.products.filter(p => p.active && p.on !== false).length, nDis = S.products.filter(p => !p.active && p.on !== false).length;
   $('#srTabs').innerHTML = `<button class="${SR.view === 'active' ? 'on' : ''}" data-act="srView" data-v="active">판매중 ${nAct}</button><button class="${SR.view === 'disc' ? 'on' : ''}" data-act="srView" data-v="disc">단종 ${nDis}</button>`;
-  $('#viewTag').textContent = SR.view === 'disc' ? ' (단종)' : ' (판매중)';
+  $('#viewTag').textContent = SR.view === 'disc' ? ' (단종)' : '';
   const ps = sortProds(S.products.filter(p => inView(p) && p.on !== false));
   $('#srProds').innerHTML = ps.map(p => `<span class="chip ${SR.excl.has(p.id) ? '' : 'on'}" data-act="srProd" data-id="${p.id}">${esc(shortOf(p))}${p.active ? '' : ' (단종)'}</span>`).join('') || '<span class="muted">상품 없음</span>';
   $('#srCount').textContent = `${SR.view === 'disc' ? '[단종 상품] ' : ''}조회 ${S.products.filter(matches).length}개 / 전체 ${S.products.filter(p => inView(p) && p.on !== false).length}개`;
@@ -704,6 +710,7 @@ function mono(p) {
   for (let i = 0; i < n - 1; i++) d += `C${f(p[i].x + dx[i] / 3)},${f(p[i].y + t[i] * dx[i] / 3)},${f(p[i + 1].x - dx[i] / 3)},${f(p[i + 1].y - t[i + 1] * dx[i] / 3)},${f(p[i + 1].x)},${f(p[i + 1].y)}`;
   return d;
 }
+let PRT = false;
 function renderChart(animate) {
   const sm = S.settings; animate = !!animate && sm.anim;
   $('#chOpt').innerHTML = `<span class="muted">값 표시</span>
@@ -715,7 +722,7 @@ function renderChart(animate) {
   const items = mkItems('G').filter(it => hasData(it));
   if (!items.length) { $('#chBody').innerHTML = '<div class="muted" style="padding:8px">그래프로 표시할 데이터가 없습니다.</div>'; renderBasis(); return; }
   const periods = periodsOf(items);
-  const W = 1260, H = 660, L = 76, R = 360, Tp = 36, Bt = 80, px1 = W - R, n = periods.length;
+  const W = 1260, H = PRT ? 430 : 660, L = 76, R = 360, Tp = 36, Bt = 80, px1 = W - R, n = periods.length;
   const xs = i => n === 1 ? (L + px1) / 2 : L + i * (px1 - L) / (n - 1);
   let mx = 0; items.forEach(it => periods.forEach(m => { const v = it.get(m).rate; if (v != null) mx = Math.max(mx, v); }));
   const man_ = num(sm.ymax) > 0 ? num(sm.ymax) : null;
@@ -1381,7 +1388,21 @@ let mode = false; try { mode = localStorage.getItem(MODEKEY) === '1'; } catch (e
 if (VIEWER) renderAll(); else setMode(mode);
 loadRemote();
 syncPref();
-window.addEventListener('beforeprint', () => { $$('.modal').forEach(m => m.remove()); renderChart(false); });
+function printFit(on) { // 인쇄 시 표 열 너비를 용지 폭(A4 가로 여백 제외 약 285mm)에 맞춰 비례 축소
+  const t = $('table.rt'); if (!t) return;
+  const cols = $$('col', t);
+  if (!on) { cols.forEach(c => { if (c.dataset.w0) { c.style.width = c.dataset.w0; delete c.dataset.w0; } }); if (t.dataset.tw0) { t.style.width = t.dataset.tw0; delete t.dataset.tw0; } return; }
+  cols.forEach(c => { if (!c.dataset.w0) c.dataset.w0 = c.style.width; });
+  if (!t.dataset.tw0) t.dataset.tw0 = t.style.width;
+  const total = cols.reduce((a, c) => a + parseFloat(c.dataset.w0), 0), avail = 1070, f = total > avail ? avail / total : 1;
+  const itw = cols.find(c => c.dataset.ck === 'it'), extra = itw ? Math.max(0, 66 - parseFloat(itw.dataset.w0) * f) : 0, g = extra ? (avail - 66) / (total - parseFloat(itw.dataset.w0)) : f;
+  cols.forEach(c => { c.style.width = (c === itw && extra ? 66 : parseFloat(c.dataset.w0) * (extra ? Math.min(f, g) : f)).toFixed(1) + 'px'; });
+  t.style.width = cols.reduce((a, c) => a + parseFloat(c.style.width), 0).toFixed(1) + 'px';
+}
+function setPrint(on) { PRT = on; renderChart(false); printFit(on); }
+window.addEventListener('beforeprint', () => { $$('.modal').forEach(m => m.remove()); setPrint(true); });
+window.addEventListener('afterprint', () => setPrint(false));
+try { matchMedia('print').addEventListener('change', e => setPrint(e.matches)); } catch (e) {}
 })();
 </script>
 <script src="../contacts.js"></script>
