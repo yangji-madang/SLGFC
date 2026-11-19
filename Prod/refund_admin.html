@@ -812,7 +812,7 @@ document.addEventListener('dblclick', e => {
 
 /* --- 그래프 --- */
 const CH = { first: true, obs: null };
-const lblG = it => it.kind === 'b' ? lbl(it) : (it.name + (it.kd ? ' ' + it.kd : '') + (payOf(it.p) ? ' ' + payOf(it.p) + '년납' : (it.label ? ' ' + it.label : ''))).trim();
+const lblG = it => it.kind === 'b' ? (it.name + ' ' + String(it.label || '').replace(/납$/, '')).trim() : [it.name, it.kd, it.type, payOf(it.p) ? payOf(it.p) + '년' : String(it.label || '').replace(/납$/, '')].filter(Boolean).join(' ');
 const lbl = it => it.kind === 'b' ? (it.name + ' ' + it.label).trim() : it.short;
 function mono(p) {
   const n = p.length, f = a => a.toFixed(1);
@@ -891,7 +891,7 @@ function renderChart(animate) {
   for (let i = lab.length - 1; i >= 0; i--) { const lim = i === lab.length - 1 ? plotB + 4 : lab[i + 1].ly - gap; if (lab[i].ly > lim) lab[i].ly = lim; }
   lab.forEach(l => {
     const c = l.it.color;
-    gl += `<g class="sr ${animate ? 'fade' : ''}" data-sid="${l.it.kind}${l.it.id}"><path d="M${(l.x + 7).toFixed(1)},${l.y.toFixed(1)}L${px1 + 10},${l.y.toFixed(1)}L${x0 - 6},${l.ly.toFixed(1)}" fill="none" stroke="${c}" stroke-width="1" stroke-opacity=".55"/><circle cx="${x0 - 4}" cy="${l.ly.toFixed(1)}" r="3" fill="${c}"/><text x="${x0 + 4}" y="${(l.ly + 4.5).toFixed(1)}" font-size="13" font-weight="700" fill="${c}">${esc(lblG(l.it))}${sm.labelMode === 'none' ? '' : ` <tspan font-weight="800">최고환급률 ${fmt1(l.v)}%</tspan>`}</text></g>`;
+    gl += `<g class="sr ${animate ? 'fade' : ''}" data-sid="${l.it.kind}${l.it.id}"><path d="M${(l.x + 7).toFixed(1)},${l.y.toFixed(1)}L${px1 + 10},${l.y.toFixed(1)}L${x0 - 6},${l.ly.toFixed(1)}" fill="none" stroke="${c}" stroke-width="1" stroke-opacity=".55"/><circle cx="${x0 - 4}" cy="${l.ly.toFixed(1)}" r="3" fill="${c}"/><text x="${x0 + 4}" y="${(l.ly + 4.5).toFixed(1)}" font-size="13" font-weight="700" fill="${c}">${esc(lblG(l.it))}${sm.labelMode === 'none' ? '' : ` <tspan font-weight="800">최고 ${fmt1(l.v)}%</tspan>`}</text></g>`;
   });
   s += `<g clip-path="url(#cpA)">${gp}</g>${gl}<line id="gd" y1="${Tp}" y2="${plotB}" stroke="#1f3a5f" stroke-width="1.2" stroke-dasharray="4 3" style="display:none"/><rect class="ov" x="${L - 20}" y="${Tp}" width="${px1 - L + 40}" height="${plotB - Tp}" fill="transparent"/></svg>`;
   $('#chBody').innerHTML = s;
