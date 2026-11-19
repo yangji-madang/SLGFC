@@ -1045,8 +1045,8 @@ function editProduct(id) {
     <div class="row"><b>경과기간별 입력</b>
       <span class="muted">월보험료·납입기간을 넣으면 누적보험료는 자동, 환급액을 넣으면 환급률은 자동 계산됩니다(회색 칸).</span><button class="sm" data-calc="refund">환급액 자동(누적×환급률)</button><button class="sm dg" data-calc="clear">전체 지우기</button></div>
     <div class="row"><span class="muted">경과기간 추가</span><input type="number" id="edPn" placeholder="숫자" style="width:70px"><select id="edPu"><option value="y">년</option><option value="m">개월</option></select><button class="sm" data-addper>＋ 추가</button></div>
-    <div class="tw" style="max-height:46vh"><table class="pg"><thead><tr><th>경과기간</th><th>누적보험료(원)</th><th>환급액(원)</th><th>환급률(%)</th></tr></thead><tbody>
-    ${S.periods.map(m => { const d = p.data[m] || {}; return `<tr><td>${plabel(m)}</td><td><input type="number" data-pm="${m}" data-pf="paid" value="${d.paid ?? ''}"></td><td><input type="number" data-pm="${m}" data-pf="refund" value="${d.refund ?? ''}"></td><td><input class="rt" type="number" step="0.1" data-pm="${m}" data-pf="rate" value="${d.rate ?? ''}"></td></tr>`; }).join('')}
+    <div class="tw" style="max-height:46vh"><table class="pg"><thead><tr><th>경과기간</th><th>누적보험료(원)</th><th>환급액(원)</th><th>환급률(%)</th><th>삭제</th></tr></thead><tbody>
+    ${S.periods.map(m => { const d = p.data[m] || {}; return `<tr><td>${plabel(m)}</td><td><input type="number" data-pm="${m}" data-pf="paid" value="${d.paid ?? ''}"></td><td><input type="number" data-pm="${m}" data-pf="refund" value="${d.refund ?? ''}"></td><td><input class="rt" type="number" step="0.1" data-pm="${m}" data-pf="rate" value="${d.rate ?? ''}"></td><td><button class="sm dg" data-delper="${m}" title="이 경과기간 삭제(모든 상품에서 제거)">✕</button></td></tr>`; }).join('')}
     </tbody></table></div>
     <div class="row" style="margin-top:8px"><button class="pri" data-save>저장</button><button data-cancel>취소</button><span class="er" id="edErr"></span></div>`;
   };
@@ -1086,6 +1086,12 @@ function editProduct(id) {
       read(); const n = $('#edFt', box).value.trim(); if (!n) return;
       if (!S.features.includes(n)) S.features.push(n); if (!p.features.includes(n)) p.features.push(n);
       commit(); build(); return;
+    }
+    if (e.target.closest('[data-delper]')) {
+      const mm = +e.target.closest('[data-delper]').dataset.delper; read();
+      const n = S.products.filter(q => q.data[mm] && Object.values(q.data[mm]).some(x => x != null && x !== '')).length + (p.data[mm] && Object.values(p.data[mm]).some(x => x != null && x !== '') ? 1 : 0);
+      if (!confirm(`'${plabel(mm)}' 경과기간을 삭제할까요?\n모든 상품에서 이 기간이 제거됩니다.` + (n ? '\n(입력된 데이터도 함께 삭제됩니다)' : ''))) return;
+      S.periods = S.periods.filter(x => x !== mm); S.products.forEach(q => delete q.data[mm]); delete p.data[mm]; commit(); build(); return;
     }
     if (e.target.closest('[data-addper]')) {
       read(); const v = num($('#edPn', box).value); if (!v || v <= 0) { $('#edErr', box).textContent = '경과기간 숫자를 입력하세요.'; return; }
