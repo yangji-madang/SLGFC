@@ -84,7 +84,7 @@ table.rt td.ft .tag{display:inline-block;max-width:100%;white-space:normal;word-
 .tip .tr i{width:10px;height:10px;border-radius:50%;flex:none}
 .tip .tr span{flex:1;white-space:nowrap}
 .cb svg .sr{transition:opacity .2s}
-.cb svg.hl .sr{opacity:.13}
+.cb svg.hl .sr{opacity:0}
 .cb svg.hl .sr.on{opacity:1}
 .cb svg .fade{opacity:0;animation:fi .7s ease 1.7s forwards}
 @keyframes fi{to{opacity:1}}
@@ -767,7 +767,7 @@ function renderChart(animate) {
   });
   s += `<g clip-path="url(#cpA)">${gp}</g>${gl}<line id="gd" y1="${Tp}" y2="${plotB}" stroke="#1f3a5f" stroke-width="1.2" stroke-dasharray="4 3" style="display:none"/><rect class="ov" x="${L - 20}" y="${Tp}" width="${px1 - L + 40}" height="${plotB - Tp}" fill="transparent"/></svg>`;
   $('#chBody').innerHTML = s;
-  chartHover($('#chBody svg'), { periods, xs, items, W, age0 });
+  chartHover($('#chBody svg'), { periods, xs, ys, items, W, age0 });
   if (animate) playWhenVisible();
   renderBasis();
 }
@@ -784,8 +784,20 @@ function chartHover(svg, c) {
     const r = svg.getBoundingClientRect(), k = c.W / r.width, vx = (e.clientX - r.left) * k;
     let best = 0, bd = 1e9; c.periods.forEach((m, i) => { const d = Math.abs(c.xs(i) - vx); if (d < bd) { bd = d; best = i; } });
     const m = c.periods[best];
+    // 포인터가 선 위에 있으면 그 선만 표시
+    const vy = (e.clientY - r.top) * k; let hit = null, hd = 14 * Math.max(1, k);
+    c.items.forEach(it => {
+      const pts = c.periods.map((pm, i) => ({ x: c.xs(i), v: it.get(pm).rate })).filter(q => q.v != null);
+      for (let j = 0; j < pts.length - 1; j++) {
+        const a = pts[j], b = pts[j + 1]; if (vx < a.x - 1 || vx > b.x + 1) continue;
+        const t = b.x === a.x ? 0 : (vx - a.x) / (b.x - a.x), y = c.ys(a.v + (b.v - a.v) * t), d = Math.abs(y - vy);
+        if (d < hd) { hd = d; hit = it; }
+      }
+    });
+    svg.classList.toggle('hl', !!hit); $$('.sr.on,.li.on').forEach(x => x.classList.remove('on'));
+    if (hit) $$(`[data-sid="${hit.kind}${hit.id}"]`).forEach(x => x.classList.add('on'));
     gd.setAttribute('x1', c.xs(best)); gd.setAttribute('x2', c.xs(best)); gd.style.display = '';
-    const rows = c.items.map(it => ({ it, e: it.get(m) })).filter(x => x.e.rate != null).sort((a, b) => b.e.rate - a.e.rate);
+    const rows = c.items.filter(it => !hit || it === hit).map(it => ({ it, e: it.get(m) })).filter(x => x.e.rate != null).sort((a, b) => b.e.rate - a.e.rate);
     tip.innerHTML = `<div class="th">${plabel(m)} 경과 · ${c.age0 + Math.floor(m / 12)}세</div>` + rows.map(x => `<div class="tr"><i style="background:${x.it.color}"></i><span>${esc(lbl(x.it))}</span><b>${fmt1(x.e.rate)}%</b></div>`).join('');
     tip.style.display = 'block';
     const px = c.xs(best) / k, tw = tip.offsetWidth;
