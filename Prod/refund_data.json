@@ -1,6 +1,6 @@
 {
  "v": 2,
- "savedAt": 1795090366560,
+ "savedAt": 1795090795825,
  "curPid": "p6ugyq2k",
  "profiles": [
   {
@@ -706,16 +706,6 @@
      "label": "20",
      "on": true
     },
-    "pajcryey": {
-     "monthly": null,
-     "data": {},
-     "age": null,
-     "sex": "",
-     "amount": null,
-     "pay": 10,
-     "label": "",
-     "on": true
-    },
     "pca4vk68": {
      "monthly": null,
      "data": {},
@@ -733,26 +723,6 @@
      "sex": "",
      "amount": null,
      "pay": 20,
-     "label": "",
-     "on": true
-    },
-    "ps4seqme": {
-     "monthly": null,
-     "data": {},
-     "age": null,
-     "sex": "",
-     "amount": null,
-     "pay": 20,
-     "label": "",
-     "on": true
-    },
-    "p7qyq2ij": {
-     "monthly": null,
-     "data": {},
-     "age": null,
-     "sex": "",
-     "amount": null,
-     "pay": 5,
      "label": "",
      "on": true
     },
@@ -776,54 +746,192 @@
      "label": "",
      "on": true
     },
-    "pvmbt2v3": {
-     "monthly": null,
-     "data": {},
-     "age": null,
-     "sex": "",
-     "amount": null,
-     "pay": 10,
-     "label": "",
-     "on": true
-    },
-    "p3ysizz9": {
-     "monthly": null,
-     "data": {},
-     "age": null,
-     "sex": "",
-     "amount": null,
-     "pay": 10,
-     "label": "",
-     "on": true
-    },
-    "po4cg3xw": {
-     "monthly": null,
-     "data": {},
+    "pszc62e3": {
+     "monthly": 451000,
+     "data": {
+      "3": {
+       "refund": 0
+      },
+      "6": {
+       "refund": 0
+      },
+      "12": {
+       "refund": 75070
+      },
+      "36": {
+       "refund": 4607210
+      },
+      "60": {
+       "refund": 9314850
+      },
+      "84": {
+       "refund": 14216500
+      },
+      "120": {
+       "refund": 51414000
+      },
+      "180": {
+       "refund": 88486200
+      },
+      "240": {
+       "refund": 133135200
+      },
+      "300": {
+       "refund": 143418000
+      },
+      "360": {
+       "refund": 153700800
+      },
+      "420": {
+       "refund": 156406800
+      }
+     },
      "age": null,
      "sex": "",
      "amount": null,
      "pay": 20,
-     "label": "",
+     "label": "20",
      "on": true
     },
-    "p6t9yb6a": {
-     "monthly": null,
-     "data": {},
+    "p79mdaq8": {
+     "monthly": 258000,
+     "data": {
+      "3": {
+       "refund": 0
+      },
+      "6": {
+       "refund": 0
+      },
+      "12": {
+       "refund": 0
+      },
+      "36": {
+       "refund": 2320480
+      },
+      "60": {
+       "refund": 4879430
+      },
+      "84": {
+       "refund": 7487140
+      },
+      "120": {
+       "refund": 23726510
+      },
+      "180": {
+       "refund": 35878480
+      },
+      "240": {
+       "refund": 52308010
+      },
+      "300": {
+       "refund": 55782380
+      },
+      "360": {
+       "refund": 68203540
+      },
+      "420": {
+       "refund": 72800030
+      }
+     },
      "age": null,
      "sex": "",
      "amount": null,
-     "pay": 0,
-     "label": "",
+     "pay": null,
+     "label": "20",
      "on": true
     },
-    "ps1bighs": {
-     "monthly": null,
-     "data": {},
+    "pcuc6evj": {
+     "monthly": 2043000,
+     "data": {
+      "3": {
+       "refund": 0
+      },
+      "6": {
+       "refund": 2244750
+      },
+      "12": {
+       "refund": 7497000
+      },
+      "36": {
+       "refund": 29231500
+      },
+      "60": {
+       "refund": 117676800
+      },
+      "84": {
+       "refund": 121538380
+      },
+      "120": {
+       "refund": 146888950
+      },
+      "180": {
+       "refund": 154119390
+      },
+      "240": {
+       "refund": 161714950
+      },
+      "300": {
+       "refund": 169735630
+      },
+      "360": {
+       "refund": 178190900
+      },
+      "420": {
+       "refund": 187080280
+      }
+     },
      "age": null,
      "sex": "",
      "amount": null,
-     "pay": 0,
-     "label": "",
+     "pay": 5,
+     "label": "5",
+     "on": true
+    },
+    "pzetig2v": {
+     "monthly": 1089000,
+     "data": {
+      "3": {
+       "refund": 0
+      },
+      "6": {
+       "refund": 0
+      },
+      "12": {
+       "refund": 2592640
+      },
+      "36": {
+       "refund": 14171420
+      },
+      "60": {
+       "refund": 26274710
+      },
+      "84": {
+       "refund": 38923000
+      },
+      "120": {
+       "refund": 148305360
+      },
+      "180": {
+       "refund": 155593120
+      },
+      "240": {
+       "refund": 163249340
+      },
+      "300": {
+       "refund": 171334040
+      },
+      "360": {
+       "refund": 179856830
+      },
+      "420": {
+       "refund": 188817200
+      }
+     },
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 10,
+     "label": "10",
      "on": true
     }
    },
@@ -994,27 +1102,6 @@
    "kd": "일반"
   },
   {
-   "id": "pajcryey",
-   "name": "올백",
-   "type": "2종 암납입면제형",
-   "label": "",
-   "pay": 10,
-   "age": null,
-   "sex": "",
-   "amount": null,
-   "monthly": null,
-   "features": [],
-   "active": true,
-   "showT": true,
-   "showG": true,
-   "note": "",
-   "data": {},
-   "bpay": 10,
-   "blabel": "",
-   "on": true,
-   "kd": ""
-  },
-  {
    "id": "pca4vk68",
    "name": "뉴스탠다드",
    "type": "1종 보증형",
@@ -1052,53 +1139,6 @@
    "note": "",
    "data": {},
    "bpay": 20,
-   "blabel": "",
-   "on": true,
-   "kd": ""
-  },
-  {
-   "id": "ps4seqme",
-   "name": "올백",
-   "type": "2종 암납입면제형",
-   "label": "",
-   "pay": 20,
-   "age": null,
-   "sex": "",
-   "amount": null,
-   "monthly": null,
-   "features": [],
-   "active": true,
-   "showT": true,
-   "showG": true,
-   "note": "",
-   "data": {},
-   "bpay": 20,
-   "blabel": "",
-   "on": true,
-   "kd": ""
-  },
-  {
-   "id": "p7qyq2ij",
-   "name": "행복",
-   "type": "2형 체증형",
-   "label": "",
-   "pay": 5,
-   "age": null,
-   "sex": "",
-   "amount": null,
-   "monthly": null,
-   "features": [
-    "고환급",
-    "연금전환",
-    "연금선지급",
-    "약관대출"
-   ],
-   "active": true,
-   "showT": true,
-   "showG": true,
-   "note": "",
-   "data": {},
-   "bpay": 5,
    "blabel": "",
    "on": true,
    "kd": ""
@@ -1146,114 +1186,260 @@
    "kd": ""
   },
   {
-   "id": "pvmbt2v3",
-   "name": "행복",
-   "type": "2형 체증형",
-   "label": "",
-   "pay": 10,
+   "id": "pszc62e3",
+   "name": "밸런스",
+   "kd": "간편",
+   "type": "1종(보증형)",
+   "label": "20",
+   "pay": 20,
    "age": null,
    "sex": "",
    "amount": null,
-   "monthly": null,
+   "monthly": 451000,
    "features": [
     "고환급",
     "연금전환",
     "연금선지급",
-    "약관대출"
+    "약관대출",
+    "적립전환",
+    "암납면",
+    "뇌심납면",
+    "장해납면"
    ],
    "active": true,
    "showT": true,
    "showG": true,
    "note": "",
-   "data": {},
-   "bpay": 10,
-   "blabel": "",
+   "data": {
+    "3": {
+     "refund": 0
+    },
+    "6": {
+     "refund": 0
+    },
+    "12": {
+     "refund": 75070
+    },
+    "36": {
+     "refund": 4607210
+    },
+    "60": {
+     "refund": 9314850
+    },
+    "84": {
+     "refund": 14216500
+    },
+    "120": {
+     "refund": 51414000
+    },
+    "180": {
+     "refund": 88486200
+    },
+    "240": {
+     "refund": 133135200
+    },
+    "300": {
+     "refund": 143418000
+    },
+    "360": {
+     "refund": 153700800
+    },
+    "420": {
+     "refund": 156406800
+    }
+   },
    "on": true,
-   "kd": ""
+   "bpay": 20,
+   "blabel": "20"
   },
   {
-   "id": "p3ysizz9",
-   "name": "착한종신",
-   "type": "기본형",
-   "label": "",
+   "id": "p79mdaq8",
+   "name": "밸런스",
+   "kd": "간편",
+   "type": "2종(미보증형)",
+   "label": "20",
+   "pay": null,
+   "age": null,
+   "sex": "",
+   "amount": null,
+   "monthly": 258000,
+   "features": [
+    "고환급",
+    "연금전환",
+    "연금선지급",
+    "약관대출",
+    "적립전환",
+    "암납면",
+    "뇌심납면",
+    "장해납면"
+   ],
+   "active": true,
+   "showT": true,
+   "showG": true,
+   "note": "",
+   "data": {
+    "3": {
+     "refund": 0
+    },
+    "6": {
+     "refund": 0
+    },
+    "12": {
+     "refund": 0
+    },
+    "36": {
+     "refund": 2320480
+    },
+    "60": {
+     "refund": 4879430
+    },
+    "84": {
+     "refund": 7487140
+    },
+    "120": {
+     "refund": 23726510
+    },
+    "180": {
+     "refund": 35878480
+    },
+    "240": {
+     "refund": 52308010
+    },
+    "300": {
+     "refund": 55782380
+    },
+    "360": {
+     "refund": 68203540
+    },
+    "420": {
+     "refund": 72800030
+    }
+   },
+   "on": true,
+   "bpay": null,
+   "blabel": "20"
+  },
+  {
+   "id": "pcuc6evj",
+   "name": "행복",
+   "kd": "일반",
+   "type": "1형(5년납)",
+   "label": "5",
+   "pay": 5,
+   "age": null,
+   "sex": "",
+   "amount": null,
+   "monthly": 2043000,
+   "features": [
+    "고환급",
+    "연금전환"
+   ],
+   "active": true,
+   "showT": true,
+   "showG": true,
+   "note": "",
+   "data": {
+    "3": {
+     "refund": 0
+    },
+    "6": {
+     "refund": 2244750
+    },
+    "12": {
+     "refund": 7497000
+    },
+    "36": {
+     "refund": 29231500
+    },
+    "60": {
+     "refund": 117676800
+    },
+    "84": {
+     "refund": 121538380
+    },
+    "120": {
+     "refund": 146888950
+    },
+    "180": {
+     "refund": 154119390
+    },
+    "240": {
+     "refund": 161714950
+    },
+    "300": {
+     "refund": 169735630
+    },
+    "360": {
+     "refund": 178190900
+    },
+    "420": {
+     "refund": 187080280
+    }
+   },
+   "on": true,
+   "bpay": 5,
+   "blabel": "5"
+  },
+  {
+   "id": "pzetig2v",
+   "name": "행복",
+   "kd": "일반",
+   "type": "2형(7년납이상)",
+   "label": "10",
    "pay": 10,
    "age": null,
    "sex": "",
    "amount": null,
-   "monthly": null,
-   "features": [],
+   "monthly": 1089000,
+   "features": [
+    "고환급",
+    "연금전환"
+   ],
    "active": true,
    "showT": true,
    "showG": true,
    "note": "",
-   "data": {},
+   "data": {
+    "3": {
+     "refund": 0
+    },
+    "6": {
+     "refund": 0
+    },
+    "12": {
+     "refund": 2592640
+    },
+    "36": {
+     "refund": 14171420
+    },
+    "60": {
+     "refund": 26274710
+    },
+    "84": {
+     "refund": 38923000
+    },
+    "120": {
+     "refund": 148305360
+    },
+    "180": {
+     "refund": 155593120
+    },
+    "240": {
+     "refund": 163249340
+    },
+    "300": {
+     "refund": 171334040
+    },
+    "360": {
+     "refund": 179856830
+    },
+    "420": {
+     "refund": 188817200
+    }
+   },
+   "on": true,
    "bpay": 10,
-   "blabel": "",
-   "on": true,
-   "kd": ""
-  },
-  {
-   "id": "po4cg3xw",
-   "name": "착한종신",
-   "type": "기본형",
-   "label": "",
-   "pay": 20,
-   "age": null,
-   "sex": "",
-   "amount": null,
-   "monthly": null,
-   "features": [],
-   "active": true,
-   "showT": true,
-   "showG": true,
-   "note": "",
-   "data": {},
-   "bpay": 20,
-   "blabel": "",
-   "on": true,
-   "kd": ""
-  },
-  {
-   "id": "p6t9yb6a",
-   "name": "CEO보장정기",
-   "type": "",
-   "label": "",
-   "pay": 0,
-   "age": null,
-   "sex": "",
-   "amount": null,
-   "monthly": null,
-   "features": [],
-   "active": true,
-   "showT": true,
-   "showG": true,
-   "note": "",
-   "data": {},
-   "bpay": 0,
-   "blabel": "",
-   "on": true,
-   "kd": "일반"
-  },
-  {
-   "id": "ps1bighs",
-   "name": "CEO보장정기",
-   "type": "",
-   "label": "",
-   "pay": 0,
-   "age": null,
-   "sex": "",
-   "amount": null,
-   "monthly": null,
-   "features": [],
-   "active": true,
-   "showT": true,
-   "showG": true,
-   "note": "",
-   "data": {},
-   "bpay": 0,
-   "blabel": "",
-   "on": true,
-   "kd": "간편"
+   "blabel": "10"
   }
  ],
  "banks": [
