@@ -812,7 +812,7 @@ document.addEventListener('dblclick', e => {
 
 /* --- 그래프 --- */
 const CH = { first: true, obs: null };
-const lblTop = it => it.kind === 'b' ? it.name : [it.name, it.kd, it.type].filter(Boolean).join(' ');
+const lblTop = it => it.kind === 'b' ? it.name : [it.name, it.kd, String(it.type || '').replace(/\([^)]*\)/g, '').trim()].filter(Boolean).join(' ');
 const lblPay = it => it.kind === 'b' ? String(it.label || '').replace(/납$/, '') : (payOf(it.p) ? payOf(it.p) + '년' : String(it.label || '').replace(/납$/, ''));
 const lblG = it => it.kind === 'b' ? (it.name + ' ' + String(it.label || '').replace(/납$/, '')).trim() : [it.name, it.kd, it.type, payOf(it.p) ? payOf(it.p) + '년' : String(it.label || '').replace(/납$/, '')].filter(Boolean).join(' ');
 const lbl = it => it.kind === 'b' ? (it.name + ' ' + it.label).trim() : it.short;
@@ -888,12 +888,12 @@ function renderChart(animate) {
     }
   });
   // 오른쪽 이름표 (겹침 해소)
-  lab.sort((a, b) => a.y - b.y); const gap = sm.labelMode === 'none' ? 17 : 33, x0 = px1 + 22;
+  lab.sort((a, b) => a.y - b.y); const gap = 17, x0 = px1 + 22;
   let prev = Tp - gap; lab.forEach(l => { l.ly = Math.max(l.y, prev + gap); prev = l.ly; });
   for (let i = lab.length - 1; i >= 0; i--) { const lim = i === lab.length - 1 ? plotB + 4 : lab[i + 1].ly - gap; if (lab[i].ly > lim) lab[i].ly = lim; }
   lab.forEach(l => {
     const c = l.it.color;
-    gl += `<g class="sr ${animate ? 'fade' : ''}" data-sid="${l.it.kind}${l.it.id}"><path d="M${(l.x + 7).toFixed(1)},${l.y.toFixed(1)}L${px1 + 10},${l.y.toFixed(1)}L${x0 - 6},${l.ly.toFixed(1)}" fill="none" stroke="${c}" stroke-width="1" stroke-opacity=".55"/><circle cx="${x0 - 4}" cy="${l.ly.toFixed(1)}" r="3" fill="${c}"/><text x="${x0 + 4}" y="${(l.ly + (sm.labelMode === 'none' ? 4.5 : -1)).toFixed(1)}" font-size="13" font-weight="800" fill="${c}">${esc(lblTop(l.it))}</text>${sm.labelMode === 'none' ? '' : `<text x="${x0 + 4}" y="${(l.ly + 14).toFixed(1)}" font-size="12" font-weight="600" fill="#34424f">${esc(lblPay(l.it))} · 최고 <tspan font-weight="800" fill="${c}">${fmt1(l.v)}%</tspan></text>`}</g>`;
+    gl += `<g class="sr ${animate ? 'fade' : ''}" data-sid="${l.it.kind}${l.it.id}"><path d="M${(l.x + 7).toFixed(1)},${l.y.toFixed(1)}L${px1 + 10},${l.y.toFixed(1)}L${x0 - 6},${l.ly.toFixed(1)}" fill="none" stroke="${c}" stroke-width="1" stroke-opacity=".55"/><circle cx="${x0 - 4}" cy="${l.ly.toFixed(1)}" r="3" fill="${c}"/><text x="${x0 + 4}" y="${(l.ly + 4.5).toFixed(1)}" font-size="13" font-weight="700" fill="${c}">${esc(lblTop(l.it) + (lblPay(l.it) ? ' ' + lblPay(l.it) : ''))}${sm.labelMode === 'none' ? '' : ` <tspan font-weight="800">최고 ${fmt1(l.v)}%</tspan>`}</text></g>`;
   });
   s += `<g clip-path="url(#cpA)">${gp}</g>${gl}<line id="gd" y1="${Tp}" y2="${plotB}" stroke="#1f3a5f" stroke-width="1.2" stroke-dasharray="4 3" style="display:none"/><rect class="ov" x="${L - 20}" y="${Tp}" width="${px1 - L + 40}" height="${plotB - Tp}" fill="transparent"/></svg>`;
   $('#chBody').innerHTML = s;
