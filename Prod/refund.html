@@ -68,8 +68,9 @@ details.pn>.in{padding:4px 8px 6px}
 .ig{display:grid;gap:.7em;font-size:11.5px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
 .cmpw{overflow-x:auto}
 table.cmp{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;font-size:var(--cfs,11.5px);background:#fff}
-table.cmp th,table.cmp td{border-bottom:1px solid #e3e9f1;padding:.25em .35em;text-align:center;vertical-align:middle;min-width:0;overflow-wrap:break-word;word-break:keep-all}
-table.cmp th.rl{width:7.5em;text-align:left;background:#eef3f9;color:#23364d;font-weight:700;padding-left:.6em}
+table.cmp th,table.cmp td{border-bottom:1px solid #e3e9f1;padding:.25em .35em;text-align:center;vertical-align:middle;min-width:0;white-space:nowrap}
+table.cmp thead th.ph{white-space:normal;overflow-wrap:normal;word-break:keep-all}
+table.cmp th.rl{width:11em;white-space:nowrap;text-align:left;background:#eef3f9;color:#23364d;font-weight:700;padding-left:.6em}
 table.cmp thead th.ph{background:linear-gradient(180deg,var(--c),color-mix(in srgb,var(--c) 70%,#000));color:#fff;border-radius:.8em .8em 0 0;box-shadow:0 .25em .5em rgba(31,58,95,.25);padding:.45em .3em;line-height:1.25}
 table.cmp thead th.ph small{display:block;font-weight:400;font-size:.85em;opacity:.95}
 table.cmp td.best{background:#fff6d6;font-weight:800;color:#8a5a00}
@@ -83,6 +84,8 @@ table.cmp td.no{color:#c3cad3}
 .ic.bk{background:linear-gradient(180deg,#fafafa,#eef1f4)}
 .ich{display:flex;align-items:baseline;gap:.5em;flex-wrap:wrap}
 .ich b{font-size:1.3em;color:#14263e}
+.ikd{font-size:1em;font-weight:700;color:var(--c);border:1px solid var(--c);border-radius:.8em;padding:0 .5em;background:#fff}
+.ipy{margin-left:auto;font-weight:800;color:#23364d;font-size:1.05em;white-space:nowrap}
 .ity{font-size:1em;font-weight:700;color:#fff;background:var(--c);border-radius:.8em;padding:0 .6em}
 .icm{font-size:.95em;color:#4a5a6a;margin:.1em 0 .4em}
 .b3{position:relative;height:1.1em;border-radius:.6em;background:linear-gradient(180deg,#d9e1ec,#eef2f7);box-shadow:inset 0 2px 3px rgba(0,0,0,.18);margin:.2em 0 .9em}
@@ -92,7 +95,7 @@ table.cmp td.no{color:#c3cad3}
 .kp{display:grid;grid-template-columns:repeat(3,1fr);gap:.3em;text-align:center}
 .kp>div{background:#fff;border:1px solid #e1e8f1;border-radius:.6em;padding:.2em .1em;box-shadow:0 1px 2px rgba(31,58,95,.12)}
 .kp small{display:block;font-size:.85em;color:#5d6b7a}
-.kp b{display:block;font-size:1.3em;color:var(--c);line-height:1.15;font-weight:800}
+.kp b{display:block;font-size:1.45em;color:var(--c);line-height:1.15;font-weight:800}
 .kp em{display:block;font-size:.8em;color:#7b8794;font-style:normal;min-height:.9em}
 .icf{margin-top:.4em;line-height:1.5}
 .icf .tag{font-size:.9em;padding:0 .5em}
@@ -583,20 +586,19 @@ function cmpTable(cards, scale) {
   const order = (S.features || []).map(f => typeof f === 'string' ? f : (f && f.name)).filter(Boolean);
   cards.forEach(c => { if (c.it.kind === 'p') c.it.p.features.forEach(f => { if (!used.includes(f)) used.push(f); }); });
   used.sort((a, b) => { const x = order.indexOf(a), y = order.indexOf(b); return (x < 0 ? 999 : x) - (y < 0 ? 999 : y); });
-  const rows = 9 + used.length, cfs = Math.max(7, Math.min(11.5, 11.5 - Math.max(0, rows - 11) * .3 - Math.max(0, n - 6) * .35));
+  const rows = 8 + used.length, cfs = Math.max(7, Math.min(11.5, 11.5 - Math.max(0, rows - 11) * .3 - Math.max(0, n - 6) * .35));
   const best = (get) => { const vs = cards.map(get); const m = Math.max(...vs.filter(v => v != null)); return vs.map(v => v != null && v === m && vs.filter(x => x === m).length < vs.length); };
   const bMax = best(c => c.mx.v), bFull = best(c => c.full);
   const bBe = (() => { const vs = cards.map(c => c.be ? c.be.m : null), m = Math.min(...vs.filter(v => v != null)); return vs.map(v => v != null && v === m && vs.filter(x => x === m).length < vs.length); })();
   const col = c => `style="--c:${c.it.color}"`, b = c => c.it.kind === 'b';
   const row = (lab, fn, cls) => `<tr><th class="rl">${lab}</th>${cards.map((c, i) => { const [t, k] = fn(c, i); return `<td class="${cls || ''}${k ? ' ' + k : ''}">${t}${k === 'best' ? ' ▲' : ''}</td>`; }).join('')}</tr>`;
-  let h = `<div class="cmpw"><table class="cmp" style="--cfs:${cfs}px"><colgroup><col style="width:7.5em">${cards.map(() => '<col>').join('')}</colgroup><thead><tr><th class="rl" style="background:none"></th>${cards.map(c => `<th class="ph" ${col(c)}>${esc(b(c) ? lblG(c.it) : c.it.name)}<small>${b(c) ? '은행 적금' : [c.it.kd, c.py ? c.py + '년납' : ''].filter(Boolean).join(' · ')}</small></th>`).join('')}</tr></thead><tbody>`;
+  let h = `<div class="cmpw"><table class="cmp" style="--cfs:${cfs}px"><colgroup><col style="width:11em">${cards.map(() => '<col>').join('')}</colgroup><thead><tr><th class="rl" style="background:none"></th>${cards.map(c => `<th class="ph" ${col(c)}>${esc(b(c) ? lblG(c.it) : c.it.name)}<small>${b(c) ? '은행 적금' : [c.it.kd, c.py ? c.py + '년납' : ''].filter(Boolean).join(' · ')}</small></th>`).join('')}</tr></thead><tbody>`;
   h += row('유형', c => [b(c) ? '-' : esc(c.it.type || '-')]);
-  h += row('가입금액', c => [!b(c) && c.it.amt ? amtKr(c.it.amt) : '-']);
-  h += row('월보험료', c => [!b(c) && c.it.monthly ? c.it.monthly.toLocaleString('ko-KR') + '원' : '-']);
   h += `<tr class="sep"><th colspan="${n + 1}">환급률 비교</th></tr>`;
-  h += `<tr><th class="rl">최고환급률</th>${cards.map((c, i) => `<td class="v${bMax[i] ? ' best' : ''}" ${col(c)}><b>${fmt1(c.mx.v)}%${bMax[i] ? ' ▲' : ''}</b><small> (${plabel(c.mx.m)})</small><span class="mb"><i style="width:${Math.min(100, c.mx.v / scale * 100).toFixed(1)}%"></i></span></td>`).join('')}</tr>`;
-  h += row('완납 시점', (c, i) => [c.full != null ? `<b>${fmt1(c.full)}%</b>` : '-', bFull[i] ? 'best' : '']);
-  h += row('원금 회복', (c, i) => [c.be ? `<b>${plabel(c.be.m)}</b>` : '미도달', bBe[i] ? 'best' : '']);
+  h += `<tr><th class="rl">최고환급률(%)</th>${cards.map((c, i) => `<td class="v${bMax[i] ? ' best' : ''}" ${col(c)}><b>${fmt1(c.mx.v)}${bMax[i] ? ' ▲' : ''}</b><span class="mb"><i style="width:${Math.min(100, c.mx.v / scale * 100).toFixed(1)}%"></i></span></td>`).join('')}</tr>`;
+  h += row('최고환급 시점(경과)', c => [plabel(c.mx.m)]);
+  h += row('완납 시점 환급률(%)', (c, i) => [c.full != null ? `<b>${fmt1(c.full)}</b>` : '-', bFull[i] ? 'best' : '']);
+  h += row('원금 회복 시점(경과)', (c, i) => [c.be ? `<b>${plabel(c.be.m)}</b>` : '미도달', bBe[i] ? 'best' : '']);
   if (used.length) {
     h += `<tr class="sep"><th colspan="${n + 1}">주요 특징</th></tr>`;
     used.forEach(f => { h += `<tr><th class="rl">${esc(f)}</th>${cards.map(c => !b(c) && c.it.p.features.includes(f) ? '<td class="ck">●</td>' : '<td class="no">-</td>').join('')}</tr>`; });
@@ -618,15 +620,13 @@ function renderInfo(T) {
   }).filter(Boolean);
   if (!cards.length) { box.innerHTML = ''; return; }
   const scale = Math.max(150, Math.ceil(Math.max(...cards.map(c => c.mx.v)) / 10) * 10), n = cards.length;
-  const cols = n <= 3 ? n : n <= 8 ? 4 : n <= 10 ? 5 : 6, fs = n <= 2 ? 15 : n === 3 ? 14 : n <= 4 ? 12.5 : n <= 8 ? 10.5 : n <= 10 ? 9.2 : 8.4;
+  const cols = n <= 3 ? n : n <= 8 ? 4 : n <= 10 ? 5 : 6, fs = n <= 2 ? 15 : n === 3 ? 14 : n <= 4 ? 13 : n <= 8 ? 11.2 : n <= 10 ? 9.8 : 9;
   $$('.igtg button').forEach(b => b.classList.toggle('on', b.dataset.igm === IGM));
   if (IGM === 'cmp') { box.innerHTML = cmpTable(cards, scale); return; }
   box.innerHTML = `<div class="ig" style="--cols:${cols};--fs:${fs}px">` + cards.map(c => {
     const it = c.it, b = it.kind === 'b', col = it.color;
-    const meta = b ? '' : [it.kd ? it.kd : '', c.py ? c.py + '년납' : '', it.amt ? '가입금액 ' + amtKr(it.amt) : '', it.monthly ? '월 ' + it.monthly.toLocaleString('ko-KR') + '원' : ''].filter(Boolean).join(' · ');
     const feats = b ? '' : it.p.features.map(f => `<span class="tag">${esc(f)}</span>`).join('');
-    return `<div class="ic${b ? ' bk' : ''}" style="--c:${col}"><div class="ich"><b>${esc(b ? lblG(it) : it.name)}</b>${!b && it.type ? `<span class="ity">${esc(it.type)}</span>` : ''}</div>
-      <div class="icm">${meta}</div>
+    return `<div class="ic${b ? ' bk' : ''}" style="--c:${col}"><div class="ich"><b>${esc(it.name)}</b>${!b && it.kd ? `<span class="ikd">${esc(it.kd)}</span>` : ''}${!b && it.type ? `<span class="ity">${esc(it.type)}</span>` : ''}${c.py ? `<span class="ipy">${c.py}년납</span>` : ''}</div>
       <div class="b3"><i style="width:${Math.min(100, c.mx.v / scale * 100).toFixed(1)}%"></i><u style="left:${(100 / scale * 100).toFixed(1)}%"><s>100%</s></u></div>
       <div class="kp"><div><small>최고환급률</small><b>${fmt1(c.mx.v)}%</b><em>${plabel(c.mx.m)} 시점</em></div>
       <div><small>완납 시점</small><b>${c.full != null ? fmt1(c.full) + '%' : '-'}</b><em>${c.py ? c.py + '년 경과' : ''}</em></div>
