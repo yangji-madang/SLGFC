@@ -213,10 +213,14 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
  .sumgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
  .sec.tbl{break-before:page}
  #sec-info .bd{padding:2px 0}
- .ig{grid-template-columns:repeat(var(--cols),minmax(0,1fr));font-size:var(--fs)}
- table.cmp{font-size:var(--cfs)}
+ .ig{grid-template-columns:repeat(var(--cols),minmax(0,1fr));font-size:min(var(--fw),var(--fh),16px)}
+ table.cmp{font-size:min(var(--cfw),var(--cfh),11.5px)}
  .cmpw{overflow:visible}
- #sec-summary,#sec-info{break-inside:avoid}
+ #p1{display:flex;flex-direction:column;height:168mm;overflow:hidden;break-after:page}
+ #sec-summary{flex:none}
+ #sec-info{flex:1;min-height:0;display:flex;flex-direction:column}
+ #sec-info>.bd{flex:1;min-height:0;padding:3px 0 0}
+ #infoBody{height:100%;container-type:size;overflow:hidden}
  .sec.chart{break-before:page;break-inside:avoid}
  table.rt tbody.gb{break-inside:avoid}
  table.rt thead{display:table-header-group}
@@ -281,6 +285,7 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
 </section>
 
 <!-- 3. 요약 -->
+<div id="p1">
 <section class="sec" id="sec-summary">
   <h2><span class="no">3</span>요약 리뷰 <small id="sumBasis"></small></h2>
   <div class="bd"><div id="sumBody"></div></div>
@@ -291,6 +296,8 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
   <h2><span class="no">★</span>상품 특징 한눈에 보기 <span class="igtg noprint"><button data-igm="card">카드형</button><button data-igm="cmp">상품별 비교형</button></span><small>최고환급률 · 완납 시점 · 원금 회복</small></h2>
   <div class="bd"><div id="infoBody"></div></div>
 </section>
+
+</div>
 
 <!-- 4. 그래프 -->
 <section class="sec chart" id="sec-chart">
@@ -592,7 +599,7 @@ function cmpTable(cards, scale) {
   const bBe = (() => { const vs = cards.map(c => c.be ? c.be.m : null), m = Math.min(...vs.filter(v => v != null)); return vs.map(v => v != null && v === m && vs.filter(x => x === m).length < vs.length); })();
   const col = c => `style="--c:${c.it.color}"`, b = c => c.it.kind === 'b';
   const row = (lab, fn, cls) => `<tr><th class="rl">${lab}</th>${cards.map((c, i) => { const [t, k] = fn(c, i); return `<td class="${cls || ''}${k ? ' ' + k : ''}">${t}${k === 'best' ? ' ▲' : ''}</td>`; }).join('')}</tr>`;
-  let h = `<div class="cmpw"><table class="cmp" style="--cfs:${cfs}px"><colgroup><col style="width:11em">${cards.map(() => '<col>').join('')}</colgroup><thead><tr><th class="rl" style="background:none"></th>${cards.map(c => `<th class="ph" ${col(c)}>${esc(b(c) ? lblG(c.it) : c.it.name)}<small>${b(c) ? '은행 적금' : [c.it.kd, c.py ? c.py + '년납' : ''].filter(Boolean).join(' · ')}</small></th>`).join('')}</tr></thead><tbody>`;
+  let h = `<div class="cmpw"><table class="cmp" style="--cfs:${cfs}px;--cfw:${(100 / (11 + 8 * n)).toFixed(3)}cqw;--cfh:${(100 / (19.5 + 2.1 * used.length)).toFixed(3)}cqh"><colgroup><col style="width:11em">${cards.map(() => '<col>').join('')}</colgroup><thead><tr><th class="rl" style="background:none"></th>${cards.map(c => `<th class="ph" ${col(c)}>${esc(b(c) ? lblG(c.it) : c.it.name)}<small>${b(c) ? '은행 적금' : [c.it.kd, c.py ? c.py + '년납' : ''].filter(Boolean).join(' · ')}</small></th>`).join('')}</tr></thead><tbody>`;
   h += row('유형', c => [b(c) ? '-' : esc(c.it.type || '-')]);
   h += `<tr class="sep"><th colspan="${n + 1}">환급률 비교</th></tr>`;
   h += `<tr><th class="rl">최고환급률(%)</th>${cards.map((c, i) => `<td class="v${bMax[i] ? ' best' : ''}" ${col(c)}><b>${fmt1(c.mx.v)}${bMax[i] ? ' ▲' : ''}</b><span class="mb"><i style="width:${Math.min(100, c.mx.v / scale * 100).toFixed(1)}%"></i></span></td>`).join('')}</tr>`;
@@ -623,7 +630,7 @@ function renderInfo(T) {
   const cols = n <= 3 ? n : n <= 8 ? 4 : n <= 10 ? 5 : 6, fs = n <= 2 ? 15 : n === 3 ? 14 : n <= 4 ? 13 : n <= 8 ? 11.2 : n <= 10 ? 9.8 : 9;
   $$('.igtg button').forEach(b => b.classList.toggle('on', b.dataset.igm === IGM));
   if (IGM === 'cmp') { box.innerHTML = cmpTable(cards, scale); return; }
-  box.innerHTML = `<div class="ig" style="--cols:${cols};--fs:${fs}px">` + cards.map(c => {
+  box.innerHTML = `<div class="ig" style="--cols:${cols};--fs:${fs}px;--fw:${(4.35 / cols).toFixed(3)}cqw;--fh:${(100 / (Math.ceil(n / cols) * 15.5)).toFixed(3)}cqh">` + cards.map(c => {
     const it = c.it, b = it.kind === 'b', col = it.color;
     const feats = b ? '' : it.p.features.map(f => `<span class="tag">${esc(f)}</span>`).join('');
     return `<div class="ic${b ? ' bk' : ''}" style="--c:${col}"><div class="ich"><b>${esc(it.name)}</b>${!b && it.kd ? `<span class="ikd">${esc(it.kd)}</span>` : ''}${!b && it.type ? `<span class="ity">${esc(it.type)}</span>` : ''}${c.py ? `<span class="ipy">${c.py}년납</span>` : ''}</div>
