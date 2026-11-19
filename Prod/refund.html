@@ -166,11 +166,12 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
  table.rt{font-size:10px}
  table.rt th,table.rt td{padding:1px 4px}
  .qa .a .s,.qa .q{font-size:10px}
- .cb svg{max-height:150mm}
+ .cb svg{max-height:84mm;width:100%}
+ .basis{line-height:1.25;margin-top:2px}
  .rzc,.rzr,.tip{display:none!important}
  table.rt{width:100%!important}
  .sumgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
- .sec.chart{break-before:page}
+ .sec.tbl{break-before:page}
  .legend{font-size:10px;grid-template-columns:repeat(5,1fr)}
  .basis{font-size:9px}
  .tw{overflow:visible;max-height:none!important}
@@ -234,9 +235,19 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
   <div class="bd"><div id="sumBody"></div></div>
 </section>
 
-<!-- 4. 표 -->
+<!-- 4. 그래프 -->
+<section class="sec chart" id="sec-chart">
+  <h2><span class="no">4</span>경과기간별 환급률 · 은행 비교</h2>
+  <div class="bd">
+    <div class="row noprint" id="chOpt"></div>
+    <div class="cb"><div id="chBody"></div><div class="tip" id="chTip"></div></div>
+    <div class="basis" id="basis"></div>
+  </div>
+</section>
+
+<!-- 5. 표 -->
 <section class="sec tbl" id="sec-table">
-  <h2><span class="no">4</span>환급률 표 <small id="tblUnit"></small></h2>
+  <h2><span class="no">5</span>환급률 표 <small id="tblUnit"></small></h2>
   <div class="bd">
     <div class="row noprint" id="tblOpt"></div>
     <div class="row noprint sizebar">셀 크기
@@ -250,15 +261,7 @@ html[data-viewer] .admin-only,html[data-viewer] .admin-link,html[data-viewer] #b
   </div>
 </section>
 
-<!-- 5. 그래프 -->
-<section class="sec chart" id="sec-chart">
-  <h2><span class="no">5</span>경과기간별 환급률 · 은행 비교</h2>
-  <div class="bd">
-    <div class="row noprint" id="chOpt"></div>
-    <div class="cb"><div id="chBody"></div><div class="tip" id="chTip"></div></div>
-    <div class="basis" id="basis"></div>
-  </div>
-</section>
+
 
 <footer class="pgft">
   <div class="ct"><span data-ct></span></div>
