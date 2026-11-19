@@ -579,7 +579,7 @@ const FROZEN = new Set(['nm', 'kd', 'ty', 'ft', 'am', 'pl', 'mo', 'it']);
 const LTITLE = { nm: '상품명', am: '가입금액', kd: '일반/간편', ft: '주요특징', ty: '유형', pl: '납기', it: '환급내용', mo: '월보험료' };
 function renderTable(T) {
   const st = S.settings;
-  $('#tblOpt').innerHTML = `<span class="muted">표시</span>
+  $('#tblOpt').innerHTML = `<button class="sm" data-act="xlsx" title="아래 환급률 표를 엑셀(.xlsx)로 저장">📥 표 엑셀 다운로드</button><span class="muted">표시</span>
     <label><input type="checkbox" data-set="settings.showMonthly"> 월보험료</label>
     <label><input type="checkbox" data-set="settings.metrics.paid"> 누적보험료</label>
     <label><input type="checkbox" data-set="settings.metrics.refund"> 환급액</label>
@@ -950,6 +950,7 @@ document.addEventListener('click', e => {
     case 'srProdAll': SR.excl.clear(); renderAll(); break;
     case 'srProdNone': S.products.filter(p => inView(p)).forEach(p => SR.excl.add(p.id)); renderAll(); break;
     case 'legend': if (t.dataset.kind === 'p') { const q = S.products.find(x => x.id === id); if (q) q.showG = false; } else { const b = S.banks.find(x => x.id === id); if (b) b.show = false; } commit(); break;
+    case 'xlsx': exportXlsx(); break;
     case 'tab': UI.tab = v; SR.view = v; renderAll(); break;
     case 'pAdd': editProduct(null); break;
     case 'pEdit': editProduct(id); break;
@@ -1043,7 +1044,9 @@ function editProduct(id) {
       <input type="text" id="edFt" placeholder="새 핵심기능" style="width:110px"><button class="sm" data-addft>＋ 항목 추가</button></div>
     <div class="row"><label style="flex:1">메모<input type="text" data-f="note" value="${esc(p.note)}" style="width:100%"></label></div>
     <div class="row"><b>경과기간별 입력</b>
-      <span class="muted">월보험료·납입기간을 넣으면 누적보험료는 자동, 환급액을 넣으면 환급률은 자동 계산됩니다(회색 칸).</span><button class="sm" data-calc="refund">환급액 자동(누적×환급률)</button><button class="sm dg" data-calc="clear">전체 지우기</button></div>
+      <span class="muted">월보험료·납입기간을 넣으면 누적보험료는 자동, <b>환급액(원)만 입력</b>하면 환급률도 자동 계산됩니다(회색 칸).</span><button class="sm" data-calc="refund">환급액 자동(누적×환급률)</button><button class="sm dg" data-calc="clear">전체 지우기</button></div>
+    <div class="row"><button class="sm pri" data-pastebtn>📋 엑셀 붙여넣기(환급액)</button><span class="muted">엑셀에서 환급액(원)을 복사 → 아래 환급액 칸에 바로 붙여넣기(Ctrl+V)하거나 이 버튼으로 입력</span></div>
+    <div class="row" id="edPasteBox" style="display:none;flex-direction:column;align-items:stretch;gap:4px"><textarea id="edPaste" rows="6" placeholder="엑셀에서 복사한 값을 붙여넣으세요.&#10;① 환급액만 세로/가로로 복사 → 경과기간 순서대로 입력&#10;② 경과기간 포함 복사(3개월·1년 등 + 값) → 기간별로 입력&#10;   · 기간 뒤 값이 1개=환급액, 2개=누적보험료·환급액, 3개=누적보험료·환급액·환급률"></textarea><div class="row"><button class="sm pri" data-pasteok>적용</button><button class="sm" data-pastex>닫기</button></div></div>
     <div class="row"><span class="muted">경과기간 추가</span><input type="number" id="edPn" placeholder="숫자" style="width:70px"><select id="edPu"><option value="y">년</option><option value="m">개월</option></select><button class="sm" data-addper>＋ 추가</button></div>
     <div class="tw" style="max-height:46vh"><table class="pg"><thead><tr><th>경과기간</th><th>누적보험료(원)</th><th>환급액(원)</th><th>환급률(%)</th><th>삭제</th></tr></thead><tbody>
     ${S.periods.map(m => { const d = p.data[m] || {}; return `<tr><td>${plabel(m)}</td><td><input type="number" data-pm="${m}" data-pf="paid" value="${d.paid ?? ''}"></td><td><input type="number" data-pm="${m}" data-pf="refund" value="${d.refund ?? ''}"></td><td><input class="rt" type="number" step="0.1" data-pm="${m}" data-pf="rate" value="${d.rate ?? ''}"></td><td><button class="sm dg" data-delper="${m}" title="이 경과기간 삭제(모든 상품에서 제거)">✕</button></td></tr>`; }).join('')}
@@ -1061,6 +1064,33 @@ function editProduct(id) {
       setA(ra, pv > 0 && rv !== null ? Math.round(rv / pv * 1000) / 10 : '', pv > 0 && rv !== null);
     });
   };
+  const msg = (t, ok) => { const el = $('#edErr', box); el.textContent = t; el.style.color = ok ? '#17803d' : ''; };
+  const numv = x => { const t = String(x).replace(/[,\s원%]/g, ''); return /^-?\d+(\.\d+)?$/.test(t) ? +t : null; };
+  const applyPaste = (text, startPm) => {
+    const lines = text.replace(/\r/g, '').split('\n').map(l => l.trim() ? l.split('\t').map(c => c.trim()) : null).filter(Boolean);
+    if (!lines.length) return msg('붙여넣은 내용이 없습니다.');
+    read(); const pairs = []; let seqVals = [], skipped = 0;
+    const pick = vals => { const n = vals.length; return n === 1 ? vals[0] : n === 2 ? vals[1] : vals[1]; };
+    lines.forEach(cells => {
+      const per = /(개월|년)$/.test(cells[0]) ? parsePeriod(cells[0]) : null;
+      if (per && cells.length > 1) { const v = numv(pick(cells.slice(1))); if (v === null) skipped++; else pairs.push([per, v]); }
+      else if (per) skipped++;
+      else { const nums = cells.filter(c => c !== ''); if (!nums.length) return; if (lines.length === 1 || nums.length === 1) nums.forEach(c => seqVals.push(numv(c))); else seqVals.push(numv(pick(nums))); }
+    });
+    if (seqVals.length) {
+      let idx = startPm != null ? S.periods.indexOf(startPm) : 0; if (idx < 0) idx = 0;
+      seqVals.forEach(v => { const pm = S.periods[idx++]; if (pm == null) { skipped++; return; } if (v === null) { skipped++; return; } pairs.push([pm, v]); });
+    }
+    if (!pairs.length) return msg('반영할 환급액을 찾지 못했습니다. 숫자(원) 형식인지 확인하세요.');
+    let addedP = 0; pairs.forEach(([pm, v]) => { if (!S.periods.includes(pm)) { S.periods.push(pm); addedP++; } (p.data[pm] = p.data[pm] || {}).refund = v; });
+    S.periods.sort((a, b) => a - b); commit(); build();
+    msg(`환급액 ${pairs.length}건 반영` + (addedP ? ` · 경과기간 ${addedP}개 추가` : '') + (skipped ? ` · 제외 ${skipped}건` : '') + ' (저장을 눌러야 확정됩니다)', true);
+  };
+  box.addEventListener('paste', e => {
+    const t = e.target; if (!t.matches || !t.matches('[data-pf="refund"]')) return;
+    const txt = (e.clipboardData || window.clipboardData).getData('text'); if (!/[\t\n]/.test(txt.trim())) return;
+    e.preventDefault(); applyPaste(txt, +t.dataset.pm);
+  });
   box.addEventListener('input', e => { if (e.target.matches('[data-f="monthly"],[data-f="pay"],[data-pf="refund"]')) auto(); });
   const build0 = build; build = () => { build0(); auto(); };
   build();
@@ -1087,6 +1117,9 @@ function editProduct(id) {
       if (!S.features.includes(n)) S.features.push(n); if (!p.features.includes(n)) p.features.push(n);
       commit(); build(); return;
     }
+    if (e.target.closest('[data-pastebtn]')) { const b = $('#edPasteBox', box); b.style.display = b.style.display === 'none' ? 'flex' : 'none'; if (b.style.display !== 'none') $('#edPaste', box).focus(); return; }
+    if (e.target.closest('[data-pastex]')) { $('#edPasteBox', box).style.display = 'none'; return; }
+    if (e.target.closest('[data-pasteok]')) { applyPaste($('#edPaste', box).value, null); return; }
     if (e.target.closest('[data-delper]')) {
       const mm = +e.target.closest('[data-delper]').dataset.delper; read();
       const n = S.products.filter(q => q.data[mm] && Object.values(q.data[mm]).some(x => x != null && x !== '')).length + (p.data[mm] && Object.values(p.data[mm]).some(x => x != null && x !== '') ? 1 : 0);
@@ -1189,6 +1222,17 @@ function parseCsv(t) {
     else if (c === '"') q = true; else if (c === ',') { row.push(cur); cur = ''; } else if (c === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; } else if (c !== '\r') cur += c; }
   if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
   return rows;
+}
+async function exportXlsx() {
+  const tb = $('#tblBody table'); if (!tb) return alert('내보낼 표가 없습니다.');
+  try { await loadSheetJS(); } catch (e) { return alert(e.message); }
+  const cl = tb.cloneNode(true); $$('td.ft', cl).forEach(td => { td.textContent = $$('.tag', td).map(t => t.textContent.trim()).join(', '); });
+  const ws = XLSX.utils.table_to_sheet(cl, { origin: 'A4' }), cp = curProf();
+  XLSX.utils.sheet_add_aoa(ws, [['주요상품 환급률 비교 (' + (SR.view === 'disc' ? '단종' : '판매중') + ')'], [$('#exLabel').textContent], [$('#tblUnit').textContent]], { origin: 'A1' });
+  ws['!cols'] = $$('col', tb).map(c => ({ wch: Math.max(6, Math.round((parseFloat(c.style.width) || 60) / 6.5)) }));
+  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, '환급률표');
+  const d = new Date(), ymd = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+  XLSX.writeFile(wb, `환급률표_${cp.label}_${SR.view === 'disc' ? '단종' : '판매중'}_${ymd}.xlsx`);
 }
 function loadSheetJS() { return new Promise((res, rej) => { if (window.XLSX) return res(); const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'; s.onload = res; s.onerror = () => rej(new Error('엑셀 라이브러리 로드 실패(인터넷 연결 확인). CSV로 저장 후 업로드하세요.')); document.head.append(s); }); }
 async function handleUpload(file) {
