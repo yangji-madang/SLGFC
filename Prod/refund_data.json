@@ -1,6 +1,6 @@
 {
  "v": 2,
- "savedAt": 1795127922426,
+ "savedAt": 1795128375420,
  "curPid": "p6ugyq2k",
  "profiles": [
   {
@@ -1592,53 +1592,6 @@
      "label": "20",
      "on": true
     },
-    "pgouf3vf": {
-     "monthly": 366000,
-     "data": {
-      "3": {
-       "refund": 0
-      },
-      "6": {
-       "refund": 0
-      },
-      "12": {
-       "refund": 0
-      },
-      "36": {
-       "refund": 2204750
-      },
-      "60": {
-       "refund": 5590600
-      },
-      "84": {
-       "refund": 9022990
-      },
-      "120": {
-       "refund": 13083010
-      },
-      "180": {
-       "refund": 20145710
-      },
-      "240": {
-       "refund": 52880230
-      },
-      "300": {
-       "refund": 56004030
-      },
-      "360": {
-       "refund": 59248020
-      },
-      "420": {
-       "refund": 62554770
-      }
-     },
-     "age": null,
-     "sex": "",
-     "amount": null,
-     "pay": null,
-     "label": "20",
-     "on": true
-    },
     "pc2mm26y": {
      "monthly": 2124000,
      "data": {
@@ -3051,67 +3004,6 @@
   },
   {
    "id": "pxz6weu1",
-   "name": "더착한VVIP",
-   "kd": "일반",
-   "type": "VVIP 암납입면제형",
-   "label": "20",
-   "pay": null,
-   "age": null,
-   "sex": "",
-   "amount": null,
-   "monthly": 366000,
-   "features": [
-    "고환급",
-    "연금전환"
-   ],
-   "active": true,
-   "showT": true,
-   "showG": true,
-   "note": "",
-   "data": {
-    "3": {
-     "refund": 0
-    },
-    "6": {
-     "refund": 0
-    },
-    "12": {
-     "refund": 0
-    },
-    "36": {
-     "refund": 2204750
-    },
-    "60": {
-     "refund": 5590600
-    },
-    "84": {
-     "refund": 9022990
-    },
-    "120": {
-     "refund": 13083010
-    },
-    "180": {
-     "refund": 20145710
-    },
-    "240": {
-     "refund": 52880230
-    },
-    "300": {
-     "refund": 56004030
-    },
-    "360": {
-     "refund": 59248020
-    },
-    "420": {
-     "refund": 62554770
-    }
-   },
-   "on": true,
-   "bpay": null,
-   "blabel": "20"
-  },
-  {
-   "id": "pgouf3vf",
    "name": "더착한VVIP",
    "kd": "일반",
    "type": "VVIP 암납입면제형",
