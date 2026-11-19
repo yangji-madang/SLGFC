@@ -833,6 +833,12 @@ function mono(p) {
   return d;
 }
 let PRT = false;
+// 우측 이름표가 그래프 영역 밖으로 잘리지 않도록 이름표 최대 폭을 추정해 여백 결정
+function labelRoom(items) {
+  const wOf = t => [...t].reduce((a, ch) => a + (ch.charCodeAt(0) > 0x2E7F ? 13.4 : /[0-9.%]/.test(ch) ? 7.6 : ch === ' ' ? 4 : 8.2), 0);
+  const mw = Math.max(0, ...items.map(it => wOf(lblTop(it) + (lblPay(it) ? ' ' + lblPay(it) : '') + (S.settings.labelMode === 'none' ? '' : ' 최고 152.5%'))));
+  return Math.round(Math.min(560, Math.max(220, 22 + 4 + mw + 16)));
+}
 function renderChart(animate) {
   const sm = S.settings; animate = !!animate && sm.anim;
   $('#chOpt').innerHTML = `<span class="muted">값 표시</span>
@@ -844,7 +850,7 @@ function renderChart(animate) {
   const items = mkItems('G').filter(it => hasData(it));
   if (!items.length) { $('#chBody').innerHTML = '<div class="muted" style="padding:8px">그래프로 표시할 데이터가 없습니다.</div>'; renderBasis(); return; }
   const periods = periodsOf(items);
-  const W = 1260, H = PRT ? 740 : 660, L = 76, R = 300, Tp = 36, Bt = 80, px1 = W - R, n = periods.length;
+  const W = 1260, H = PRT ? 740 : 660, L = 76, R = labelRoom(items), Tp = 36, Bt = 80, px1 = W - R, n = periods.length;
   const xs = i => n === 1 ? (L + px1) / 2 : L + i * (px1 - L) / (n - 1);
   let mx = 0; items.forEach(it => periods.forEach(m => { const v = it.get(m).rate; if (v != null) mx = Math.max(mx, v); }));
   const man_ = num(sm.ymax) > 0 ? num(sm.ymax) : null;
