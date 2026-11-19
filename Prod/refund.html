@@ -733,7 +733,7 @@ function renderChart(animate) {
   items.forEach(it => {
     const pts = periods.map((m, i) => ({ m, i, v: it.get(m).rate })).filter(p => p.v != null);
     if (!pts.length) return;
-    const dash = it.kind === 'b' ? '2 6' : DASH[Math.min(it.vi, 2)], sw = it.kind === 'b' ? 2.6 : 2.8;
+    const dash = it.kind === 'b' ? '2 6' : (it.kd === '간편' ? '6 4' : ''), sw = it.kind === 'b' ? 1.8 : 1.9;
     const xy = pts.map(p => ({ x: xs(p.i), y: ys(p.v) }));
     const d = sm.smooth ? mono(xy) : 'M' + xy.map(q => q.x.toFixed(1) + ',' + q.y.toFixed(1)).join('L');
     gp += `<g class="sr" data-sid="${it.kind}${it.id}"><path d="${d}" fill="none" stroke="${it.color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" ${dash ? `stroke-dasharray="${dash}"` : ''}/>`;
