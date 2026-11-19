@@ -1,6 +1,6 @@
 {
  "v": 2,
- "savedAt": 1795091811058,
+ "savedAt": 1795127922426,
  "curPid": "p6ugyq2k",
  "profiles": [
   {
@@ -656,7 +656,7 @@
      "sex": "",
      "amount": null,
      "pay": null,
-     "label": "20년납",
+     "label": "20",
      "on": true
     },
     "piay200v": {
@@ -1113,6 +1113,100 @@
       },
       "420": {
        "refund": 155280000
+      }
+     },
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": null,
+     "label": "20",
+     "on": true
+    },
+    "ps8ckfwp": {
+     "monthly": 425000,
+     "data": {
+      "3": {
+       "refund": 0
+      },
+      "6": {
+       "refund": 0
+      },
+      "12": {
+       "refund": 0
+      },
+      "36": {
+       "refund": 2624110
+      },
+      "60": {
+       "refund": 5539080
+      },
+      "84": {
+       "refund": 8496130
+      },
+      "120": {
+       "refund": 12297270
+      },
+      "180": {
+       "refund": 19985320
+      },
+      "240": {
+       "refund": 53852920
+      },
+      "300": {
+       "refund": 67383550
+      },
+      "360": {
+       "refund": 114562280
+      },
+      "420": {
+       "refund": 123265560
+      }
+     },
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": null,
+     "label": "20",
+     "on": true
+    },
+    "plsqe3o6": {
+     "monthly": 410000,
+     "data": {
+      "3": {
+       "refund": 0
+      },
+      "6": {
+       "refund": 0
+      },
+      "12": {
+       "refund": 0
+      },
+      "36": {
+       "refund": 3600410
+      },
+      "60": {
+       "refund": 7439360
+      },
+      "84": {
+       "refund": 11305640
+      },
+      "120": {
+       "refund": 16250690
+      },
+      "180": {
+       "refund": 26284230
+      },
+      "240": {
+       "refund": 67917750
+      },
+      "300": {
+       "refund": 72716230
+      },
+      "360": {
+       "refund": 77136280
+      },
+      "420": {
+       "refund": 80973510
       }
      },
      "age": null,
@@ -1679,7 +1773,7 @@
    "name": "밸런스",
    "kd": "일반",
    "type": "1종 보증형",
-   "label": "20년납",
+   "label": "20",
    "pay": null,
    "age": null,
    "sex": "",
@@ -2271,7 +2365,7 @@
   {
    "id": "phnm31bw",
    "name": "골든",
-   "kd": "일반",
+   "kd": "간편",
    "type": "1종(일정기간경과후보증형)1형",
    "label": "20",
    "pay": null,
@@ -2334,7 +2428,7 @@
   {
    "id": "p3tc3nyh",
    "name": "골든",
-   "kd": "일반",
+   "kd": "간편",
    "type": "1종(일정기간경과후보증형)2형",
    "label": "20",
    "pay": null,
@@ -2388,6 +2482,132 @@
     },
     "420": {
      "refund": 155280000
+    }
+   },
+   "on": true,
+   "bpay": null,
+   "blabel": "20"
+  },
+  {
+   "id": "ps8ckfwp",
+   "name": "골든",
+   "kd": "간편",
+   "type": "2종(미보증형)1형",
+   "label": "20",
+   "pay": null,
+   "age": null,
+   "sex": "",
+   "amount": null,
+   "monthly": 425000,
+   "features": [
+    "고환급",
+    "연금전환",
+    "연금선지급",
+    "적립전환"
+   ],
+   "active": true,
+   "showT": true,
+   "showG": true,
+   "note": "",
+   "data": {
+    "3": {
+     "refund": 0
+    },
+    "6": {
+     "refund": 0
+    },
+    "12": {
+     "refund": 0
+    },
+    "36": {
+     "refund": 2624110
+    },
+    "60": {
+     "refund": 5539080
+    },
+    "84": {
+     "refund": 8496130
+    },
+    "120": {
+     "refund": 12297270
+    },
+    "180": {
+     "refund": 19985320
+    },
+    "240": {
+     "refund": 53852920
+    },
+    "300": {
+     "refund": 67383550
+    },
+    "360": {
+     "refund": 114562280
+    },
+    "420": {
+     "refund": 123265560
+    }
+   },
+   "on": true,
+   "bpay": null,
+   "blabel": "20"
+  },
+  {
+   "id": "plsqe3o6",
+   "name": "골든",
+   "kd": "간편",
+   "type": "2종(미보증형)2형",
+   "label": "20",
+   "pay": null,
+   "age": null,
+   "sex": "",
+   "amount": null,
+   "monthly": 410000,
+   "features": [
+    "고환급",
+    "연금전환",
+    "연금선지급",
+    "적립전환"
+   ],
+   "active": true,
+   "showT": true,
+   "showG": true,
+   "note": "",
+   "data": {
+    "3": {
+     "refund": 0
+    },
+    "6": {
+     "refund": 0
+    },
+    "12": {
+     "refund": 0
+    },
+    "36": {
+     "refund": 3600410
+    },
+    "60": {
+     "refund": 7439360
+    },
+    "84": {
+     "refund": 11305640
+    },
+    "120": {
+     "refund": 16250690
+    },
+    "180": {
+     "refund": 26284230
+    },
+    "240": {
+     "refund": 67917750
+    },
+    "300": {
+     "refund": 72716230
+    },
+    "360": {
+     "refund": 77136280
+    },
+    "420": {
+     "refund": 80973510
     }
    },
    "on": true,
