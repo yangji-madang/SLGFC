@@ -686,6 +686,7 @@ document.addEventListener('dblclick', e => {
 
 /* --- 그래프 --- */
 const CH = { first: true, obs: null };
+const lblG = it => it.kind === 'b' ? lbl(it) : (it.name + (it.kd ? ' ' + it.kd : '') + (payOf(it.p) ? ' ' + payOf(it.p) + '년납' : (it.label ? ' ' + it.label : ''))).trim();
 const lbl = it => it.kind === 'b' ? (it.name + ' ' + it.label).trim() : it.short;
 function mono(p) {
   const n = p.length, f = a => a.toFixed(1);
@@ -714,7 +715,7 @@ function renderChart(animate) {
   const items = mkItems('G').filter(it => hasData(it));
   if (!items.length) { $('#chBody').innerHTML = '<div class="muted" style="padding:8px">그래프로 표시할 데이터가 없습니다.</div>'; renderBasis(); return; }
   const periods = periodsOf(items);
-  const W = 1120, H = 660, L = 76, R = 236, Tp = 36, Bt = 80, px1 = W - R, n = periods.length;
+  const W = 1260, H = 660, L = 76, R = 360, Tp = 36, Bt = 80, px1 = W - R, n = periods.length;
   const xs = i => n === 1 ? (L + px1) / 2 : L + i * (px1 - L) / (n - 1);
   let mx = 0; items.forEach(it => periods.forEach(m => { const v = it.get(m).rate; if (v != null) mx = Math.max(mx, v); }));
   const man_ = num(sm.ymax) > 0 ? num(sm.ymax) : null;
@@ -744,7 +745,7 @@ function renderChart(animate) {
     gp += `<g class="sr" data-sid="${it.kind}${it.id}"><path d="${d}" fill="none" stroke="${it.color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" ${dash ? `stroke-dasharray="${dash}"` : ''}/>`;
     pts.forEach((p, j) => { const last = j === pts.length - 1; gp += `<circle cx="${xy[j].x.toFixed(1)}" cy="${xy[j].y.toFixed(1)}" r="${last ? 5 : 3.8}" fill="${last ? it.color : '#fff'}" stroke="${it.color}" stroke-width="2"/>`; });
     gp += '</g>';
-    const lp = pts[pts.length - 1]; lab.push({ it, x: xy[xy.length - 1].x, y: xy[xy.length - 1].y, v: lp.v });
+    const lp = pts[pts.length - 1]; lab.push({ it, x: xy[xy.length - 1].x, y: xy[xy.length - 1].y, v: Math.max(...pts.map(q => q.v)) });
     const lm = sm.labelMode;
     if (lm === 'key' || lm === 'all') {
       let vl = '';
@@ -763,7 +764,7 @@ function renderChart(animate) {
   for (let i = lab.length - 1; i >= 0; i--) { const lim = i === lab.length - 1 ? plotB + 4 : lab[i + 1].ly - gap; if (lab[i].ly > lim) lab[i].ly = lim; }
   lab.forEach(l => {
     const c = l.it.color;
-    gl += `<g class="sr ${animate ? 'fade' : ''}" data-sid="${l.it.kind}${l.it.id}"><path d="M${(l.x + 7).toFixed(1)},${l.y.toFixed(1)}L${px1 + 10},${l.y.toFixed(1)}L${x0 - 6},${l.ly.toFixed(1)}" fill="none" stroke="${c}" stroke-width="1" stroke-opacity=".55"/><circle cx="${x0 - 4}" cy="${l.ly.toFixed(1)}" r="3" fill="${c}"/><text x="${x0 + 4}" y="${(l.ly + 4.5).toFixed(1)}" font-size="13" font-weight="700" fill="${c}">${esc(lbl(l.it))}${sm.labelMode === 'none' ? '' : ` <tspan font-weight="800">${fmt1(l.v)}</tspan>`}</text></g>`;
+    gl += `<g class="sr ${animate ? 'fade' : ''}" data-sid="${l.it.kind}${l.it.id}"><path d="M${(l.x + 7).toFixed(1)},${l.y.toFixed(1)}L${px1 + 10},${l.y.toFixed(1)}L${x0 - 6},${l.ly.toFixed(1)}" fill="none" stroke="${c}" stroke-width="1" stroke-opacity=".55"/><circle cx="${x0 - 4}" cy="${l.ly.toFixed(1)}" r="3" fill="${c}"/><text x="${x0 + 4}" y="${(l.ly + 4.5).toFixed(1)}" font-size="13" font-weight="700" fill="${c}">${esc(lblG(l.it))}${sm.labelMode === 'none' ? '' : ` <tspan font-weight="800">최고환급률 ${fmt1(l.v)}%</tspan>`}</text></g>`;
   });
   s += `<g clip-path="url(#cpA)">${gp}</g>${gl}<line id="gd" y1="${Tp}" y2="${plotB}" stroke="#1f3a5f" stroke-width="1.2" stroke-dasharray="4 3" style="display:none"/><rect class="ov" x="${L - 20}" y="${Tp}" width="${px1 - L + 40}" height="${plotB - Tp}" fill="transparent"/></svg>`;
   $('#chBody').innerHTML = s;
@@ -773,7 +774,7 @@ function renderChart(animate) {
 }
 function playWhenVisible() {
   const box = $('#chBody'); if (CH.obs) CH.obs.disconnect();
-  const go = () => { const a = $('#anA'); if (a && a.beginElement) a.beginElement(); else { const r = $('#cpR'); if (r) r.setAttribute('width', 1120); } };
+  const go = () => { const a = $('#anA'); if (a && a.beginElement) a.beginElement(); else { const r = $('#cpR'); if (r) r.setAttribute('width', 1260); } };
   const r = box.getBoundingClientRect();
   if (r.top < innerHeight * 0.8 && r.bottom > 0) { go(); return; }
   CH.obs = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { go(); CH.obs.disconnect(); } }, { threshold: 0.25 }); CH.obs.observe(box);
