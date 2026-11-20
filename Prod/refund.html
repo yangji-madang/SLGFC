@@ -549,13 +549,13 @@ function mkItems(kind) {
   sortProds(S.products).forEach(p => {
     if (!matches(p)) return;
     if (!(kind === 'T' ? p.showT : p.showG)) return;
-    out.push({ kind: 'p', id: p.id, p, name: p.name, amt: amtOf(p), kd: p.kd || '', type: p.type, label: labelOf(p), short: shortOf(p), monthly: num(p.monthly),
+    out.push({ kind: 'p', id: p.id, p, name: p.name, amt: amtOf(p), kd: p.kd || '', type: p.type, label: labelOf(p), short: shortOf(p), sname: p.name + (p.kd ? ' ' + p.kd : ''), monthly: num(p.monthly),
       color: PALETTE[gi.get(p.name + '|' + p.type) % PALETTE.length], get: m => prodEff(p, m) });
   });
   S.banks.forEach((b, i) => {
     if (!b.show) return;
     const bp = bankParams(b);
-    out.push({ kind: 'b', id: b.id, b, name: bName(b), amt: null, kd: '', type: '적금 ' + (num(b.rate) ?? '-') + '%', label: bp.pay ? bp.pay + '년납' : '', short: bankLabel(b), monthly: bp.monthly,
+    out.push({ kind: 'b', id: b.id, b, name: bName(b), amt: null, kd: '', type: '적금 ' + (num(b.rate) ?? '-') + '%', label: bp.pay ? bp.pay + '년납' : '', short: bankLabel(b), sname: bankLabel(b), monthly: bp.monthly,
       color: BANKCOL[i % BANKCOL.length], get: m => bankEff(b, m) });
   });
   const seen = {};
@@ -677,7 +677,7 @@ function renderSummary(T) {
   if (!items.length) { $('#sumBody').innerHTML = '<div class="muted">조회 대상 상품 데이터가 없습니다.</div>'; return; }
   const R = (it, m) => it.get(m).rate, f1 = v => fmt1(v) + '%', B = t => `<b>${esc(t)}</b>`;
   const top = (m, n = 3) => items.map(it => ({ it, v: R(it, m) })).filter(x => x.v != null).sort((a, b) => b.v - a.v).slice(0, n);
-  const topTxt = a => a.map(x => `${B(x.it.short)} ${f1(x.v)}`).join(' &gt; ');
+  const topTxt = a => a.map(x => `${B(x.it.sname)} ${f1(x.v)}`).join(' &gt; ');
   const blocks = [];
   // 초기
   const early = periods.filter(m => m <= 60 && items.some(it => R(it, m) != null));
@@ -689,12 +689,12 @@ function renderSummary(T) {
   const be = items.map(it => { const m = periods.find(x => (R(it, x) ?? -1) >= 100 - 1e-9); return { it, m, v: m != null ? R(it, m) : null }; });
   const hit = be.filter(x => x.m != null).sort((a, b) => a.m - b.m || b.v - a.v);
   blocks.push(['Q. 납입 원금(100%)을 가장 빨리 회복하는 상품은?', [
-    hit.length ? '빠른 순: ' + hit.slice(0, 3).map(x => `${B(x.it.short)} ${plabel(x.m)}(${f1(x.v)})`).join(' &gt; ') : '조회 기간 내 100%에 도달한 상품이 없습니다.',
+    hit.length ? '빠른 순: ' + hit.slice(0, 3).map(x => `${B(x.it.sname)} ${plabel(x.m)}(${f1(x.v)})`).join(' &gt; ') : '조회 기간 내 100%에 도달한 상품이 없습니다.',
     `100% 도달 ${hit.length}개 / 미도달 ${items.length - hit.length}개 (조회 기간 내 기준)`]]);
   // 완납시점
   const fp = items.map(it => { const py = num(it.p.pay), m = py ? py * 12 : null; const v = m != null && periods.includes(m) ? R(it, m) : null; return { it, py, m, v }; }).filter(x => x.v != null).sort((a, b) => b.v - a.v);
   if (fp.length) blocks.push(['Q. 완납 시점(납입 종료 직후)에 환급률이 높은 상품은?', [
-    '상위: ' + fp.slice(0, 3).map(x => `${B(x.it.short)} ${f1(x.v)}`).join(' &gt; '),
+    '상위: ' + fp.slice(0, 3).map(x => `${B(x.it.sname)} ${f1(x.v)}`).join(' &gt; '),
     `완납 시점에 100% 이상인 상품은 ${fp.filter(x => x.v >= 100).length}개 / 조회 ${fp.length}개입니다. (각 상품의 납입기간 종료 시점 기준)`]]);
   // 10년·20년
   const [f0, f1m] = S.settings.focus;
@@ -707,9 +707,9 @@ function renderSummary(T) {
   if (last > f1m) { const t = top(last); if (t.length) blocks.push(['Q. 최장 경과(' + plabel(last) + ')까지 유지하면?', [`${plabel(last)} 경과 시점 상위: ${topTxt(t)}`]]); }
   // 미달/하락
   const never = items.filter(it => { const v = periods.map(m => R(it, m)).filter(x => x != null); return v.length && Math.max(...v) < 100; });
-  if (never.length) blocks.push(['Q. 조회 기간 내 100%에 못 미치는 상품은?', [never.map(it => { const v = periods.map(m => R(it, m)).filter(x => x != null); return `${B(it.short)} (최고 ${f1(Math.max(...v))})`; }).join(', '), '보장 중심 설계 여부 등은 설계서·약관으로 별도 확인이 필요합니다.']]);
+  if (never.length) blocks.push(['Q. 조회 기간 내 100%에 못 미치는 상품은?', [never.map(it => { const v = periods.map(m => R(it, m)).filter(x => x != null); return `${B(it.sname)} (최고 ${f1(Math.max(...v))})`; }).join(', '), '보장 중심 설계 여부 등은 설계서·약관으로 별도 확인이 필요합니다.']]);
   const drop = items.map(it => { const pts = periods.map(m => [m, R(it, m)]).filter(x => x[1] != null); if (pts.length < 3) return null; const mx = pts.reduce((a, b) => b[1] > a[1] ? b : a); const lt = pts[pts.length - 1]; return mx[1] - lt[1] >= 10 ? { it, mx, lt } : null; }).filter(Boolean);
-  if (drop.length) blocks.push(['Q. 오래 유지하면 환급률이 내려가는 상품은?', drop.map(d => `${B(d.it.short)}: 최고 ${f1(d.mx[1])}(${plabel(d.mx[0])}) → ${f1(d.lt[1])}(${plabel(d.lt[0])})`)]);
+  if (drop.length) blocks.push(['Q. 오래 유지하면 환급률이 내려가는 상품은?', drop.map(d => `${B(d.it.sname)}: 최고 ${f1(d.mx[1])}(${plabel(d.mx[0])}) → ${f1(d.lt[1])}(${plabel(d.lt[0])})`)]);
   // 은행
   if (banks.length) {
     const lines = [];
@@ -721,7 +721,7 @@ function renderSummary(T) {
         const pr = R(it, m), br = bk.get(m).rate; if (pr == null || br == null) return;
         tot++; if (pr > br) { over++; names.push({ it, d: pr - br }); }
       });
-      if (tot) { names.sort((a, b) => b.d - a.d); lines.push(`${plabel(m)} 경과: 은행 적금 수익률 대비 환급률이 높은 상품 ${over}/${tot}개` + (names.length ? ` (격차 상위 ${names.slice(0, 2).map(x => B(x.it.short) + ' +' + fmt1(x.d) + '%p').join(', ')})` : '')); }
+      if (tot) { names.sort((a, b) => b.d - a.d); lines.push(`${plabel(m)} 경과: 은행 적금 수익률 대비 환급률이 높은 상품 ${over}/${tot}개` + (names.length ? ` (격차 상위 ${names.slice(0, 2).map(x => B(x.it.sname) + ' +' + fmt1(x.d) + '%p').join(', ')})` : '')); }
     });
     if (lines.length) { lines.push('은행 비교는 납입기간이 같은 적금 항목 기준이며, 보장이 포함된 보험과 단순 비교에는 한계가 있습니다.'); blocks.push(['Q. 은행 적금과 비교하면?', lines]); }
   }
