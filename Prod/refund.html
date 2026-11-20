@@ -56,6 +56,7 @@ details.pn>.in{padding:4px 8px 6px}
 .mt input[type=number]{width:96px}
 .sw{display:inline-block;width:14px;height:10px;border-radius:2px;vertical-align:middle}
 /* 요약 */
+.pn{color:#1a56c4;text-decoration:underline;text-underline-offset:2px}
 .sumgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 14px}
 .qa{border-left:3px solid var(--gold);padding:1px 0 1px 8px;break-inside:avoid}
 .qa .q{font-weight:700;color:var(--navy);font-size:13.5px}
@@ -675,7 +676,7 @@ function renderSummary(T) {
   const periods = periodsOf(T);
   $('#sumBasis').textContent = items.length ? `비교 대상 ${items.length}개 상품` : '';
   if (!items.length) { $('#sumBody').innerHTML = '<div class="muted">조회 대상 상품 데이터가 없습니다.</div>'; return; }
-  const R = (it, m) => it.get(m).rate, f1 = v => fmt1(v) + '%', B = t => `<b>${esc(t)}</b>`;
+  const R = (it, m) => it.get(m).rate, f1 = v => fmt1(v) + '%', B = t => `<b class="pn">${esc(t)}</b>`;
   const top = (m, n = 3) => items.map(it => ({ it, v: R(it, m) })).filter(x => x.v != null).sort((a, b) => b.v - a.v).slice(0, n);
   const topTxt = a => a.map(x => `${B(x.it.sname)} ${f1(x.v)}`).join(' &gt; ');
   const blocks = [];
