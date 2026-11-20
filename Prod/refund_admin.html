@@ -462,7 +462,9 @@ function persist() {
   snapCur();
   return { v: 2, savedAt: S.savedAt, curPid: S.curPid, profiles: S.profiles, periods: S.periods, features: S.features, defaults: S.defaults, products: S.products, banks: S.banks, settings: S.settings };
 }
+function sortFeats() { const o = S.features || []; (S.products || []).forEach(q => { if (q.features) q.features.sort((a, b) => { const x = o.indexOf(a), y = o.indexOf(b); return (x < 0 ? 999 : x) - (y < 0 ? 999 : y); }); }); }
 function commit() {
+  sortFeats();
   S.savedAt = Date.now();
   if (!VIEWER) { try { localStorage.setItem(KEY, JSON.stringify(persist())); } catch (e) {} }
   renderAll();
@@ -994,7 +996,7 @@ function renderMaster() {
   h += `<details class="pn"><summary>② 경과기간 · 핵심기능 항목</summary><div class="in">
     <div class="row"><b>경과기간</b>${S.periods.map(m => `<span class="chip ft">${plabel(m)} <span class="x" data-act="perDel" data-v="${m}" title="삭제">✕</span></span>`).join('')}
       <input type="number" id="perN" placeholder="숫자" style="width:70px"><select id="perU"><option value="y">년</option><option value="m">개월</option></select><button data-act="perAdd">추가</button></div>
-    <div class="row"><b>핵심기능</b>${S.features.map(f => `<span class="chip ft">${esc(f)} <span class="x" data-act="ftEdit" data-v="${esc(f)}" title="이름 수정">✎</span><span class="x" data-act="ftDel" data-v="${esc(f)}" title="삭제">✕</span></span>`).join('')}
+    <div class="row"><b>핵심기능</b>${S.features.map(f => `<span class="chip ft"><span class="x" data-act="ftMove" data-d="-1" data-v="${esc(f)}" title="앞으로">◀</span>${esc(f)} <span class="x" data-act="ftMove" data-d="1" data-v="${esc(f)}" title="뒤로">▶</span><span class="x" data-act="ftEdit" data-v="${esc(f)}" title="이름 수정">✎</span><span class="x" data-act="ftDel" data-v="${esc(f)}" title="삭제">✕</span></span>`).join('')}
       <input type="text" id="ftN" placeholder="새 항목" style="width:110px"><button data-act="ftAdd">추가</button></div></div></details>`;
   // 상품
   h += `<details class="pn" open><summary>③ 상품 DB (${active.length} 판매중 / ${disc.length} 단종)</summary><div class="in">
@@ -1115,6 +1117,7 @@ document.addEventListener('click', e => {
     case 'bulkSel': case 'bulkAll': bulk(a === 'bulkAll'); break;
     case 'perAdd': { const n = num($('#perN').value); if (!n || n <= 0) return alert('숫자를 입력하세요.'); const m = $('#perU').value === 'y' ? Math.round(n * 12) : Math.round(n); if (S.periods.includes(m)) return alert('이미 있는 경과기간입니다.'); S.periods.push(m); S.periods.sort((x, y) => x - y); commit(); break; }
     case 'perDel': { const m = +v; const used = S.products.some(q => q.data[m]); if (confirm(`${plabel(m)} 항목을 삭제할까요?` + (used ? '\n(입력된 데이터도 함께 삭제됩니다)' : ''))) { S.periods = S.periods.filter(x => x !== m); S.products.forEach(q => delete q.data[m]); commit(); } break; }
+    case 'ftMove': { const i = S.features.indexOf(v), j = i + (+t.dataset.d); if (i < 0 || j < 0 || j >= S.features.length) return; const tmp = S.features[i]; S.features[i] = S.features[j]; S.features[j] = tmp; commit(); break; }
     case 'ftAdd': { const n = $('#ftN').value.trim(); if (!n) return; if (S.features.includes(n)) return alert('이미 있는 항목입니다.'); S.features.push(n); commit(); break; }
     case 'ftEdit': { const n = (prompt('핵심기능 이름 수정', v) || '').trim(); if (!n || n === v) return; if (S.features.includes(n)) return alert('이미 있는 항목입니다.'); S.features = S.features.map(x => x === v ? n : x); S.products.forEach(q => q.features = q.features.map(x => x === v ? n : x)); if (SR.feats.delete(v)) SR.feats.add(n); commit(); break; }
     case 'ftDel': if (confirm(`'${v}' 항목을 삭제할까요? 상품에 선택된 값도 제거됩니다.`)) { S.features = S.features.filter(x => x !== v); S.products.forEach(q => q.features = q.features.filter(x => x !== v)); SR.feats.delete(v); commit(); } break;
@@ -1184,7 +1187,7 @@ function editProduct(id) {
     box.innerHTML = `<div class="tnote">※ 납입기간·구분·사용 여부·월보험료·환급 데이터는 현재 프로필(<b>${esc(curProf().label)}</b>)에만 적용됩니다.</div>
     <div class="fg">
     <label>상품명<input type="text" data-f="name" value="${esc(p.name)}"></label>
-    <label>일반/간편<input type="text" data-f="kd" list="kdList" value="${esc(p.kd || '')}" placeholder="일반 / 간편 / (없음)"><datalist id="kdList"><option value="일반"><option value="간편"></datalist></label>
+    <label>일반/간편<select data-f="kd"><option value="" ${!p.kd ? 'selected' : ''}>(없음)</option><option value="일반" ${p.kd === '일반' ? 'selected' : ''}>일반</option><option value="간편" ${p.kd === '간편' ? 'selected' : ''}>간편</option></select></label>
     <label>유형(예: 1종 보증형)<input type="text" data-f="type" value="${esc(p.type)}"></label>
     <label>납기 표시(비우면 N년납)<input type="text" data-f="label" value="${esc(p.label)}" placeholder="예: 10년납"></label>
     <label>납입기간(년) · 0=미지정<input type="number" data-f="pay" value="${p.pay ?? ''}" placeholder="기본 ${S.defaults.pay}"></label>
