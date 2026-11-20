@@ -429,6 +429,7 @@ function normalize(o) {
     o.banks.forEach(b => { if (b.monthly != null) pf.bsnap[b.id] = b.monthly; });
     o.profiles = [pf];
   }
+  migrateCatalog(o); syncCatalog(o);
   applyProf(o, pickProfile(o));
   return o;
 }
@@ -460,11 +461,36 @@ function switchProfile(id) {
 }
 function persist() {
   snapCur();
-  return { v: 2, savedAt: S.savedAt, curPid: S.curPid, profiles: S.profiles, periods: S.periods, features: S.features, defaults: S.defaults, products: S.products, banks: S.banks, settings: S.settings };
+  return { v: 2, savedAt: S.savedAt, curPid: S.curPid, profiles: S.profiles, periods: S.periods, features: S.features, catalog: S.catalog, defaults: S.defaults, products: S.products, banks: S.banks, settings: S.settings };
 }
-function sortFeats() { const o = S.features || []; (S.products || []).forEach(q => { if (q.features) q.features.sort((a, b) => { const x = o.indexOf(a), y = o.indexOf(b); return (x < 0 ? 999 : x) - (y < 0 ? 999 : y); }); }); }
+/* ===== 상품기본 정보(마스터): 상품명 > 일반/간편 > 유형 (+핵심기능, 판매상태) ===== */
+const KDS = ['일반', '간편'];
+function catLeaves(o = S) { const r = []; (o.catalog || []).forEach(g => (g.nodes || []).forEach(n => (n.types || []).forEach(l => r.push({ id: l.id, name: g.name, kd: n.kd || '', type: l.type || '', features: l.features || [], active: l.active !== false, label: [g.name, n.kd, l.type].filter(Boolean).join(' ') })))); return r; }
+function ensureLeaf(o, name, kd, type) {
+  o.catalog = o.catalog || [];
+  let g = o.catalog.find(x => x.name === name); if (!g) { g = { id: 'g' + uid(), name, nodes: [] }; o.catalog.push(g); }
+  let n = g.nodes.find(x => (x.kd || '') === (kd || '')); if (!n) { n = { id: 'n' + uid(), kd: kd || '', types: [] }; g.nodes.push(n); }
+  let l = n.types.find(x => (x.type || '') === (type || '')); if (!l) { l = { id: 'l' + uid(), type: type || '', features: [], active: true }; n.types.push(l); }
+  return l;
+}
+function migrateCatalog(o) {
+  o.catalog = o.catalog || [];
+  const known = new Set(catLeaves(o).map(x => x.id)), seen = new Set();
+  o.products.forEach(p => {
+    if (p.cid && known.has(p.cid)) return;
+    const l = ensureLeaf(o, p.name, p.kd, p.type); p.cid = l.id;
+    if (!seen.has(l.id) && !known.has(l.id)) { l.features = (p.features || []).slice(); l.active = p.active !== false; }
+    else { l.features = uniq([...(l.features || []), ...(p.features || [])]); l.active = l.active || p.active !== false; }
+    seen.add(l.id);
+  });
+}
+function syncCatalog(o = S) {
+  const m = {}; catLeaves(o).forEach(x => m[x.id] = x);
+  o.products.forEach(p => { const x = m[p.cid]; if (!x) return; p.name = x.name; p.kd = x.kd; p.type = x.type; p.features = x.features.slice(); p.active = x.active; });
+}
+function sortFeats() { const o = S.features || []; catLeaves().forEach(() => {}); (S.catalog || []).forEach(g => g.nodes.forEach(n => n.types.forEach(l => l.features.sort((a, b) => { const x = o.indexOf(a), y = o.indexOf(b); return (x < 0 ? 999 : x) - (y < 0 ? 999 : y); })))); (S.products || []).forEach(q => { if (q.features) q.features.sort((a, b) => { const x = o.indexOf(a), y = o.indexOf(b); return (x < 0 ? 999 : x) - (y < 0 ? 999 : y); }); }); }
 function commit() {
-  sortFeats();
+  syncCatalog(); sortFeats();
   S.savedAt = Date.now();
   if (!VIEWER) { try { localStorage.setItem(KEY, JSON.stringify(persist())); } catch (e) {} }
   renderAll();
@@ -1000,7 +1026,7 @@ function renderMaster() {
       <input type="text" id="ftN" placeholder="새 항목" style="width:110px"><button data-act="ftAdd">추가</button></div></div></details>`;
   // 상품
   h += `<details class="pn" open><summary>③ 상품 DB (${active.length} 판매중 / ${disc.length} 단종)</summary><div class="in">
-    <div class="row"><button class="pri" data-act="pAdd">＋ 상품 추가</button><button data-act="upload">📥 엑셀/CSV 업로드</button><button data-act="tpl">양식 받기(CSV)</button><button data-act="expCsv">현재 데이터 CSV</button>
+    <div class="row"><button class="pri" data-act="catEdit">🗂 상품기본 정보</button><button class="pri" data-act="pAdd">＋ 환급률 정보 추가</button><button data-act="upload">📥 엑셀/CSV 업로드</button><button data-act="tpl">양식 받기(CSV)</button><button data-act="expCsv">현재 데이터 CSV</button>
       <button data-act="expJson">JSON 내보내기</button><button data-act="impJson">JSON 불러오기</button><button class="dg" data-act="reset">테스트 데이터로 초기화</button>
       <input type="file" id="fileUp" accept=".xlsx,.xls,.csv" style="display:none"><input type="file" id="fileJson" accept=".json" style="display:none"></div>
     <div class="row"><span class="muted">표시 일괄</span><button class="sm" data-act="vis" data-k="showT" data-v="1">표 전체 보기</button><button class="sm" data-act="vis" data-k="showT" data-v="0">표 전체 숨김</button>
@@ -1107,10 +1133,11 @@ document.addEventListener('click', e => {
     case 'legend': if (t.dataset.kind === 'p') { const q = S.products.find(x => x.id === id); if (q) q.showG = false; } else { const b = S.banks.find(x => x.id === id); if (b) b.show = false; } commit(); break;
     case 'xlsx': exportXlsx(); break;
     case 'tab': UI.tab = v; SR.view = v; renderAll(); break;
+    case 'catEdit': editCatalog(); break;
     case 'pAdd': editProduct(null); break;
     case 'pEdit': editProduct(id); break;
     case 'pCopy': { const c = clone(p); c.id = uid(); c.label = c.label || ''; c.name = p.name; S.products.splice(idx + 1, 0, c); commit(); editProduct(c.id); break; }
-    case 'pDisc': p.active = !p.active; commit(); break;
+    case 'pDisc': { p.active = !p.active; const lf = (S.catalog || []).flatMap(g => g.nodes.flatMap(n => n.types)).find(l => l.id === p.cid); if (lf) lf.active = p.active; commit(); break; }
     case 'pDel': if (confirm(`'${shortOf(p)}' 상품을 삭제할까요? (복구 불가)`)) { S.products.splice(idx, 1); S.banks.forEach(b => { if (b.link === id) b.link = ''; }); commit(); } break;
     case 'up': case 'dn': { S.settings.sortMode = 'custom'; const dir = a === 'up' ? -1 : 1; let j = idx + dir; while (j >= 0 && j < S.products.length && S.products[j].active !== p.active) j += dir; if (j >= 0 && j < S.products.length) { [S.products[idx], S.products[j]] = [S.products[j], S.products[idx]]; commit(); } break; }
     case 'vis': S.products.filter(x => x.active).forEach(x => x[t.dataset.k] = v === '1'); commit(); break;
@@ -1179,16 +1206,70 @@ function openModal(title, node, w = 760) {
 }
 
 /* --- 상품 편집 --- */
+/* --- 상품기본 정보 (상품명 > 일반/간편 > 유형 · 핵심기능 · 판매상태) --- */
+function editCatalog() {
+  const D = clone(S.catalog || []), box = document.createElement('div');
+  const stat = a => `<select data-k="active"><option value="1" ${a ? 'selected' : ''}>판매중</option><option value="0" ${!a ? 'selected' : ''}>단종</option></select>`;
+  const used = id => S.products.filter(q => q.cid === id).length;
+  const build = () => {
+    box.innerHTML = `<div class="tnote">※ 상품명 &gt; 일반/간편 &gt; 유형 순으로 등록합니다. 여기서 정한 핵심기능·판매상태가 환급률표·그래프·인포 전체에 적용되고, <b>환급률 정보</b> 입력 시 이 목록에서 상품을 선택합니다.</div>
+    <div class="row"><button class="pri" data-addg>＋ 상품명 추가</button><span class="muted">핵심기능 항목 추가</span><input type="text" id="cgFt" placeholder="새 핵심기능" style="width:120px"><button class="sm" data-addft>＋ 추가</button></div>
+    <div id="cgList" style="max-height:62vh;overflow:auto">${D.map((g, gi) => `<div class="cg" data-g="${g.id}" style="border:1px solid #c9d3df;border-radius:6px;margin:6px 0;padding:6px 8px;background:#f7f9fc">
+      <div class="row"><b>상품명</b><input type="text" data-k="gname" value="${esc(g.name)}" style="width:170px"><span class="muted">판매상태 일괄</span><select data-bulk><option value="">선택</option><option value="1">판매중</option><option value="0">단종</option></select>
+      <button class="sm" data-addn>＋ 일반/간편</button><button class="sm" data-gmv="-1" ${gi === 0 ? 'disabled' : ''}>▲</button><button class="sm" data-gmv="1" ${gi === D.length - 1 ? 'disabled' : ''}>▼</button><button class="sm dg" data-delg>상품명 삭제</button></div>
+      ${g.nodes.map(n => `<div class="cn" data-n="${n.id}" style="margin:4px 0 4px 18px;padding-left:8px;border-left:3px solid #8796a8"><div class="row"><b>일반/간편</b><select data-k="kd"><option value="" ${!n.kd ? 'selected' : ''}>(없음)</option>${KDS.map(k => `<option ${n.kd === k ? 'selected' : ''}>${k}</option>`).join('')}</select><button class="sm" data-addl>＋ 유형</button><button class="sm dg" data-deln>삭제</button></div>
+        ${n.types.map(l => `<div class="cl" data-l="${l.id}" style="margin:3px 0 3px 18px;padding:3px 6px;background:#fff;border:1px solid #dfe5ec;border-radius:5px"><div class="row"><b>유형</b><input type="text" data-k="type" value="${esc(l.type)}" placeholder="예: 2종(미보증형)" style="width:170px">${stat(l.active !== false)}<button class="sm dg" data-dell>삭제</button>${used(l.id) ? `<span class="muted">환급률 정보 ${used(l.id)}건 연결</span>` : ''}</div>
+          <div class="row" style="margin-top:2px"><b>핵심기능</b>${S.features.map(f => `<label><input type="checkbox" data-ft="${esc(f)}" ${l.features.includes(f) ? 'checked' : ''}> ${esc(f)}</label>`).join('')}</div></div>`).join('')}</div>`).join('')}</div>`).join('') || '<div class="muted" style="padding:8px">등록된 상품이 없습니다. [＋ 상품명 추가]를 누르세요.</div>'}</div>
+    <div class="row" style="margin-top:8px"><button class="pri" data-save>저장</button><button data-cancel>취소</button><span class="er" id="cgErr"></span></div>`;
+  };
+  const read = () => {
+    $$('.cg', box).forEach(ge => {
+      const g = D.find(x => x.id === ge.dataset.g); if (!g) return;
+      g.name = $('[data-k="gname"]', ge).value.trim();
+      $$('.cn', ge).forEach(ne => { const n = g.nodes.find(x => x.id === ne.dataset.n); if (!n) return; n.kd = $('[data-k="kd"]', ne).value;
+        $$('.cl', ne).forEach(le => { const l = n.types.find(x => x.id === le.dataset.l); if (!l) return; l.type = $('[data-k="type"]', le).value.trim(); l.active = $('[data-k="active"]', le).value === '1'; l.features = $$('[data-ft]', le).filter(c => c.checked).map(c => c.dataset.ft); }); });
+    });
+  };
+  const m = openModal('상품기본 정보', box, 860);
+  build();
+  const find = el => { const ge = el.closest('.cg'), g = ge && D.find(x => x.id === ge.dataset.g), ne = el.closest('.cn'), n = ne && g && g.nodes.find(x => x.id === ne.dataset.n), le = el.closest('.cl'), l = le && n && n.types.find(x => x.id === le.dataset.l); return { g, n, l }; };
+  box.addEventListener('change', e => { if (e.target.matches('[data-bulk]')) { const v = e.target.value; if (v === '') return; $$('.cl [data-k="active"]', e.target.closest('.cg')).forEach(sel => sel.value = v); e.target.value = ''; } });
+  box.addEventListener('click', e => {
+    const t = e.target.closest('button'); if (!t) return;
+    const err = x => { $('#cgErr', box).textContent = x; };
+    if (t.matches('[data-cancel]')) { m.remove(); return; }
+    if (t.matches('[data-addft]')) { read(); const n = $('#cgFt', box).value.trim(); if (!n) return; if (S.features.includes(n)) return err('이미 있는 핵심기능입니다.'); S.features.push(n); build(); return; }
+    if (t.matches('[data-addg]')) { read(); D.push({ id: 'g' + uid(), name: '', nodes: [{ id: 'n' + uid(), kd: '', types: [{ id: 'l' + uid(), type: '', features: [], active: true }] }] }); build(); const gs = $$('.cg [data-k="gname"]', box); gs[gs.length - 1].focus(); return; }
+    const { g, n, l } = find(t);
+    if (t.matches('[data-addn]')) { read(); const used = g.nodes.map(x => x.kd), kd = KDS.find(k => !used.includes(k)) ?? ''; g.nodes.push({ id: 'n' + uid(), kd, types: [{ id: 'l' + uid(), type: '', features: [], active: true }] }); build(); return; }
+    if (t.matches('[data-addl]')) { read(); n.types.push({ id: 'l' + uid(), type: '', features: [], active: true }); build(); return; }
+    if (t.matches('[data-gmv]')) { read(); const i = D.indexOf(g), j = i + (+t.dataset.gmv); if (j < 0 || j >= D.length) return; [D[i], D[j]] = [D[j], D[i]]; build(); return; }
+    if (t.matches('[data-dell]')) { read(); if (used(l.id)) return err(`'${[g.name, n.kd, l.type].filter(Boolean).join(' ')}'에 환급률 정보 ${used(l.id)}건이 연결되어 삭제할 수 없습니다. 먼저 환급률 정보를 삭제하세요.`); n.types = n.types.filter(x => x !== l); build(); return; }
+    if (t.matches('[data-deln]')) { read(); const c = n.types.reduce((a, x) => a + used(x.id), 0); if (c) return err(`환급률 정보 ${c}건이 연결되어 삭제할 수 없습니다.`); g.nodes = g.nodes.filter(x => x !== n); build(); return; }
+    if (t.matches('[data-delg]')) { read(); const c = g.nodes.reduce((a, x) => a + x.types.reduce((b, y) => b + used(y.id), 0), 0); if (c) return err(`'${g.name}'에 환급률 정보 ${c}건이 연결되어 삭제할 수 없습니다.`); if (!confirm(`'${g.name || '(이름 없음)'}' 상품명을 삭제할까요?`)) return; D.splice(D.indexOf(g), 1); build(); return; }
+    if (t.matches('[data-save]')) {
+      read();
+      const keys = new Set();
+      for (const g of D) {
+        if (!g.name) return err('상품명이 비어 있는 항목이 있습니다.');
+        if (D.filter(x => x.name === g.name).length > 1) return err(`상품명 '${g.name}'이(가) 중복됩니다.`);
+        const ks = new Set();
+        for (const n of g.nodes) { if (ks.has(n.kd)) return err(`'${g.name}'에 같은 일반/간편(${n.kd || '없음'})이 중복됩니다. 한 곳에 유형으로 묶어 주세요.`); ks.add(n.kd);
+          const ts = new Set(); for (const l of n.types) { if (ts.has(l.type)) return err(`'${g.name} ${n.kd}'에 같은 유형(${l.type || '없음'})이 중복됩니다.`); ts.add(l.type); } }
+      }
+      S.catalog = D; commit(); m.remove();
+    }
+  });
+}
 function editProduct(id) {
   const src = id ? S.products.find(x => x.id === id) : null;
-  const p = src ? clone(src) : { id: uid(), name: '', kd: '', type: '', label: '', pay: null, age: null, sex: '', amount: null, monthly: null, features: [], active: true, showT: true, showG: true, note: '', data: {} };
+  if (!src && !catLeaves().length) { alert("먼저 '상품기본 정보'에서 상품(상품명 > 일반/간편 > 유형)을 등록하세요."); return editCatalog(); }
+  const p = src ? clone(src) : { id: uid(), cid: catLeaves()[0].id, name: '', kd: '', type: '', label: '', pay: null, age: null, sex: '', amount: null, monthly: null, features: [], active: true, showT: true, showG: true, note: '', data: {} };
   const box = document.createElement('div');
   let build = () => {
     box.innerHTML = `<div class="tnote">※ 납입기간·구분·사용 여부·월보험료·환급 데이터는 현재 프로필(<b>${esc(curProf().label)}</b>)에만 적용됩니다.</div>
     <div class="fg">
-    <label>상품명<input type="text" data-f="name" value="${esc(p.name)}"></label>
-    <label>일반/간편<select data-f="kd"><option value="" ${!p.kd ? 'selected' : ''}>(없음)</option><option value="일반" ${p.kd === '일반' ? 'selected' : ''}>일반</option><option value="간편" ${p.kd === '간편' ? 'selected' : ''}>간편</option></select></label>
-    <label>유형(예: 1종 보증형)<input type="text" data-f="type" value="${esc(p.type)}"></label>
+    <label style="grid-column:1/-1;flex:1 1 100%">상품 (상품기본 정보에서 선택)<select data-f="cid" style="width:100%">${catLeaves().map(x => `<option value="${x.id}" ${x.id === p.cid ? 'selected' : ''}>${esc(x.label)}${x.active ? '' : ' (단종)'}</option>`).join('')}</select></label>
     <label>납기 표시(비우면 N년납)<input type="text" data-f="label" value="${esc(p.label)}" placeholder="예: 10년납"></label>
     <label>납입기간(년) · 0=미지정<input type="number" data-f="pay" value="${p.pay ?? ''}" placeholder="기본 ${S.defaults.pay}"></label>
     <label>가입나이<input type="number" data-f="age" value="${p.age ?? ''}" placeholder="기본 ${S.defaults.age}"></label>
@@ -1196,8 +1277,7 @@ function editProduct(id) {
     <label>가입금액(만원)<input type="number" data-f="amount" value="${p.amount ?? ''}" placeholder="기본 ${S.defaults.amount}"></label>
     <label>월보험료(원)<input type="number" data-f="monthly" value="${p.monthly ?? ''}"></label>
     <label style="flex-direction:row;align-items:center;gap:5px;color:var(--txt)"><input type="checkbox" data-f="on" ${p.on !== false ? 'checked' : ''} style="width:auto"> 이 프로필에서 사용</label></div>
-    <div class="row" style="margin-top:6px"><b>핵심기능</b>${S.features.map(f => `<label><input type="checkbox" data-ft="${esc(f)}" ${p.features.includes(f) ? 'checked' : ''}> ${esc(f)}</label>`).join('')}
-      <input type="text" id="edFt" placeholder="새 핵심기능" style="width:110px"><button class="sm" data-addft>＋ 항목 추가</button></div>
+    <div class="row" style="margin-top:6px"><b>핵심기능</b>${p.features.length ? p.features.map(f => `<span class="chip ft">${esc(f)}</span>`).join('') : '<span class="muted">(없음)</span>'}<span class="muted">· ${p.active === false ? '단종' : '판매중'} · 상품기본 정보에서 관리</span></div>
     <div class="row"><label style="flex:1">메모<input type="text" data-f="note" value="${esc(p.note)}" style="width:100%"></label></div>
     <div class="row"><b>경과기간별 입력</b>
       <span class="muted">월보험료·납입기간을 넣으면 누적보험료는 자동, <b>환급액(원)만 입력</b>하면 환급률도 자동 계산됩니다(회색 칸).</span><button class="sm" data-calc="refund">환급액 자동(누적×환급률)</button><button class="sm dg" data-calc="clear">전체 지우기</button></div>
@@ -1250,11 +1330,12 @@ function editProduct(id) {
   box.addEventListener('input', e => { if (e.target.matches('[data-f="monthly"],[data-f="pay"],[data-pf="refund"]')) auto(); });
   const build0 = build; build = () => { build0(); auto(); };
   build();
-  const m = openModal(src ? '상품 수정 · ' + shortOf(src) : '상품 추가', box, 720);
+  const m = openModal(src ? '환급률 정보 수정 · ' + shortOf(src) : '환급률 정보 추가', box, 720);
+  box.addEventListener('change', e => { if (e.target.matches('[data-f="cid"]')) { read(); build(); } });
   const read = () => {
     const g = k => $(`[data-f="${k}"]`, box).value;
-    p.name = g('name').trim(); p.kd = g('kd').trim(); p.type = g('type').trim(); p.label = g('label').trim(); p.pay = num(g('pay')); p.age = num(g('age')); p.sex = g('sex'); p.amount = num(g('amount')); p.monthly = num(g('monthly')); p.note = g('note').trim(); p.on = $('[data-f="on"]', box).checked;
-    p.features = $$('[data-ft]', box).filter(c => c.checked).map(c => c.dataset.ft);
+    { const lf = catLeaves().find(x => x.id === g('cid')); if (lf) { p.cid = lf.id; p.name = lf.name; p.kd = lf.kd; p.type = lf.type; p.features = lf.features.slice(); p.active = lf.active; } }
+    p.label = g('label').trim(); p.pay = num(g('pay')); p.age = num(g('age')); p.sex = g('sex'); p.amount = num(g('amount')); p.monthly = num(g('monthly')); p.note = g('note').trim(); p.on = $('[data-f="on"]', box).checked;
     p.data = {}; S.periods.forEach(pm => { const d = {}; ['paid', 'refund', 'rate'].forEach(f => { const el = $(`[data-pm="${pm}"][data-pf="${f}"]`, box); const v = el && !el.dataset.auto ? num(el.value) : null; if (v !== null) d[f] = v; }); if (Object.keys(d).length) p.data[pm] = d; });
   };
   box.addEventListener('click', e => {
@@ -1290,7 +1371,7 @@ function editProduct(id) {
     }
     if (e.target.closest('[data-cancel]')) m.remove();
     if (e.target.closest('[data-save]')) {
-      read(); if (!p.name) { $('#edErr', box).textContent = '상품명을 입력하세요.'; return; }
+      read(); if (!p.name) { $('#edErr', box).textContent = '상품을 선택하세요.'; return; }
       { const same = S.products.filter(x => x.id !== p.id && x.name === p.name && (x.kd || '') === (p.kd || '')), key = a => [...a].sort().join('|'), diff = same.filter(x => key(x.features) !== key(p.features));
         if (diff.length && !confirm(`⚠ 같은 상품명·구분('${p.name}${p.kd ? ' ' + p.kd : ''}')인데 주요특징이 서로 다릅니다.\n\n· 이 상품: ${p.features.join(', ') || '(없음)'}\n` + diff.slice(0, 4).map(x => `· ${shortOf(x)}: ${x.features.join(', ') || '(없음)'}`).join('\n') + `\n\n같은 상품·같은 구분이면 주요특징도 같아야 합니다(표에는 합쳐서 표시됩니다). 일반/간편 사이의 차이는 구분해서 표시되므로 괜찮습니다.\n그대로 저장할까요? [취소]를 누르면 수정 창으로 돌아갑니다.`)) return; }
       if (!src) { p.bpay = p.pay ?? null; p.blabel = p.label; }
@@ -1418,6 +1499,7 @@ function importCore(hdr, body, skipDemo) {
     let p = find(name, type, pay, label, kd);
     if (!p) { p = { id: uid(), bpay: pay, blabel: label, on: true, name, kd, type, label, pay, age: null, sex: '', amount: null, monthly: null, features: [], active: true, showT: true, showG: true, note: '', data: {} }; S.products.push(p); added++; touched.add(p.id); }
     else if (!touched.has(p.id)) { upd++; touched.add(p.id); }
+    { const lf = ensureLeaf(S, name, kd, type); if (!p.cid) p.cid = lf.id; }
     if (!skipDemo) {
       if (ci.age >= 0 && num(g(ci.age)) !== null) p.age = num(g(ci.age));
       if (ci.sex >= 0 && ['남', '여'].includes(String(g(ci.sex)).trim())) p.sex = String(g(ci.sex)).trim();
@@ -1425,7 +1507,7 @@ function importCore(hdr, body, skipDemo) {
     }
     p.on = true;
     if (ci.mon >= 0 && num(g(ci.mon)) !== null) p.monthly = num(g(ci.mon));
-    if (ci.feat >= 0 && String(g(ci.feat)).trim()) { const fs = String(g(ci.feat)).split(/[;,/、]/).map(x => x.trim()).filter(Boolean); fs.forEach(f => { if (!S.features.includes(f)) S.features.push(f); }); p.features = uniq([...p.features, ...fs]); }
+    if (ci.feat >= 0 && String(g(ci.feat)).trim()) { const fs = String(g(ci.feat)).split(/[;,/、]/).map(x => x.trim()).filter(Boolean); fs.forEach(f => { if (!S.features.includes(f)) S.features.push(f); }); const lf = ensureLeaf(S, name, kd, type); lf.features = uniq([...lf.features, ...fs]); }
     if (ci.per >= 0 && String(g(ci.per)).trim() !== '') {
       const m = parsePeriod(g(ci.per)); if (m) { addPeriod(m); const d = p.data[m] = p.data[m] || {}; [['paid', ci.paid], ['refund', ci.refund], ['rate', ci.rate]].forEach(([k, i]) => { const v = i >= 0 ? num(g(i)) : null; if (v !== null) { d[k] = v; cells++; } }); }
     }
