@@ -115,6 +115,10 @@ table.rt2 td.no{color:#b4bcc6}
 body.admin .admin-only{display:block}
 html[data-viewer] .admin-only,html[data-viewer] .adm-btn{display:none!important}
 .adm-btn{display:none}
+.dh{cursor:grab;display:inline-block;padding:0 6px;font-size:15px;color:#5d6b7a;user-select:none}
+.dh:active{cursor:grabbing}
+.dragover{outline:2px dashed #c4521f;background:#fff1e6!important}
+.chip[draggable=true]{cursor:grab}
 body.admin .adm-btn{display:inline-block}
 details.pnl{border:1px solid #d5dce4;border-radius:4px;margin:5px 0;background:#fafbfd}
 details.pnl>summary{cursor:pointer;padding:4px 10px;font-weight:700;color:var(--navy);font-size:13.5px}
@@ -286,7 +290,7 @@ function renderMain() {
   $('#ftCopy').textContent = 'ⓒ' + new Date().getFullYear() + '. YOON HYUNCHUL, ALL RIGHTS RESERVED.';
 }
 function renderChips() {
-  $('#pchips').innerHTML = '<b style="font-size:13px">상품 선택</b>' + S.products.filter(p => p.show !== false).map(p => `<span class="chip ${UI.off.has(p.id) ? '' : 'on'}" data-chip="${p.id}"><i style="background:${p.color}"></i>${esc(p.name)}</span>`).join('');
+  $('#pchips').innerHTML = '<b style="font-size:13px">상품 선택</b>' + S.products.filter(p => p.show !== false).map(p => `<span class="chip ${UI.off.has(p.id) ? '' : 'on'}" data-chip="${p.id}"${VIEWER ? '' : ` draggable="true" data-cdrag="${S.products.indexOf(p)}" title="끌어서 보기순서 변경"`}><i style="background:${p.color}"></i>${esc(p.name)}</span>`).join('');
 }
 function renderConcept() {
   const ps = vis(), R = 1 + Math.max(1, ...ps.map(p => (p.steps || []).length));
@@ -451,8 +455,8 @@ renderAdmin = function () {
   /* 상품 관리 */
   h += `<details class="pnl" data-id="prod"${OPEN('prod')}><summary>📦 상품 관리 (추가 · 수정 · 순서 · 표시)</summary><div class="in">
    <div class="row"><button class="pri" data-a="padd">＋ 상품 추가</button><span class="tnote">※ 표시를 끄면 조회페이지·인쇄에서 제외됩니다(단종 등). 상세 내용은 [편집]에서 입력합니다.</span></div>
-   <div style="overflow:auto"><table class="mt" style="width:100%"><tr><th>순서</th><th>상품명</th><th>부제</th><th>유형 태그</th><th>색상</th><th>표시</th><th>그래프</th><th></th></tr>
-   ${P.map((p, i) => `<tr><td><button class="sm" data-a="pmv" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''}>▲</button><button class="sm" data-a="pmv" data-i="${i}" data-d="1" ${i === P.length - 1 ? 'disabled' : ''}>▼</button></td>
+   <div style="overflow:auto"><table class="mt" style="width:100%"><tr><th>보기순서<br><span style="font-weight:400;font-size:11px">☰ 끌어서 이동</span></th><th>상품명</th><th>부제</th><th>유형 태그</th><th>색상</th><th>표시</th><th>그래프</th><th></th></tr>
+   ${P.map((p, i) => `<tr data-prow="${i}"><td style="white-space:nowrap"><span class="dh" draggable="true" data-drag="${i}" title="끌어서 순서 변경">☰</span> <button class="sm" data-a="pmv" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''}>▲</button><button class="sm" data-a="pmv" data-i="${i}" data-d="1" ${i === P.length - 1 ? 'disabled' : ''}>▼</button></td>
    <td><input type="text" data-f="ptxt" data-id="${p.id}" data-k="name" value="${esc(p.name)}"></td><td><input type="text" data-f="ptxt" data-id="${p.id}" data-k="sub" value="${esc(p.sub)}"></td><td><input type="text" data-f="ptxt" data-id="${p.id}" data-k="tag" value="${esc(p.tag)}"></td>
    <td><input type="color" data-f="pcol" data-id="${p.id}" value="${p.color}"></td><td><input type="checkbox" data-f="pchk" data-id="${p.id}" data-k="show" ${p.show !== false ? 'checked' : ''}></td><td><input type="checkbox" data-f="pchk" data-id="${p.id}" data-k="rateOn" ${p.rateOn !== false ? 'checked' : ''}></td>
    <td style="white-space:nowrap"><button class="sm pri" data-a="pedit" data-id="${p.id}">편집</button> <button class="sm dg" data-a="pdel" data-id="${p.id}">삭제</button></td></tr>`).join('')}</table></div></div></details>`;
@@ -544,6 +548,13 @@ document.addEventListener('paste', e => {
   const r0 = rowsEl.findIndex(a => a.includes(t)), c0 = rowsEl[r0].indexOf(t);
   grid.forEach((row, ri) => row.forEach((v, ci) => { const el = rowsEl[r0 + ri] && rowsEl[r0 + ri][c0 + ci]; if (!el) return; el.value = v.trim().replace('%', ''); el.dispatchEvent(new Event('input', { bubbles: true })); }));
 });
+
+/* 상품 보기순서: 끌어서 이동 (표 핸들 · 상단 칩) */
+let dragIdx = null;
+document.addEventListener('dragstart', e => { const h = e.target.closest('[data-drag],[data-cdrag]'); if (!h) return; dragIdx = +(h.dataset.drag ?? h.dataset.cdrag); e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', String(dragIdx)); } catch (x) {} });
+document.addEventListener('dragover', e => { if (dragIdx === null) return; const t = e.target.closest('[data-prow],[data-cdrag]'); if (!t) return; e.preventDefault(); $$('.dragover').forEach(x => x.classList.remove('dragover')); t.classList.add('dragover'); });
+document.addEventListener('drop', e => { if (dragIdx === null) return; const t = e.target.closest('[data-prow],[data-cdrag]'); $$('.dragover').forEach(x => x.classList.remove('dragover')); if (!t) { dragIdx = null; return; } e.preventDefault(); const to = +(t.dataset.prow ?? t.dataset.cdrag), from = dragIdx; dragIdx = null; if (from === to) return; const [m] = S.products.splice(from, 1); S.products.splice(to, 0, m); commit(true); });
+document.addEventListener('dragend', () => { dragIdx = null; $$('.dragover').forEach(x => x.classList.remove('dragover')); });
 /* --- 버튼 처리 --- */
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-a]'); if (!b) return;
