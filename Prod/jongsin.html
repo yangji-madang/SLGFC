@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ko" data-viewer="1">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>종신보험 5종 컨셉 비교</title>
+<style>
+:root{--navy:#1f3a5f;--gold:#b8892b;--line:#b9c3cf;--head:#dce9f5;--txt:#1b2430;--muted:#5d6b7a;--pz:1}
+*{box-sizing:border-box}
+html{font-family:system-ui,-apple-system,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+body{margin:0;background:#eef1f5;color:var(--txt);font-size:14px;line-height:1.4;word-break:keep-all;overflow-wrap:break-word}
+.page{max-width:1320px;margin:0 auto;background:#fff;padding:8px 14px 10px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid #98a6b6;background:#f7f9fb;border-radius:4px;padding:3px 9px}
+button:hover{background:#e8eff7}
+button.pri{background:var(--navy);color:#fff;border-color:var(--navy)}
+button.pri:hover{background:#2c4f7e}
+button.dg{color:#b3261e;border-color:#d9a5a1}
+button.sm{padding:1px 6px;font-size:12px}
+button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+button.gh{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:700}
+button.gh:hover{background:#9c7420}
+input[type=text],input[type=number],select,textarea{border:1px solid #98a6b6;border-radius:4px;padding:3px 6px;background:#fff;min-width:0}
+textarea{width:100%;line-height:1.35;resize:vertical}
+.muted{color:var(--muted)}
+.ok{color:#117a3a}.er{color:#b3261e}
+/* 제목 */
+.hd{display:flex;align-items:baseline;gap:4px 12px;flex-wrap:wrap;border-bottom:2px solid var(--navy);padding-bottom:3px}
+.hd h1{margin:0;font-size:20px;color:var(--navy);white-space:nowrap}
+.hd .sub{font-size:13px;font-weight:600}
+.hd .ex{margin-left:auto;font-size:12px;font-weight:600;white-space:nowrap}
+.tb{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:5px 0}
+.tb .sp{flex:1}
+.tb label{display:inline-flex;gap:4px;align-items:center;white-space:nowrap;font-size:13px}
+.chip{display:inline-flex;align-items:center;gap:4px;border:1px solid #98a6b6;border-radius:12px;padding:1px 9px;background:#fff;cursor:pointer;font-size:13px;user-select:none}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.sec{margin:6px 0;border:1px solid #cfd7e0;border-radius:5px;overflow:hidden}
+.sec>h2{margin:0;padding:3px 10px;background:var(--navy);color:#fff;font-size:14px;display:flex;align-items:center;gap:8px}
+.sec>h2 .no{background:var(--gold);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex:none}
+.sec>h2 small{font-weight:400;opacity:.85;margin-left:auto}
+.sec .bd{padding:6px 8px}
+/* 줄 표기 */
+.ln{line-height:1.38;text-wrap:pretty}
+.ln.b{font-weight:700}
+.ln.mu{color:var(--muted);font-size:.88em}
+.ln.wn{color:#b3261e;font-weight:700}
+.ln.hl{color:#c4521f;font-weight:800}
+/* 1. 컨셉 도식 */
+.cgrid{display:grid;grid-template-columns:7.6em repeat(var(--n),minmax(0,1fr));gap:0 6px}
+.clab{background:#eef3f9;border:1px solid #cfd7e0;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#23364d;padding:4px}
+.clab b{font-size:1.15em}.clab small{margin-top:6px;color:var(--muted)}
+.card{display:flex;flex-direction:column;min-width:0}
+.card .ch{background:var(--c);color:var(--tc);text-align:center;padding:6px 4px 7px;border-radius:6px 6px 0 0}
+.card .ch .nm{font-size:1.18em;font-weight:800;line-height:1.2}
+.card .ch .sb{font-size:.82em;opacity:.92}
+.card .ch .sl{margin-top:3px;font-size:.92em}
+.card .ch .tg{display:inline-block;margin-top:5px;background:#fff;color:#3e2b20;border-radius:10px;padding:0 10px;font-size:.84em;font-weight:700}
+.stp{background:color-mix(in srgb,var(--c) 13%,#fff);border:1px solid var(--c);padding:6px 4px;text-align:center;margin-top:13px;position:relative;border-radius:3px;flex:1;display:flex;flex-direction:column;justify-content:center}
+.stp:first-of-type{margin-top:6px}
+.card .ch+.stp{margin-top:6px}
+.stp:not(.f)::before{content:'';position:absolute;left:50%;top:-11px;margin-left:-8px;border:8px solid transparent;border-top:9px solid var(--c);border-bottom:0}
+/* 2. 비교표 */
+table.cmp2{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px}
+table.cmp2 th,table.cmp2 td{border:1px solid #e0d2bf;padding:5px 4px;vertical-align:middle}
+table.cmp2 thead th{color:var(--tc);background:var(--c);text-align:center;font-size:1.1em}
+table.cmp2 thead th.corner{background:#dce9f5;color:#23364d;border-color:#cfd7e0}
+table.cmp2 thead th small{display:block;font-weight:400;font-size:.75em}
+table.cmp2 th.rl{background:#eef3f9;color:#23364d;text-align:center;font-weight:700;line-height:1.25;border-color:#cfd7e0}
+table.cmp2 td{text-align:center;background:#fff}
+table.cmp2 tbody tr:nth-child(even) td{background:#fffdf8}
+table.cmp2 tr.fsep th{background:#1f3a5f;color:#fff;text-align:left;padding:2px 8px;font-size:.9em}
+.st{font-weight:800;line-height:1.3}
+.st.ok{color:#c4521f}.st.x{color:#7b8794;font-weight:600}.st.na{color:#b4bcc6;font-weight:400}.st.chk{color:#b3261e}
+td .sub{font-size:.88em;color:var(--muted)}
+/* 3. 그래프 */
+.cb{position:relative}
+.cb svg{width:100%;height:auto;display:block;font-family:inherit}
+.cb svg text{font-family:inherit}
+.legend{display:flex;flex-wrap:wrap;gap:3px 12px;justify-content:center;font-size:12.5px;margin-top:2px}
+.legend .li{cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:0 4px;border-radius:3px;user-select:none}
+.legend .li:hover{background:#eef3f9}.legend .li.off{opacity:.35}
+.legend .li svg{width:24px;height:12px;flex:none}
+.tip{display:none;position:absolute;top:8px;z-index:20;background:rgba(255,255,255,.97);border:1px solid #9fb0c3;border-radius:6px;padding:5px 8px;box-shadow:0 4px 14px rgba(20,40,70,.22);font-size:12.5px;pointer-events:none;max-width:330px}
+.tip .th{font-weight:700;color:var(--navy);border-bottom:1px solid #dde3ea;margin-bottom:2px;padding-bottom:1px}
+.tip .tr{display:flex;align-items:center;gap:6px;line-height:1.55}
+.tip .tr i{width:10px;height:10px;border-radius:50%;flex:none}
+.tip .tr span{flex:1;white-space:nowrap}
+table.rt2{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px;margin-top:6px}
+table.rt2 th,table.rt2 td{border:1px solid #e0d2bf;padding:3px 2px;text-align:center;font-variant-numeric:tabular-nums}
+table.rt2 thead th{background:#dce9f5;color:#23364d}
+table.rt2 th.pn{color:var(--tc);background:var(--c);font-size:.95em;text-align:center}
+table.rt2 td.hit{background:#fbe3d6;color:#c4521f;font-weight:800}
+table.rt2 td.no{color:#b4bcc6}
+/* 4. 연금 */
+.pgrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:8px}
+.pcards{display:flex;flex-direction:column;gap:8px}
+.pcard{border:1px solid var(--c);background:color-mix(in srgb,var(--c) 10%,#fff);border-radius:3px;overflow:hidden;flex:1}
+.pcard .pt{background:var(--c);color:var(--tc);padding:3px 8px;font-weight:700;font-size:.95em}
+.pcard .pb{padding:5px 8px}
+.pcard .pb .ln{padding:1px 0}
+/* 5. 포인트 */
+.pts{background:#f3e6cf;border:1px solid #e0d2bf;border-radius:4px;padding:6px 10px}
+.pts .ptt{font-weight:800;color:#c4521f;margin-bottom:2px}
+.pts .ln{position:relative;padding-left:12px}
+.pts .ln::before{content:'•';position:absolute;left:0}
+.nts{margin-top:5px;font-size:12px;color:#4d5b6a}
+.nts .ln{padding-left:12px;position:relative}
+.nts .ln::before{content:'※';position:absolute;left:0}
+.laws{margin-top:3px;font-size:12px}
+.laws a{color:#0b5cad}
+/* 푸터 */
+.pgft{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-top:6px;padding-top:3px;border-top:1px solid #cfd7e0}
+.pgft .ct{font-size:12px;color:#34424f}
+.pgft .cp{font-size:11.5px;margin-left:auto;text-align:right;white-space:nowrap;color:#34424f}
+/* 관리 전용 */
+.admin-only{display:none}
+body.admin .admin-only{display:block}
+html[data-viewer] .admin-only,html[data-viewer] .adm-btn{display:none!important}
+.adm-btn{display:none}
+body.admin .adm-btn{display:inline-block}
+details.pnl{border:1px solid #d5dce4;border-radius:4px;margin:5px 0;background:#fafbfd}
+details.pnl>summary{cursor:pointer;padding:4px 10px;font-weight:700;color:var(--navy);font-size:13.5px}
+details.pnl>.in{padding:4px 10px 8px}
+.row{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:3px 0}
+.mt{border-collapse:collapse;font-size:12.5px}
+.mt th,.mt td{border:1px solid #cfd6de;padding:2px 4px;text-align:center;vertical-align:middle}
+.mt th{background:var(--head);white-space:nowrap}
+.mt td.l{text-align:left}
+.mt input[type=text]{width:100%}
+.mt input.y{width:58px;text-align:right}
+.tnote{font-size:12px;color:var(--muted);margin:2px 0}
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px 10px}
+.fg label{display:flex;flex-direction:column;font-size:12px;color:var(--muted);gap:1px}
+.fg label input,.fg label select{color:var(--txt);font-size:13px;width:100%}
+.blk{border:1px solid #d5dce4;border-radius:5px;padding:5px 8px;margin:6px 0;background:#fff}
+.blk>b{color:var(--navy)}
+body.fmt [data-sk]{cursor:pointer}
+body.fmt [data-sk]:hover{outline:2px dashed #c4521f;outline-offset:1px}
+body.fmt [data-sk].fsel{outline:2px solid #c4521f}
+/* 모달 */
+.modal{position:fixed;left:50%;top:4vh;transform:translateX(-50%);max-width:96vw;max-height:92vh;display:flex;flex-direction:column;background:#fff;border:1px solid #6c7f93;border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.modal .mh{background:var(--navy);color:#fff;padding:5px 10px;display:flex;justify-content:space-between;align-items:center;cursor:move;border-radius:5px 5px 0 0;user-select:none;touch-action:none}
+.modal .mh .x{background:transparent;color:#fff;border:none;font-size:16px;padding:0 4px}
+.modal .mb{padding:8px 10px;overflow:auto}
+.tabs{display:flex;gap:2px;margin:4px 0 0;flex-wrap:wrap}
+.tabs button{border-radius:4px 4px 0 0;border-bottom:none}
+/*GH-POS*/
+@media screen{html:not([data-viewer]) body{padding-top:40px!important}#btnGh{position:fixed!important;top:6px!important;right:12px!important;left:auto!important;bottom:auto!important;z-index:99999!important;margin:0!important;font-size:13px}}
+@media print{#btnGh{display:none!important}}
+/*END-GH-POS*/
+@page{size:A4 portrait;margin:8mm}
+@media print{
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ body{background:#fff;font-size:11px}
+ .noprint,.modal,.admin-only,body.admin .admin-only{display:none!important}
+ .page{max-width:none;padding:0}
+ .pgwrap{zoom:var(--pz)}
+ .sec{border:none;margin:3px 0;break-inside:avoid}
+ .sec>h2{padding:1px 6px;font-size:11.5px}
+ .sec .bd{padding:3px 0}
+ .hd h1{font-size:17px}
+ table.cmp2{font-size:10.5px}
+ table.cmp2 th,table.cmp2 td{padding:3px 3px}
+ table.rt2{font-size:10.5px}
+ .pg2{break-before:page}
+ .pts,.nts,.pcard{break-inside:avoid}
+ tr{break-inside:avoid}
+ .pgft .ct,.pgft .cp{font-size:9.5px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="hd">
+  <h1 id="hTitle"></h1><span class="sub" id="hSub"></span><span class="ex" id="hEx"></span>
+</header>
+
+<div class="tb noprint">
+  <span class="row" id="pchips" style="margin:0"></span><span class="sp"></span>
+  <label>인쇄 방향 <select id="orient"><option value="portrait">세로</option><option value="landscape">가로</option></select></label>
+  <label>인쇄 배율 <input type="range" id="pzr" min="50" max="130" value="100" style="width:90px"><b id="pzv">100%</b></label>
+  <button class="pri" id="prt">🖨 인쇄</button>
+  <a class="adm-btn" id="lnkView" href="jongsin.html" target="_blank" rel="noopener"><button>👁 조회페이지</button></a>
+  <button class="adm-btn" id="btnFmt">🅰 글꼴서식 편집</button>
+  <button class="adm-btn" id="btnTok">🔑 토큰 설정</button>
+  <button class="gh adm-btn" id="btnGh">⬆ GitHub 반영</button>
+</div>
+
+<!-- 관리 패널 -->
+<div class="admin-only noprint" id="adm"></div>
+
+<div class="pgwrap" id="pg1">
+<section class="sec" id="sec-concept"><h2><span class="no">1</span><span id="h1t"></span></h2><div class="bd" id="conceptBody"></div></section>
+<section class="sec" id="sec-table"><h2><span class="no">2</span><span id="h2t"></span></h2><div class="bd" id="tableBody"></div></section>
+</div>
+
+<div class="pgwrap pg2" id="pg2">
+<section class="sec" id="sec-chart"><h2><span class="no">3</span><span id="h3t"></span><small class="noprint"><label style="font-weight:400"><input type="checkbox" id="chLbl"> 값 표시</label></small></h2>
+  <div class="bd"><div class="cb"><div id="chBody"></div><div class="tip" id="chTip"></div></div><div class="legend" id="chLeg"></div><div id="rateTbl"></div></div></section>
+<section class="sec" id="sec-pension"><h2><span class="no">4</span><span id="h4t"></span></h2><div class="bd"><div class="pgrid"><div id="penChart"></div><div class="pcards" id="penCards"></div></div></div></section>
+<section class="sec" id="sec-points"><h2><span class="no">5</span><span id="h5t"></span></h2><div class="bd"><div class="pts" id="ptsBody"></div><div class="nts" id="ntsBody"></div><div class="laws" id="lawsBody"></div></div></section>
+</div>
+
+<footer class="pgft">
+  <div class="ct"><span data-ct></span></div>
+  <div class="cp" id="ftCopy"></div>
+</footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+const DEFAULT = {"v": 1, "savedAt": 0, "title": "종신보험 5종 컨셉 비교", "sub": "올백·밸런스·더행복·골든·착한(VVIP) | 40세 남 표준체 월납 예시", "issue": "2026.11.13", "sec": {"concept": "상품별 핵심 컨셉 (도식)", "table": "상품별 비교표", "chart": "경과년도별 환급률 비교 (%)", "pension": "연금 기능 비교 (연금전환 · 연금선지급)", "points": "핵심 포인트 · 유의사항"}, "rows": [{"id": "cond", "label": "예시\n가입조건"}, {"id": "rtype", "label": "환급\n형태"}, {"id": "refund", "label": "환급\n특징"}, {"id": "cover", "label": "보장\n특징"}], "features": [{"id": "f1", "label": "원금보장\n(환급률 100%↑)"}, {"id": "f2", "label": "연금전환"}, {"id": "f3", "label": "연금선지급"}, {"id": "f4", "label": "약관대출"}, {"id": "f5", "label": "중도인출"}, {"id": "f6", "label": "암 납입면제"}], "products": [{"id": "allbaek", "name": "올백종신", "sub": "(ALL 100) 1종·2종", "color": "#C4521F", "slogan": ["낸 보험료 100% 환급+", "탄탄한 사망보장"], "tag": "무해약환급금형", "steps": [["**① 납입기간(10년)", "해약환급금 0원", "대신 보험료 부담 ↓"], ["**② 완납 시점부터", "환급률 100% 이상", "(1·2종 모두 100.0%)"], ["**③ 사망보험금", "= 가입금액 + 낸 보험료", "2종은 암진단 납입면제"]], "show": true, "rateOn": true, "rows": {"cond": ["10년납 · 가입 1억원", "월 698,000원(1종)", "월 714,000원(2종)", "총납입 8,376~8,568만"], "rtype": ["**무해약환급금형", "납입기간 중 해지 시", "환급금 0원"], "refund": ["~~완납 후 환급률(1종)", "납입기간 내 0.0%", "++10년 100.0%", "20년 101.8%", "30년 119.0%"], "cover": ["**사망보험금 =", "가입금액 + 낸 보험료", "완납 후 1억 8,376만원", "~~(2종 1억 8,568만원)", "2종: 암진단 시", "보험료 납입면제"]}, "func": {"f1": {"s": "ok", "t": ["10년(완납) 100.0%"]}, "f2": {"s": "na", "t": []}, "f3": {"s": "na", "t": []}, "f4": {"s": "chk", "t": []}, "f5": {"s": "na", "t": []}, "f6": {"s": "ok", "t": ["2종"]}}, "rates": {"1": 0, "3": 0, "5": 0, "7": 0, "10": 100.0, "20": 101.8, "30": 119.0}, "rateLabel": "올백 1종 · 10년납"}, {"id": "balance", "name": "밸런스종신", "sub": "(2603)", "color": "#26766B", "slogan": ["체증 + 증액 + 더블연금", "유연하고 똑똑한 종신"], "tag": "저해약환급금형", "steps": [["**① 10년 이후 10년간", "매년 가입금액 2% 체증", "사망보장 ↑"], ["**② 증액서비스", "10·20·30년 시점", "기본보험료 10·20·30%"], ["**③ 더블연금전환", "총수령 납입보험료의", "150~200% 최저보증"]], "show": true, "rateOn": true, "rows": {"cond": ["1형 10년납 · 1억원", "월 827,000원", "총납입 9,924만원"], "rtype": ["**저해약환급금형", "납입기간 중 해지 시", "환급금이 적음"], "refund": ["~~공시이율 2.1% 가정", "5년 39.6%", "++10년 105.0%", "20년 140.0%", "40년 160.1%"], "cover": ["**10년 후 10년간", "매년 가입금액 2% 체증", "+ 증액서비스", "10년 1억 1,192만원", "20년 1억 4,977만원", "30년~ 1억 7,954만원"]}, "func": {"f1": {"s": "ok", "t": ["10년 105.0%"]}, "f2": {"s": "ok", "t": ["더블연금전환", "150~200% 최저보증"]}, "f3": {"s": "chk", "t": []}, "f4": {"s": "chk", "t": []}, "f5": {"s": "na", "t": []}, "f6": {"s": "na", "t": []}}, "rates": {"1": 18.9, "3": 35.5, "5": 39.6, "10": 105.0, "20": 140.0}, "rateLabel": "밸런스 1형 · 10년납"}, {"id": "haengbok", "name": "더행복종신", "sub": "(2601)", "color": "#647F2B", "slogan": ["상승하는 사망보장 +", "연금선지급으로 유연하게"], "tag": "저해약환급금형", "steps": [["**① 5년 이후 10년간", "매년 가입금액 10% 체증", "→ 가입금액의 200%"], ["**② 증액서비스", "납입완료·10년 시점", "추가 증액보험금"], ["**③ 연금선지급", "사망보험금을 감액해", "최대 30년 노후자금"]], "show": true, "rateOn": true, "rows": {"cond": ["2형 7년납 · 6,000만원", "월 1,050,600원", "총납입 8,825만원"], "rtype": ["**저해약환급금형", "납입기간 중", "유해약환급금형의 50%"], "refund": ["~~2형 7년납 기준", "5년 40.6%", "++7년 100.0%", "10년 117.0%", "35년 146.5%"], "cover": ["**5년 후 10년간", "매년 가입금액 10% 체증", "→ 가입금액의 200%", "+ 증액서비스", "6,000만→1억 5,219만", "~~(15년 시점~)"]}, "func": {"f1": {"s": "ok", "t": ["7년(완납) 100.0%"]}, "f2": {"s": "na", "t": []}, "f3": {"s": "ok", "t": ["최대 30년"]}, "f4": {"s": "ok", "t": []}, "f5": {"s": "na", "t": []}, "f6": {"s": "na", "t": []}}, "rates": {"1": 25.2, "3": 37.3, "5": 40.6, "7": 100.0, "10": 117.0, "15": 122.8}, "rateLabel": "더행복 2형 · 7년납"}, {"id": "golden", "name": "골든종신", "sub": "(2601) 1종", "color": "#E3A21A", "slogan": ["낸 만큼 꺼내 써도", "보장은 처음 그대로"], "tag": "저해약환급금형", "steps": [["**① 낸 보험료만큼", "사망보장 체증", "(1형 10%·2형 5%/년)"], ["**② 중도인출", "낸 보험료 100~140%", "목적자금 활용"], ["**③ 사망보장 유지", "인출해도 가입금액", "그대로 종신 보장"]], "show": true, "rateOn": true, "rows": {"cond": ["1형 7년납 · 1억원", "월 1,296,000원", "총납입 1억 886만원"], "rtype": ["**저해약환급금형", "납입기간 중 해지 시", "환급금 적음"], "refund": ["~~공시이율 2.1% 가정", "5년 33.3%", "10년 67.7%", "++20년 116.9%", "40년 165.5%"], "cover": ["**낸 보험료만큼 체증", "1형 매년 10%씩", "2형 매년 5%씩", "~~(총 100~140%)", "인출해도 사망보장은", "처음 금액 그대로"]}, "func": {"f1": {"s": "ok", "t": ["20년 116.9%"]}, "f2": {"s": "na", "t": []}, "f3": {"s": "na", "t": []}, "f4": {"s": "ok", "t": []}, "f5": {"s": "ok", "t": ["낸 보험료 100~140%"]}, "f6": {"s": "na", "t": []}}, "rates": {"1": 21.0, "3": 30.9, "5": 33.3, "10": 67.7, "20": 116.9}, "rateLabel": "골든 1형 · 7년납"}, {"id": "vvip", "name": "착한종신", "sub": "(VVIP 2608)", "color": "#A8384B", "slogan": ["다음 세대를 위한", "세심한 상속 재원"], "tag": "저해약환급금형", "steps": [["**① 고액 상속 Plan", "가입금액 3억원 이상", "유동성 재원 마련"], ["**② 고액계약 할인", "가입금액별 3~8%", "보험료 할인"], ["**③ 유형 선택", "라이트형 · 암납입면제형", "(보험료/면제 선택)"]], "show": true, "rateOn": true, "rows": {"cond": ["라이트형 20년납", "가입 5억원(할인 전)", "월 785,000원", "총납입 1억 8,840만원"], "rtype": ["**저해약환급금형", "납입기간 중", "유해약환급금형의 50%"], "refund": ["~~공시이율 2.05% 가정", "5년 28.5%", "10년 32.8%", "20년 66.4%", "40년 69.5%"], "cover": ["**가입금액 3억원 이상", "최저사망보험금은", "가입금액·납입보험료 중", "큰 금액", "가산보험금(이율 연동)", "고액계약 할인 3~8%"]}, "func": {"f1": {"s": "x", "t": ["40년 69.5%"]}, "f2": {"s": "na", "t": []}, "f3": {"s": "na", "t": []}, "f4": {"s": "chk", "t": []}, "f5": {"s": "na", "t": []}, "f6": {"s": "ok", "t": ["암납입면제형"]}}, "rates": {"1": 0.0, "3": 20.1, "5": 28.5, "10": 32.8, "20": 66.4}, "rateLabel": "착한 라이트 · 20년납"}], "years": [1, 3, 5, 7, 10, 15, 20, 25, 30], "ref": 100, "ymax": null, "pension": {"title": "90세 시점 총액 ÷ 총납입보험료 (%)", "cats": ["사망 시", "해지 시", "연금 활용 시"], "ymax": null, "series": [{"name": "밸런스", "color": "#26766B", "vals": [180.9, 168.9, 200.0]}, {"name": "더행복", "color": "#647F2B", "vals": [172.4, 160.5, 153.9]}], "cards": [{"id": "pc1", "pid": "balance", "title": "밸런스종신 · 더블연금전환 (연금전환)", "lines": ["**방식: 주보험 보장을 종료하고 해약환급금을 재원으로 종신연금 수령 (1회 한)", "**조건: 45~80세 · 납입기간 경과 후 · 연금개시 3년 전 신청", "**최저보증: 총수령액(종신연금+사망시 지급금)이 납입보험료의 150~200%", "**예시(60세 전부전환 → 90세 사망): 총 1억 9,848만원 (200.0%)", "!!연 지급액: 확인필요 (리플릿 표기 불명확)"]}, {"id": "pc2", "pid": "haengbok", "title": "더행복종신 · 사망보험금 연금선지급", "lines": ["**방식: 사망보험금을 감액해 발생한 해약환급금을 연금으로 수령, 최대 30년", "**조건: 45~90세 · 납입기간 경과 · 계약자적립액 500만원↑ · 대출잔액 없음", "**예시(65세부터 30년, 매년 가입금액 3%): 연 356만원→432만원(점증)", "**연금선지급 누계 1억 1,953만원 + 94세 사망보험금 1,521만원", "**= 총 1억 3,475만원 (납입보험료 8,825만원의 152.7%)"]}]}, "points": ["100% 도달 시점: 더행복 7년 · 올백 10년 · 밸런스 10년(105.0%) · 골든 20년(116.9%) / 착한(라이트 20년납)은 40년 69.5%", "90세 시점 연금 활용: 밸런스 더블연금전환 200.0% vs 더행복 연금선지급 153.9% (납기·가입금액·연금 개시시점이 달라 단순 비교 유의)", "착한(VVIP)은 환급보다 고액 사망보장 중심: 월 100만원 기준 가입금액 올백 2억 9,000만원 vs 착한 라이트형 6억 4,000만원 (남 40세·20년납)", "올백·골든·착한: 연금전환/연금선지급 기능은 첨부 자료에 기재 없음"], "notes": ["기호: ●가능 · ×불가(예시 기준 100% 미달) · –첨부 자료에 기재 없음 · 확인필요=첨부 자료만으로 확인 불가. 주황 굵은 환급률은 납입보험료(100%) 도달 시점. 골든은 최저보증이율 가정 시에도 20년 100.0%.", "출처: 삼성생명 상품 리플릿(올백 2601 [준법감시필 26-2799·26-2806], 밸런스 2603 [26-2795], 더행복 2601 [25-4193], 골든 2601 [25-4206], VVIP 2608 [26-2444]). 상품별 예시 조건·이율 가정이 달라 단순 비교에 유의.", "올백 2종 환급률: 10년 100.0% · 20년 100.7% · 30년 117.7%. 올백 7년은 납입기간(10년) 내라 환급금 0(무해약환급금형).", "해약환급금은 납입보험료보다 적거나 없을 수 있으며, 고의적 사고 및 2년 이내 자살 시 사망보험금은 지급하지 않습니다. 가입 전 상품설명서·약관을 확인하시기 바랍니다."], "laws": [{"t": "소득세법 시행령 제25조 (보험차익 과세 기준 — 예시 금액은 세전)", "u": "https://www.law.go.kr/법령/소득세법시행령/제25조"}, {"t": "상속세 및 증여세법 제8조 (상속재산으로 보는 보험금 — 계약자·수익자 설정에 따라 달라짐)", "u": "https://www.law.go.kr/법령/상속세및증여세법/제8조"}], "styles": {}};
+const VIEWER = document.documentElement.dataset.viewer === '1';
+const KEY = 'jongsin_data_v1', GHK = 'jongsin_gh_cfg_v1', DATAFILE = 'jongsin_data.json';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nl = s => esc(s).replace(/\n/g, '<br>');
+const num = v => { if (v === null || v === undefined || v === '') return null; const n = Number(String(v).replace(/,/g, '')); return Number.isFinite(n) ? n : null; };
+const uid = () => 'x' + Math.random().toString(36).slice(2, 8);
+const clone = o => JSON.parse(JSON.stringify(o));
+const fmt1 = v => (Math.round(v * 10) / 10).toFixed(1);
+const lines = t => String(t).split('\n').map(s => s.replace(/\s+$/, '')).filter(s => s !== '');
+let S = null;
+const UI = { off: new Set(), hid: new Set(), lbl: false, fmt: false, open: {} };
+const FONTS = [['', '(기본 글꼴)'], ['"Malgun Gothic","맑은 고딕",sans-serif', '맑은 고딕'], ['"Apple SD Gothic Neo",sans-serif', 'Apple SD 고딕'], ['Dotum,"돋움",sans-serif', '돋움'], ['Gulim,"굴림",sans-serif', '굴림'], ['Batang,"바탕",serif', '바탕'], ['"Nanum Gothic","나눔고딕",sans-serif', '나눔고딕'], ['Arial,sans-serif', 'Arial'], ['"Times New Roman",serif', 'Times New Roman'], ['"Courier New",monospace', 'Courier New']];
+
+/* ===== 데이터 ===== */
+function normalize(o) {
+  const d = Object.assign(clone(DEFAULT), o || {});
+  d.styles = d.styles || {};
+  d.products = (d.products || []).map(p => Object.assign({ id: uid(), name: '', sub: '', color: '#26766B', slogan: [], tag: '', steps: [], show: true, rateOn: true, rows: {}, func: {}, rates: {}, rateLabel: '' }, p));
+  d.rows = d.rows || []; d.features = d.features || []; d.years = (d.years || []).map(Number).sort((a, b) => a - b);
+  d.pension = Object.assign({ title: '', cats: [], series: [], cards: [], ymax: null }, d.pension || {});
+  d.points = d.points || []; d.notes = d.notes || []; d.laws = d.laws || [];
+  return d;
+}
+function load() {
+  if (!VIEWER) { try { const t = localStorage.getItem(KEY); if (t) return normalize(JSON.parse(t)); } catch (e) {} }
+  return normalize(DEFAULT);
+}
+async function loadRemote() {
+  try {
+    const r = await fetch(DATAFILE, { cache: 'no-store' }); if (!r.ok) return;
+    const o = await r.json(); if (!o || !o.products) return;
+    if (VIEWER || (o.savedAt || 0) > (S.savedAt || 0)) { S = normalize(o); if (!VIEWER) { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} } renderAll(); }
+  } catch (e) {}
+}
+function commit(struct) {
+  S.savedAt = Date.now();
+  if (!VIEWER) { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  renderMain(); if (struct) renderAdmin();
+}
+const vis = () => S.products.filter(p => p.show !== false && !UI.off.has(p.id));
+const prod = id => S.products.find(p => p.id === id);
+
+/* ===== 글꼴 서식 ===== */
+function styleOf(key, grp) {
+  const st = S.styles || {}, o = Object.assign({}, st['g:' + grp], st[key]); let c = '';
+  if (o.ff) c += 'font-family:' + o.ff + ';'; if (o.fs) c += 'font-size:' + o.fs + 'px;'; if (o.c) c += 'color:' + o.c + ';';
+  if (o.b === 1) c += 'font-weight:700;'; else if (o.b === 0) c += 'font-weight:400;';
+  if (o.u === 1) c += 'text-decoration:underline;';
+  return c;
+}
+const sk = (key, grp) => { const st = styleOf(key, grp); return ` data-sk="${esc(key)}" data-sg="${grp}"${st ? ` style="${st}"` : ''}`; };
+const tx = (key, grp, text, tag = 'span', cls = '') => `<${tag}${cls ? ` class="${cls}"` : ''}${sk(key, grp)}>${nl(text)}</${tag}>`;
+function ln(key, grp, line) {
+  let s = String(line), c = ''; const m = s.match(/^(\*\*|~~|!!|\+\+)/);
+  if (m) { c = { '**': 'b', '~~': 'mu', '!!': 'wn', '++': 'hl' }[m[1]]; s = s.slice(2); }
+  return `<div class="ln ${c}"${sk(key, grp)}>${esc(s)}</div>`;
+}
+const lns = (key, grp, arr) => (arr || []).map((l, i) => ln(key + '.' + i, grp, l)).join('');
+function lum(hex) { const h = hex.replace('#', ''); const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16); return (0.299 * r + 0.587 * g + 0.114 * b) / 255; }
+const tc = hex => lum(hex || '#888888') > 0.62 ? '#3e2b20' : '#ffffff';
+const pcol = p => `--c:${p.color};--tc:${tc(p.color)}`;
+
+/* ===== 렌더 ===== */
+function renderMain() {
+  $('#hTitle').outerHTML = tx('ui.title', 'title', S.title, 'h1').replace('<h1', '<h1 id="hTitle"');
+  $('#hSub').outerHTML = tx('ui.sub', 'sub', S.sub, 'span', 'sub').replace('<span', '<span id="hSub"');
+  $('#hEx').outerHTML = tx('ui.issue', 'issue', S.issue ? '발행일 ' + S.issue : '', 'span', 'ex').replace('<span', '<span id="hEx"');
+  document.title = S.title;
+  const secs = ['concept', 'table', 'chart', 'pension', 'points'];
+  secs.forEach((k, i) => { $('#h' + (i + 1) + 't').innerHTML = tx('ui.sec.' + k, 'sech', S.sec[k] || ''); });
+  renderChips(); renderConcept(); renderTable(); renderChart(); renderRateTable(); renderPension(); renderPoints();
+  $('#ftCopy').textContent = 'ⓒ' + new Date().getFullYear() + '. YOON HYUNCHUL, ALL RIGHTS RESERVED.';
+}
+function renderChips() {
+  $('#pchips').innerHTML = '<b style="font-size:13px">상품 선택</b>' + S.products.filter(p => p.show !== false).map(p => `<span class="chip ${UI.off.has(p.id) ? '' : 'on'}" data-chip="${p.id}"><i style="background:${p.color}"></i>${esc(p.name)}</span>`).join('');
+}
+function renderConcept() {
+  const ps = vis();
+  let h = `<div class="cgrid" style="--n:${ps.length}"><div class="clab">${tx('ui.clab1', 'clab', '핵심\n컨셉', 'b')}${tx('ui.clab2', 'clabs', '각 상품\n개별 설명', 'small')}</div>`;
+  ps.forEach(p => {
+    h += `<div class="card" style="${pcol(p)}"><div class="ch">${tx(`p.${p.id}.name`, 'pname', p.name, 'div', 'nm')}${p.sub ? tx(`p.${p.id}.sub`, 'psub', p.sub, 'div', 'sb') : ''}<div class="sl">${lns(`p.${p.id}.slg`, 'slogan', p.slogan)}</div>${p.tag ? tx(`p.${p.id}.tag`, 'tag', p.tag, 'span', 'tg') : ''}</div>`;
+    (p.steps || []).forEach((st, k) => { h += `<div class="stp${k === 0 ? ' f' : ''}">${lns(`p.${p.id}.st${k}`, 'step', st)}</div>`; });
+    h += '</div>';
+  });
+  $('#conceptBody').innerHTML = h + '</div>';
+}
+const SYM = { ok: '● 가능', x: '× 불가', na: '–', chk: '확인필요' };
+function renderTable() {
+  const ps = vis(), n = ps.length;
+  let h = `<table class="cmp2"><colgroup><col style="width:7.6em">${ps.map(() => `<col style="width:${(100 / Math.max(1, n)).toFixed(3)}%">`).join('')}</colgroup><thead><tr><th class="corner">${tx('ui.corner', 'rowlabel', '구분')}</th>`;
+  ps.forEach(p => { h += `<th style="${pcol(p)}">${tx(`t.${p.id}.name`, 'tname', p.name)}${p.sub ? `<small>${esc(p.sub)}</small>` : ''}</th>`; });
+  h += '</tr></thead><tbody>';
+  S.rows.forEach(r => {
+    h += `<tr><th class="rl">${tx('r.' + r.id, 'rowlabel', r.label)}</th>`;
+    ps.forEach(p => { h += `<td>${lns(`c.${r.id}.${p.id}`, 'cell', (p.rows || {})[r.id])}</td>`; });
+    h += '</tr>';
+  });
+  if (S.features.length) {
+    h += `<tr class="fsep"><th colspan="${n + 1}">기능 비교</th></tr>`;
+    S.features.forEach(f => {
+      h += `<tr><th class="rl">${tx('f.' + f.id, 'flabel', f.label)}</th>`;
+      ps.forEach(p => {
+        const v = (p.func || {})[f.id] || { s: 'na', t: [] };
+        h += `<td><div class="st ${v.s}"${sk(`fs.${f.id}.${p.id}`, 'fstat')}>${SYM[v.s] || '–'}</div>${(v.t || []).map((t, i) => ln(`ft.${f.id}.${p.id}.${i}`, 'ftext', '~~' + t)).join('')}</td>`;
+      });
+      h += '</tr>';
+    });
+  }
+  $('#tableBody').innerHTML = h + '</tbody></table>';
+}
+/* --- 선 그래프 --- */
+const SHAPES = [(x, y, c) => `<circle cx="${x}" cy="${y}" r="5" fill="${c}" stroke="#fff" stroke-width="1"/>`,
+  (x, y, c) => `<rect x="${x - 4.5}" y="${y - 4.5}" width="9" height="9" fill="${c}" stroke="#fff" stroke-width="1"/>`,
+  (x, y, c) => `<path d="M${x} ${y - 6}L${x + 6} ${y}L${x} ${y + 6}L${x - 6} ${y}Z" fill="${c}" stroke="#fff" stroke-width="1"/>`,
+  (x, y, c) => `<path d="M${x} ${y - 6}L${x + 6} ${y + 5}L${x - 6} ${y + 5}Z" fill="${c}" stroke="#fff" stroke-width="1"/>`,
+  (x, y, c) => `<path d="M${x - 5} ${y - 5}L${x + 5} ${y + 5}M${x + 5} ${y - 5}L${x - 5} ${y + 5}" stroke="${c}" stroke-width="3"/>`];
+function chartProds() { return vis().filter(p => p.rateOn !== false && S.years.some(y => num((p.rates || {})[y]) !== null)); }
+let CH = null;
+function renderChart() {
+  const ps = chartProds(), yrs = S.years, N = Math.max(1, yrs.length);
+  const W = 1000, H = 330, L = 56, R = 18, T = 14, B = 40, pw = W - L - R, ph = H - T - B;
+  let mx = S.ref || 100; ps.forEach(p => yrs.forEach(y => { const v = num((p.rates || {})[y]); if (v !== null && v > mx) mx = v; }));
+  const step = mx > 200 ? 50 : 20, ymax = num(S.ymax) || (Math.ceil((mx + 1) / step) * step);
+  const X = i => L + (i + 0.5) * pw / N, Y = v => T + ph * (1 - v / ymax);
+  let s = `<svg viewBox="0 0 ${W} ${H}" id="chSvg">`;
+  for (let v = 0; v <= ymax + 0.001; v += step) s += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="#e2d6c4" stroke-width="1"/><text x="${L - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="13" fill="#3e2b20">${v}%</text>`;
+  yrs.forEach((y, i) => { s += `<text x="${X(i)}" y="${H - B + 20}" text-anchor="middle" font-size="13" fill="#3e2b20">${y}년</text>`; });
+  s += `<text x="${L + pw / 2}" y="${H - 4}" text-anchor="middle" font-size="12" fill="#7a6455">경과년도</text>`;
+  if (S.ref) s += `<line x1="${L}" x2="${W - R}" y1="${Y(S.ref)}" y2="${Y(S.ref)}" stroke="#8a7a6e" stroke-width="2" stroke-dasharray="7 5"/><text x="${W - R - 4}" y="${Y(S.ref) - 5}" text-anchor="end" font-size="12" fill="#6b5b50">원금(${S.ref}%)</text>`;
+  s += `<line id="chGuide" x1="0" x2="0" y1="${T}" y2="${T + ph}" stroke="#1f3a5f" stroke-dasharray="3 3" opacity="0"/>`;
+  ps.forEach((p, k) => {
+    if (UI.hid.has(p.id)) return;
+    const pts = []; yrs.forEach((y, i) => { const v = num((p.rates || {})[y]); if (v !== null) pts.push([X(i), Y(v), v]); });
+    if (pts.length > 1) s += `<path d="${pts.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join('')}" fill="none" stroke="${p.color}" stroke-width="2.8" stroke-linejoin="round"/>`;
+    pts.forEach(q => { s += SHAPES[k % SHAPES.length](q[0].toFixed(1), q[1].toFixed(1), p.color); if (UI.lbl) s += `<text x="${q[0]}" y="${q[1] - 9}" text-anchor="middle" font-size="11.5" font-weight="700" fill="${p.color}">${fmt1(q[2])}</text>`; });
+  });
+  s += '</svg>';
+  $('#chBody').innerHTML = s;
+  $('#chLeg').innerHTML = ps.map((p, k) => `<span class="li ${UI.hid.has(p.id) ? 'off' : ''}" data-leg="${p.id}"><svg viewBox="0 0 24 12"><line x1="0" x2="24" y1="6" y2="6" stroke="${p.color}" stroke-width="2.8"/>${SHAPES[k % SHAPES.length](12, 6, p.color)}</svg>${esc(p.name)}</span>`).join('') + (S.ref ? `<span class="li" style="cursor:default"><svg viewBox="0 0 24 12"><line x1="0" x2="24" y1="6" y2="6" stroke="#8a7a6e" stroke-width="2" stroke-dasharray="5 3"/></svg>원금(${S.ref}%)</span>` : '');
+  CH = { ps, X, L, pw, N, yrs };
+}
+function renderRateTable() {
+  const ps = chartProds(), yrs = S.years;
+  let h = `<table class="rt2"><colgroup><col style="width:14em">${yrs.map(() => '<col>').join('')}</colgroup><thead><tr><th>${tx('ui.rtc', 'rtlabel', '상품 · 예시 조건')}</th>${yrs.map(y => `<th>${y}년</th>`).join('')}</tr></thead><tbody>`;
+  ps.forEach(p => {
+    h += `<tr><th class="pn" style="${pcol(p)}">${tx(`rl.${p.id}`, 'rlabel', p.rateLabel || p.name)}</th>`;
+    yrs.forEach(y => { const v = num((p.rates || {})[y]); h += v === null ? '<td class="no">–</td>' : `<td class="${S.ref && v >= S.ref ? 'hit' : ''}">${fmt1(v)}</td>`; });
+    h += '</tr>';
+  });
+  $('#rateTbl').innerHTML = h + '</tbody></table>';
+}
+function renderPension() {
+  const P = S.pension, ser = P.series.filter(x => x.name || x.vals.length), C = P.cats.length || 1, K = Math.max(1, ser.length);
+  const W = 560, H = 330, L = 50, R = 10, T = 30, B = 34, pw = W - L - R, ph = H - T - B;
+  let mx = 0; ser.forEach(x => (x.vals || []).forEach(v => { if (num(v) > mx) mx = num(v); }));
+  const ymax = num(P.ymax) || (Math.ceil(mx * 1.12 / 40) * 40 || 40), step = ymax / 6;
+  const Y = v => T + ph * (1 - v / ymax), gw = pw / C, bw = Math.min(46, gw * 0.72 / K);
+  let s = `<svg viewBox="0 0 ${W} ${H}"><text x="${W / 2}" y="16" text-anchor="middle" font-size="14" font-weight="700" fill="#3e2b20">${esc(P.title)}</text>`;
+  for (let i = 0; i <= 6; i++) { const v = step * i; s += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="#e2d6c4"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="#3e2b20">${Math.round(v)}%</text>`; }
+  P.cats.forEach((c, ci) => {
+    const gx = L + ci * gw + gw / 2;
+    s += `<text x="${gx}" y="${H - 12}" text-anchor="middle" font-size="13" fill="#3e2b20">${esc(c)}</text>`;
+    ser.forEach((x, si) => { const v = num((x.vals || [])[ci]); if (v === null) return; const bx = gx - (K * bw) / 2 + si * bw, y = Y(v);
+      s += `<rect x="${bx.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw - 2).toFixed(1)}" height="${(T + ph - y).toFixed(1)}" fill="${x.color}"/><text x="${(bx + (bw - 2) / 2).toFixed(1)}" y="${(y - 5).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="#3e2b20">${fmt1(v)}%</text>`; });
+  });
+  s += '</svg>';
+  s += `<div class="legend">${ser.map(x => `<span class="li" style="cursor:default"><i style="width:12px;height:12px;background:${x.color};display:inline-block"></i>${esc(x.name)}</span>`).join('')}</div>`;
+  $('#penChart').innerHTML = s;
+  $('#penCards').innerHTML = (P.cards || []).map(c => { const p = prod(c.pid) || { color: '#1f3a5f' };
+    return `<div class="pcard" style="${pcol(p)}"><div class="pt">${tx(`pc.${c.id}.t`, 'pctitle', c.title)}</div><div class="pb">${lns(`pc.${c.id}.l`, 'pcline', c.lines)}</div></div>`; }).join('');
+}
+function renderPoints() {
+  $('#ptsBody').innerHTML = S.points.length ? `<div class="ptt"${sk('ui.ptt', 'ptt')}>핵심 포인트 (리플릿 수치 기준)</div>` + lns('pt', 'point', S.points) : '';
+  $('#ntsBody').innerHTML = lns('nt', 'note', S.notes);
+  $('#lawsBody').innerHTML = S.laws.length ? `<div${sk('ui.lawt', 'note')}>※ 근거 법령(국가법령정보센터 조문 링크): ` + S.laws.map((l, i) => `<a href="${esc(l.u)}" target="_blank" rel="noopener">${esc(l.t)}</a>`).join(' · ') + '</div>' : '';
+}
+function renderAll() { renderMain(); if (!VIEWER) renderAdmin(); }
+
+/* ===== 이벤트 (조회 공통) ===== */
+document.addEventListener('click', e => {
+  const c = e.target.closest('[data-chip]'); if (c) { const id = c.dataset.chip; UI.off.has(id) ? UI.off.delete(id) : UI.off.add(id); renderMain(); return; }
+  const lg = e.target.closest('[data-leg]'); if (lg) { const id = lg.dataset.leg; UI.hid.has(id) ? UI.hid.delete(id) : UI.hid.add(id); renderChart(); return; }
+  if (!VIEWER && UI.fmt) { const t = e.target.closest('[data-sk]'); if (t && !e.target.closest('.modal')) { e.preventDefault(); e.stopPropagation(); fmtDlg(t); } }
+}, true);
+$('#chLbl').addEventListener('change', e => { UI.lbl = e.target.checked; renderChart(); });
+$('#prt').addEventListener('click', () => window.print());
+const pgStyle = document.createElement('style'); document.head.appendChild(pgStyle);
+function setOrient(o) { pgStyle.textContent = `@page{size:A4 ${o};margin:8mm}`; $('#orient').value = o; try { localStorage.setItem('jongsin_orient', o); } catch (e) {} }
+$('#orient').addEventListener('change', e => setOrient(e.target.value));
+function setPz(v) { document.documentElement.style.setProperty('--pz', v / 100); $('#pzv').textContent = v + '%'; $('#pzr').value = v; try { localStorage.setItem('jongsin_pz', v); } catch (e) {} }
+$('#pzr').addEventListener('input', e => setPz(+e.target.value));
+{ let o = 'portrait', z = 100; try { o = localStorage.getItem('jongsin_orient') || o; z = +(localStorage.getItem('jongsin_pz') || z); } catch (e) {} setOrient(o); setPz(z); }
+/* 그래프 툴팁 */
+const cb = $('.cb');
+cb.addEventListener('mousemove', e => {
+  if (!CH || !CH.ps.length) return; const svg = $('#chSvg'); if (!svg) return; const r = svg.getBoundingClientRect(), sc = 1000 / r.width, mx = (e.clientX - r.left) * sc;
+  const i = Math.floor((mx - CH.L) / (CH.pw / CH.N)); const tip = $('#chTip'), g = $('#chGuide');
+  if (i < 0 || i >= CH.N) { tip.style.display = 'none'; g.setAttribute('opacity', 0); return; }
+  const y = CH.yrs[i]; g.setAttribute('x1', CH.X(i)); g.setAttribute('x2', CH.X(i)); g.setAttribute('opacity', .6);
+  tip.innerHTML = `<div class="th">${y}년 경과</div>` + CH.ps.filter(p => !UI.hid.has(p.id)).map(p => { const v = num((p.rates || {})[y]); return `<div class="tr"><i style="background:${p.color}"></i><span>${esc(p.name)}</span><b>${v === null ? '–' : fmt1(v) + '%'}</b></div>`; }).join('');
+  tip.style.display = 'block'; const cr = cb.getBoundingClientRect(); let lx = e.clientX - cr.left + 14; if (lx + 260 > cr.width) lx = e.clientX - cr.left - 270; tip.style.left = Math.max(0, lx) + 'px';
+});
+cb.addEventListener('mouseleave', () => { $('#chTip').style.display = 'none'; const g = $('#chGuide'); if (g) g.setAttribute('opacity', 0); });
+
+/* ===== 모달 (드래그 이동) ===== */
+let zTop = 1000;
+function openModal(title, node, w = 760) {
+  const m = document.createElement('div'); m.className = 'modal'; m.style.width = w + 'px'; m.style.zIndex = ++zTop;
+  m.innerHTML = `<div class="mh"><span>${esc(title)}</span><button class="x" data-close>✕</button></div><div class="mb"></div>`;
+  $('.mb', m).append(node); document.body.append(m);
+  m.addEventListener('mousedown', () => { m.style.zIndex = ++zTop; });
+  $('[data-close]', m).addEventListener('click', () => { m.remove(); $$('.fsel').forEach(x => x.classList.remove('fsel')); });
+  const hd = $('.mh', m); let sx, sy, ox, oy, drag = false;
+  hd.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; drag = true; const r = m.getBoundingClientRect(); m.style.transform = 'none'; m.style.left = r.left + 'px'; m.style.top = r.top + 'px'; sx = e.clientX; sy = e.clientY; ox = r.left; oy = r.top; hd.setPointerCapture(e.pointerId); });
+  hd.addEventListener('pointermove', e => { if (!drag) return; m.style.left = Math.max(0, ox + e.clientX - sx) + 'px'; m.style.top = Math.max(0, oy + e.clientY - sy) + 'px'; });
+  hd.addEventListener('pointerup', () => { drag = false; });
+  return m;
+}
+window.addEventListener('beforeprint', () => $$('.modal').forEach(m => m.remove()));
+
+/* ================= 관리 전용 ================= */
+let fmtDlg = () => {};
+function renderAdmin() {}
+if (!VIEWER) {
+document.body.classList.add('admin');
+const OPEN = id => UI.open[id] ? ' open' : '';
+const KIND = { ok: '● 가능', x: '× 불가', na: '– 자료 미기재', chk: '확인필요' };
+const HINT = '<div class="tnote">줄 단위 입력 · 접두어: <b>**</b> 굵게 · <b>~~</b> 흐리게(작게) · <b>!!</b> 경고(빨강) · <b>++</b> 강조(주황)</div>';
+const move = (arr, i, d) => { const j = i + d; if (j < 0 || j >= arr.length) return; [arr[i], arr[j]] = [arr[j], arr[i]]; };
+const ta = (k, v, rows = 3, extra = '') => `<textarea rows="${rows}" ${extra} data-v="${k}">${esc((v || []).join ? v.join('\n') : v)}</textarea>`;
+
+renderAdmin = function () {
+  const A = $('#adm'); if (!A) return;
+  // 열려 있던 패널 기억
+  $$('details.pnl', A).forEach(d => { UI.open[d.dataset.id] = d.open; });
+  const P = S.products;
+  let h = '';
+  /* 상품 관리 */
+  h += `<details class="pnl" data-id="prod"${OPEN('prod')}><summary>📦 상품 관리 (추가 · 수정 · 순서 · 표시)</summary><div class="in">
+   <div class="row"><button class="pri" data-a="padd">＋ 상품 추가</button><span class="tnote">※ 표시를 끄면 조회페이지·인쇄에서 제외됩니다(단종 등). 상세 내용은 [편집]에서 입력합니다.</span></div>
+   <div style="overflow:auto"><table class="mt" style="width:100%"><tr><th>순서</th><th>상품명</th><th>부제</th><th>유형 태그</th><th>색상</th><th>표시</th><th>그래프</th><th></th></tr>
+   ${P.map((p, i) => `<tr><td><button class="sm" data-a="pmv" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''}>▲</button><button class="sm" data-a="pmv" data-i="${i}" data-d="1" ${i === P.length - 1 ? 'disabled' : ''}>▼</button></td>
+   <td><input type="text" data-f="ptxt" data-id="${p.id}" data-k="name" value="${esc(p.name)}"></td><td><input type="text" data-f="ptxt" data-id="${p.id}" data-k="sub" value="${esc(p.sub)}"></td><td><input type="text" data-f="ptxt" data-id="${p.id}" data-k="tag" value="${esc(p.tag)}"></td>
+   <td><input type="color" data-f="pcol" data-id="${p.id}" value="${p.color}"></td><td><input type="checkbox" data-f="pchk" data-id="${p.id}" data-k="show" ${p.show !== false ? 'checked' : ''}></td><td><input type="checkbox" data-f="pchk" data-id="${p.id}" data-k="rateOn" ${p.rateOn !== false ? 'checked' : ''}></td>
+   <td style="white-space:nowrap"><button class="sm pri" data-a="pedit" data-id="${p.id}">편집</button> <button class="sm dg" data-a="pdel" data-id="${p.id}">삭제</button></td></tr>`).join('')}</table></div></div></details>`;
+  /* 항목 · 기능 */
+  h += `<details class="pnl" data-id="feat"${OPEN('feat')}><summary>🧩 비교 항목 · 기능 관리 (행 추가)</summary><div class="in"><div class="fg" style="grid-template-columns:1fr 1fr;gap:12px">
+   <div class="blk"><b>비교 항목(글 입력 행)</b><div class="tnote">예: 예시 가입조건, 환급형태 … 항목을 추가하면 각 상품 편집창에 입력칸이 생깁니다.</div>
+   ${S.rows.map((r, i) => `<div class="row"><input type="text" data-f="rowdef" data-i="${i}" value="${esc(r.label.replace(/\n/g, ' / '))}" style="flex:1" title="줄바꿈은 ' / ' 로 입력"><button class="sm" data-a="rmv" data-i="${i}" data-d="-1">▲</button><button class="sm" data-a="rmv" data-i="${i}" data-d="1">▼</button><button class="sm dg" data-a="rdel" data-i="${i}">삭제</button></div>`).join('')}
+   <div class="row"><input type="text" id="newRow" placeholder="새 비교 항목명" style="flex:1"><button class="sm pri" data-a="radd">＋ 항목 추가</button></div></div>
+   <div class="blk"><b>기능(가능/불가 표시 행)</b><div class="tnote">예: 원금보장, 연금전환, 약관대출 … 추가하면 각 상품 편집창 [기능] 탭에서 상태를 지정합니다.</div>
+   ${S.features.map((f, i) => `<div class="row"><input type="text" data-f="featdef" data-i="${i}" value="${esc(f.label.replace(/\n/g, ' / '))}" style="flex:1"><button class="sm" data-a="fmv" data-i="${i}" data-d="-1">▲</button><button class="sm" data-a="fmv" data-i="${i}" data-d="1">▼</button><button class="sm dg" data-a="fdel" data-i="${i}">삭제</button></div>`).join('')}
+   <div class="row"><input type="text" id="newFeat" placeholder="새 기능명" style="flex:1"><button class="sm pri" data-a="fadd">＋ 기능 추가</button></div></div></div></div></details>`;
+  /* 환급률 data */
+  const yrs = S.years;
+  h += `<details class="pnl" data-id="rate"${OPEN('rate')}><summary>📈 환급률 그래프 data 입력 (경과년도별)</summary><div class="in">
+   <div class="row"><label>기준선(%) <input type="number" data-f="g" data-k="ref" value="${S.ref ?? ''}" style="width:70px"></label><label>Y축 최대(비우면 자동) <input type="number" data-f="g" data-k="ymax" value="${S.ymax ?? ''}" style="width:80px"></label>
+    <span class="muted">경과년도 추가</span><input type="number" id="newYear" min="1" style="width:70px" placeholder="예: 40"><button class="sm pri" data-a="yadd">＋ 추가</button>
+    <span class="tnote">※ 빈 칸 = 자료 없음(–). 엑셀에서 복사한 숫자 범위를 칸에 붙여넣으면 여러 칸이 한 번에 채워집니다. 입력 즉시 아래 그래프에 반영됩니다.</span></div>
+   <div style="overflow:auto"><table class="mt" id="rmat"><tr><th>상품</th><th>예시 조건(표 · 범례 표기)</th>${yrs.map(y => `<th>${y}년 <button class="sm dg" data-a="ydel" data-y="${y}" title="이 경과년도 삭제">✕</button></th>`).join('')}</tr>
+   ${P.map(p => `<tr><td class="l"><span style="display:inline-block;width:10px;height:10px;background:${p.color};border-radius:2px"></span> ${esc(p.name)}</td><td><input type="text" data-f="ptxt" data-id="${p.id}" data-k="rateLabel" value="${esc(p.rateLabel)}" style="width:170px"></td>
+   ${yrs.map(y => `<td><input type="text" class="y" inputmode="decimal" data-f="prate" data-id="${p.id}" data-y="${y}" value="${(p.rates || {})[y] ?? ''}"></td>`).join('')}</tr>`).join('')}</table></div></div></details>`;
+  /* 연금 */
+  const PE = S.pension;
+  h += `<details class="pnl" data-id="pen"${OPEN('pen')}><summary>💰 연금 기능 비교 data (그래프 · 설명 카드)</summary><div class="in">
+   <div class="row"><label>그래프 제목 <input type="text" data-f="pen" data-k="title" value="${esc(PE.title)}" style="width:340px"></label><label>Y축 최대(자동=비움) <input type="number" data-f="pen" data-k="ymax" value="${PE.ymax ?? ''}" style="width:80px"></label></div>
+   <div style="overflow:auto"><table class="mt"><tr><th>계열(상품)</th><th>색</th>${PE.cats.map((c, ci) => `<th><input type="text" data-f="pcat" data-ci="${ci}" value="${esc(c)}" style="width:96px"> <button class="sm dg" data-a="pcdel" data-ci="${ci}">✕</button></th>`).join('')}<th><button class="sm pri" data-a="pcadd">＋ 항목</button></th></tr>
+   ${PE.series.map((x, si) => `<tr><td><input type="text" data-f="pser" data-si="${si}" data-k="name" value="${esc(x.name)}" style="width:110px"></td><td><input type="color" data-f="pser" data-si="${si}" data-k="color" value="${x.color}"></td>${PE.cats.map((c, ci) => `<td><input type="text" class="y" data-f="pval" data-si="${si}" data-ci="${ci}" value="${(x.vals || [])[ci] ?? ''}"></td>`).join('')}<td><button class="sm dg" data-a="psdel" data-si="${si}">삭제</button></td></tr>`).join('')}</table></div>
+   <div class="row"><button class="sm pri" data-a="psadd">＋ 계열(상품) 추가</button></div>
+   <div class="tnote" style="margin-top:6px"><b>연금 설명 카드</b></div>${HINT}
+   ${PE.cards.map((c, i) => `<div class="blk"><div class="row"><select data-f="pcard" data-i="${i}" data-k="pid">${P.map(p => `<option value="${p.id}" ${c.pid === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select><input type="text" data-f="pcard" data-i="${i}" data-k="title" value="${esc(c.title)}" style="flex:1"><button class="sm" data-a="cmv" data-i="${i}" data-d="-1">▲</button><button class="sm" data-a="cmv" data-i="${i}" data-d="1">▼</button><button class="sm dg" data-a="cdel" data-i="${i}">삭제</button></div>
+   <textarea rows="5" data-f="pcardl" data-i="${i}">${esc(c.lines.join('\n'))}</textarea></div>`).join('')}
+   <div class="row"><button class="sm pri" data-a="cadd">＋ 설명 카드 추가</button></div></div></details>`;
+  /* 문구 */
+  h += `<details class="pnl" data-id="txt"${OPEN('txt')}><summary>📝 제목 · 문구 · 법령 링크</summary><div class="in">
+   <div class="fg"><label>제목<input type="text" data-f="g" data-k="title" value="${esc(S.title)}"></label><label>부제<input type="text" data-f="g" data-k="sub" value="${esc(S.sub)}"></label><label>발행일<input type="text" data-f="g" data-k="issue" value="${esc(S.issue)}"></label>
+   ${['concept', 'table', 'chart', 'pension', 'points'].map((k, i) => `<label>구역 ${i + 1} 제목<input type="text" data-f="sec" data-k="${k}" value="${esc(S.sec[k])}"></label>`).join('')}</div>
+   ${HINT}<div class="fg" style="grid-template-columns:1fr 1fr"><label>핵심 포인트 (줄 단위)${ta('pts', S.points, 6, 'data-f="lines" data-k="points"')}</label><label>유의사항 · 출처 (줄 단위)${ta('nts', S.notes, 6, 'data-f="lines" data-k="notes"')}</label></div>
+   <div class="blk"><b>근거 법령 링크</b> <span class="tnote">(국가법령정보센터 조문 주소 · 예: https://www.law.go.kr/법령/소득세법시행령/제25조)</span>
+   ${S.laws.map((l, i) => `<div class="row"><input type="text" data-f="law" data-i="${i}" data-k="t" value="${esc(l.t)}" style="flex:1" placeholder="법령·조문 설명"><input type="text" data-f="law" data-i="${i}" data-k="u" value="${esc(l.u)}" style="flex:1" placeholder="https://…"><button class="sm dg" data-a="ldel" data-i="${i}">삭제</button></div>`).join('')}
+   <div class="row"><button class="sm pri" data-a="ladd">＋ 법령 추가</button></div></div></div></details>`;
+  /* 데이터 */
+  h += `<details class="pnl" data-id="dat"${OPEN('dat')}><summary>💾 데이터 저장 · 가져오기</summary><div class="in"><div class="row">
+   <span class="tnote">※ 입력값은 이 브라우저에 자동 저장됩니다. 조회페이지에 공유하려면 우측 상단 [⬆ GitHub 반영]을 누르세요(파일: Prod/${DATAFILE}).</span></div>
+   <div class="row"><button data-a="exp">📥 JSON 내보내기</button><button data-a="imp">📤 JSON 가져오기</button><input type="file" id="impF" accept=".json,application/json" style="display:none"><button data-a="fmtreset" class="dg">글꼴서식 전체 초기화</button><button data-a="reset" class="dg">↺ 기본 데이터로 초기화</button></div></div></details>`;
+  A.innerHTML = h;
+};
+
+/* --- 입력 처리 --- */
+const getP = id => prod(id);
+document.addEventListener('input', e => {
+  const t = e.target, f = t.dataset.f; if (!f) return;
+  const P = t.dataset.id ? getP(t.dataset.id) : null, i = +t.dataset.i;
+  switch (f) {
+    case 'g': S[t.dataset.k] = t.type === 'number' ? num(t.value) : t.value; break;
+    case 'sec': S.sec[t.dataset.k] = t.value; break;
+    case 'ptxt': P[t.dataset.k] = t.value; break;
+    case 'pcol': P.color = t.value; break;
+    case 'pchk': P[t.dataset.k] = t.checked; break;
+    case 'pslg': P.slogan = lines(t.value); break;
+    case 'pstep': P.steps[+t.dataset.s] = lines(t.value); break;
+    case 'prow': P.rows[t.dataset.r] = lines(t.value); break;
+    case 'pfs': (P.func[t.dataset.fid] = P.func[t.dataset.fid] || { s: 'na', t: [] }).s = t.value; break;
+    case 'pft': (P.func[t.dataset.fid] = P.func[t.dataset.fid] || { s: 'na', t: [] }).t = lines(t.value); break;
+    case 'prate': { const v = num(t.value); P.rates = P.rates || {}; if (v === null) delete P.rates[t.dataset.y]; else P.rates[t.dataset.y] = v; break; }
+    case 'rowdef': S.rows[i].label = t.value.replace(/ \/ /g, '\n'); break;
+    case 'featdef': S.features[i].label = t.value.replace(/ \/ /g, '\n'); break;
+    case 'lines': S[t.dataset.k] = lines(t.value); break;
+    case 'law': S.laws[i][t.dataset.k] = t.value; break;
+    case 'pen': S.pension[t.dataset.k] = t.type === 'number' ? num(t.value) : t.value; break;
+    case 'pcat': S.pension.cats[+t.dataset.ci] = t.value; break;
+    case 'pser': S.pension.series[+t.dataset.si][t.dataset.k] = t.value; break;
+    case 'pval': { const x = S.pension.series[+t.dataset.si]; x.vals = x.vals || []; x.vals[+t.dataset.ci] = num(t.value); break; }
+    case 'pcard': S.pension.cards[i][t.dataset.k] = t.value; break;
+    case 'pcardl': S.pension.cards[i].lines = lines(t.value); break;
+    case 'fmt': return;
+    default: return;
+  }
+  commit(false);
+  if (f === 'pcol' || f === 'ptxt' && ['name', 'sub', 'tag'].includes(t.dataset.k)) { /* 색·이름은 칩/그래프 범례 즉시 반영 (renderMain 완료) */ }
+});
+document.addEventListener('change', e => { const t = e.target; if (t.dataset.f === 'pchk') { commit(true); } if (t.id === 'impF') importFile(t.files[0]); if (t.dataset.f === 'pfs') commit(false); });
+/* 엑셀 붙여넣기 (환급률 · 연금 표) */
+document.addEventListener('paste', e => {
+  const t = e.target; if (!t.dataset || !['prate', 'pval'].includes(t.dataset.f)) return;
+  const txt = (e.clipboardData || window.clipboardData).getData('text'); if (!/[\t\n]/.test(txt)) return;
+  e.preventDefault();
+  const grid = txt.replace(/\r/g, '').replace(/\n$/, '').split('\n').map(r => r.split('\t'));
+  const cells = $$(`input[data-f="${t.dataset.f}"]`, t.closest('table')), tbl = t.closest('table');
+  const rowsEl = $$('tr', tbl).map(tr => $$(`input[data-f="${t.dataset.f}"]`, tr)).filter(a => a.length);
+  const r0 = rowsEl.findIndex(a => a.includes(t)), c0 = rowsEl[r0].indexOf(t);
+  grid.forEach((row, ri) => row.forEach((v, ci) => { const el = rowsEl[r0 + ri] && rowsEl[r0 + ri][c0 + ci]; if (!el) return; el.value = v.trim().replace('%', ''); el.dispatchEvent(new Event('input', { bubbles: true })); }));
+});
+/* --- 버튼 처리 --- */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const a = b.dataset.a, i = +b.dataset.i, d = +b.dataset.d;
+  switch (a) {
+    case 'padd': { const p = { id: uid(), name: '새 상품', sub: '', color: '#8a5a2b', slogan: [], tag: '', steps: [['**① 단계1', '내용'], ['**② 단계2', '내용'], ['**③ 단계3', '내용']], show: true, rateOn: true, rows: {}, func: {}, rates: {}, rateLabel: '새 상품' }; S.products.push(p); commit(true); editProd(p.id); return; }
+    case 'pmv': move(S.products, i, d); commit(true); return;
+    case 'pdel': { const p = getP(b.dataset.id); if (!confirm(`'${p.name}' 상품을 삭제합니다. (표시만 끄려면 상품 목록의 '표시' 체크를 해제하세요)`)) return; S.products = S.products.filter(x => x.id !== p.id); S.pension.cards = S.pension.cards.filter(c => c.pid !== p.id); commit(true); return; }
+    case 'pedit': editProd(b.dataset.id); return;
+    case 'radd': { const v = $('#newRow').value.trim(); if (!v) return alert('항목명을 입력하세요.'); S.rows.push({ id: 'r' + uid(), label: v }); commit(true); return; }
+    case 'rmv': move(S.rows, i, d); commit(true); return;
+    case 'rdel': if (!confirm(`'${S.rows[i].label.replace(/\n/g, ' ')}' 항목을 삭제합니다. 각 상품에 입력한 내용도 함께 사라집니다.`)) return; S.rows.splice(i, 1); commit(true); return;
+    case 'fadd': { const v = $('#newFeat').value.trim(); if (!v) return alert('기능명을 입력하세요.'); S.features.push({ id: 'f' + uid(), label: v }); commit(true); return; }
+    case 'fmv': move(S.features, i, d); commit(true); return;
+    case 'fdel': if (!confirm(`'${S.features[i].label.replace(/\n/g, ' ')}' 기능을 삭제합니다.`)) return; S.features.splice(i, 1); commit(true); return;
+    case 'yadd': { const y = num($('#newYear').value); if (!y || y < 1) return alert('경과년도를 숫자로 입력하세요.'); if (S.years.includes(y)) return alert('이미 있는 경과년도입니다.'); S.years.push(y); S.years.sort((p, q) => p - q); UI.open.rate = true; commit(true); return; }
+    case 'ydel': { const y = +b.dataset.y; if (!confirm(`${y}년 열을 삭제합니다. 입력한 환급률도 사라집니다.`)) return; S.years = S.years.filter(v => v !== y); S.products.forEach(p => { delete (p.rates || {})[y]; }); UI.open.rate = true; commit(true); return; }
+    case 'pcadd': S.pension.cats.push('새 항목'); S.pension.series.forEach(x => x.vals.push(null)); UI.open.pen = true; commit(true); return;
+    case 'pcdel': { const ci = +b.dataset.ci; S.pension.cats.splice(ci, 1); S.pension.series.forEach(x => x.vals.splice(ci, 1)); UI.open.pen = true; commit(true); return; }
+    case 'psadd': S.pension.series.push({ name: '새 계열', color: '#b8892b', vals: S.pension.cats.map(() => null) }); UI.open.pen = true; commit(true); return;
+    case 'psdel': S.pension.series.splice(+b.dataset.si, 1); UI.open.pen = true; commit(true); return;
+    case 'cadd': S.pension.cards.push({ id: uid(), pid: (S.products[0] || {}).id, title: '새 설명 카드', lines: ['**내용을 입력하세요'] }); UI.open.pen = true; commit(true); return;
+    case 'cmv': move(S.pension.cards, i, d); UI.open.pen = true; commit(true); return;
+    case 'cdel': S.pension.cards.splice(i, 1); UI.open.pen = true; commit(true); return;
+    case 'ladd': S.laws.push({ t: '', u: 'https://www.law.go.kr/' }); UI.open.txt = true; commit(true); return;
+    case 'ldel': S.laws.splice(i, 1); UI.open.txt = true; commit(true); return;
+    case 'exp': { const blob = new Blob([JSON.stringify(S, null, 1)], { type: 'application/json' }), u = URL.createObjectURL(blob), el = document.createElement('a'); el.href = u; el.download = DATAFILE; el.click(); URL.revokeObjectURL(u); return; }
+    case 'imp': $('#impF').click(); return;
+    case 'fmtreset': if (confirm('모든 글꼴서식(글꼴·크기·색상·굵기·밑줄)을 초기화합니다.')) { S.styles = {}; commit(false); } return;
+    case 'reset': if (confirm('모든 입력을 지우고 기본 데이터로 되돌립니다. 계속할까요?')) { S = normalize(DEFAULT); S.savedAt = Date.now(); commit(true); } return;
+  }
+});
+function importFile(f) {
+  if (!f) return; const r = new FileReader();
+  r.onload = () => { try { const o = JSON.parse(r.result); if (!o.products) throw 0; S = normalize(o); commit(true); alert('가져왔습니다.'); } catch (e) { alert('올바른 JSON 파일이 아닙니다.'); } $('#impF').value = ''; };
+  r.readAsText(f);
+}
+
+/* --- 상품 편집 창 --- */
+function editProd(id) {
+  const p = getP(id); if (!p) return; const box = document.createElement('div');
+  let tab = 'basic';
+  const tabs = [['basic', '기본'], ['steps', '컨셉 도식'], ['rows', '비교 항목'], ['func', '기능'], ['rate', '환급률']];
+  const draw = () => {
+    let b = '';
+    if (tab === 'basic') b = `<div class="fg"><label>상품명<input type="text" data-f="ptxt" data-id="${id}" data-k="name" value="${esc(p.name)}"></label><label>부제<input type="text" data-f="ptxt" data-id="${id}" data-k="sub" value="${esc(p.sub)}"></label><label>유형 태그(예: 저해약환급금형)<input type="text" data-f="ptxt" data-id="${id}" data-k="tag" value="${esc(p.tag)}"></label><label>대표 색상<input type="color" data-f="pcol" data-id="${id}" value="${p.color}" style="height:30px"></label></div>
+      <div class="row"><b>슬로건</b> <span class="tnote">줄 단위(2줄 권장)</span></div>${HINT}<textarea rows="3" data-f="pslg" data-id="${id}">${esc(p.slogan.join('\n'))}</textarea>
+      <div class="row"><label><input type="checkbox" data-f="pchk" data-id="${id}" data-k="show" ${p.show !== false ? 'checked' : ''}> 조회·인쇄에 표시</label><label><input type="checkbox" data-f="pchk" data-id="${id}" data-k="rateOn" ${p.rateOn !== false ? 'checked' : ''}> 환급률 그래프에 포함</label></div>`;
+    if (tab === 'steps') b = HINT + (p.steps || []).map((st, k) => `<div class="blk"><div class="row"><b>단계 ${k + 1}</b><button class="sm dg" data-sdel="${k}">삭제</button></div><textarea rows="4" data-f="pstep" data-id="${id}" data-s="${k}">${esc(st.join('\n'))}</textarea></div>`).join('') + `<button class="sm pri" data-sadd>＋ 단계 추가</button>`;
+    if (tab === 'rows') b = HINT + S.rows.map(r => `<div class="blk"><b>${esc(r.label.replace(/\n/g, ' '))}</b><textarea rows="5" data-f="prow" data-id="${id}" data-r="${r.id}">${esc(((p.rows || {})[r.id] || []).join('\n'))}</textarea></div>`).join('') || '<div class="muted">비교 항목이 없습니다. [비교 항목 · 기능 관리]에서 추가하세요.</div>';
+    if (tab === 'func') b = S.features.map(f => { const v = (p.func || {})[f.id] || { s: 'na', t: [] }; return `<div class="blk"><div class="row"><b style="min-width:130px">${esc(f.label.replace(/\n/g, ' '))}</b><select data-f="pfs" data-id="${id}" data-fid="${f.id}">${Object.keys(KIND).map(k => `<option value="${k}" ${v.s === k ? 'selected' : ''}>${KIND[k]}</option>`).join('')}</select></div><textarea rows="2" data-f="pft" data-id="${id}" data-fid="${f.id}" placeholder="보조 문구(줄 단위, 선택)">${esc((v.t || []).join('\n'))}</textarea></div>`; }).join('') || '<div class="muted">기능 항목이 없습니다.</div>';
+    if (tab === 'rate') b = `<div class="row"><label>예시 조건(표·범례) <input type="text" data-f="ptxt" data-id="${id}" data-k="rateLabel" value="${esc(p.rateLabel)}" style="width:260px"></label></div><div class="tnote">빈 칸 = 자료 없음. 엑셀 범위 붙여넣기 가능.</div><table class="mt"><tr>${S.years.map(y => `<th>${y}년</th>`).join('')}</tr><tr>${S.years.map(y => `<td><input type="text" class="y" data-f="prate" data-id="${id}" data-y="${y}" value="${(p.rates || {})[y] ?? ''}"></td>`).join('')}</tr></table>`;
+    box.innerHTML = `<div class="tabs">${tabs.map(t => `<button class="${tab === t[0] ? 'on' : ''}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</div><div style="border:1px solid #98a6b6;padding:8px;border-radius:0 4px 4px 4px">${b}</div><div class="row" style="margin-top:6px"><span class="muted">입력은 즉시 저장·반영됩니다.</span><button class="sm" data-pclose style="margin-left:auto">닫기</button></div>`;
+  };
+  draw();
+  box.addEventListener('click', e => {
+    const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; draw(); return; }
+    const sd = e.target.closest('[data-sdel]'); if (sd) { p.steps.splice(+sd.dataset.sdel, 1); commit(false); draw(); return; }
+    if (e.target.closest('[data-sadd]')) { p.steps.push(['**새 단계', '내용']); commit(false); draw(); return; }
+    if (e.target.closest('[data-pclose]')) { m.remove(); renderAdmin(); }
+  });
+  const m = openModal('상품 편집 — ' + p.name, box, 640);
+  $('[data-close]', m).addEventListener('click', () => renderAdmin());
+}
+
+/* --- 글꼴 서식 --- */
+$('#btnFmt').addEventListener('click', () => { UI.fmt = !UI.fmt; document.body.classList.toggle('fmt', UI.fmt); $('#btnFmt').classList.toggle('on', UI.fmt); $('#btnFmt').textContent = UI.fmt ? '🅰 글꼴서식 편집 중 (글자를 클릭)' : '🅰 글꼴서식 편집'; });
+let fmtModal = null;
+fmtDlg = function (el) {
+  const key = el.dataset.sk, grp = el.dataset.sg; $$('.fsel').forEach(x => x.classList.remove('fsel')); el.classList.add('fsel');
+  if (fmtModal) fmtModal.remove();
+  S.styles = S.styles || {};
+  const box = document.createElement('div'); let scope = 'one';
+  const cur = () => scope === 'one' ? (S.styles[key] = S.styles[key] || {}) : (S.styles['g:' + grp] = S.styles['g:' + grp] || {});
+  const view = () => Object.assign({}, S.styles['g:' + grp], S.styles[key]);
+  const cs = getComputedStyle(el), v = view();
+  box.innerHTML = `<div class="tnote" style="max-width:330px">선택한 글자: <b>${esc((el.textContent || '').slice(0, 30))}</b></div>
+  <div class="row"><label><input type="radio" name="fsc" value="one" checked> 이 글자만</label><label><input type="radio" name="fsc" value="grp"> 같은 종류 전체(예: 모든 상품명)</label></div>
+  <div class="fg" style="grid-template-columns:1fr 1fr"><label>글꼴<select id="fFf">${FONTS.map(f => `<option value="${esc(f[0])}" ${v.ff === f[0] || (!v.ff && !f[0]) ? 'selected' : ''}>${f[1]}</option>`).join('')}</select></label>
+  <label>크기(px)<input type="number" id="fFs" min="8" max="60" value="${v.fs || Math.round(parseFloat(cs.fontSize))}"></label>
+  <label>색상<input type="color" id="fC" value="${rgb2hex(v.c || cs.color)}" style="height:30px"></label>
+  <label>굵기·밑줄<span><label style="display:inline-flex;flex-direction:row;gap:3px"><input type="checkbox" id="fB" ${(v.b === 1 || (v.b === undefined && parseInt(cs.fontWeight) >= 600)) ? 'checked' : ''}> 굵게</label> <label style="display:inline-flex;flex-direction:row;gap:3px"><input type="checkbox" id="fU" ${(v.u === 1 || (v.u === undefined && cs.textDecorationLine.includes('underline'))) ? 'checked' : ''}> 밑줄</label></span></label></div>
+  <div class="row" style="margin-top:6px"><button class="sm dg" id="fRes">이 범위 초기화</button><button class="sm" id="fClose" style="margin-left:auto">닫기</button></div>`;
+  const apply = (k, val) => { const o = cur(); o[k] = val; commit(false); const nel = $(`[data-sk="${CSS.escape(key)}"]`); if (nel) nel.classList.add('fsel'); };
+  box.addEventListener('input', e => { const t = e.target; if (t.id === 'fFf') apply('ff', t.value || undefined); if (t.id === 'fFs') apply('fs', num(t.value) || undefined); if (t.id === 'fC') apply('c', t.value); });
+  box.addEventListener('change', e => { const t = e.target; if (t.name === 'fsc') { scope = t.value; } if (t.id === 'fB') apply('b', t.checked ? 1 : 0); if (t.id === 'fU') apply('u', t.checked ? 1 : 0); });
+  fmtModal = openModal('글꼴서식', box, 360); fmtModal.style.left = 'auto'; fmtModal.style.right = '16px'; fmtModal.style.transform = 'none'; fmtModal.style.top = '90px';
+  $('#fClose', box).addEventListener('click', () => { fmtModal.remove(); fmtModal = null; $$('.fsel').forEach(x => x.classList.remove('fsel')); });
+  $('#fRes', box).addEventListener('click', () => { if (scope === 'one') delete S.styles[key]; else delete S.styles['g:' + grp]; commit(false); fmtModal.remove(); fmtModal = null; });
+}
+function rgb2hex(c) { if (/^#/.test(c)) return c.length === 4 ? '#' + c.slice(1).replace(/./g, x => x + x) : c; const m = c.match(/\d+/g); if (!m) return '#000000'; return '#' + m.slice(0, 3).map(n => (+n).toString(16).padStart(2, '0')).join(''); }
+
+/* --- GitHub 반영 --- */
+function ghCfg() {
+  let c = {}; try { c = JSON.parse(localStorage.getItem(GHK) || '{}'); } catch (e) {}
+  if (!c.tok) { try { const o = JSON.parse(localStorage.getItem('refund_gh_cfg_v1') || '{}'); if (o.tok) c = { tok: o.tok, repo: o.repo, branch: o.branch }; } catch (e) {} }
+  return { tok: c.tok || '', repo: c.repo || 'yangji-madang/SLGFC', path: c.path || 'Prod/' + DATAFILE, branch: c.branch || 'main' };
+}
+function ghSave(c) { try { localStorage.setItem(GHK, JSON.stringify(c)); } catch (e) { alert('이 브라우저에 저장하지 못했습니다.'); } }
+const tokMask = t => t ? t.slice(0, 4) + '…' + t.slice(-4) + ' (' + t.length + '자)' : '저장된 토큰 없음';
+function tokDlg() {
+  const c = ghCfg(), box = document.createElement('div');
+  box.innerHTML = `<div class="tnote">※ 토큰은 <b>이 브라우저(localStorage)에만</b> 저장되며 화면·파일·GitHub에는 기록되지 않습니다. 환급률 비교 페이지에서 이미 설정한 토큰이 있으면 자동으로 이어 씁니다.<br>※ 필요 권한: 대상 저장소 Contents <b>Read and write</b>.</div>
+  <div class="fg"><label style="grid-column:1/-1">액세스 토큰 <input type="password" id="tkIn" autocomplete="off" placeholder="github_pat_… / ghp_…"></label><label>저장소(소유자/이름)<input type="text" id="tkRepo" value="${esc(c.repo)}"></label><label>브랜치<input type="text" id="tkBr" value="${esc(c.branch)}"></label><label style="grid-column:1/-1">저장 파일 경로<input type="text" id="tkPath" value="${esc(c.path)}"></label></div>
+  <div class="row">현재 상태 : <b id="tkSt">${esc(tokMask(c.tok))}</b></div><div class="row" id="tkMsg" style="min-height:18px"></div>
+  <div class="row"><button class="sm" id="tkSave">저장</button><button class="sm" id="tkDel">토큰 삭제</button><button class="sm" id="tkClose" style="margin-left:auto">닫기</button></div>`;
+  const m = openModal('GitHub 토큰 설정', box, 480), q = id => $(id, box), msg = (t, ok) => { q('#tkMsg').style.color = ok ? '#17803d' : '#b3261e'; q('#tkMsg').textContent = t; };
+  q('#tkSave').addEventListener('click', () => { const o = ghCfg(), n = { tok: q('#tkIn').value.trim() || o.tok, repo: q('#tkRepo').value.trim(), path: q('#tkPath').value.trim().replace(/^\/+/, ''), branch: q('#tkBr').value.trim() || 'main' };
+    if (!n.tok) return msg('토큰을 입력해 주세요.'); if (/[^\x21-\x7e]/.test(n.tok)) return msg('토큰에 공백·한글 등 사용할 수 없는 문자가 있습니다.'); if (!/^[\w.-]+\/[\w.-]+$/.test(n.repo)) return msg('저장소는 "소유자/이름" 형식입니다.'); if (!n.path) return msg('저장 파일 경로를 입력하세요.');
+    ghSave(n); q('#tkIn').value = ''; q('#tkSt').textContent = tokMask(n.tok); msg('저장했습니다.', true); });
+  q('#tkDel').addEventListener('click', () => { const n = ghCfg(); n.tok = ''; ghSave(n); try { localStorage.removeItem('refund_gh_cfg_v1'); } catch (e) {} q('#tkSt').textContent = tokMask(''); msg('토큰을 삭제했습니다.', true); });
+  q('#tkClose').addEventListener('click', () => m.remove());
+}
+async function ghPush() {
+  const c = ghCfg(); if (!c.tok) { alert('GitHub 토큰이 설정되어 있지 않습니다. 토큰 설정 창을 엽니다.'); return tokDlg(); }
+  const api = `https://api.github.com/repos/${c.repo}/contents/${c.path.split('/').map(encodeURIComponent).join('/')}`, hd = { Authorization: 'Bearer ' + c.tok, Accept: 'application/vnd.github+json' };
+  try {
+    let sha; const g = await fetch(api + '?ref=' + encodeURIComponent(c.branch), { headers: hd });
+    if (g.ok) sha = (await g.json()).sha; else if (g.status === 401) { alert('토큰이 올바르지 않거나 만료되었습니다.'); return tokDlg(); } else if (g.status !== 404) return alert('GitHub 확인 실패: ' + g.status);
+    S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+    const body = { message: 'jongsin_data 갱신 ' + new Date().toISOString().slice(0, 10), content: btoa(unescape(encodeURIComponent(JSON.stringify(S, null, 1)))), branch: c.branch }; if (sha) body.sha = sha;
+    const r = await fetch(api, { method: 'PUT', headers: hd, body: JSON.stringify(body) });
+    alert(r.ok ? `GitHub(${c.repo}/${c.path})에 반영했습니다. 조회 페이지는 잠시 후 갱신됩니다.` : (r.status === 403 || r.status === 404 ? '반영 실패(' + r.status + '): 토큰의 저장소 쓰기(Contents) 권한을 확인해 주세요.' : '반영 실패: ' + r.status + ' ' + (await r.text()).slice(0, 200)));
+  } catch (e) { alert('반영 실패: ' + e.message); }
+}
+$('#btnTok').addEventListener('click', tokDlg); $('#btnGh').addEventListener('click', ghPush);
+}
+
+/* ===== 시작 ===== */
+S = load();
+renderAll();
+loadRemote();
+})();
+</script>
+<script src="../contacts.js"></script>
+</body>
+</html>
