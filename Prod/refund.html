@@ -613,7 +613,8 @@ function renderSearch() {
   $('#srTabs').innerHTML = `<button class="${SR.view === 'active' ? 'on' : ''}" data-act="srView" data-v="active">판매중 ${nAct}</button><button class="${SR.view === 'disc' ? 'on' : ''}" data-act="srView" data-v="disc">단종 ${nDis}</button>`;
   $('#viewTag').textContent = SR.view === 'disc' ? ' (단종)' : '';
   const ps = sortProds(S.products.filter(p => inView(p) && p.on !== false));
-  $('#srProds').innerHTML = ps.map(p => `<span class="chip ${SR.excl.has(p.id) ? '' : 'on'}" data-act="srProd" data-id="${p.id}">${esc(shortOf(p))}${p.active ? '' : ' (단종)'}</span>`).join('') || '<span class="muted">상품 없음</span>';
+  const nms = uniq(ps.map(p => p.name));
+  $('#srProds').innerHTML = nms.map(n => `<span class="chip ${ps.some(p => p.name === n && !SR.excl.has(p.id)) ? 'on' : ''}" data-act="srProd" data-v="${esc(n)}">${esc(n)}</span>`).join('') || '<span class="muted">상품 없음</span>';
   $('#srCount').textContent = `${SR.view === 'disc' ? '[단종 상품] ' : ''}조회 ${S.products.filter(matches).length}개 / 전체 ${S.products.filter(p => inView(p) && p.on !== false).length}개`;
 }
 
@@ -1137,7 +1138,7 @@ document.addEventListener('click', e => {
     case 'srFeat': SR.feats.has(v) ? SR.feats.delete(v) : SR.feats.add(v); renderAll(); break;
     case 'srFeatAll': S.features.forEach(f => SR.feats.add(f)); renderAll(); break;
     case 'srFeatNone': SR.feats.clear(); renderAll(); break;
-    case 'srProd': SR.excl.has(id) ? SR.excl.delete(id) : SR.excl.add(id); renderAll(); break;
+    case 'srProd': { const ids = S.products.filter(q => q.name === v && inView(q) && q.on !== false).map(q => q.id), allOn = ids.every(i => !SR.excl.has(i)); ids.forEach(i => allOn ? SR.excl.add(i) : SR.excl.delete(i)); renderAll(); break; }
     case 'srProdAll': SR.excl.clear(); renderAll(); break;
     case 'srProdNone': S.products.filter(p => inView(p)).forEach(p => SR.excl.add(p.id)); renderAll(); break;
     case 'legend': if (t.dataset.kind === 'p') { const q = S.products.find(x => x.id === id); if (q) q.showG = false; } else { const b = S.banks.find(x => x.id === id); if (b) b.show = false; } commit(); break;
