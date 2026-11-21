@@ -554,7 +554,7 @@ function mkItems(kind) {
   sortProds(S.products).forEach(p => {
     if (!matches(p)) return;
     if (!(kind === 'T' ? p.showT : p.showG)) return;
-    out.push({ kind: 'p', id: p.id, p, name: p.name, amt: amtOf(p), kd: p.kd || '', type: p.type, label: labelOf(p), short: shortOf(p), sname: p.name + (p.kd ? ' ' + p.kd : ''), monthly: num(p.monthly),
+    out.push({ kind: 'p', id: p.id, p, name: p.name, amt: amtOf(p), kd: p.kd || '', type: p.type, label: labelOf(p), short: shortOf(p), sname: p.name + (p.kd ? ' ' + p.kd : '') + (p.type ? '(' + String(p.type).replace(/[()]/g, ' ').replace(/\s+/g, ' ').trim() + ')' : ''), monthly: num(p.monthly),
       color: PALETTE[gi.get(p.name + '|' + p.type) % PALETTE.length], get: m => prodEff(p, m) });
   });
   S.banks.forEach((b, i) => {
