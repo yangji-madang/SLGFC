@@ -47,18 +47,15 @@ textarea{width:100%;line-height:1.35;resize:vertical}
 .ln.wn{color:#b3261e;font-weight:700}
 .ln.hl{color:#c4521f;font-weight:800}
 /* 1. 컨셉 도식 */
-.cgrid{display:grid;grid-template-columns:7.6em repeat(var(--n),minmax(0,1fr));gap:0 6px}
-.clab{background:#eef3f9;border:1px solid #cfd7e0;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#23364d;padding:4px}
+.cgrid{display:grid;grid-template-columns:7.6em repeat(var(--n),minmax(0,1fr));gap:13px 6px;align-items:stretch}
+.clab{grid-row:1/span var(--r);background:#eef3f9;border:1px solid #cfd7e0;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#23364d;padding:4px}
 .clab b{font-size:1.15em}.clab small{margin-top:6px;color:var(--muted)}
-.card{display:flex;flex-direction:column;min-width:0}
-.card .ch{background:var(--c);color:var(--tc);text-align:center;padding:6px 4px 7px;border-radius:6px 6px 0 0}
-.card .ch .nm{font-size:1.18em;font-weight:800;line-height:1.2}
-.card .ch .sb{font-size:.82em;opacity:.92}
-.card .ch .sl{margin-top:3px;font-size:.92em}
-.card .ch .tg{display:inline-block;margin-top:5px;background:#fff;color:#3e2b20;border-radius:10px;padding:0 10px;font-size:.84em;font-weight:700}
-.stp{background:color-mix(in srgb,var(--c) 13%,#fff);border:1px solid var(--c);padding:6px 4px;text-align:center;margin-top:13px;position:relative;border-radius:3px;flex:1;display:flex;flex-direction:column;justify-content:center}
-.stp:first-of-type{margin-top:6px}
-.card .ch+.stp{margin-top:6px}
+.ch{background:var(--c);color:var(--tc);text-align:center;padding:6px 4px 7px;border-radius:6px 6px 0 0;margin-bottom:-7px;display:flex;flex-direction:column;justify-content:flex-start}
+.ch .nm{font-size:1.18em;font-weight:800;line-height:1.2}
+.ch .sb{font-size:.82em;opacity:.92}
+.ch .sl{margin-top:3px;font-size:.92em}
+.ch .tg{align-self:center;margin-top:5px;background:#fff;color:#3e2b20;border-radius:10px;padding:0 10px;font-size:.84em;font-weight:700}
+.stp{background:color-mix(in srgb,var(--c) 13%,#fff);border:1px solid var(--c);padding:6px 4px;text-align:center;position:relative;border-radius:3px;display:flex;flex-direction:column;justify-content:flex-start}
 .stp:not(.f)::before{content:'';position:absolute;left:50%;top:-11px;margin-left:-8px;border:8px solid transparent;border-top:9px solid var(--c);border-bottom:0}
 /* 2. 비교표 */
 table.cmp2{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px}
@@ -292,12 +289,11 @@ function renderChips() {
   $('#pchips').innerHTML = '<b style="font-size:13px">상품 선택</b>' + S.products.filter(p => p.show !== false).map(p => `<span class="chip ${UI.off.has(p.id) ? '' : 'on'}" data-chip="${p.id}"><i style="background:${p.color}"></i>${esc(p.name)}</span>`).join('');
 }
 function renderConcept() {
-  const ps = vis();
-  let h = `<div class="cgrid" style="--n:${ps.length}"><div class="clab">${tx('ui.clab1', 'clab', '핵심\n컨셉', 'b')}${tx('ui.clab2', 'clabs', '각 상품\n개별 설명', 'small')}</div>`;
-  ps.forEach(p => {
-    h += `<div class="card" style="${pcol(p)}"><div class="ch">${tx(`p.${p.id}.name`, 'pname', p.name, 'div', 'nm')}${p.sub ? tx(`p.${p.id}.sub`, 'psub', p.sub, 'div', 'sb') : ''}<div class="sl">${lns(`p.${p.id}.slg`, 'slogan', p.slogan)}</div>${p.tag ? tx(`p.${p.id}.tag`, 'tag', p.tag, 'span', 'tg') : ''}</div>`;
-    (p.steps || []).forEach((st, k) => { h += `<div class="stp${k === 0 ? ' f' : ''}">${lns(`p.${p.id}.st${k}`, 'step', st)}</div>`; });
-    h += '</div>';
+  const ps = vis(), R = 1 + Math.max(1, ...ps.map(p => (p.steps || []).length));
+  let h = `<div class="cgrid" style="--n:${ps.length};--r:${R}"><div class="clab">${tx('ui.clab1', 'clab', '핵심\n컨셉', 'b')}${tx('ui.clab2', 'clabs', '각 상품\n개별 설명', 'small')}</div>`;
+  ps.forEach((p, c) => {
+    h += `<div class="ch" style="${pcol(p)};grid-column:${c + 2};grid-row:1">${tx(`p.${p.id}.name`, 'pname', p.name, 'div', 'nm')}${p.sub ? tx(`p.${p.id}.sub`, 'psub', p.sub, 'div', 'sb') : ''}<div class="sl">${lns(`p.${p.id}.slg`, 'slogan', p.slogan)}</div>${p.tag ? tx(`p.${p.id}.tag`, 'tag', p.tag, 'span', 'tg') : ''}</div>`;
+    (p.steps || []).forEach((st, k) => { h += `<div class="stp${k === 0 ? ' f' : ''}" style="${pcol(p)};grid-column:${c + 2};grid-row:${k + 2}">${lns(`p.${p.id}.st${k}`, 'step', st)}</div>`; });
   });
   $('#conceptBody').innerHTML = h + '</div>';
 }
