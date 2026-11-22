@@ -32,6 +32,7 @@ s.oldv{color:#9ca3af;text-decoration:line-through;text-decoration-color:#9ca3af}
 .ovg .h{background:var(--navy);color:#fff;font-weight:700;justify-content:center;text-align:center}
 .ovg .l{font-weight:700;justify-content:center;text-align:center;background:var(--bg2)}
 .ovg .k{cursor:pointer}
+.ovg .lv{background:#fff;border-radius:3px;padding:0 3px;font-weight:700}
 .ovg .k:hover{outline:2px solid var(--navy)}
 .k1{background:var(--c1);color:#0b2a6b}.k2{background:var(--c2);color:#0b3d1f}.k3{background:var(--c3);color:#5b2c06}.k4{background:var(--c4);color:#6b0f3a;border:1px dashed var(--c4b)}
 .tl{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;min-width:780px}
@@ -1101,8 +1102,9 @@ function ovLocal(){
   var out;
   if(!items.length){out=g.__r4.join("");}
   else{
-    var nmR=REGM[reg].n+(sub?" "+sub:"");
-    out='<div class="l" data-loc="1" style="grid-row:4;grid-column:1/2">지자체<br>('+esc(sub||REGM[reg].n.replace(/(특별|광역)?(시|도)$/,""))+')</div>';
+    var shortR=REGM[reg].n.replace(/특별자치(시|도)|특별시|광역시/g,function(x){return x==="특별자치도"?"도":(x==="특별자치시"?"시":"");});if(!/(시|도)$/.test(shortR)){shortR+=/도$/.test(REGM[reg].n)?"":"시";}shortR=shortR.replace(/통합(시|도)$/,"$1");
+    var nmR=shortR;
+    out='<div class="l" data-loc="1" style="grid-row:4;grid-column:1/2">지자체<br>('+esc(shortR.replace(/(시|도)$/,"")+(sub?"·"+sub:""))+')</div>';
     var G={p:[2,4,[]],b:[4,6,[]],c:[6,8,[]]};
     items.forEach(function(d){
       var gg=d.g||[],k=gg.indexOf("임신·출산")>=0?"p":(gg.indexOf("영아(0~1세)")>=0?"b":(gg.indexOf("유아·아동(2세~)")>=0?"c":""));
@@ -1110,7 +1112,7 @@ function ovLocal(){
       var nm=String(d.n).replace(/\([^)]*\)/g,"").replace(new RegExp("^"+(d.q||"")+"\\s*"),"").trim();
       var ls=String(d.a||"").split("\n"),am=(ls.filter(function(x){return /만원/.test(x);})[0]||ls[0]).replace(/\s*\([^)]*\)\s*$/,"").replace(/[.。]\s*$/,"").replace(/^출생아 1인당\s*/,"").trim();
       if(am.length>22){am=am.slice(0,21)+"…";}
-      G[k][2].push({kw:nm.split(" ")[0],t:'<b>'+esc(d.q&&d.q!==sub&&d.q!==REGM[reg].n&&isSpec(d)?d.q+" ":"")+'</b>'+esc(nm)+(am?' <b>'+esc(am)+'</b>':'')});
+      G[k][2].push({kw:nm.split(" ")[0],t:'<b class="lv">'+esc(isSpec(d)?d.q:shortR)+'</b> '+esc(nm.replace(new RegExp("^("+shortR+"|"+shortR.replace(/(시|도)$/,"")+")\\s+"),""))+(am?' <b>'+esc(am)+'</b>':'')});
     });
     var any=false;
     Object.keys(G).forEach(function(k){
