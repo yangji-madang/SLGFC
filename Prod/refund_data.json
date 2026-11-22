@@ -1,6 +1,6 @@
 {
  "v": 2,
- "savedAt": 1795283806482,
+ "savedAt": 1795385934836,
  "curPid": "p05mgge0",
  "profiles": [
   {
@@ -1009,6 +1009,26 @@
      "pay": null,
      "label": "20",
      "on": true
+    },
+    "pb0x4qer": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 40,
+     "label": "전기납",
+     "on": true
+    },
+    "pc4n82y7": {
+     "monthly": null,
+     "data": {},
+     "age": null,
+     "sex": "",
+     "amount": null,
+     "pay": 40,
+     "label": "전기납",
+     "on": true
     }
    },
    "bsnap": {}
@@ -2004,41 +2024,189 @@
      "on": true
     },
     "parme3h8": {
-     "monthly": null,
-     "data": {},
+     "monthly": 190000,
+     "data": {
+      "3": {
+       "refund": 0
+      },
+      "6": {
+       "refund": 0
+      },
+      "12": {
+       "refund": 0
+      },
+      "36": {
+       "refund": 1490000
+      },
+      "60": {
+       "refund": 3370000
+      },
+      "84": {
+       "refund": 5250000
+      },
+      "120": {
+       "refund": 7480000
+      },
+      "180": {
+       "refund": 10850000
+      },
+      "240": {
+       "refund": 26630000
+      },
+      "300": {
+       "refund": 25090000
+      },
+      "360": {
+       "refund": 21610000
+      },
+      "420": {
+       "refund": 12700000
+      }
+     },
      "age": null,
      "sex": "",
-     "amount": null,
+     "amount": 30000,
      "pay": null,
      "label": "20",
      "on": true
     },
     "pennj21y": {
-     "monthly": null,
-     "data": {},
+     "monthly": 199000,
+     "data": {
+      "3": {
+       "refund": 0
+      },
+      "6": {
+       "refund": 0
+      },
+      "12": {
+       "refund": 0
+      },
+      "36": {
+       "refund": 158000
+      },
+      "60": {
+       "refund": 3520000
+      },
+      "84": {
+       "refund": 5440000
+      },
+      "120": {
+       "refund": 7690000
+      },
+      "180": {
+       "refund": 10990000
+      },
+      "240": {
+       "refund": 26460000
+      },
+      "300": {
+       "refund": 24910000
+      },
+      "360": {
+       "refund": 21410000
+      },
+      "420": {
+       "refund": 12430000
+      }
+     },
      "age": null,
      "sex": "",
-     "amount": null,
+     "amount": 30000,
      "pay": null,
      "label": "20",
      "on": true
     },
     "p2gevd8c": {
-     "monthly": null,
-     "data": {},
+     "monthly": 570000,
+     "data": {
+      "3": {
+       "refund": 0
+      },
+      "6": {
+       "refund": 0
+      },
+      "12": {
+       "refund": 0
+      },
+      "36": {
+       "refund": 4490000
+      },
+      "60": {
+       "refund": 10130000
+      },
+      "84": {
+       "refund": 15750000
+      },
+      "120": {
+       "refund": 22450000
+      },
+      "180": {
+       "refund": 32560000
+      },
+      "240": {
+       "refund": 79890000
+      },
+      "300": {
+       "refund": 75280000
+      },
+      "360": {
+       "refund": 64850000
+      },
+      "420": {
+       "refund": 38100000
+      }
+     },
      "age": null,
      "sex": "",
-     "amount": null,
+     "amount": 30000,
      "pay": null,
      "label": "20",
      "on": true
     },
     "pxz6weu1": {
-     "monthly": null,
-     "data": {},
+     "monthly": 597000,
+     "data": {
+      "3": {
+       "refund": 0
+      },
+      "6": {
+       "refund": 0
+      },
+      "12": {
+       "refund": 0
+      },
+      "36": {
+       "refund": 475000
+      },
+      "60": {
+       "refund": 10560000
+      },
+      "84": {
+       "refund": 16320000
+      },
+      "120": {
+       "refund": 23080000
+      },
+      "180": {
+       "refund": 32980000
+      },
+      "240": {
+       "refund": 79390000
+      },
+      "300": {
+       "refund": 74730000
+      },
+      "360": {
+       "refund": 64230000
+      },
+      "420": {
+       "refund": 37300000
+      }
+     },
      "age": null,
      "sex": "",
-     "amount": null,
+     "amount": 30000,
      "pay": null,
      "label": "20",
      "on": true
@@ -4926,8 +5094,8 @@
    "pay": null,
    "age": null,
    "sex": "",
-   "amount": null,
-   "monthly": null,
+   "amount": 30000,
+   "monthly": 190000,
    "features": [
     "연금전환",
     "고환급"
@@ -4936,7 +5104,44 @@
    "showT": true,
    "showG": true,
    "note": "",
-   "data": {},
+   "data": {
+    "3": {
+     "refund": 0
+    },
+    "6": {
+     "refund": 0
+    },
+    "12": {
+     "refund": 0
+    },
+    "36": {
+     "refund": 1490000
+    },
+    "60": {
+     "refund": 3370000
+    },
+    "84": {
+     "refund": 5250000
+    },
+    "120": {
+     "refund": 7480000
+    },
+    "180": {
+     "refund": 10850000
+    },
+    "240": {
+     "refund": 26630000
+    },
+    "300": {
+     "refund": 25090000
+    },
+    "360": {
+     "refund": 21610000
+    },
+    "420": {
+     "refund": 12700000
+    }
+   },
    "on": true,
    "bpay": null,
    "blabel": "20",
@@ -4951,8 +5156,8 @@
    "pay": null,
    "age": null,
    "sex": "",
-   "amount": null,
-   "monthly": null,
+   "amount": 30000,
+   "monthly": 199000,
    "features": [
     "연금전환",
     "고환급"
@@ -4961,7 +5166,44 @@
    "showT": true,
    "showG": true,
    "note": "",
-   "data": {},
+   "data": {
+    "3": {
+     "refund": 0
+    },
+    "6": {
+     "refund": 0
+    },
+    "12": {
+     "refund": 0
+    },
+    "36": {
+     "refund": 158000
+    },
+    "60": {
+     "refund": 3520000
+    },
+    "84": {
+     "refund": 5440000
+    },
+    "120": {
+     "refund": 7690000
+    },
+    "180": {
+     "refund": 10990000
+    },
+    "240": {
+     "refund": 26460000
+    },
+    "300": {
+     "refund": 24910000
+    },
+    "360": {
+     "refund": 21410000
+    },
+    "420": {
+     "refund": 12430000
+    }
+   },
    "on": true,
    "bpay": null,
    "blabel": "20",
@@ -4976,8 +5218,8 @@
    "pay": null,
    "age": null,
    "sex": "",
-   "amount": null,
-   "monthly": null,
+   "amount": 30000,
+   "monthly": 570000,
    "features": [
     "연금전환",
     "고환급"
@@ -4986,7 +5228,44 @@
    "showT": true,
    "showG": true,
    "note": "",
-   "data": {},
+   "data": {
+    "3": {
+     "refund": 0
+    },
+    "6": {
+     "refund": 0
+    },
+    "12": {
+     "refund": 0
+    },
+    "36": {
+     "refund": 4490000
+    },
+    "60": {
+     "refund": 10130000
+    },
+    "84": {
+     "refund": 15750000
+    },
+    "120": {
+     "refund": 22450000
+    },
+    "180": {
+     "refund": 32560000
+    },
+    "240": {
+     "refund": 79890000
+    },
+    "300": {
+     "refund": 75280000
+    },
+    "360": {
+     "refund": 64850000
+    },
+    "420": {
+     "refund": 38100000
+    }
+   },
    "on": true,
    "bpay": null,
    "blabel": "20",
@@ -5001,8 +5280,8 @@
    "pay": null,
    "age": null,
    "sex": "",
-   "amount": null,
-   "monthly": null,
+   "amount": 30000,
+   "monthly": 597000,
    "features": [
     "연금전환",
     "고환급"
@@ -5011,7 +5290,44 @@
    "showT": true,
    "showG": true,
    "note": "",
-   "data": {},
+   "data": {
+    "3": {
+     "refund": 0
+    },
+    "6": {
+     "refund": 0
+    },
+    "12": {
+     "refund": 0
+    },
+    "36": {
+     "refund": 475000
+    },
+    "60": {
+     "refund": 10560000
+    },
+    "84": {
+     "refund": 16320000
+    },
+    "120": {
+     "refund": 23080000
+    },
+    "180": {
+     "refund": 32980000
+    },
+    "240": {
+     "refund": 79390000
+    },
+    "300": {
+     "refund": 74730000
+    },
+    "360": {
+     "refund": 64230000
+    },
+    "420": {
+     "refund": 37300000
+    }
+   },
    "on": true,
    "bpay": null,
    "blabel": "20",
