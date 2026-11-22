@@ -810,7 +810,7 @@ function build(){
   OV_HEAD.forEach(function(t,i){h+='<div class="h" style="grid-row:1;grid-column:'+(i+1)+'">'+t+'</div>';});
   OV.forEach(function(o){
     var cls=o[3]==="l"?"l":"k "+o[3];
-    h+='<div class="'+cls+'" style="grid-row:'+(o[3]==="l"&&o[0]===5?'5/8':o[0])+';grid-column:'+o[1]+'/'+o[2]+'"'+(o[5]?' data-kw="'+o[5]+'" title="클릭 시 아래 표에서 검색"':'')+'><span>'+o[4]+'</span></div>';
+    h+='<div class="'+cls+'"'+(o[0]===4?' data-r4="1"':'')+' style="grid-row:'+(o[3]==="l"&&o[0]===5?'5/8':o[0])+';grid-column:'+o[1]+'/'+o[2]+'"'+(o[5]?' data-kw="'+o[5]+'" title="클릭 시 아래 표에서 검색"':'')+'><span>'+o[4]+'</span></div>';
   });
   var t='<div class="tl"><b style="font-size:11.5px;align-self:center">주요 변경 흐름</b>';
   TL.forEach(function(x){t+='<span class="'+(x[2]||"")+'"><b>'+x[0]+'</b> '+x[1]+'</span>';});
@@ -1081,7 +1081,48 @@ function regInit(){
   subFill();window.__rr=1;supInfo();
 }
 function jo(t){var c=t.charCodeAt(t.length-1)-44032;return(c>=0&&c%28!==0)?"은":"는";}
+
+/* 지자체 선택 시 개요 도식의 「지자체」 줄을 선택 지역 제도로 교체(미선택·제도 없음이면 대표 사례 유지) */
+function ovLocal(){
+  var g=$("#ov .ovg");if(!g){return;}
+  var m=$("#mode").value,reg=$("#reg").value,sub=$("#sub").value;
+  var items=[];
+  if(m==="loc"&&reg&&REGM[reg]){
+    DATA.forEach(function(d){
+      if(d.r==="전국"||rk(d)!==reg||d.end||d.c==="예정(신설)"){return;}
+      if(d.auto&&d.q!==sub){return;}
+      if(sub&&isSpec(d)&&d.q!==sub){return;}
+      items.push(d);
+    });
+  }
+  var cells=g.querySelectorAll('[data-r4]'),i;
+  if(!g.__r4){g.__r4=[];for(i=0;i<cells.length;i++){g.__r4.push(cells[i].outerHTML);}}
+  [].forEach.call(g.querySelectorAll('[data-r4],[data-loc]'),function(e){e.remove();});
+  var out;
+  if(!items.length){out=g.__r4.join("");}
+  else{
+    var nmR=REGM[reg].n+(sub?" "+sub:"");
+    out='<div class="l" data-loc="1" style="grid-row:4;grid-column:1/2">지자체<br>('+esc(sub||REGM[reg].n.replace(/(특별|광역)?(시|도)$/,""))+')</div>';
+    var G={p:[2,4,[]],b:[4,6,[]],c:[6,8,[]]};
+    items.forEach(function(d){
+      var gg=d.g||[],k=gg.indexOf("임신·출산")>=0?"p":(gg.indexOf("영아(0~1세)")>=0?"b":(gg.indexOf("유아·아동(2세~)")>=0?"c":""));
+      if(!k){return;}
+      var nm=String(d.n).replace(/\([^)]*\)/g,"").replace(new RegExp("^"+(d.q||"")+"\\s*"),"").trim();
+      var ls=String(d.a||"").split("\n"),am=(ls.filter(function(x){return /만원/.test(x);})[0]||ls[0]).replace(/\s*\([^)]*\)\s*$/,"").replace(/[.。]\s*$/,"").replace(/^출생아 1인당\s*/,"").trim();
+      if(am.length>22){am=am.slice(0,21)+"…";}
+      G[k][2].push({kw:nm.split(" ")[0],t:'<b>'+esc(d.q&&d.q!==sub&&d.q!==REGM[reg].n&&isSpec(d)?d.q+" ":"")+'</b>'+esc(nm)+(am?' <b>'+esc(am)+'</b>':'')});
+    });
+    var any=false;
+    Object.keys(G).forEach(function(k){
+      var q=G[k];if(!q[2].length){return;}any=true;
+      out+='<div class="k k3" data-loc="1" style="grid-row:4;grid-column:'+q[0]+'/'+q[1]+'" data-kw="'+esc(q[2][0].kw)+'" title="클릭 시 아래 표에서 검색"><span>'+q[2].map(function(x){return x.t;}).join(' · ')+'</span></div>';
+    });
+    if(!any){out=g.__r4.join("");}
+  }
+  g.insertAdjacentHTML("beforeend",out);
+}
 function supInfo(){
+  try{ovLocal();}catch(e){}
   var el=$("#sup");if(!el||!window.__rr){return;}
   var m=$("#mode").value,reg=$("#reg").value,sub=$("#sub").value;
   var ps=$("#psup");
