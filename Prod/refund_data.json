@@ -1,6 +1,6 @@
 {
  "v": 2,
- "savedAt": 1795386909729,
+ "savedAt": 1795386973697,
  "curPid": "pf1",
  "profiles": [
   {
@@ -3738,9 +3738,8 @@
        "id": "lpxs5nwsh",
        "type": "1종(일반형)",
        "features": [
-        "연금전환",
-        "연금선지급",
-        "적립전환"
+        "원금보장",
+        "약관대출"
        ],
        "active": true
       },
@@ -3748,9 +3747,9 @@
        "id": "lpxv216oz",
        "type": "2종(암납입면제형",
        "features": [
-        "연금전환",
-        "연금선지급",
-        "적립전환"
+        "원금보장",
+        "암납면",
+        "약관대출"
        ],
        "active": true
       }
@@ -3764,9 +3763,7 @@
        "id": "lpmiye44p",
        "type": "1종(일반형)",
        "features": [
-        "연금전환",
-        "연금선지급",
-        "적립전환"
+        "원금보장"
        ],
        "active": true
       },
@@ -3774,9 +3771,8 @@
        "id": "lpe2i7df8",
        "type": "2종(암납입면제형)",
        "features": [
-        "연금전환",
-        "연금선지급",
-        "적립전환"
+        "암납면",
+        "약관대출"
        ],
        "active": true
       }
@@ -4999,9 +4995,8 @@
    "amount": null,
    "monthly": 525000,
    "features": [
-    "연금전환",
-    "연금선지급",
-    "적립전환"
+    "원금보장",
+    "약관대출"
    ],
    "active": true,
    "showT": true,
@@ -5062,9 +5057,9 @@
    "amount": null,
    "monthly": 590000,
    "features": [
-    "연금전환",
-    "연금선지급",
-    "적립전환"
+    "원금보장",
+    "암납면",
+    "약관대출"
    ],
    "active": true,
    "showT": true,
@@ -5125,9 +5120,7 @@
    "amount": null,
    "monthly": 734000,
    "features": [
-    "연금전환",
-    "연금선지급",
-    "적립전환"
+    "원금보장"
    ],
    "active": true,
    "showT": true,
@@ -5188,9 +5181,8 @@
    "amount": null,
    "monthly": 923000,
    "features": [
-    "연금전환",
-    "연금선지급",
-    "적립전환"
+    "암납면",
+    "약관대출"
    ],
    "active": true,
    "showT": true,
