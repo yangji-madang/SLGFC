@@ -34,6 +34,8 @@ s.oldv{color:#9ca3af;text-decoration:line-through;text-decoration-color:#9ca3af}
 .ovg .k{cursor:pointer}
 .ovg .lv{background:#fff;border-radius:3px;padding:0 3px;font-weight:700}
 .ovg .k:hover{outline:2px solid var(--navy)}
+.ovg .it{cursor:pointer;border-radius:3px}
+.ovg .it:hover{background:rgba(255,255,255,.75);outline:1.5px solid var(--navy)}
 .k1{background:var(--c1);color:#0b2a6b}.k2{background:var(--c2);color:#0b3d1f}.k3{background:var(--c3);color:#5b2c06}.k4{background:var(--c4);color:#6b0f3a;border:1px dashed var(--c4b)}
 .tl{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;min-width:780px}
 .tl span{font-size:11.5px;border:1px solid var(--bd);border-radius:3px;padding:1px 5px;background:#fff}
@@ -1112,12 +1114,12 @@ function ovLocal(){
       var nm=String(d.n).replace(/\([^)]*\)/g,"").replace(new RegExp("^"+(d.q||"")+"\\s*"),"").trim();
       var ls=String(d.a||"").split("\n"),am=(ls.filter(function(x){return /만원/.test(x);})[0]||ls[0]).replace(/\s*\([^)]*\)\s*$/,"").replace(/[.。]\s*$/,"").replace(/^출생아 1인당\s*/,"").trim();
       if(am.length>22){am=am.slice(0,21)+"…";}
-      G[k][2].push({kw:nm.split(" ")[0],t:'<b class="lv">'+esc(isSpec(d)?d.q:shortR)+'</b> '+esc(nm.replace(new RegExp("^("+shortR+"|"+shortR.replace(/(시|도)$/,"")+")\\s+"),""))+(am?' <b>'+esc(am)+'</b>':'')});
+      G[k][2].push({kw:String(d.n),t:'<b class="lv">'+esc(isSpec(d)?d.q:shortR)+'</b> '+esc(nm.replace(new RegExp("^("+shortR+"|"+shortR.replace(/(시|도)$/,"")+")\\s+"),""))+(am?' <b>'+esc(am)+'</b>':'')});
     });
     var any=false;
     Object.keys(G).forEach(function(k){
       var q=G[k];if(!q[2].length){return;}any=true;
-      out+='<div class="k k3" data-loc="1" style="grid-row:4;grid-column:'+q[0]+'/'+q[1]+'" data-kw="'+esc(q[2][0].kw)+'" title="클릭 시 아래 표에서 검색"><span>'+q[2].map(function(x){return x.t;}).join(' · ')+'</span></div>';
+      out+='<div class="k k3" data-loc="1" style="grid-row:4;grid-column:'+q[0]+'/'+q[1]+'" ><span>'+q[2].map(function(x){return '<span class="it" data-kw="'+esc(x.kw)+'" title="클릭 시 아래 표에서 이 제도만 검색">'+x.t+'</span>';}).join(' · ')+'</span></div>';
     });
     if(!any){out=g.__r4.join("");}
   }
