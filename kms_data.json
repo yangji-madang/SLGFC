@@ -56,6 +56,12 @@
        "pin": true
       },
       {
+       "label": "종신상품비교",
+       "url": "https://yangji-madang.github.io/SLGFC/Prod/jongsin.html",
+       "tags": [],
+       "pin": true
+      },
+      {
        "label": "New플러스원 고환급특약 검색",
        "url": "Prod/newplus1_surrendervalue.html",
        "tags": [
@@ -64,12 +70,6 @@
         "해약환급금",
         "고환급"
        ],
-       "pin": false
-      },
-      {
-       "label": "종신상품비교",
-       "url": "https://yangji-madang.github.io/SLGFC/Prod/jongsin.html",
-       "tags": [],
        "pin": false
       }
      ]
