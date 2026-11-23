@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-17",
+ "updated": "2026-11-23",
  "sections": [
   {
    "title": "SLI GFC",
@@ -64,6 +64,18 @@
         "해약환급금",
         "고환급"
        ],
+       "pin": false
+      },
+      {
+       "label": "종신상품비교",
+       "url": "https://yangji-madang.github.io/SLGFC/Prod/jongsin.html",
+       "tags": [],
+       "pin": false
+      },
+      {
+       "label": "종신상품비교 관리",
+       "url": "https://yangji-madang.github.io/SLGFC/Prod/jongsin_admin.html",
+       "tags": [],
        "pin": false
       }
      ]
