@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-23",
+ "updated": "2026-11-24",
  "sections": [
   {
    "title": "SLI GFC",
@@ -273,7 +273,7 @@
      "pin": false,
      "links": [
       {
-       "label": "FC MALL",
+       "label": "STM MALL(FC물품)",
        "url": "https://www.stmmall.co.kr/mall/",
        "tags": [
         "쇼핑"
