@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24",
+ "updated": "2026-11-26",
  "sections": [
   {
    "title": "SLI GFC",
@@ -296,6 +296,16 @@
         "은행",
         "적금",
         "예금"
+       ],
+       "pin": false
+      },
+      {
+       "label": "2027년 GFC 등록기준",
+       "url": "https://naver.me/F5s6P4np",
+       "tags": [
+        "GFC",
+        "등록",
+        "기준"
        ],
        "pin": false
       }
