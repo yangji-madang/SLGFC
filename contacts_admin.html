@@ -26,8 +26,15 @@ h1{margin:0 0 4px;font-size:21px;color:#17294a}
 .st.err{color:#b4231a}.st.ok{color:#1b6b3a}
 .how{margin:14px 0 0;padding:10px 12px;background:#fff8e6;border-left:4px solid #e0a43a;font-size:13px;color:#4a3b14}
 .how li{margin:2px 0}
+.cpe{margin:16px 0 0;padding:10px 12px;border:1px solid #d7deea;border-radius:4px;background:#f8fafc;font-size:13.5px}
+.cpe b{display:block;color:#4a5670;font-size:12.5px;margin-bottom:5px}
+.cpe .r2{display:flex;gap:6px;align-items:center}
+.cpe input{flex:1;min-width:0;font:inherit;padding:8px 10px;border:1px solid #94a3b8;border-radius:4px}
+.cpe button{font:inherit;font-size:13px;padding:7px 12px;border:1px solid #17294a;border-radius:4px;background:#fff;color:#17294a;cursor:pointer;white-space:nowrap}
+.cpe .h{margin-top:5px;color:#6b7690;font-size:12.5px}
+.cpe .pr{margin-top:6px;padding:6px 8px;background:#fff;border:1px dashed #94a3b8;border-radius:4px;text-align:right;font-size:12.5px;color:#4a5670}
 .cp{max-width:860px;margin:0 auto 16px;text-align:right;font-size:12.5px;color:#4a5670;padding:0 6px}
-@media print{body{background:#fff}.bar,.add,.row button,.st{display:none}.sheet{border:none;max-width:none;padding:0}.row input{border:1px solid #888}}
+@media print{body{background:#fff}.bar,.add,.row button,.st,.cpe{display:none}.sheet{border:none;max-width:none;padding:0}.row input{border:1px solid #888}}
 /*GH-POS*/
 @media screen{html body{padding-top:40px!important}#bGh{position:fixed!important;top:6px!important;right:12px!important;left:auto!important;bottom:auto!important;z-index:99999!important;margin:0!important;font-size:13px!important;padding:6px 14px!important;border-radius:4px!important;background:#b8860b!important;border:1px solid #8a6508!important;color:#fff!important;font-weight:700!important;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.3)}}
 @media print{#bGh{display:none!important}}
@@ -47,19 +54,35 @@ h1{margin:0 0 4px;font-size:21px;color:#17294a}
   <div id="list"></div>
   <button type="button" class="add" id="add">＋ 담당자 추가</button>
   <div class="prev"><b>선택 목록 미리보기</b><div id="pv"></div></div>
+  <div class="cpe">
+    <b>Copyright 문구 (하단 우측 표시) — 생성/수정</b>
+    <div class="r2"><input type="text" id="cpIn" maxlength="200" placeholder="예) ⓒ{YEAR}. YOON HYUNCHUL, ALL RIGHTS RESERVED."><button type="button" id="cpDef">기본 문구</button></div>
+    <div class="h">{YEAR} 를 넣으면 페이지를 열 때마다 해당 연도로 자동 변경됩니다. 문구를 비우면 기본 문구가 적용됩니다.</div>
+    <div class="pr" id="cpPv"></div>
+  </div>
   <div class="st" id="st"></div>
   <ul class="how">
     <li>이름·직함·연락처를 한 줄로 입력합니다. 이 줄이 인쇄물 하단 왼쪽에 그대로 찍힙니다.</li>
     <li>수정 후 「GitHub에 반영」을 눌러야 다른 기기와 모든 페이지에 적용됩니다(1~2분 소요).</li>
+    <li>Copyright 문구도 「GitHub 반영」 시 함께 저장됩니다. 연도는 {YEAR} 표시를 유지하는 한 자동으로 바뀝니다.</li>
     <li>담당자를 삭제하면, 그 담당자를 선택해 둔 페이지는 「표시하지 않음」으로 돌아갑니다.</li>
   </ul>
 </div>
-<div class="cp">ⓒ<span id="yr">2026</span>. YOON HYUNCHUL, ALL RIGHTS RESERVED.</div>
+<div class="cp" id="cp">ⓒ<span id="yr">2026</span>. YOON HYUNCHUL, ALL RIGHTS RESERVED.</div>
 <script>
 (function(){
 var GH={o:'yangji-madang',r:'SLGFC',b:'main',p:'contacts.json'},TKEY='info_gh_token';
 var $=function(i){return document.getElementById(i)};
-$('yr').textContent=new Date().getFullYear();
+var CPDEF='ⓒ{YEAR}. YOON HYUNCHUL, ALL RIGHTS RESERVED.';
+var cpTx=CPDEF,cpOrig=CPDEF;
+function cpClean(v){v=String(v==null?'':v).replace(/\s+/g,' ').trim().slice(0,200);return v||CPDEF}
+function cpOut(t){return t.replace(/\{YEAR\}/g,String(new Date().getFullYear()))}
+function cpDraw(){
+  var o=cpOut(cpTx);
+  $('cp').textContent=o;
+  $('cpPv').textContent=o;
+  if($('cpIn').value!==cpTx)$('cpIn').value=cpTx;
+}
 var rows=[],baseUpd=null,orig=[];
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function st(m,c){var e=$('st');e.textContent=m||'';e.className='st'+(c?' '+c:'')}
@@ -88,7 +111,10 @@ $('list').addEventListener('click',function(e){
   draw();st('');
 });
 $('add').addEventListener('click',function(){rows.push({id:newId(),t:''});draw();var ins=$('list').querySelectorAll('input');if(ins.length)ins[ins.length-1].focus()});
-$('bRst').addEventListener('click',function(){if(confirm('수정 내용을 버리고 저장된 목록으로 되돌립니다.')){rows=orig.map(function(r){return{id:r.id,t:r.t}});draw();st('')}});
+$('bRst').addEventListener('click',function(){if(confirm('수정 내용을 버리고 저장된 목록으로 되돌립니다.')){rows=orig.map(function(r){return{id:r.id,t:r.t}});cpTx=cpOrig;cpDraw();draw();st('')}});
+$('cpIn').addEventListener('input',function(){cpTx=cpClean(this.value===''?'':this.value);$('cp').textContent=cpOut(cpTx);$('cpPv').textContent=cpOut(cpTx);st('')});
+$('cpIn').addEventListener('blur',function(){cpDraw()});
+$('cpDef').addEventListener('click',function(){cpTx=CPDEF;cpDraw();st('')});
 $('prt').addEventListener('click',function(){window.print()});
 $('bTk').addEventListener('click',function(){try{localStorage.removeItem(TKEY)}catch(e){}st('저장된 토큰을 삭제했습니다.','ok')});
 
@@ -96,7 +122,8 @@ function load(){
   fetch('contacts.json',{cache:'no-cache'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){
     baseUpd=j.updated||null;
     rows=(j.contacts||[]).map(function(x){return{id:x.id||newId(),t:String(x.t||'')}});
-    orig=rows.map(function(r){return{id:r.id,t:r.t}});draw();
+    orig=rows.map(function(r){return{id:r.id,t:r.t}});
+    cpTx=cpClean(j.copyright);cpOrig=cpTx;cpDraw();draw();
   }).catch(function(){st('contacts.json 을 불러오지 못했습니다. 새로고침하거나 주소를 확인하세요.','err')});
 }
 function b64(s){var u=new TextEncoder().encode(s),x='';u.forEach(function(c){x+=String.fromCharCode(c)});return btoa(x)}
@@ -115,10 +142,10 @@ async function push(tk){
   var ja=await ra.json(),live=null;try{live=JSON.parse(unb64(ja.content)).updated||null}catch(e){}
   if(live!==baseUpd){throw {msg:'다른 곳에서 먼저 수정되었습니다. 새로고침 후 다시 수정해 주세요(내용 보호).'}}
   var upd=new Date().toISOString();
-  var out=JSON.stringify({updated:upd,contacts:clean},null,2)+'\n';
+  var out=JSON.stringify({updated:upd,copyright:cpTx,contacts:clean},null,2)+'\n';
   var rp=await api('PUT',url,tk,{message:'[담당자 공통 관리] 담당자 목록 수정',content:b64(out),sha:ja.sha,branch:GH.b});
   if(!rp.ok){throw {msg:'반영 실패 ('+rp.status+')'+(rp.status===409?' : 동시에 수정되었습니다. 새로고침 후 다시 시도하세요.':'')}}
-  baseUpd=upd;rows=clean.map(function(r){return{id:r.id,t:r.t}});orig=rows.map(function(r){return{id:r.id,t:r.t}});draw();
+  baseUpd=upd;cpOrig=cpTx;rows=clean.map(function(r){return{id:r.id,t:r.t}});orig=rows.map(function(r){return{id:r.id,t:r.t}});draw();
 }
 $('bGh').addEventListener('click',async function(){
   var tk='';try{tk=localStorage.getItem(TKEY)||''}catch(e){}
@@ -130,11 +157,13 @@ $('bGh').addEventListener('click',async function(){
     try{localStorage.setItem(TKEY,tk)}catch(e){}
   }
   if(rows.some(function(r){return !r.t.trim()})&&!confirm('빈 줄은 저장되지 않습니다. 계속할까요?'))return;
+  if(cpTx.indexOf('{YEAR}')<0&&!confirm('Copyright 문구에 {YEAR} 가 없어 연도가 자동 변경되지 않습니다. 이대로 저장할까요?'))return;
   st('GitHub에 반영 중…');$('bGh').disabled=true;
   try{await push(tk);st('반영 완료. 다른 기기와 모든 페이지는 1~2분 후 새로고침하면 보입니다.','ok')}
   catch(e){if(e&&e.bad){try{localStorage.removeItem(TKEY)}catch(x){}}st((e&&e.msg)||'반영 중 오류가 발생했습니다.','err')}
   $('bGh').disabled=false;
 });
+cpDraw();
 load();
 })();
 </script>
