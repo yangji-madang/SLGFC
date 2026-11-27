@@ -97,7 +97,7 @@ body.editing [data-ed]{outline:1px dashed #b08435;outline-offset:1px;cursor:text
 body.editing [data-ed]:focus{outline:2px solid #e0a43a;background:#fffbe9}
 body.editing [data-p]{cursor:text}
 body.editing #pt[contenteditable],body.editing #pbody[contenteditable]{outline:1px dashed #b08435}
-@media print{.edtip,#gst{display:none!important}}
+@media print{.edtip,#gst,#cfgPanel,[data-adm]{display:none!important}}
 </style>
 </head>
 <body>
@@ -499,6 +499,7 @@ window.__emkAdm={cfgChanged:function(){saveLocal();},buildHtml:buildHtml,hosts:h
 })();
 </script>
 <script src="../contacts.js"></script>
+<script src="../copyright.js"></script>
 <script data-adm>
 (function(){
 var K=window.__emk;if(!K||!K.cfg)return;
@@ -524,5 +525,4 @@ d.addEventListener('change',function(e){
 });
 })();
 </script>
-<script src="../copyright.js"></script>
 </body></html>
