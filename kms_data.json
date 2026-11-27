@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-26",
+ "updated": "2026-11-27",
  "sections": [
   {
    "title": "SLI GFC",
@@ -255,6 +255,20 @@
       {
        "br": true,
        "pin": true
+      },
+      {
+       "label": "고용유지지원 제",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/empkeep_info_graph.html",
+       "tags": [
+        "고용",
+        "지원",
+        "제도"
+       ],
+       "pin": false
+      },
+      {
+       "br": true,
+       "pin": false
       },
       {
        "label": "출산.육아지원제도",
