@@ -281,3 +281,9 @@ body[data-vt=tb] #paneOv{display:none}
 
 .ovtb{display:flex;gap:6px;margin:0 0 6px}
 .ovtb .chip{font-size:12px}
+
+.csum{font-size:12.5px;margin:0 0 6px;padding:5px 8px;background:#f1f5fb;border:1px solid var(--bd);border-radius:6px;line-height:1.7}
+.csum .ct{display:inline-block;background:#fff;border:1px solid #9db3d6;border-radius:12px;padding:0 8px;margin:0 3px 0 0;color:var(--navy);font-weight:700}
+.csum .ct i{font-style:normal;color:var(--mut);font-weight:400}
+.csum .none{color:var(--mut)}
+@media print{.csum{font-size:9px;padding:2px 4px}}

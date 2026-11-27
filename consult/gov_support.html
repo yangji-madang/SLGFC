@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>중소기업·소상공인 정부지원·세제지원 현황</title>
-<link rel="stylesheet" href="gov_support.css?v=20261103a">
+<link rel="stylesheet" href="gov_support.css?v=20261127a">
 </head>
 <body data-vt="ov">
 <div id="top">
@@ -41,6 +41,7 @@
     <div id="flt"></div>
   </section>
   <p id="cnt"></p>
+  <div class="csum" id="csum"></div>
   <p class="mhint">← 좌우로 밀면 PC와 같은 전체 표를 볼 수 있습니다. (두 손가락으로 확대·축소도 가능)</p>
   <div class="tw"><table class="gt" data-fz="4"><thead id="th"></thead><tbody id="tb"></tbody></table></div>
   </div>
@@ -65,6 +66,7 @@
   var Q0=G.fromQS(location.search); F.sido=Q0.sido; F.sigun=Q0.sigun; F.nc=Q0.nc;
   function SC(){return G.items.filter(function(i){return G.inRegion(i,F);});}
   $('flt').innerHTML=G.FILTER_HTML;
+  $('freset').insertAdjacentHTML('beforebegin','<button type="button" class="btn" id="fgo">조회</button> ');
   $('th').innerHTML=G.THEAD;
   $('foot').textContent=G.cfg.foot||''; $('disc').textContent=G.cfg.disc||'';
 
@@ -129,8 +131,25 @@
     var qs=G.toQS(F);
     $('prt').href='gov_support_print.html'+(qs?'?'+qs:'')+(G.preview?(qs?'&':'?')+'preview=1':'');
     ovRender(); mxRender();
+    $('fgo').textContent='조회 (결과 '+list.length+'건)';
+    $('csum').innerHTML=condSum();
     G.freezeAll();
   }
+  /* 선택된 검색조건 요약 : 표 위에 항상 표시 */
+  function condSum(){
+    var t=[], add=function(k,v){ if(v) t.push('<span class="ct"><i>'+esc(k)+'</i> '+esc(v)+'</span>'); };
+    if(F.sido) add('지역',G.regionName(F)+(F.sido&&F.nc?' (중앙정부·전국 제외)':''));
+    add('키워드',(F.q||'').trim()?(F.q.trim()+' ('+(F.qm==='and'?'AND':'OR')+')'):'');
+    add('분류',F.cats.join(', ')); add('지급 주체',F.lvs.join(', ')); add('대상 기업',F.tgs.join(', ')); add('제한조건',F.lts.join(', ')); add('지원 형태',F.pfs.join(', ')); add('출처 등급',F.rels.join(', '));
+    add('지급 주체 입력',(F.lv||'').trim()); add('대상 기업 입력',(F.tg||'').trim()); add('제한조건 입력',(F.lt||'').trim());
+    if(F.chk) add('옵션','확인필요 항목만'); if(F.hideEnd) add('옵션','마감·종료 가능 제외');
+    return '<b>선택한 조건</b> '+(t.length?t.join(' '):'<span class="none">없음 (전체 표시)</span>');
+  }
+  $('fgo').addEventListener('click',function(){
+    F.q=$('fq').value; F.lv=$('flv').value; F.tg=$('ftg').value; F.lt=$('flt2').value; F.chk=$('fchk').checked; F.hideEnd=$('fend').checked;
+    render(); $('cnt').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  $('fq').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); $('fgo').click(); } });
   G.initFilterUI(F,render);
   render();
   G.termsInit();
