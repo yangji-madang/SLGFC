@@ -79,6 +79,10 @@ table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:9.8pt;lin
   .doc{padding:0 8mm}
   .f input,.f select{border:1px solid #888}
   tfoot{display:table-footer-group}
+  /* 기본 1페이지: 표 높이를 용지 높이로 고정해 내용이 적어도 저작권(tfoot)이 하단에 위치 */
+  .pt{height:289mm}
+  .pt>tbody>tr>td{vertical-align:top}
+  .pt>tfoot>tr>td{vertical-align:bottom;height:1px}
 }
 @media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}.res{grid-template-columns:1fr}.ttl{flex-wrap:wrap}}
 </style>
@@ -294,6 +298,30 @@ try{fetch('empkeep_basis.json',{cache:'no-store'}).then(function(r){return r.ok?
   if(j.pending&&j.pending.length&&window.showPending)window.showPending(j.pending);
 }).catch(function(){})}catch(e){}
 window.__emk={cfg:CFG,boot:boot};
+})();
+</script>
+<script>
+/* 인쇄 : 약간 넘치면 1페이지에 맞게 축소, 계산내역이 많으면 자연스럽게 여러 페이지 */
+(function(){
+  var MM=96/25.4,AV=289*MM,MAXSHRINK=0.72;
+  function fit(){
+    var d=document.getElementById('doc');if(!d)return;
+    d.style.zoom='';d.style.width='';
+    var ft=document.querySelector('.pt>tfoot'),fh=ft?ft.getBoundingClientRect().height:0;
+    var av=AV-fh-4,h=d.getBoundingClientRect().height;
+    if(h<=av)return;
+    var z=Math.max(MAXSHRINK,av/h);
+    if(av/h<MAXSHRINK)return; /* 너무 많으면 축소하지 않고 여러 페이지 */
+    for(var i=0;i<6;i++){
+      d.style.zoom=z;d.style.width=(210/z)+'mm';
+      h=d.getBoundingClientRect().height;
+      if(h<=av+1)break;
+      z=z*av/h-0.005;if(z<MAXSHRINK){z=MAXSHRINK;d.style.zoom=z;d.style.width=(210/z)+'mm';break}
+    }
+  }
+  function reset(){var d=document.getElementById('doc');if(d){d.style.zoom='';d.style.width=''}}
+  window.addEventListener('beforeprint',fit);window.addEventListener('afterprint',reset);
+  window.__fitPrint=fit;
 })();
 </script>
 <script src="../contacts.js"></script>
