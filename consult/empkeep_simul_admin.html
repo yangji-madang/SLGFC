@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ko" data-ver="0"><head>
+<meta name="robots" content="noindex,nofollow" data-adm>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>고용유지지원금 시뮬레이션 | 내 회사 예상 지원금 · 편집</title>
+<style>
+:root{--navy:#17294a;--blue:#2f5d9a;--sky:#eaf2fb;--gold:#b08435;--goldl:#f6edd6;--gold2:#e0a43a;--ink:#1d2433;--mut:#566074;--line:#c3cde0;--soft:#f3f6fb;--rosed:#a5372f}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#e9edf3}
+body{font-family:system-ui,-apple-system,'Segoe UI','Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans CJK KR',sans-serif;color:var(--ink);font-size:11pt;line-height:1.5;word-break:keep-all;overflow-wrap:normal;text-wrap:pretty;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+a{color:#1763ad}
+.bar{display:flex;gap:6px;width:210mm;max-width:100%;margin:8px auto 0;justify-content:flex-end;flex-wrap:wrap}
+.bar button,.bar a.lk{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--navy);border-radius:4px;cursor:pointer;text-decoration:none}
+.bar button{background:var(--navy);color:#fff}.bar a.lk{background:#fff;color:var(--navy)}
+.pt{width:210mm;max-width:100%;margin:8px auto 14px;background:#fff;box-shadow:0 2px 14px rgba(20,40,80,.18);border-collapse:collapse}
+.pt td{padding:0}
+.doc{padding:6mm 8mm 3mm}
+.ttl{position:relative;display:flex;align-items:center;gap:3mm;border-radius:2.4mm;padding:2.6mm 4mm 2mm;color:#fff;border-bottom:.9mm solid var(--gold2);background:radial-gradient(70% 220% at 100% 0%,rgba(224,164,58,.38),transparent 62%),linear-gradient(110deg,#17294a 0%,#244a80 55%,#2f6aa8 100%)}
+.ttl h1{flex:none;font-size:18pt;line-height:1.1;white-space:nowrap;font-weight:800}
+.ttl .sub{flex:1;min-width:0;font-size:9.6pt;font-weight:700;line-height:1.34;border-left:1px solid rgba(255,255,255,.6);padding-left:3mm}
+.ttl .chips{flex:none;display:flex;flex-direction:column;gap:1mm;align-items:flex-end;padding-top:1.4mm}
+.ttl .chips span{background:rgba(10,24,52,.42);border:1px solid rgba(255,255,255,.6);border-radius:5mm;padding:.2mm 2.2mm;font-size:8.6pt;font-weight:700;white-space:nowrap}
+.ttl .chips b{color:#ffe08a}
+.ttl .qd{position:absolute;top:.8mm;right:3.4mm;font-size:6.8pt;font-weight:600}
+h2{display:flex;align-items:center;gap:2mm;font-size:13.4pt;font-weight:800;color:var(--navy);margin:3.6mm 0 1.6mm;break-after:avoid}
+h2:before{content:"";width:1.8mm;height:5.2mm;border-radius:1mm;background:linear-gradient(var(--blue),var(--gold2))}
+h2 small{margin-left:auto;font-size:8.6pt;font-weight:500;color:#6a7488}
+p{margin:.8mm 0 1.2mm;font-size:10.4pt}
+.n{font-size:9pt;color:var(--mut)}
+.k{display:inline-block;font-size:8pt;font-weight:800;border-radius:2px;padding:0 3px;line-height:1.5;color:#fff;background:#b45309}
+/* 입력 */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm 2.4mm}
+.f{display:flex;flex-direction:column;gap:.6mm}
+.f label{font-size:9.6pt;font-weight:800;color:var(--navy)}
+.f input,.f select{font:inherit;font-size:11pt;padding:1.2mm 2mm;border:1px solid var(--line);border-radius:1.6mm;background:#fff;width:100%;min-width:0}
+.f input:focus,.f select:focus{outline:2px solid var(--gold2);border-color:var(--gold2)}
+.f small{font-size:8.2pt;color:var(--mut);line-height:1.3}
+.span2{grid-column:span 2}
+.btns{display:flex;gap:2mm;margin-top:2mm}
+.btns button{font:inherit;font-size:11pt;font-weight:800;padding:1.4mm 5mm;border-radius:1.6mm;cursor:pointer;border:1px solid var(--navy)}
+.btns .go{background:var(--navy);color:#fff}.btns .rs{background:#fff;color:var(--navy)}
+/* 결과 */
+.res{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:2.4mm;margin-top:1.4mm}
+.big{background:linear-gradient(135deg,var(--navy),#2f5d9a);color:#fff;border-radius:2.4mm;border-bottom:1mm solid var(--gold2);padding:2.4mm 3.4mm}
+.big small{display:block;font-size:9.4pt;font-weight:700;color:#d8e6f8}
+.big b{display:block;font-size:24pt;line-height:1.15;color:#ffe08a;white-space:nowrap}
+.big span{font-size:9pt;color:#e6eefa}
+.mini{border:1px solid #d3deee;border-top:1.2mm solid var(--blue);border-radius:2mm;background:#fff;padding:1.8mm 3mm}
+.mini small{display:block;font-size:9.4pt;font-weight:700;color:var(--mut)}
+.mini b{display:block;font-size:15pt;color:var(--navy);white-space:nowrap}
+.mini span{font-size:8.6pt;color:var(--mut)}
+.tw{border:1px solid var(--line);border-radius:1.6mm;margin:1.4mm 0;overflow:auto;max-height:78vh}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:9.8pt;line-height:1.42}
+.t th,.t td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:1.1mm 1.8mm;text-align:left;vertical-align:top}
+.t tr>*:last-child{border-right:0}.t tbody tr:last-child>*{border-bottom:0}
+.t thead th{background:var(--navy);color:#fff;text-align:center;position:sticky;top:0;z-index:3}
+.t tbody th{background:var(--sky);color:var(--navy);font-weight:800;position:sticky;left:0;z-index:2;white-space:nowrap}
+.t thead th:first-child{left:0;z-index:4}
+.t td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.t tr.tot th,.t tr.tot td{background:var(--goldl);font-weight:800;color:var(--navy)}
+.t tr{break-inside:avoid}
+.wn{background:#fdeceb;border:1px solid #efc0bb;border-left:1.4mm solid #c9544a;border-radius:1.8mm;padding:1.6mm 3mm;margin:1.4mm 0;font-size:10pt;color:#5a1d18}
+.hl{background:#fff6e2;border:1px solid #ead9b0;border-left:1.4mm solid var(--gold2);border-radius:1.8mm;padding:1.6mm 3mm;margin:1.4mm 0;font-size:10pt}
+.mut{display:none}
+.chk{font-size:9.6pt;margin-top:1mm}
+.ft{margin:2mm 8mm 5mm;border-top:1.4px solid var(--gold);background:var(--soft);border-radius:0 0 1.5mm 1.5mm;padding:1.3mm 2.5mm 1.4mm}
+.law a{color:inherit;text-decoration:underline dotted;text-underline-offset:1px}
+.ft .law{font-size:6.4pt;color:var(--mut);line-height:1.36}
+.ft .row{display:flex;justify-content:space-between;align-items:center;margin-top:.8mm;font-size:7.6pt;gap:3mm}
+.ft .row .l{color:var(--navy);font-weight:700}
+.ft .row .r{color:var(--navy);font-size:7pt;margin-left:auto;white-space:nowrap}
+@page{size:A4 portrait;margin:7mm 0 0}
+@media print{
+  html,body{background:#fff}body{font-size:10pt}
+  .bar,.btns,.noprint{display:none!important}
+  .pt{margin:0;box-shadow:none;width:100%}
+  .tw{overflow:visible;max-height:none}
+  .t thead th,.t tbody th{position:static}
+  .doc{padding:0 8mm}
+  .f input,.f select{border:1px solid #888}
+  tfoot{display:table-footer-group}
+}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}.res{grid-template-columns:1fr}.ttl{flex-wrap:wrap}}
+</style>
+<style data-adm>
+.bar .sec{background:#fff;color:var(--navy)}
+#bGh{background:#b08435;border-color:#8a6620}
+#gst{font-size:12px;color:#17294a;max-width:100%}
+.edtip{display:none;width:210mm;max-width:100%;margin:6px auto 0;background:#fff6e2;border:1px solid #ead9b0;border-left:4px solid #e0a43a;border-radius:4px;padding:4px 10px;font-size:12px;color:#5a4410}
+body.editing .edtip{display:block}
+body.editing [data-ed]{outline:1px dashed #b08435;outline-offset:1px;cursor:text}
+body.editing [data-ed]:focus{outline:2px solid #e0a43a;background:#fffbe9}
+body.editing [data-p]{cursor:text}
+body.editing #pt[contenteditable],body.editing #pbody[contenteditable]{outline:1px dashed #b08435}
+@media print{.edtip,#gst{display:none!important}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <button type="button" data-adm id="bEdit" class="sec">글자 편집</button>
+  <a id="lView" class="lk" data-adm target="_blank" rel="noopener" href="empkeep_simul.html">조회 페이지</a>
+  <span id="gst" data-adm></span>
+  <button type="button" data-adm id="bDl" class="sec">수정본 내려받기</button>
+  <button type="button" data-adm id="bGh">⬆ GitHub 반영</button>
+  <button type="button" data-adm id="bTk" class="sec">토큰 삭제</button>
+  <button type="button" data-adm id="bRst" class="sec">원래대로</button>
+<a class="lk" href="empkeep_info_graph_admin.html">인포그래픽</a>
+  <a class="lk" href="empkeep_info-admin.html">상세내용</a>
+  
+  <button type="button" id="prt">인쇄 / PDF 저장</button>
+</div>
+<div class="edtip" data-adm>편집 모드 : 글자만 수정됩니다(서식 없음). 팝업 설명은 Alt+클릭으로 열어 수정하세요. 편집 완료 후 'GitHub 반영'을 누르면 조회 페이지도 함께 바뀝니다.</div>
+
+<table class="pt"><tbody><tr><td>
+<div class="doc" id="doc">
+<header class="ttl">
+  <h1>고용유지지원금 시뮬레이션</h1>
+  <div class="sub">우리 회사가 받을 수 있는 예상 지원금<br>: 숫자를 입력하면 바로 계산됩니다</div>
+  <div class="chips"><span>고시 <b>제2026-30호</b> 기준</span><span>1일 상한 <b data-cfg="cap">68,100원</b></span></div>
+  <div class="qd">기준일 <b>2026.11.27</b></div>
+</header>
+
+<h2>1. 회사 정보 입력<small>모의 계산용 · 입력값은 저장되지 않습니다</small></h2>
+<div class="grid">
+  <div class="f"><label for="type">고용유지조치 유형</label>
+    <select id="type"><option value="paid">유급 (근로시간 단축)</option><option value="unpaid">무급 (30일 이상 휴업·휴직)</option></select></div>
+  <div class="f"><label for="size">기업 규모</label>
+    <select id="size"><option value="pri">우선지원대상기업</option><option value="big">대규모기업</option></select>
+    <small>상시근로자 수 기준은 실무 안내 3장 참고</small></div>
+  <div class="f"><label for="area">선제대응지역 여부</label>
+    <select id="area"><option value="n">해당 없음</option><option value="y">지정지역 사업장</option></select>
+    <small>지정기간 중 실시분만 해당</small></div>
+  <div class="f"><label for="cnt">대상 근로자 수 (명)</label><input id="cnt" type="number" min="1" step="1" value="10"></div>
+  <div class="f"><label for="wage">월 통상임금 (원, 1인)</label><input id="wage" type="number" min="0" step="10000" value="3000000"></div>
+  <div class="f" id="fHours"><label for="hours">월 소정근로시간 (시간)</label><input id="hours" type="number" min="1" step="1" value="209"></div>
+  <div class="f" id="fCut"><label for="cut">근로시간 단축률 (%)</label><input id="cut" type="number" min="0" max="100" step="1" value="50">
+    <small>유급은 <span data-cfg="minCut">20</span>% 이상이어야 합니다</small></div>
+  <div class="f" id="fPay"><label for="pay">휴업수당 등 지급률 (%)</label><input id="pay" type="number" min="0" max="100" step="1" value="70">
+    <small>단축시간 임금 대비. 근로기준법 제46조 <span data-cfg="minPay">70</span>% 이상</small></div>
+  <div class="f"><label for="months">실시 기간 (개월)</label><input id="months" type="number" min="1" max="12" step="1" value="6"></div>
+  <div class="f" id="fAvg"><label for="avg">월 평균임금 (원, 무급용)</label><input id="avg" type="number" min="0" step="10000" value="3300000">
+    <small>직전 3개월 임금총액 기준 월 환산액</small></div>
+  <div class="f" id="fTrain"><label for="train">직업능력개발 (무급용)</label>
+    <select id="train"><option value="n">실시 안 함</option><option value="y">실시 (1인 월 10만 원)</option></select></div>
+</div>
+<div class="btns noprint"><button class="go" type="button" id="calc">계산하기</button><button class="rs" type="button" id="reset">초기화</button></div>
+<div class="wn" id="warn" data-noedit style="display:none"></div>
+
+<h2>2. 예상 지원금<small id="sumline" data-noedit></small></h2>
+<div class="res" data-noedit>
+  <div class="big"><small>총 예상 지원금</small><b id="rTot">-</b><span id="rTotS"></span></div>
+  <div class="mini"><small>1인 월 지원금</small><b id="rPm">-</b><span id="rPmS"></span></div>
+  <div class="mini"><small>회사 실부담 (대략)</small><b id="rNet">-</b><span id="rNetS"></span></div>
+</div>
+
+<h2>3. 계산 내역<small>산식 단계별</small></h2>
+<div class="tw"><table class="t">
+<thead><tr><th>단계</th><th>내용</th><th>산식</th><th>값</th></tr></thead>
+<tbody id="steps" data-noedit></tbody></table></div>
+
+<h2>4. 월별 지급 예상<small>180일 한도 반영</small></h2>
+<div class="tw"><table class="t">
+<thead><tr><th>월차</th><th>누적 환산일수</th><th>1인 지급 금품</th><th>1인 지원금</th><th>전체 지원금</th><th>비고</th></tr></thead>
+<tbody id="rows" data-noedit></tbody></table></div>
+
+<h2>5. 유의사항<small>꼭 확인하세요</small></h2>
+<div class="hl"><b>이 결과는 모의 계산입니다.</b> 지원 여부와 금액은 관할 고용센터 심사로 확정되며, 한도 산정 방식은 고용센터 기준과 다를 수 있습니다. 근거 : <a href="https://www.law.go.kr/행정규칙/고용유지지원금신청및지급에관한규정" target="_blank" rel="noopener">고용노동부 고시 제2026-30호</a> 제5조·제10조·제20조, <a href="https://www.law.go.kr/법령/고용보험법시행령/제21조" target="_blank" rel="noopener">고용보험법 시행령 제21조</a>.</div>
+<ul class="n" style="margin:0 0 1mm 4.6mm;list-style:disc">
+  <li>지원비율 : 유급 우선지원대상기업 2/3, 대규모기업 1/2(단축 50% 이상이면 2/3). 선제대응지역은 80%, 60%(단축 50% 이상 70%). 무급은 평균임금의 50% 범위입니다.</li>
+  <li>1일 상한 68,100원, 연 180일 한도. 환산일수는 단축시간 ÷ 8시간으로 가정했습니다 <span class="k">확인 필요</span></li>
+  <li>특별고용지원업종·고용위기지역의 별도 지원비율(9/10 등)은 확인 전이라 반영하지 않았습니다 <span class="k">확인 필요</span></li>
+  <li>무급은 근로자별 심사로 금액이 정해지므로 평균임금 50%와 상한 중 작은 값으로 단순 계산했습니다 <span class="k">확인 필요</span></li>
+  <li>고용유지 세액공제(조특법 제30조의3)는 반영하지 않았고, 지원금과의 중복 적용 여부는 세무전문가와 확인하세요 <span class="k">확인 필요</span></li>
+</ul>
+</div>
+</td></tr></tbody>
+<tfoot><tr><td>
+<footer class="ft">
+  <div class="law" data-law="근거 : {{고시전체}}, {{고용보험법시행령|제21조}}, {{고용보험법|제21조}}, {{근로기준법|제46조}}<br>※ 모의 계산 자료입니다. 2026.11.27 기준이며 개별 사안은 고용24·관할 고용센터(☎1350)에서 확인하세요."></div>
+  <div class="row"><span class="l" data-ct></span><span class="r">ⓒ<span class="yr">2026</span>. YOON HYUNCHUL, ALL RIGHTS RESERVED.</span></div>
+</footer>
+</td></tr></tfoot></table>
+
+<script id="cfg" type="application/json">{"cap":68100,"maxDays":180,"minCut":20,"minPay":70,"train":100000,"unpaidRate":50,"ratePri":66.6667,"rateBig":50,"rateBigHigh":66.6667,"cutHigh":50,"areaPri":80,"areaBig":60,"areaBigHigh":70,"defaults":{"type":"paid","size":"pri","area":"n","cnt":10,"wage":3000000,"hours":209,"cut":50,"pay":70,"months":6,"avg":3300000,"train":"n"}}</script>
+<script id="pov" type="application/json">{}</script>
+<script>
+(function(){
+var CFG=JSON.parse(document.getElementById('cfg').textContent);
+var CAP,MAXD,MIN_CUT,TRAIN;
+function R(x){return Math.abs(x-66.6667)<0.001?2/3:x/100}
+function sync(){CAP=CFG.cap;MAXD=CFG.maxDays;MIN_CUT=CFG.minCut;TRAIN=CFG.train}
+sync();
+var BASE='https://www.law.go.kr/';
+var PN={'고용보험법시행령':'고용보험법 시행령'};
+function lk(s){return s.replace(/\{\{([^|}]+)(?:\|([^|}]+))?\}\}/g,function(m,n,a){
+  if(n==='고시전체')return '<a href="'+BASE+'행정규칙/'+encodeURIComponent('고용유지지원금신청및지급에관한규정')+'" target="_blank" rel="noopener">고용노동부 고시 제2026-30호</a>';
+  return '<a href="'+BASE+'법령/'+encodeURIComponent(n)+(a?'/'+encodeURIComponent(a):'')+'" target="_blank" rel="noopener">'+(PN[n]||n)+(a?' '+a:'')+'</a>';});}
+document.querySelectorAll('[data-law]').forEach(function(e){e.innerHTML=lk(e.getAttribute('data-law'))});
+document.querySelectorAll('.yr').forEach(function(e){e.textContent=new Date().getFullYear()});
+function $(i){return document.getElementById(i)}
+function nv(i){var v=parseFloat($(i).value);return isNaN(v)?0:v}
+function won(n){return Math.round(n).toLocaleString('ko-KR')+'원'}
+function man(n){return (Math.round(n/10000)).toLocaleString('ko-KR')+'만 원'}
+function big(n){return n>=100000000?(n/100000000).toFixed(2).replace(/\.?0+$/,'')+'억 원':man(n)}
+
+/* 계산 핵심 : 화면과 분리해 검증 가능하게 둠 */
+function compute(o){
+  sync();var out={err:[],steps:[],rows:[],total:0,pm:0,net:0};
+  if(o.cnt<1)out.err.push('대상 근로자 수는 1명 이상이어야 합니다.');
+  if(o.months<1||o.months>12)out.err.push('실시 기간은 1~12개월 범위로 입력하세요.');
+  if(o.type==='paid'){
+    if(o.cut<MIN_CUT)out.err.push('유급 고용유지조치는 월 소정근로시간을 '+MIN_CUT+'% 이상 단축해야 합니다. 현재 '+o.cut+'%입니다.');
+    if(o.cut>100)out.err.push('단축률은 100%를 넘을 수 없습니다.');
+    if(o.pay<CFG.minPay)out.err.push('휴업수당 등 지급률이 '+CFG.minPay+'% 미만입니다. 부득이한 사유로 미달 지급하려면 노동위원회 승인이 필요합니다.');
+    var rate;
+    if(o.area==='y')rate=(o.size==='pri')?R(CFG.areaPri):(o.cut>=CFG.cutHigh?R(CFG.areaBigHigh):R(CFG.areaBig));
+    else rate=(o.size==='pri')?R(CFG.ratePri):(o.cut>=CFG.cutHigh?R(CFG.rateBigHigh):R(CFG.rateBig));
+    var shortH=o.hours*o.cut/100, days=shortH/8;
+    var wageCut=o.wage*o.cut/100, paid=wageCut*o.pay/100;
+    var raw=paid*rate, capM=days*CAP, pm=Math.min(raw,capM);
+    out.steps=[
+      ['1','월 단축시간',o.hours+'시간 × '+o.cut+'%',shortH.toFixed(1)+'시간'],
+      ['2','단축시간 임금(1인)',won(o.wage)+' × '+o.cut+'%',won(wageCut)],
+      ['3','지급 금품(1인)',won(wageCut)+' × '+o.pay+'%',won(paid)],
+      ['4','지원비율',(o.area==='y'?'선제대응지역 ':'')+(o.size==='pri'?'우선지원대상기업':'대규모기업')+(o.cut>=CFG.cutHigh?' (단축 '+CFG.cutHigh+'% 이상)':''),(rate*100).toFixed(1).replace(/\.0$/,'')+'%'],
+      ['5','지원금 산정액(1인, 월)',won(paid)+' × '+(rate*100).toFixed(1).replace(/\.0$/,'')+'%',won(raw)],
+      ['6','1일 상한 한도(1인, 월)','환산일수 '+days.toFixed(2)+'일 × '+won(CAP),won(capM)],
+      ['7','1인 월 지원금','4·6 중 작은 값'+(raw>capM?' (상한 적용)':''),won(pm)]
+    ];
+    var cum=0,tot=0;
+    for(var m=1;m<=o.months;m++){
+      var d=Math.min(days,Math.max(0,MAXD-cum)), cap=cum+days>MAXD;
+      var ratio=days>0?d/days:0;
+      var pmm=pm*ratio, tm=pmm*o.cnt;
+      cum+=d;tot+=tm;
+      out.rows.push([m+'개월차',cum.toFixed(1)+'일',won(paid*ratio),won(pmm),won(tm),cap?MAXD+'일 한도 적용':'']);
+    }
+    out.total=tot;out.pm=pm;
+    out.cost=paid*o.months*o.cnt;
+    out.net=Math.max(0,out.cost-tot);
+    out.sum='유급 · '+o.cnt+'명 · '+o.months+'개월';
+    out.tS='1인 평균 '+won(tot/o.cnt)+' (총 '+Math.round(cum)+'일분 환산)';
+  }else{
+    if(o.avg<=0)out.err.push('월 평균임금을 입력하세요.');
+    var dayAvg=o.avg/30, perDay=Math.min(dayAvg*CFG.unpaidRate/100,CAP);
+    var daysU=Math.min(o.months*30,MAXD);
+    var base=perDay*daysU, tr=(o.train==='y')?TRAIN*o.months:0;
+    out.steps=[
+      ['1','일 평균임금','월 평균임금 '+won(o.avg)+' ÷ 30',won(dayAvg)],
+      ['2','일 지원액(1인)','평균임금 '+CFG.unpaidRate+'% 와 '+won(CAP)+' 중 작은 값',won(perDay)],
+      ['3','지원 일수(1인)','실시 '+o.months+'개월 × 30일, 최대 '+MAXD+'일',daysU+'일'],
+      ['4','휴업·휴직 지원금(1인)',won(perDay)+' × '+daysU+'일',won(base)],
+      ['5','직업능력개발 지원금(1인)',o.train==='y'?won(TRAIN)+' × '+o.months+'개월':'실시 안 함',won(tr)],
+      ['6','1인 합계','4 + 5',won(base+tr)]
+    ];
+    var cumU=0;
+    for(var k=1;k<=o.months;k++){
+      var dk=Math.min(30,Math.max(0,MAXD-cumU)); cumU+=dk;
+      var pk=perDay*dk+((o.train==='y')?TRAIN:0);
+      out.rows.push([k+'개월차',cumU+'일','-',won(pk),won(pk*o.cnt),(cumU>=MAXD&&dk<30)?MAXD+'일 한도 적용':'']);
+    }
+    out.total=(base+tr)*o.cnt;out.pm=(daysU>0?(base+tr)/o.months:0);
+    out.net=0;out.cost=0;
+    out.sum='무급 · '+o.cnt+'명 · '+o.months+'개월';
+    out.tS='1인 합계 '+won(base+tr);
+  }
+  return out;
+}
+window.__compute=compute;
+
+function read(){return{type:$('type').value,size:$('size').value,area:$('area').value,cnt:nv('cnt'),wage:nv('wage'),hours:nv('hours')||1,cut:nv('cut'),pay:nv('pay'),months:nv('months'),avg:nv('avg'),train:$('train').value}}
+function render(){
+  var o=read(),r=compute(o);
+  var w=$('warn');
+  if(r.err.length){w.style.display='block';w.innerHTML='<b>확인이 필요합니다.</b><br>'+r.err.join('<br>')}else w.style.display='none';
+  var blocked=r.err.some(function(e){return e.indexOf('% 이상 단축해야')>-1||e.indexOf('1명 이상')>-1||e.indexOf('1~12')>-1||e.indexOf('평균임금을')>-1||e.indexOf('100%를')>-1});
+  $('sumline').textContent=r.sum||'';
+  if(blocked){$('rTot').textContent='-';$('rTotS').textContent='요건을 먼저 확인하세요';$('rPm').textContent='-';$('rPmS').textContent='';$('rNet').textContent='-';$('rNetS').textContent='';$('steps').innerHTML='';$('rows').innerHTML='';return}
+  $('rTot').textContent=big(r.total);$('rTotS').textContent='= '+won(r.total)+' · '+r.tS;
+  $('rPm').textContent=won(r.pm);$('rPmS').textContent=o.type==='paid'?'상한 적용 후':'월 평균 환산';
+  if(o.type==='paid'){$('rNet').textContent=big(r.net);$('rNetS').textContent='지급 금품 '+big(r.cost)+' 중 지원금 차감'}
+  else{$('rNet').textContent='-';$('rNetS').textContent='무급은 근로자에게 직접 지급'}
+  var s='';r.steps.forEach(function(x){s+='<tr><th>'+x[0]+'</th><td>'+x[1]+'</td><td>'+x[2]+'</td><td class="num"><b>'+x[3]+'</b></td></tr>'});
+  $('steps').innerHTML=s;
+  var h='',cnt=0;r.rows.forEach(function(x){h+='<tr><th>'+x[0]+'</th><td class="num">'+x[1]+'</td><td class="num">'+x[2]+'</td><td class="num">'+x[3]+'</td><td class="num">'+x[4]+'</td><td>'+x[5]+'</td></tr>'});
+  h+='<tr class="tot"><th>합계</th><td></td><td></td><td></td><td class="num">'+won(r.total)+'</td><td></td></tr>';
+  $('rows').innerHTML=h;
+}
+function toggle(){
+  var u=$('type').value==='unpaid';
+  ['fHours','fCut','fPay'].forEach(function(i){$(i).style.display=u?'none':'flex'});
+  ['fAvg','fTrain'].forEach(function(i){$(i).style.display=u?'flex':'none'});
+  $('size').disabled=u;$('area').disabled=u;
+  render();
+}
+function applyDefaults(){var d=CFG.defaults||{};for(var k in d){var e=$(k);if(e)e.value=d[k]}}
+function cfgLabels(){
+  document.querySelectorAll('[data-cfg]').forEach(function(e){var k=e.getAttribute('data-cfg');e.textContent=(k==='cap')?won(CFG.cap):CFG[k]});
+}
+function boot(){sync();applyDefaults();cfgLabels();toggle()}
+document.addEventListener('input',function(e){var t=e.target;if(t.matches&&t.matches('input,select')&&t.closest('#doc'))render()});
+document.addEventListener('change',function(e){var t=e.target;if(!(t.matches&&t.matches('input,select')&&t.closest('#doc')))return;if(t.id==='type')toggle();else render()});
+document.addEventListener('click',function(e){
+  var t=e.target.closest&&e.target.closest('button');if(!t)return;
+  if(t.id==='calc')render();
+  else if(t.id==='reset'){applyDefaults();toggle()}
+  else if(t.id==='prt')window.print();
+});
+boot();
+
+/* 기준일 : empkeep_basis.json(매일 아침 점검 작업이 갱신)을 읽어 표시. 읽지 못하면 이 파일에 적힌 날짜를 그대로 씁니다. */
+try{fetch('empkeep_basis.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){
+  if(!j||!j.asof)return;var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(j.asof);if(!m)return;
+  document.querySelectorAll('.qd b').forEach(function(b){b.textContent=m[1]+'.'+m[2]+'.'+m[3]});
+  if(j.pending&&j.pending.length&&window.showPending)window.showPending(j.pending);
+}).catch(function(){})}catch(e){}
+window.__emk={cfg:CFG,boot:boot};
+})();
+</script>
+<script data-adm>
+(function(){
+var FN='empkeep_simul_admin.html',VN='empkeep_simul.html',K=window.__emk||{};
+var GH={o:'yangji-madang',r:'SLGFC',b:'main',pa:'consult/'+FN,pv:'consult/'+VN};
+var TKEY='info_gh_token',LKEY='emk_edit:'+FN;
+var root=document.documentElement,editing=false,curId=null;
+var ov={};try{ov=JSON.parse((document.getElementById('pov')||{}).textContent||'{}')}catch(e){}
+var verHtml=root.getAttribute('data-ver')||'0',baseVer=verHtml;
+function $(i){return document.getElementById(i)}
+function gst(m,warn){var e=$('gst');e.textContent=m;e.style.color=warn?'#a5372f':'#17294a'}
+function roots(){return Array.prototype.slice.call(document.querySelectorAll('#doc,[data-sheet]'))}
+/* 저장된 수정본(이 브라우저) 적용 */
+(function(){
+  var sv=null;try{sv=JSON.parse(localStorage.getItem(LKEY)||'null')}catch(e){}
+  if(sv&&sv.html&&(sv.from===verHtml||sv.ver===verHtml)){
+    var rs=roots();
+    if(rs.length===sv.html.length){rs.forEach(function(r,i){r.innerHTML=sv.html[i]})}
+    if(sv.cfg&&K.cfg){Object.keys(sv.cfg).forEach(function(k){K.cfg[k]=sv.cfg[k]})}
+    if(sv.ov){Object.keys(sv.ov).forEach(function(k){ov[k]=sv.ov[k];if(K.P)K.P[k]=sv.ov[k]})}
+    baseVer=sv.ver;if(K.boot)K.boot();
+  }
+})();
+var plainOK=(function(){var t=document.createElement('div');try{t.contentEditable='plaintext-only';return t.contentEditable==='plaintext-only'}catch(e){return false}})();
+var CE=plainOK?'plaintext-only':'true';
+function skip(el){return el.closest&&el.closest('svg,.qd,.ft .row,.law,.slgct,script,style,.pop,select,option,input,textarea,[data-noedit],[data-cfg]')}
+function hosts(rt){var out=[];(function w(el){
+  if(el.nodeType!==1||skip(el)||el.classList.contains('yr')||el.classList.contains('i')||el.hasAttribute('data-ct'))return;
+  var own=Array.prototype.some.call(el.childNodes,function(n){return n.nodeType===3&&n.nodeValue.trim()});
+  if(own){out.push(el);return}
+  Array.prototype.forEach.call(el.children,w)})(rt);return out}
+function restoreSB(){document.querySelectorAll('[data-sb]').forEach(function(e){if(e._o!=null){e.innerHTML=e._o;delete e._o}e.removeAttribute('data-sb')})}
+function clean(rt){rt.querySelectorAll('[contenteditable],[data-ed]').forEach(function(e){e.removeAttribute('contenteditable');e.removeAttribute('data-ed')});rt.querySelectorAll('[data-sb]').forEach(function(e){e.removeAttribute('data-sb')})}
+function popEdit(on){[K.pt,K.pbd].forEach(function(e){if(!e)return;if(on)e.setAttribute('contenteditable',CE);else e.removeAttribute('contenteditable')})}
+function setEdit(on){
+  editing=on;document.body.classList.toggle('editing',on);
+  $('bEdit').textContent=on?'편집 완료·저장':'글자 편집';
+  if(on){restoreSB();roots().forEach(function(r){hosts(r).forEach(function(h){h.setAttribute('contenteditable',CE);h.setAttribute('data-ed','1')})})}
+  else{document.querySelectorAll('[data-ed]').forEach(function(h){h.removeAttribute('contenteditable');h.removeAttribute('data-ed')})}
+  popEdit(on);
+}
+function saveLocal(extra){
+  roots().forEach(clean);
+  var o={ver:baseVer,from:verHtml,html:roots().map(function(r){return r.innerHTML}),ov:ov};
+  if(K.cfg)o.cfg=K.cfg;
+  if(extra)for(var k in extra)o[k]=extra[k];
+  try{localStorage.setItem(LKEY,JSON.stringify(o))}catch(e){gst('이 브라우저에 임시 저장하지 못했습니다.',true)}
+  if(K.boot)K.boot();
+}
+$('bEdit').addEventListener('click',function(){if(!editing){setEdit(true)}else{setEdit(false);saveLocal();gst('이 브라우저에 임시 저장했습니다. GitHub에 반영하면 다른 기기에서도 보입니다.')}});
+/* 팝업 설명 : 편집 중에는 Alt+클릭으로 열어 수정 */
+document.addEventListener('click',function(e){
+  var t=e.target.closest&&e.target.closest('[data-p]');if(!t)return;
+  if(editing&&!e.altKey){e.stopPropagation();e.preventDefault();return}
+  curId=t.getAttribute('data-p');
+},true);
+document.addEventListener('input',function(e){
+  if(!editing||!curId||!K.pop||!K.pop.contains(e.target))return;
+  var c=K.pbd.cloneNode(true),lw=c.querySelector('.lw'),l=lw?lw.innerHTML.replace(/^\s*근거\s*:\s*/,''):((K.P[curId]||{}).l||'');
+  if(lw)lw.remove();
+  K.P[curId]={t:K.pt.textContent,b:c.innerHTML,l:l};ov[curId]=K.P[curId];
+});
+/* 입력 규칙 : Enter 는 줄바꿈, 서식 단축키 차단, 붙여넣기는 글자만 */
+function selRange(){var sl=window.getSelection();if(!sl||!sl.rangeCount)return null;return{sl:sl,r:sl.getRangeAt(0)}}
+function insBr(){var o=selRange();if(!o)return;var r=o.r;r.deleteContents();var br=document.createElement('br');r.insertNode(br);r.setStartAfter(br);r.collapse(true);o.sl.removeAllRanges();o.sl.addRange(r)}
+function insSp(){var o=selRange();if(!o)return;var r=o.r;r.deleteContents();var n=r.startContainer,i=r.startOffset,prev='',next='';
+  if(n.nodeType===3){prev=n.nodeValue.charAt(i-1);next=n.nodeValue.charAt(i)}
+  var ch=(!prev||/[\s ]/.test(prev)||!next||/[\s ]/.test(next))?' ':' ';
+  var tn=document.createTextNode(ch);r.insertNode(tn);r.setStartAfter(tn);r.collapse(true);o.sl.removeAllRanges();o.sl.addRange(r)}
+document.addEventListener('keydown',function(e){
+  if(!editing)return;var t=e.target;if(!(t&&t.closest&&t.closest('[contenteditable]')))return;
+  if((e.ctrlKey||e.metaKey)&&/^[biu]$/i.test(e.key)){e.preventDefault();return}
+  if(e.isComposing)return;
+  if(e.key==='Enter'){e.preventDefault();insBr();return}
+  if(e.key===' '&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();insSp();return}
+});
+document.addEventListener('paste',function(e){
+  if(!editing)return;var t=e.target;if(!(t&&t.closest&&t.closest('[contenteditable]')))return;
+  e.preventDefault();document.execCommand('insertText',false,(e.clipboardData||window.clipboardData).getData('text').replace(/\s*\n\s*/g,' '));
+});
+$('bRst').addEventListener('click',function(){
+  if(confirm('이 브라우저에 저장된 수정 내용을 지우고 원래대로 되돌립니다.')){try{localStorage.removeItem(LKEY)}catch(e){}location.reload()}
+});
+/* 파일 만들기 : mode = 'admin'(편집 페이지) 또는 'view'(조회 페이지) */
+function buildHtml(ver,mode){
+  if(editing){setEdit(false);saveLocal()}
+  restoreSB();
+  var doc=root.cloneNode(true);
+  doc.setAttribute('data-ver',ver);
+  clean(doc);
+  doc.querySelectorAll('[data-sheet],[data-sheet] .main').forEach(function(e){e.removeAttribute('style')});
+  doc.querySelectorAll('.slgct,#slgctCss').forEach(function(e){e.remove()});
+  doc.querySelectorAll('[data-ct]').forEach(function(e){e.textContent=''});
+  var pp=doc.querySelector('#pop');if(pp){pp.setAttribute('hidden','');pp.removeAttribute('style');doc.querySelector('#pt').textContent='';doc.querySelector('#pbody').innerHTML=''}
+  var po=doc.querySelector('#pov');if(po)po.textContent=JSON.stringify(ov).replace(/</g,'\\u003c');
+  var cf=doc.querySelector('#cfg');if(cf&&K.cfg)cf.textContent=JSON.stringify(K.cfg).replace(/</g,'\\u003c');
+  var g=doc.querySelector('#gst');if(g)g.textContent='';
+  doc.querySelector('body').className='';
+  if(mode==='view'){
+    doc.querySelectorAll('[data-adm]').forEach(function(e){e.remove()});
+    doc.querySelectorAll('.bar a.lk').forEach(function(a){a.setAttribute('href',a.getAttribute('href').replace('_admin','').replace('-admin',''))});
+    var tt=doc.querySelector('title');tt.textContent=tt.textContent.replace(/ · 편집$/,'');
+  }
+  if(K.boot)setTimeout(K.boot,0);
+  return '<!DOCTYPE html>\n'+doc.outerHTML;
+}
+$('bDl').addEventListener('click',function(){
+  var html=buildHtml(String(Date.now()),'admin');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  a.download=FN;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
+});
+/* GitHub 반영 : 편집 페이지와 조회 페이지를 함께 갱신. 토큰은 이 브라우저의 localStorage에만 저장 */
+function getTk(){try{return localStorage.getItem(TKEY)||''}catch(e){return ''}}
+function b64(s){var b=new TextEncoder().encode(s),o='',i;for(i=0;i<b.length;i+=8192)o+=String.fromCharCode.apply(null,b.subarray(i,i+8192));return btoa(o)}
+function d64(s){var b=atob(s.replace(/\n/g,'')),u=new Uint8Array(b.length),i;for(i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new TextDecoder().decode(u)}
+function api(tk,p,opt){return fetch('https://api.github.com/repos/'+GH.o+'/'+GH.r+'/contents/'+p.split('/').map(encodeURIComponent).join('/')+(opt&&opt.q||''),{method:opt&&opt.m||'GET',headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json'},body:opt&&opt.body})}
+async function ghPush(tk){
+  try{
+    gst('GitHub 확인 중...');
+    var rv=await api(tk,GH.pv,{q:'?ref='+GH.b});
+    if(rv.status===401||rv.status===403){gst('토큰 권한을 확인하세요(Contents 쓰기 권한 필요).',true);return}
+    var sv=null,remoteVer='';
+    if(rv.ok){sv=await rv.json();var m=/<html[^>]*data-ver="(\d+)"/.exec(d64(sv.content));remoteVer=m?m[1]:''}
+    if(remoteVer&&remoteVer!=='0'&&remoteVer!==baseVer&&remoteVer!==verHtml&&!confirm('GitHub에 이 화면과 다른 최신 수정본이 있습니다.\n그대로 덮어쓸까요?')){gst('취소했습니다.');return}
+    var ver=String(Date.now()),ha=buildHtml(ver,'admin'),hv=buildHtml(ver,'view');
+    gst('GitHub에 올리는 중...');
+    var ra=await api(tk,GH.pa,{q:'?ref='+GH.b}),sa=ra.ok?(await ra.json()).sha:undefined;
+    var msg='empkeep: 웹 편집 반영 ('+new Date().toLocaleString('ko-KR')+')';
+    var r1=await api(tk,GH.pa,{m:'PUT',body:JSON.stringify({message:msg,content:b64(ha),branch:GH.b,sha:sa})});
+    if(!r1.ok){gst('편집 페이지 반영 실패('+r1.status+')',true);return}
+    var rv2=await api(tk,GH.pv,{q:'?ref='+GH.b}),sv2=rv2.ok?(await rv2.json()).sha:undefined;
+    var r2=await api(tk,GH.pv,{m:'PUT',body:JSON.stringify({message:msg,content:b64(hv),branch:GH.b,sha:sv2})});
+    if(!r2.ok){gst('조회 페이지 반영 실패('+r2.status+')',true);return}
+    baseVer=ver;saveLocal({ver:ver});
+    gst('반영 완료 : 편집·조회 페이지 모두 갱신(반영까지 1~2분 걸릴 수 있습니다)');
+  }catch(e){gst('오류 : '+e.message,true)}
+}
+$('bGh').addEventListener('click',function(){
+  var tk=getTk();
+  if(!tk){
+    tk=(prompt('GitHub 토큰(Contents 쓰기 권한)을 입력하세요.\n이 브라우저에만 저장되며 파일에는 기록되지 않습니다.')||'').trim();
+    if(!tk)return;try{localStorage.setItem(TKEY,tk)}catch(e){}
+  }
+  ghPush(tk);
+});
+$('bTk').addEventListener('click',function(){
+  if(!getTk()){gst('저장된 토큰이 없습니다.');return}
+  if(confirm('이 브라우저에 저장된 GitHub 토큰을 삭제합니다.')){try{localStorage.removeItem(TKEY)}catch(e){}gst('토큰을 삭제했습니다.')}
+});
+window.showPending=function(p){gst('법령 변경 확인 필요 '+p.length+'건 : '+p.join(' / '),true)};
+window.__emkAdm={cfgChanged:function(){saveLocal();},buildHtml:buildHtml,hosts:hosts};
+})();
+</script>
+<script src="../contacts.js"></script>
+<script data-adm>
+(function(){
+var K=window.__emk;if(!K||!K.cfg)return;
+var F=[['cap','1일 상한액(원)',1],['maxDays','연 한도(일)',1],['minCut','유급 최소 단축률(%)',1],['minPay','휴업수당 지급률 기준(%)',1],
+['ratePri','우선지원대상기업 지원비율(%)',0.01],['rateBig','대규모기업 지원비율(%)',0.01],['rateBigHigh','대규모기업 고단축 지원비율(%)',0.01],['cutHigh','고단축 기준(%)',1],
+['areaPri','선제대응지역 우선지원(%)',0.01],['areaBig','선제대응지역 대규모(%)',0.01],['areaBigHigh','선제대응지역 대규모 고단축(%)',0.01],
+['unpaidRate','무급 평균임금 반영률(%)',1],['train','직업능력개발 월 지원(원)',1]];
+var D=[['cnt','대상 근로자 수(명)'],['wage','월 통상임금(원)'],['hours','월 소정근로시간'],['cut','단축률(%)'],['pay','지급률(%)'],['months','실시 기간(개월)'],['avg','월 평균임금(원)']];
+var d=document.createElement('details');d.setAttribute('data-adm','');d.id='cfgPanel';d.open=true;
+d.style.cssText='width:210mm;max-width:100%;margin:8px auto 0;background:#fff;border:1px solid #c3cde0;border-left:4px solid #b08435;border-radius:4px;padding:6px 10px;font-size:12px';
+var h='<summary style="cursor:pointer;font-weight:800;color:#17294a">계산 설정값 (조회 페이지의 계산에 바로 반영됩니다)</summary><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px 10px;margin-top:6px">';
+F.forEach(function(f){h+='<label style="display:flex;flex-direction:column;gap:2px;font-weight:700">'+f[1]+'<input data-k="'+f[0]+'" type="number" step="'+f[2]+'" value="'+K.cfg[f[0]]+'" style="padding:3px 5px;font:inherit;border:1px solid #c3cde0;border-radius:3px"></label>'});
+h+='</div><div style="font-weight:800;margin:8px 0 2px;color:#17294a">입력 기본값</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px 10px">';
+D.forEach(function(f){h+='<label style="display:flex;flex-direction:column;gap:2px;font-weight:700">'+f[1]+'<input data-d="'+f[0]+'" type="number" value="'+K.cfg.defaults[f[0]]+'" style="padding:3px 5px;font:inherit;border:1px solid #c3cde0;border-radius:3px"></label>'});
+h+='</div><div style="margin-top:6px;color:#566074">지원비율 2/3는 66.6667 로 입력하면 정확히 2/3로 계산됩니다. 화면 설명 문구의 숫자는 아래 본문에서 직접 고치세요.</div>';
+d.innerHTML=h;
+var tip=document.querySelector('.edtip');tip.parentNode.insertBefore(d,tip.nextSibling);
+d.addEventListener('change',function(e){
+  var t=e.target,k=t.getAttribute('data-k'),dk=t.getAttribute('data-d'),v=parseFloat(t.value);
+  if(isNaN(v))return;
+  if(k)K.cfg[k]=v;else if(dk)K.cfg.defaults[dk]=v;
+  K.boot();if(window.__emkAdm)window.__emkAdm.cfgChanged();
+});
+})();
+</script>
+</body></html>

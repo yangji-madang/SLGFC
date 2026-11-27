@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko"><head>
+<html lang="ko" data-ver="0"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>고용유지지원금 시뮬레이션 | 내 회사 예상 지원금</title>
@@ -95,7 +95,7 @@ table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:9.8pt;lin
 <header class="ttl">
   <h1>고용유지지원금 시뮬레이션</h1>
   <div class="sub">우리 회사가 받을 수 있는 예상 지원금<br>: 숫자를 입력하면 바로 계산됩니다</div>
-  <div class="chips"><span>고시 <b>제2026-30호</b> 기준</span><span>1일 상한 <b>68,100원</b></span></div>
+  <div class="chips"><span>고시 <b>제2026-30호</b> 기준</span><span>1일 상한 <b data-cfg="cap">68,100원</b></span></div>
   <div class="qd">기준일 <b>2026.11.27</b></div>
 </header>
 
@@ -113,9 +113,9 @@ table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:9.8pt;lin
   <div class="f"><label for="wage">월 통상임금 (원, 1인)</label><input id="wage" type="number" min="0" step="10000" value="3000000"></div>
   <div class="f" id="fHours"><label for="hours">월 소정근로시간 (시간)</label><input id="hours" type="number" min="1" step="1" value="209"></div>
   <div class="f" id="fCut"><label for="cut">근로시간 단축률 (%)</label><input id="cut" type="number" min="0" max="100" step="1" value="50">
-    <small>유급은 20% 이상이어야 합니다</small></div>
+    <small>유급은 <span data-cfg="minCut">20</span>% 이상이어야 합니다</small></div>
   <div class="f" id="fPay"><label for="pay">휴업수당 등 지급률 (%)</label><input id="pay" type="number" min="0" max="100" step="1" value="70">
-    <small>단축시간 임금 대비. 근로기준법 제46조 70% 이상</small></div>
+    <small>단축시간 임금 대비. 근로기준법 제46조 <span data-cfg="minPay">70</span>% 이상</small></div>
   <div class="f"><label for="months">실시 기간 (개월)</label><input id="months" type="number" min="1" max="12" step="1" value="6"></div>
   <div class="f" id="fAvg"><label for="avg">월 평균임금 (원, 무급용)</label><input id="avg" type="number" min="0" step="10000" value="3300000">
     <small>직전 3개월 임금총액 기준 월 환산액</small></div>
@@ -123,10 +123,10 @@ table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:9.8pt;lin
     <select id="train"><option value="n">실시 안 함</option><option value="y">실시 (1인 월 10만 원)</option></select></div>
 </div>
 <div class="btns noprint"><button class="go" type="button" id="calc">계산하기</button><button class="rs" type="button" id="reset">초기화</button></div>
-<div class="wn" id="warn" style="display:none"></div>
+<div class="wn" id="warn" data-noedit style="display:none"></div>
 
-<h2>2. 예상 지원금<small id="sumline"></small></h2>
-<div class="res">
+<h2>2. 예상 지원금<small id="sumline" data-noedit></small></h2>
+<div class="res" data-noedit>
   <div class="big"><small>총 예상 지원금</small><b id="rTot">-</b><span id="rTotS"></span></div>
   <div class="mini"><small>1인 월 지원금</small><b id="rPm">-</b><span id="rPmS"></span></div>
   <div class="mini"><small>회사 실부담 (대략)</small><b id="rNet">-</b><span id="rNetS"></span></div>
@@ -135,12 +135,12 @@ table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:9.8pt;lin
 <h2>3. 계산 내역<small>산식 단계별</small></h2>
 <div class="tw"><table class="t">
 <thead><tr><th>단계</th><th>내용</th><th>산식</th><th>값</th></tr></thead>
-<tbody id="steps"></tbody></table></div>
+<tbody id="steps" data-noedit></tbody></table></div>
 
 <h2>4. 월별 지급 예상<small>180일 한도 반영</small></h2>
 <div class="tw"><table class="t">
 <thead><tr><th>월차</th><th>누적 환산일수</th><th>1인 지급 금품</th><th>1인 지원금</th><th>전체 지원금</th><th>비고</th></tr></thead>
-<tbody id="rows"></tbody></table></div>
+<tbody id="rows" data-noedit></tbody></table></div>
 
 <h2>5. 유의사항<small>꼭 확인하세요</small></h2>
 <div class="hl"><b>이 결과는 모의 계산입니다.</b> 지원 여부와 금액은 관할 고용센터 심사로 확정되며, 한도 산정 방식은 고용센터 기준과 다를 수 있습니다. 근거 : <a href="https://www.law.go.kr/행정규칙/고용유지지원금신청및지급에관한규정" target="_blank" rel="noopener">고용노동부 고시 제2026-30호</a> 제5조·제10조·제20조, <a href="https://www.law.go.kr/법령/고용보험법시행령/제21조" target="_blank" rel="noopener">고용보험법 시행령 제21조</a>.</div>
@@ -160,9 +160,15 @@ table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:9.8pt;lin
 </footer>
 </td></tr></tfoot></table>
 
+<script id="cfg" type="application/json">{"cap":68100,"maxDays":180,"minCut":20,"minPay":70,"train":100000,"unpaidRate":50,"ratePri":66.6667,"rateBig":50,"rateBigHigh":66.6667,"cutHigh":50,"areaPri":80,"areaBig":60,"areaBigHigh":70,"defaults":{"type":"paid","size":"pri","area":"n","cnt":10,"wage":3000000,"hours":209,"cut":50,"pay":70,"months":6,"avg":3300000,"train":"n"}}</script>
+<script id="pov" type="application/json">{}</script>
 <script>
 (function(){
-var CAP=68100, MAXD=180, MIN_CUT=20, TRAIN=100000;
+var CFG=JSON.parse(document.getElementById('cfg').textContent);
+var CAP,MAXD,MIN_CUT,TRAIN;
+function R(x){return Math.abs(x-66.6667)<0.001?2/3:x/100}
+function sync(){CAP=CFG.cap;MAXD=CFG.maxDays;MIN_CUT=CFG.minCut;TRAIN=CFG.train}
+sync();
 var BASE='https://www.law.go.kr/';
 var PN={'고용보험법시행령':'고용보험법 시행령'};
 function lk(s){return s.replace(/\{\{([^|}]+)(?:\|([^|}]+))?\}\}/g,function(m,n,a){
@@ -178,16 +184,16 @@ function big(n){return n>=100000000?(n/100000000).toFixed(2).replace(/\.?0+$/,''
 
 /* 계산 핵심 : 화면과 분리해 검증 가능하게 둠 */
 function compute(o){
-  var out={err:[],steps:[],rows:[],total:0,pm:0,net:0};
+  sync();var out={err:[],steps:[],rows:[],total:0,pm:0,net:0};
   if(o.cnt<1)out.err.push('대상 근로자 수는 1명 이상이어야 합니다.');
   if(o.months<1||o.months>12)out.err.push('실시 기간은 1~12개월 범위로 입력하세요.');
   if(o.type==='paid'){
-    if(o.cut<MIN_CUT)out.err.push('유급 고용유지조치는 월 소정근로시간을 20% 이상 단축해야 합니다. 현재 '+o.cut+'%입니다.');
+    if(o.cut<MIN_CUT)out.err.push('유급 고용유지조치는 월 소정근로시간을 '+MIN_CUT+'% 이상 단축해야 합니다. 현재 '+o.cut+'%입니다.');
     if(o.cut>100)out.err.push('단축률은 100%를 넘을 수 없습니다.');
-    if(o.pay<70)out.err.push('휴업수당 등 지급률이 70% 미만입니다. 부득이한 사유로 미달 지급하려면 노동위원회 승인이 필요합니다.');
+    if(o.pay<CFG.minPay)out.err.push('휴업수당 등 지급률이 '+CFG.minPay+'% 미만입니다. 부득이한 사유로 미달 지급하려면 노동위원회 승인이 필요합니다.');
     var rate;
-    if(o.area==='y')rate=(o.size==='pri')?0.8:(o.cut>=50?0.7:0.6);
-    else rate=(o.size==='pri')?2/3:(o.cut>=50?2/3:0.5);
+    if(o.area==='y')rate=(o.size==='pri')?R(CFG.areaPri):(o.cut>=CFG.cutHigh?R(CFG.areaBigHigh):R(CFG.areaBig));
+    else rate=(o.size==='pri')?R(CFG.ratePri):(o.cut>=CFG.cutHigh?R(CFG.rateBigHigh):R(CFG.rateBig));
     var shortH=o.hours*o.cut/100, days=shortH/8;
     var wageCut=o.wage*o.cut/100, paid=wageCut*o.pay/100;
     var raw=paid*rate, capM=days*CAP, pm=Math.min(raw,capM);
@@ -195,9 +201,9 @@ function compute(o){
       ['1','월 단축시간',o.hours+'시간 × '+o.cut+'%',shortH.toFixed(1)+'시간'],
       ['2','단축시간 임금(1인)',won(o.wage)+' × '+o.cut+'%',won(wageCut)],
       ['3','지급 금품(1인)',won(wageCut)+' × '+o.pay+'%',won(paid)],
-      ['4','지원비율',(o.area==='y'?'선제대응지역 ':'')+(o.size==='pri'?'우선지원대상기업':'대규모기업')+(o.cut>=50?' (단축 50% 이상)':''),(rate*100).toFixed(1).replace(/\.0$/,'')+'%'],
+      ['4','지원비율',(o.area==='y'?'선제대응지역 ':'')+(o.size==='pri'?'우선지원대상기업':'대규모기업')+(o.cut>=CFG.cutHigh?' (단축 '+CFG.cutHigh+'% 이상)':''),(rate*100).toFixed(1).replace(/\.0$/,'')+'%'],
       ['5','지원금 산정액(1인, 월)',won(paid)+' × '+(rate*100).toFixed(1).replace(/\.0$/,'')+'%',won(raw)],
-      ['6','1일 상한 한도(1인, 월)','환산일수 '+days.toFixed(2)+'일 × 68,100원',won(capM)],
+      ['6','1일 상한 한도(1인, 월)','환산일수 '+days.toFixed(2)+'일 × '+won(CAP),won(capM)],
       ['7','1인 월 지원금','4·6 중 작은 값'+(raw>capM?' (상한 적용)':''),won(pm)]
     ];
     var cum=0,tot=0;
@@ -206,7 +212,7 @@ function compute(o){
       var ratio=days>0?d/days:0;
       var pmm=pm*ratio, tm=pmm*o.cnt;
       cum+=d;tot+=tm;
-      out.rows.push([m+'개월차',cum.toFixed(1)+'일',won(paid*ratio),won(pmm),won(tm),cap?'180일 한도 적용':'']);
+      out.rows.push([m+'개월차',cum.toFixed(1)+'일',won(paid*ratio),won(pmm),won(tm),cap?MAXD+'일 한도 적용':'']);
     }
     out.total=tot;out.pm=pm;
     out.cost=paid*o.months*o.cnt;
@@ -215,22 +221,22 @@ function compute(o){
     out.tS='1인 평균 '+won(tot/o.cnt)+' (총 '+Math.round(cum)+'일분 환산)';
   }else{
     if(o.avg<=0)out.err.push('월 평균임금을 입력하세요.');
-    var dayAvg=o.avg/30, perDay=Math.min(dayAvg*0.5,CAP);
+    var dayAvg=o.avg/30, perDay=Math.min(dayAvg*CFG.unpaidRate/100,CAP);
     var daysU=Math.min(o.months*30,MAXD);
     var base=perDay*daysU, tr=(o.train==='y')?TRAIN*o.months:0;
     out.steps=[
       ['1','일 평균임금','월 평균임금 '+won(o.avg)+' ÷ 30',won(dayAvg)],
-      ['2','일 지원액(1인)','평균임금 50% 와 68,100원 중 작은 값',won(perDay)],
-      ['3','지원 일수(1인)','실시 '+o.months+'개월 × 30일, 최대 180일',daysU+'일'],
+      ['2','일 지원액(1인)','평균임금 '+CFG.unpaidRate+'% 와 '+won(CAP)+' 중 작은 값',won(perDay)],
+      ['3','지원 일수(1인)','실시 '+o.months+'개월 × 30일, 최대 '+MAXD+'일',daysU+'일'],
       ['4','휴업·휴직 지원금(1인)',won(perDay)+' × '+daysU+'일',won(base)],
-      ['5','직업능력개발 지원금(1인)',o.train==='y'?'10만 원 × '+o.months+'개월':'실시 안 함',won(tr)],
+      ['5','직업능력개발 지원금(1인)',o.train==='y'?won(TRAIN)+' × '+o.months+'개월':'실시 안 함',won(tr)],
       ['6','1인 합계','4 + 5',won(base+tr)]
     ];
     var cumU=0;
     for(var k=1;k<=o.months;k++){
       var dk=Math.min(30,Math.max(0,MAXD-cumU)); cumU+=dk;
       var pk=perDay*dk+((o.train==='y')?TRAIN:0);
-      out.rows.push([k+'개월차',cumU+'일','-',won(pk),won(pk*o.cnt),(cumU>=MAXD&&dk<30)?'180일 한도 적용':'']);
+      out.rows.push([k+'개월차',cumU+'일','-',won(pk),won(pk*o.cnt),(cumU>=MAXD&&dk<30)?MAXD+'일 한도 적용':'']);
     }
     out.total=(base+tr)*o.cnt;out.pm=(daysU>0?(base+tr)/o.months:0);
     out.net=0;out.cost=0;
@@ -246,7 +252,7 @@ function render(){
   var o=read(),r=compute(o);
   var w=$('warn');
   if(r.err.length){w.style.display='block';w.innerHTML='<b>확인이 필요합니다.</b><br>'+r.err.join('<br>')}else w.style.display='none';
-  var blocked=r.err.some(function(e){return e.indexOf('20% 이상')>-1||e.indexOf('1명 이상')>-1||e.indexOf('1~12')>-1||e.indexOf('평균임금을')>-1||e.indexOf('100%를')>-1});
+  var blocked=r.err.some(function(e){return e.indexOf('% 이상 단축해야')>-1||e.indexOf('1명 이상')>-1||e.indexOf('1~12')>-1||e.indexOf('평균임금을')>-1||e.indexOf('100%를')>-1});
   $('sumline').textContent=r.sum||'';
   if(blocked){$('rTot').textContent='-';$('rTotS').textContent='요건을 먼저 확인하세요';$('rPm').textContent='-';$('rPmS').textContent='';$('rNet').textContent='-';$('rNetS').textContent='';$('steps').innerHTML='';$('rows').innerHTML='';return}
   $('rTot').textContent=big(r.total);$('rTotS').textContent='= '+won(r.total)+' · '+r.tS;
@@ -266,15 +272,20 @@ function toggle(){
   $('size').disabled=u;$('area').disabled=u;
   render();
 }
-$('type').addEventListener('change',toggle);
-['size','area','cnt','wage','hours','cut','pay','months','avg','train'].forEach(function(i){$(i).addEventListener('input',render);$(i).addEventListener('change',render)});
-$('calc').addEventListener('click',render);
-$('reset').addEventListener('click',function(){
-  var d={type:'paid',size:'pri',area:'n',cnt:10,wage:3000000,hours:209,cut:50,pay:70,months:6,avg:3300000,train:'n'};
-  for(var k in d)$(k).value=d[k];toggle();
+function applyDefaults(){var d=CFG.defaults||{};for(var k in d){var e=$(k);if(e)e.value=d[k]}}
+function cfgLabels(){
+  document.querySelectorAll('[data-cfg]').forEach(function(e){var k=e.getAttribute('data-cfg');e.textContent=(k==='cap')?won(CFG.cap):CFG[k]});
+}
+function boot(){sync();applyDefaults();cfgLabels();toggle()}
+document.addEventListener('input',function(e){var t=e.target;if(t.matches&&t.matches('input,select')&&t.closest('#doc'))render()});
+document.addEventListener('change',function(e){var t=e.target;if(!(t.matches&&t.matches('input,select')&&t.closest('#doc')))return;if(t.id==='type')toggle();else render()});
+document.addEventListener('click',function(e){
+  var t=e.target.closest&&e.target.closest('button');if(!t)return;
+  if(t.id==='calc')render();
+  else if(t.id==='reset'){applyDefaults();toggle()}
+  else if(t.id==='prt')window.print();
 });
-$('prt').addEventListener('click',function(){window.print()});
-toggle();
+boot();
 
 /* 기준일 : empkeep_basis.json(매일 아침 점검 작업이 갱신)을 읽어 표시. 읽지 못하면 이 파일에 적힌 날짜를 그대로 씁니다. */
 try{fetch('empkeep_basis.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){
@@ -282,6 +293,7 @@ try{fetch('empkeep_basis.json',{cache:'no-store'}).then(function(r){return r.ok?
   document.querySelectorAll('.qd b').forEach(function(b){b.textContent=m[1]+'.'+m[2]+'.'+m[3]});
   if(j.pending&&j.pending.length&&window.showPending)window.showPending(j.pending);
 }).catch(function(){})}catch(e){}
+window.__emk={cfg:CFG,boot:boot};
 })();
 </script>
 <script src="../contacts.js"></script>

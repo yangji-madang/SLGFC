@@ -169,8 +169,9 @@ body.editing #pt[contenteditable],body.editing #pbody[contenteditable]{outline:1
   <button type="button" data-adm id="bGh">⬆ GitHub 반영</button>
   <button type="button" data-adm id="bTk" class="sec">토큰 삭제</button>
   <button type="button" data-adm id="bRst" class="sec">원래대로</button>
-  <a class="lk" href="empkeep_info-admin.html">상세내용</a>
-  <a class="lk" href="empkeep_simul.html">지원금 시뮬레이션</a>
+<a class="lk" href="empkeep_info-admin.html">상세내용</a>
+  <a class="lk" href="empkeep_simul_admin.html">지원금 시뮬레이션</a>
+  
   <button type="button" id="prt">인쇄 / PDF 저장</button>
 </div>
 <div class="edtip" data-adm>편집 모드 : 글자만 수정됩니다(서식 없음). 팝업 설명은 Alt+클릭으로 열어 수정하세요. 편집 완료 후 'GitHub 반영'을 누르면 조회 페이지도 함께 바뀝니다.</div>
@@ -463,7 +464,7 @@ var FN='empkeep_info_graph_admin.html',VN='empkeep_info_graph.html',K=window.__e
 var GH={o:'yangji-madang',r:'SLGFC',b:'main',pa:'consult/'+FN,pv:'consult/'+VN};
 var TKEY='info_gh_token',LKEY='emk_edit:'+FN;
 var root=document.documentElement,editing=false,curId=null;
-var ov={};try{ov=JSON.parse(document.getElementById('pov').textContent||'{}')}catch(e){}
+var ov={};try{ov=JSON.parse((document.getElementById('pov')||{}).textContent||'{}')}catch(e){}
 var verHtml=root.getAttribute('data-ver')||'0',baseVer=verHtml;
 function $(i){return document.getElementById(i)}
 function gst(m,warn){var e=$('gst');e.textContent=m;e.style.color=warn?'#a5372f':'#17294a'}
@@ -474,13 +475,14 @@ function roots(){return Array.prototype.slice.call(document.querySelectorAll('#d
   if(sv&&sv.html&&(sv.from===verHtml||sv.ver===verHtml)){
     var rs=roots();
     if(rs.length===sv.html.length){rs.forEach(function(r,i){r.innerHTML=sv.html[i]})}
+    if(sv.cfg&&K.cfg){Object.keys(sv.cfg).forEach(function(k){K.cfg[k]=sv.cfg[k]})}
     if(sv.ov){Object.keys(sv.ov).forEach(function(k){ov[k]=sv.ov[k];if(K.P)K.P[k]=sv.ov[k]})}
     baseVer=sv.ver;if(K.boot)K.boot();
   }
 })();
 var plainOK=(function(){var t=document.createElement('div');try{t.contentEditable='plaintext-only';return t.contentEditable==='plaintext-only'}catch(e){return false}})();
 var CE=plainOK?'plaintext-only':'true';
-function skip(el){return el.closest&&el.closest('svg,.qd,.ft .row,.law,.slgct,script,style,.pop')}
+function skip(el){return el.closest&&el.closest('svg,.qd,.ft .row,.law,.slgct,script,style,.pop,select,option,input,textarea,[data-noedit],[data-cfg]')}
 function hosts(rt){var out=[];(function w(el){
   if(el.nodeType!==1||skip(el)||el.classList.contains('yr')||el.classList.contains('i')||el.hasAttribute('data-ct'))return;
   var own=Array.prototype.some.call(el.childNodes,function(n){return n.nodeType===3&&n.nodeValue.trim()});
@@ -499,6 +501,7 @@ function setEdit(on){
 function saveLocal(extra){
   roots().forEach(clean);
   var o={ver:baseVer,from:verHtml,html:roots().map(function(r){return r.innerHTML}),ov:ov};
+  if(K.cfg)o.cfg=K.cfg;
   if(extra)for(var k in extra)o[k]=extra[k];
   try{localStorage.setItem(LKEY,JSON.stringify(o))}catch(e){gst('이 브라우저에 임시 저장하지 못했습니다.',true)}
   if(K.boot)K.boot();
@@ -549,6 +552,7 @@ function buildHtml(ver,mode){
   doc.querySelectorAll('[data-ct]').forEach(function(e){e.textContent=''});
   var pp=doc.querySelector('#pop');if(pp){pp.setAttribute('hidden','');pp.removeAttribute('style');doc.querySelector('#pt').textContent='';doc.querySelector('#pbody').innerHTML=''}
   var po=doc.querySelector('#pov');if(po)po.textContent=JSON.stringify(ov).replace(/</g,'\\u003c');
+  var cf=doc.querySelector('#cfg');if(cf&&K.cfg)cf.textContent=JSON.stringify(K.cfg).replace(/</g,'\\u003c');
   var g=doc.querySelector('#gst');if(g)g.textContent='';
   doc.querySelector('body').className='';
   if(mode==='view'){
@@ -603,7 +607,7 @@ $('bTk').addEventListener('click',function(){
   if(confirm('이 브라우저에 저장된 GitHub 토큰을 삭제합니다.')){try{localStorage.removeItem(TKEY)}catch(e){}gst('토큰을 삭제했습니다.')}
 });
 window.showPending=function(p){gst('법령 변경 확인 필요 '+p.length+'건 : '+p.join(' / '),true)};
-window.__emkAdm={buildHtml:buildHtml,hosts:hosts};
+window.__emkAdm={cfgChanged:function(){saveLocal();},buildHtml:buildHtml,hosts:hosts};
 })();
 </script>
 <script src="../contacts.js"></script>
