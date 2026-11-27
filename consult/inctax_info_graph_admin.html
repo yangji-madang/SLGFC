@@ -161,7 +161,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
   <button type="button" data-adm="" id="bGh">⬆ GitHub 반영</button>
   <button type="button" data-adm="" id="bTk" class="sec">토큰 삭제</button>
   <button type="button" data-adm="" id="bRst" class="sec">원래대로</button>
-  <a id="lDetail" class="lk" href="inctax_info-admin.html">상세 페이지</a>
+  <a id="lDetail" class="lk" href="inctax_info_admin.html">상세 페이지</a>
   <button type="button" id="prt">인쇄 / PDF 저장</button>
 </div>
 <div class="edtip" data-adm="">편집 모드 : 글자만 수정됩니다(서식 없음). 팝업 설명은 Alt+클릭으로 열어 수정하세요.</div>
@@ -478,7 +478,7 @@ function buildHtml(ver,mode){
   doc.querySelector('#pov').textContent=JSON.stringify(ov).replace(/</g,'\\u003c');
   var pp=doc.querySelector('#pop');pp.setAttribute('hidden','');pp.removeAttribute('style');doc.querySelector('#pt').textContent='';doc.querySelector('#pbody').innerHTML='';
   doc.querySelector('#gst').textContent='';
-  var cx=doc.querySelector('#ctSel');if(cx)cx.remove();doc.querySelectorAll('[data-ct]').forEach(function(e){e.textContent=''});var ld=doc.querySelector('#lDetail');if(ld&&mode==='view')ld.setAttribute('href',ld.getAttribute('href').replace('-admin',''));
+  var cx=doc.querySelector('#ctSel');if(cx)cx.remove();doc.querySelectorAll('[data-ct]').forEach(function(e){e.textContent=''});var ld=doc.querySelector('#lDetail');if(ld&&mode==='view')ld.setAttribute('href',ld.getAttribute('href').replace('_admin',''));
   doc.querySelector('body').className='';
   if(mode==='view'){
     doc.querySelectorAll('[data-adm]').forEach(function(e){e.remove()});
@@ -494,7 +494,7 @@ document.getElementById('bDl').addEventListener('click',function(){
   a.download=FN;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
 });
 onOpen=setPopEdit;
-/* GitHub 반영 : 편집 페이지(-admin)와 조회 페이지를 함께 갱신. 토큰은 이 브라우저의 localStorage에만 저장 */
+/* GitHub 반영 : 편집 페이지(_admin)와 조회 페이지를 함께 갱신. 토큰은 이 브라우저의 localStorage에만 저장 */
 var VN=FN.replace('_admin',''),GH={o:'yangji-madang',r:'SLGFC',b:'main',pa:'consult/'+FN,pv:'consult/'+VN},TKEY='info_gh_token',baseVer=sheetEl.getAttribute('data-ver');
 document.getElementById('lView').href=VN;
 window.showPending=function(p){gst('법령 변경 확인 필요 '+p.length+'건 : '+p.join(' / '),true)};

@@ -255,7 +255,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 <script>
 (function(){
 var sheetEl=document.getElementById("sheet"),mainEl=document.getElementById("main"),ftEl=document.getElementById("ft");
-var FN=location.pathname.split("/").pop()||"inctax_info-admin.html";
+var FN=location.pathname.split("/").pop()||"inctax_info_admin.html";
 if(!/\.html$/i.test(FN))FN+=".html";
 var KEY="info_edit_"+FN,ov={};
 try{ov=JSON.parse(document.getElementById("pov").textContent||"{}")}catch(e){}

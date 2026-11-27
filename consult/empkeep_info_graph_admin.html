@@ -169,7 +169,7 @@ body.editing #pt[contenteditable],body.editing #pbody[contenteditable]{outline:1
   <button type="button" data-adm id="bGh">⬆ GitHub 반영</button>
   <button type="button" data-adm id="bTk" class="sec">토큰 삭제</button>
   <button type="button" data-adm id="bRst" class="sec">원래대로</button>
-<a class="lk" href="empkeep_info-admin.html">상세내용</a>
+<a class="lk" href="empkeep_info_admin.html">상세내용</a>
   <a class="lk" href="empkeep_simul_admin.html">지원금 시뮬레이션</a>
   
   <button type="button" id="prt">인쇄 / PDF 저장</button>
@@ -557,7 +557,7 @@ function buildHtml(ver,mode){
   doc.querySelector('body').className='';
   if(mode==='view'){
     doc.querySelectorAll('[data-adm]').forEach(function(e){e.remove()});
-    doc.querySelectorAll('.bar a.lk').forEach(function(a){a.setAttribute('href',a.getAttribute('href').replace('_admin','').replace('-admin',''))});
+    doc.querySelectorAll('.bar a.lk').forEach(function(a){a.setAttribute('href',a.getAttribute('href').replace('_admin','').replace('_admin',''))});
     var tt=doc.querySelector('title');tt.textContent=tt.textContent.replace(/ · 편집$/,'');
   }
   if(K.boot)setTimeout(K.boot,0);

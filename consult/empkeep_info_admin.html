@@ -376,7 +376,7 @@ window.__emk={boot:function(){}};
 </script>
 <script data-adm>
 (function(){
-var FN='empkeep_info-admin.html',VN='empkeep_info.html',K=window.__emk||{};
+var FN='empkeep_info_admin.html',VN='empkeep_info.html',K=window.__emk||{};
 var GH={o:'yangji-madang',r:'SLGFC',b:'main',pa:'consult/'+FN,pv:'consult/'+VN};
 var TKEY='info_gh_token',LKEY='emk_edit:'+FN;
 var root=document.documentElement,editing=false,curId=null;
@@ -473,7 +473,7 @@ function buildHtml(ver,mode){
   doc.querySelector('body').className='';
   if(mode==='view'){
     doc.querySelectorAll('[data-adm]').forEach(function(e){e.remove()});
-    doc.querySelectorAll('.bar a.lk').forEach(function(a){a.setAttribute('href',a.getAttribute('href').replace('_admin','').replace('-admin',''))});
+    doc.querySelectorAll('.bar a.lk').forEach(function(a){a.setAttribute('href',a.getAttribute('href').replace('_admin','').replace('_admin',''))});
     var tt=doc.querySelector('title');tt.textContent=tt.textContent.replace(/ · 편집$/,'');
   }
   if(K.boot)setTimeout(K.boot,0);

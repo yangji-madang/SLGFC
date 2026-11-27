@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow" data-adm="">
-<title>법인세 개요 | 세금 한눈에 보기 · 편집</title>
+<title>상속세 개요 | 세금 한눈에 보기 · 편집</title>
 <style>
 :root{--navy:#17294a;--navy2:#2a4470;--gold:#b08435;--goldl:#f5ecd7;--ink:#1d2433;--mut:#566074;--line:#d5dbe6;--soft:#f3f6fb;--red:#b4443c;--redl:#fbeeec;--grn:#2c7a5b;--grnl:#eaf5ef}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -13,8 +13,8 @@ body{font-family:system-ui,-apple-system,'Segoe UI','Malgun Gothic','Apple SD Go
 .bar button{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
 .sheet{width:210mm;height:296.5mm;margin:10px auto;background:#fff;padding:5.5mm 6.5mm 6.5mm;display:flex;flex-direction:column;gap:0;box-shadow:0 2px 14px rgba(20,40,80,.18);overflow:hidden;position:relative}
 /* 제목 */
-.ttl{display:flex;align-items:center;gap:3mm;border-radius:2.2mm;padding:1.8mm 4mm;color:#fff;border-bottom:.8mm solid #f2b84b;text-shadow:0 1px 2px rgba(50,8,12,.6);
-background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 60%),linear-gradient(110deg,#6b1d2a 0%,#92352c 45%,#b4502c 100%)}
+.ttl{display:flex;align-items:center;gap:3mm;border-radius:2.2mm;padding:1.8mm 4mm;color:#fff;border-bottom:.8mm solid #f2b84b;text-shadow:0 1px 2px rgba(30,18,8,.6);
+background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 60%),linear-gradient(110deg,#3e2a1c 0%,#654530 45%,#85603a 100%)}
 .ttl h1{font-size:16.5pt;line-height:1.1;white-space:nowrap;letter-spacing:-.01em;font-weight:800}
 .ttl .sub{font-size:8pt;font-weight:700;line-height:1.3;flex:1;border-left:1px solid rgba(255,255,255,.6);padding-left:3mm}
 .ttl .sub i{display:block;font-style:normal;font-size:6.4pt;letter-spacing:.12em;color:#ffe8a8;font-weight:700}
@@ -132,13 +132,13 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 <body class="">
 <div class="bar">
   <button type="button" data-adm="" id="bEdit" class="sec">글자 편집</button>
-  <a id="lView" class="lk" data-adm="" target="_blank" rel="noopener" href="corptax_info.html">조회 페이지</a>
+  <a id="lView" class="lk" data-adm="" target="_blank" rel="noopener" href="inhtax_info.html">조회 페이지</a>
   <span id="gst" data-adm="" style="color: rgb(23, 41, 74);"></span>
   <button type="button" data-adm="" id="bDl" class="sec">수정본 내려받기</button>
   <button type="button" data-adm="" id="bGh">⬆ GitHub 반영</button>
   <button type="button" data-adm="" id="bTk" class="sec">토큰 삭제</button>
   <button type="button" data-adm="" id="bRst" class="sec">원래대로</button>
-  <a id="lGraph" class="lk" href="corptax_info_graph_admin.html">인포그래픽</a>
+  <a id="lGraph" class="lk" href="inhtax_info_graph_admin.html">인포그래픽</a>
   <button type="button" id="prt">인쇄 / PDF 저장</button>
 </div>
 <div class="edtip" data-adm="">편집 모드 : 글자만 수정됩니다(서식 없음). 팝업 설명은 Alt+클릭으로 열어 수정하세요.</div>
@@ -147,99 +147,101 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 <div class="main" id="main">
 
 <header class="ttl">
-  <h1>법인세 개요</h1>
-  <div class="sub"><i>TAX BRIEFING</i>회사가 번 이익에 내는 세금<br>: 계산 방법과 주의점</div>
-  <div class="chips"><span>세율 <b>10~25%</b></span><span>신고 <b>종료 후 3개월</b></span><span>지방세 <b>+10%</b></span></div>
+  <h1>상속세 개요</h1>
+  <div class="sub"><i>TAX BRIEFING</i>물려받는 재산에 내는 세금 : 계산과 주의점</div>
+  <div class="chips"><span>세율 <b>10~50%</b></span><span>신고 <b>6개월</b></span><span>일괄공제 <b>5억</b></span></div>
   <div class="qd">기준일 <b id="qd">2026.11.06</b></div>
 </header>
 
 <section>
-  <div class="sh"><span class="n">1</span>법인세는 이렇게 계산됩니다<span class="hint">각 칸을 누르면 쉬운 설명이 열립니다</span></div>
+  <div class="sh"><span class="n">1</span>상속세는 이렇게 계산됩니다<span class="hint">각 칸을 누르면 쉬운 설명이 열립니다</span></div>
   <div class="chain">
-    <div class="st" data-p="ik" tabindex="0"><span class="i">i</span><span class="no">1</span><b>익금</b><small>회사가 번 돈</small><p>매출·이자·임대료·처분이익</p></div>
-    <div class="st" data-p="sg" tabindex="0"><span class="i">i</span><span class="no">2</span><b>손금</b><small>회사가 쓴 돈</small><p>원가·급여·임차료·감가상각비</p></div>
-    <div class="st" data-p="adj" tabindex="0"><span class="i">i</span><span class="no">3</span><b>세무조정</b><small>장부와 세법의 차이</small><p>한도초과가산(+)<br>특례 차감(−)</p></div>
-    <div class="st" data-p="tb" tabindex="0"><span class="i">i</span><span class="no">4</span><b>과세표준</b><small>세금 매기는 기준금액</small><p>소득 − 이월결손금 − 비과세</p></div>
-    <div class="st" data-p="rate" tabindex="0"><span class="i">i</span><span class="no">5</span><b>세율</b><small>10·20·22·25%</small><p>4단계 누진세율</p></div>
-    <div class="st" data-p="credit" tabindex="0"><span class="i">i</span><span class="no">6</span><b>감면·공제</b><small>세액에서 직접 차감</small><p>중소감면<br>고용·투자공제<br>기납부 차감</p></div>
-    <div class="st" data-p="pay" tabindex="0"><span class="i">i</span><span class="no">7</span><b>납부세액</b><small>신고하고 납부</small><p>종료 후 3개월 내 + 지방소득세</p></div>
+    <div class="st" data-p="ass" tabindex="0"><span class="i">i</span><span class="no">1</span><b>상속재산</b><small>물려받는 재산 전체</small><p>부동산·금융·보험금·퇴직금 등</p></div>
+    <div class="st" data-p="dbt" tabindex="0"><span class="i">i</span><span class="no">2</span><b>차감항목</b><small>빼주는 금액</small><p>공과금·장례비·채무</p></div>
+    <div class="st" data-p="pre" tabindex="0"><span class="i">i</span><span class="no">3</span><b>사전증여</b><small>더하는 금액</small><p>상속인 10년,<br>그 외 5년 내 증여</p></div>
+    <div class="st" data-p="ded" tabindex="0"><span class="i">i</span><span class="no">4</span><b>상속공제</b><small>일괄·배우자·금융재산</small><p>일괄5억,<br>배우자5억~30억 </p></div>
+    <div class="st" data-p="tb" tabindex="0"><span class="i">i</span><span class="no">5</span><b>과세표준</b><small>세율 곱하는 기준</small><p>과세가액−상속공제</p></div>
+    <div class="st" data-p="rate" tabindex="0"><span class="i">i</span><span class="no">6</span><b>세율</b><small>10~50%</small><p>5단계 누진세율</p></div>
+    <div class="st" data-p="pay" tabindex="0"><span class="i">i</span><span class="no">7</span><b>납부세액</b><small>6개월 내 신고</small><p>산출세액−세액공제</p></div>
   </div>
-  <div class="fm">법인세 = ( 익금 <i>−</i> 손금 <i>±</i> 세무조정 <i>−</i> 이월결손금 ) <i>×</i> 세율 <i>−</i> 세액공제·감면 <i>−</i> 기납부세액 <span>&nbsp;※ 지방소득세(약 10%) 별도 신고·납부</span></div>
+  <div class="fm">상속세 = ( 상속재산 <i>−</i> 채무·장례비 <i>+</i> 사전증여 <i>−</i> 상속공제 ) <i>×</i> 세율 <i>−</i> 누진공제 <i>−</i> 세액공제 <span>&nbsp;※ 유산 총액 기준 과세</span></div>
 </section>
 
 <div class="two">
   <section>
-    <div class="sh"><span class="n">2</span>세율 한눈에<span class="hint">2026년 개시 사업연도~</span></div>
+    <div class="sh"><span class="n">2</span>세율 한눈에<span class="hint">2026.11.06 현행 기준</span></div>
     <div class="rt">
-      <div class="rh"><span>과세표준</span><span>법인세율 (비례 막대)</span><span>지방세포함</span><span>누진공제</span></div>
-      <div class="rw" data-p="prog" tabindex="0"><span class="rl">2억 이하</span><span class="bb"><i style="width:40%"></i><b>10%</b></span><span class="re">11%</span><span class="rd">없음</span></div>
-      <div class="rw" data-p="prog" tabindex="0"><span class="rl">2억~200억</span><span class="bb"><i style="width:80%"></i><b>20%</b></span><span class="re">22%</span><span class="rd">2,000만</span></div>
-      <div class="rw" data-p="prog" tabindex="0"><span class="rl">200억~3천억</span><span class="bb"><i style="width:88%"></i><b>22%</b></span><span class="re">24.2%</span><span class="rd">4.2억</span></div>
-      <div class="rw" data-p="prog" tabindex="0"><span class="rl">3천억 초과</span><span class="bb"><i style="width:100%"></i><b>25%</b></span><span class="re">27.5%</span><span class="rd">94.2억</span></div>
+      <div class="rh"><span>과세표준</span><span>세율 (비례 막대)</span><span>끝 세액</span><span>누진공제</span></div>
+      <div class="rw" data-p="prog" tabindex="0"><span class="rl">1억 이하</span><span class="bb"><i style="width:26%"></i><b>10%</b></span><span class="re">1,000만</span><span class="rd">없음</span></div>
+      <div class="rw" data-p="prog" tabindex="0"><span class="rl">1억~5억</span><span class="bb"><i style="width:40%"></i><b>20%</b></span><span class="re">9,000만</span><span class="rd">1,000만</span></div>
+      <div class="rw" data-p="prog" tabindex="0"><span class="rl">5억~10억</span><span class="bb"><i style="width:60%"></i><b>30%</b></span><span class="re">2.4억</span><span class="rd">6,000만</span></div>
+      <div class="rw" data-p="prog" tabindex="0"><span class="rl">10억~30억</span><span class="bb"><i style="width:80%"></i><b>40%</b></span><span class="re">10.4억</span><span class="rd">1.6억</span></div>
+      <div class="rw" data-p="prog" tabindex="0"><span class="rl">30억 초과</span><span class="bb"><i style="width:100%"></i><b>50%</b></span><span class="re">20.4억</span><span class="rd">4.6억</span></div>
     </div>
-    <div class="note">산출세액 = 과세표준 × 세율 − 누진공제 <span class="lk" data-p="prog">[계산 요령]</span><br>2025년까지 9·19·21·24%, 2026년 1월 1일 이후 시작 사업연도부터 전 구간 1%p 인상. 12월 결산 법인은 <b>2027년 3월 신고분</b>부터 새 세율.<br>※ 부동산임대업 주업 등 소규모 <span class="lk" data-p="small">성실신고확인대상 법인</span>은 200억 이하도 20%. <span class="lk" data-p="local">지방소득세란?</span></div>
+    <div class="note">산출세액 = 과세표준 × 세율 − 누진공제 <span class="lk" data-p="prog">[계산 요령]</span><br>끝 세액 = 구간 끝 과표 기준(30억 초과는 50억).<br>증여세 세율표와 같고, 2026 세제개편안은 미반영입니다. <span class="lk" data-p="gen">[세대생략 할증이란?]</span></div>
   </section>
 
   <section>
-    <div class="sh"><span class="n">3</span>계산 예시<span class="hint">12월 결산 중소법인 · 2026 사업연도 · 가정 수치</span></div>
+    <div class="sh"><span class="n">3</span>계산 예시<span class="hint">배우자·자녀 상속 · 가정 수치</span></div>
     <table class="ex">
-      <tbody><tr data-p="ex"><td>회계상 당기순이익</td><td>4억 원</td><td>손익계산서상 이익 (가정)</td></tr>
-      <tr class="sb" data-p="adj"><td>(+) 세무조정 가산</td><td>5,000만 원</td><td>접대비·승용차 비용 초과 등</td></tr>
-      <tr class="hl" data-p="tb"><td>(=) 과세표준</td><td>4억 5,000만 원</td><td>이월결손금 없다고 가정</td></tr>
-      <tr class="sb" data-p="prog"><td>과세표준 × 세율 20%</td><td>9,000만 원</td><td>2억 초과 구간 세율 적용</td></tr>
-      <tr class="sb neg" data-p="prog"><td>(−) 누진공제</td><td>−2,000만 원</td><td>200억 이하 구간 공제액</td></tr>
-      <tr class="hl" data-p="prog"><td>(=) 산출세액</td><td>7,000만 원</td><td>구간별 : 2억×10% + 2.5억×20%</td></tr>
-      <tr class="sb neg" data-p="credit"><td>(−) 세액공제·감면</td><td>−1,000만 원</td><td>예 : 고용 관련 공제 (가정)</td></tr>
-      <tr><td>총부담세액</td><td>6,000만 원</td><td>7,000만 − 1,000만</td></tr>
-      <tr class="sb neg" data-p="t_mid"><td>(−) 중간예납 등 기납부</td><td>−2,000만 원</td><td>8월에 미리 낸 세금 (가정)</td></tr>
-      <tr class="hl"><td>3월 신고 때 낼 법인세</td><td>4,000만 원</td><td>6,000만 − 2,000만</td></tr>
-      <tr class="sb" data-p="local"><td>(+) 법인지방소득세 (약식)</td><td>600만 원</td><td>총부담세액의 약 10%</td></tr>
-      <tr class="fin"><td>세금 부담 합계</td><td>6,600만 원</td><td>과세표준 대비 약 14.7%</td></tr>
+      <tbody><tr data-p="ass"><td>총상속재산</td><td>20억 원</td><td>부동산 14억 + 금융 4억 + 기타 2억 (가정)</td></tr>
+      <tr class="sb neg" data-p="dbt"><td>(−) 채무·장례비 등</td><td>−2억 원</td><td>공과금·장례비·채무 (가정)</td></tr>
+      <tr class="hl" data-p="pre"><td>(=) 상속세 과세가액</td><td>18억 원</td><td>사전증여 없다고 가정</td></tr>
+      <tr class="sb neg" data-p="ded"><td>(−) 일괄공제</td><td>−5억 원</td><td>기초+인적공제 대신 선택</td></tr>
+      <tr class="sb neg" data-p="ded"><td>(−) 배우자공제</td><td>−10억 원</td><td>배우자 실제 상속분 (가정)</td></tr>
+      <tr class="sb neg" data-p="ded"><td>(−) 금융재산공제</td><td>−8,000만 원</td><td>순금융재산 4억의 20%</td></tr>
+      <tr class="hl" data-p="tb"><td>(=) 과세표준</td><td>2억 2,000만 원</td><td>18억 − 5억 − 10억 − 0.8억</td></tr>
+      <tr class="sb" data-p="prog"><td>과세표준 × 세율 20%</td><td>4,400만 원</td><td>1억 초과~5억 이하 구간</td></tr>
+      <tr class="sb neg" data-p="prog"><td>(−) 누진공제</td><td>−1,000만 원</td><td>해당 구간 공제액</td></tr>
+      <tr class="hl" data-p="prog"><td>(=) 산출세액</td><td>3,400만 원</td><td>구간별 : 1억×10% + 1.2억×20%</td></tr>
+      <tr class="sb neg" data-p="c7"><td>(−) 분납 (2개월 내 납부)</td><td>−1,700만 원</td><td>2,000만 원 초과 시 50% 이하 (선택)</td></tr>
+      <tr class="fin"><td>신고기한 내 낼 상속세</td><td>1,700만 원</td><td>총 3,400만 원 중 (분납 1,700만 원)</td></tr>
     </tbody></table>
-    <div class="co" data-p="exinc">세율 인상 체감 : 2025년 세율이면 <b>6,550만</b> → 2026년 <b>7,000만 원</b> ( <b>+450만 원</b>, 약 +6.9% ) <span class="lk">[왜?]</span></div>
+    <div class="co" data-p="exb">비교 : 배우자공제 없이 계산하면 과표 12.2억 → 산출세액 약 <b>3.28억 원</b> (약 9.6배) <span class="lk">[왜?]</span></div>
   </section>
 </div>
 
 <section>
-  <div class="sh"><span class="n">4</span>1년 일정 한눈에<span class="hint">12월 결산 법인 기준 · 사업연도는 정관으로 정하며 최대 1년</span></div>
+  <div class="sh"><span class="n">4</span>상속 일정 한눈에<span class="hint">사망일 기준 · 신고기한은 사망일이 속한 달의 말일부터 계산</span></div>
   <div class="tl">
-    <div class="tn" data-p="t_start" tabindex="0"><div class="tb"><div class="dt">1월 1일</div><div class="tt">사업연도 시작</div><p>이날부터 거래가<br>올해 소득 계산 대상</p></div></div>
-    <div class="tn" data-p="t_mid" tabindex="0"><div class="tb"><div class="dt">8월 31일</div><div class="tt">중간예납</div><p>전년 세액 1/2 또는<br>가결산액 선납</p></div></div>
-    <div class="tn" data-p="t_end" tabindex="0"><div class="tb"><div class="dt">12월 31일</div><div class="tt">사업연도 종료·결산</div><p>장부 마감, 세무조정 후<br>세액 계산</p></div></div>
-    <div class="tn" data-p="t_file" tabindex="0"><div class="tb"><div class="dt">다음해 3월 31일</div><div class="tt">법인세 신고·납부</div><p>종료 후 3개월 이내,<br>1천만 원 초과 분납 가능</p></div></div>
-    <div class="tn" data-p="local" tabindex="0"><div class="tb"><div class="dt">다음해 4월 30일</div><div class="tt">지방소득세 신고·납부</div><p>법인세 신고 후 1개월 내 지자체 신고</p></div></div>
+    <div class="tn" data-p="t1" tabindex="0"><div class="tb"><div class="dt">사망 전 10년</div><div class="tt">사전증여 합산</div><p>상속인 10년·그 외 5년분 가산</p></div></div>
+    <div class="tn" data-p="t2" tabindex="0"><div class="tb"><div class="dt">사망일</div><div class="tt">상속 개시</div><p>이날 기준으로 재산·채무 파악</p></div></div>
+    <div class="tn" data-p="t3" tabindex="0"><div class="tb"><div class="dt">3개월 이내</div><div class="tt">상속포기·한정승인</div><p>안 날부터 3개월 내 법원 신청</p></div></div>
+    <div class="tn" data-p="t4" tabindex="0"><div class="tb"><div class="dt">6개월 이내</div><div class="tt">신고·납부</div><p>사망월 말일부터 (해외 9개월)</p></div></div>
+    <div class="tn" data-p="t5" tabindex="0"><div class="tb"><div class="dt">신고 후 9개월</div><div class="tt">배우자 분할 기한</div><p>분할·신고해야 공제 인정</p></div></div>
   </div>
 </section>
 
 <section>
-  <div class="sh"><span class="n">5</span>대표·경리 담당자가 꼭 주의할 점 · 분납과 연부연납<span class="hint">각 칸을 누르면 사례와 대응 방법이 열립니다</span></div>
+  <div class="sh"><span class="n">5</span>상속인이 꼭 주의할 점 · 분납·연부연납·물납<span class="hint">각 칸을 누르면 사례와 대응 방법이 열립니다</span></div>
   <div class="grid3">
-    <div class="cd" data-p="c1" tabindex="0"><span class="tg">증빙</span><b>3만 원 초과 지출은 적격증빙</b><p>세금계산서·카드·현금영수증 없으면 <u>증빙불비 가산세 2%</u> 부과 가능.</p></div>
-    <div class="cd" data-p="c2" tabindex="0"><span class="tg">가지급금</span><b>인출금이 가지급금이면</b><p>받지 않은 이자도 <u>인정이자(연 4.6%)</u> 과세<br>방치 시 대표 상여로 보아 소득세 부과.</p></div>
-    <div class="cd" data-p="c3" tabindex="0"><span class="tg">접대비</span><b>기업업무추진비는 한도 있음</b><p>기본 연 <u>3,600만 원</u>(일반법인 1,200만 원)<br>+매출 비례분이 한도. 초과분 비용 불인정.</p></div>
-    <div class="cd" data-p="c4" tabindex="0"><span class="tg">승용차</span><b>승용차는 전부 비용처리 불가</b><p>운행기록부 없으면 차량당 연 <u>1,500만</u>까지만 인정. 감가상각비 연 800만 원 한도, 전용보험 필수.</p></div>
-    <div class="cd" data-p="c5" tabindex="0"><span class="tg">임원</span><b>임원 퇴직금은 정관이 좌우</b><p>정관 규정 없으면 <u>직전 1년 총급여×10%×근속연수</u>까지만 비용 인정, 초과분 상여 처리.</p></div>
-    <div class="cd" data-p="c6" tabindex="0"><span class="tg">기한</span><b>신고·납부 기한 놓치면</b><p>무신고 <u>20%</u>, 과소신고 <u>10%</u>,<br>납부지연 <u>하루 0.022%</u>(연 약 8%). 부정행위 40%.</p></div>
-    <div class="cd" data-p="c7" tabindex="0"><span class="tg">분납</span><b>세금이 크면 나눠 납부</b><p>납부세액 <u>1,000만 원</u> 초과 시 기한 후<br><u>1개월(중소 2개월)</u> 내 분납. 무이자.</p></div>
-    <div class="cd" data-p="c8" tabindex="0"><span class="tg">연부연납</span><b>법인세는 연부연납 없음</b><p>연부연납은 <u>상속·증여세</u> 제도(2,000만 원 초과, 담보). 법인세는 분납·납기연장으로 대응.</p></div>
-    <div class="cd" data-p="c9" tabindex="0"><span class="tg">납기연장</span><b>낼 돈 없으면 미리 신청</b><p>재해·큰 손실 시 <u>납부기한 연장·징수유예</u> 신청 가능. 기한 전 신청 필수.</p></div>
+    <div class="cd" data-p="c10" tabindex="0" style="grid-column:1/-1"><span class="tg">납부</span><b>납부는 6개월 이내 현금 일시납이 원칙</b><p>사망월 말일부터 <u>6개월</u>(해외 9개월) 이내 신고하며 <u>현금(금전)으로 한꺼번에 납부</u>하는 것이 원칙. 분납·연부연납·물납은 예외이므로 납부재원을 미리 준비하세요.</p></div>
+    <div class="cd" data-p="c1" tabindex="0"><span class="tg">기한</span><b>신고기한 놓치면</b><p>사망월 말일부터 <u>6개월</u>(해외 9개월). 무신고 <u>20%</u>, 납부지연 <u>하루 0.022%</u>, 부정행위 40%.</p></div>
+    <div class="cd" data-p="c2" tabindex="0"><span class="tg">인출</span><b>사망 전 재산 인출 주의</b><p>사망 전 <u>1년 2억·2년 5억 원</u> 이상 처분·인출 후 용도가 불분명하면 <u>상속재산으로 추정</u>.</p></div>
+    <div class="cd" data-p="c3" tabindex="0"><span class="tg">증여</span><b>생전 증여도 합산</b><p>상속인은 <u>10년</u>, 그 외 사람은 <u>5년</u> 내 증여를 상속재산에 더함. 이미 낸 증여세는 공제.</p></div>
+    <div class="cd" data-p="c4" tabindex="0"><span class="tg">평가</span><b>재산은 시가로 평가</b><p>매매·감정·수용가액 등 <u>시가가 우선</u>. 없으면 공시가격 등으로 보충 평가.</p></div>
+    <div class="cd" data-p="c5" tabindex="0"><span class="tg">공제</span><b>배우자공제는 분할이 관건</b><p>법정상속분 한도 <u>5억~30억 원</u>. 신고기한 내<br>분할 못 하면 이후 <u>9개월 내</u> 분할·신고해야 인정.</p></div>
+    <div class="cd" data-p="c6" tabindex="0"><span class="tg">납세의무</span><b>상속인 각자 연대납부</b><p>받은 재산 한도에서 <u>연대납세의무</u>. 한 명이 안 내면 다른 상속인에게도 청구.</p></div>
+    <div class="cd" data-p="c7" tabindex="0"><span class="tg">분납</span><b>세금이 크면 나눠 납부</b><p>납부세액 <u>1,000만 원</u> 초과 시 기한 후 <u>2개월</u> 이내 분납. 2,000만 원 초과는 50% 이하. 무이자.</p></div>
+    <div class="cd" data-p="c8" tabindex="0"><span class="tg">연부연납</span><b>연부연납으로 10년 분할</b><p>세액 <u>2,000만 원 초과</u>, 담보 제공 시 허가일부터 <u>10년</u>(가업상속 20년) 분할. 가산금 부담.</p></div>
+    <div class="cd" data-p="c9" tabindex="0"><span class="tg">물납</span><b>현금 부족하면 물납</b><p>부동산·유가증권이 상속재산의 <u>1/2 초과</u>, 세액 2,000만 원 초과 등 요건 충족 시 <u>현물 납부</u> 신청.</p></div>
   </div>
 </section>
 
 <section class="grow">
   <div class="sh"><span class="n">6</span>일반인이 자주 하는 오해, 사실은?<span class="hint">각 줄을 누르면 근거가 열립니다</span></div>
   <div class="myth">
-    <div class="mt" data-p="m1" tabindex="0"><div class="o">"법인 통장의 돈은 곧 내 돈이다"</div><div class="ar">▶</div><div class="s"><span>법인은 대표와 <b>별개 인격</b>. 꺼내 쓰면 급여·배당(소득세) 또는 가지급금(인정이자·상여 처분).</span></div></div>
-    <div class="mt" data-p="m2" tabindex="0"><div class="o">"비용을 많이 쓸수록 무조건 절세다"</div><div class="ar">▶</div><div class="s"><span>세금은 <b>세율만큼(약 11~27.5%)만</b> 줄고 나머지는 현금 유출. 업무 무관 지출은 비용 불인정.</span></div></div>
-    <div class="mt" data-p="m3" tabindex="0"><div class="o">"적자인 해는 신고하지 않아도 된다"</div><div class="ar">▶</div><div class="s"><span>적자여도 <b>신고 의무</b> 있음. 신고해야 적자를 이후 이익에서 빼는 <b>이월결손금(최대 15년)</b> 공제 가능.</span></div></div>
-    <div class="mt" data-p="m4" tabindex="0"><div class="o">"법인세율이 낮으니 법인이 무조건 유리하다"</div><div class="ar">▶</div><div class="s"><span>법인세 후 <b>급여·배당·퇴직금</b>으로 꺼낼 때 소득세 추가. 소득 규모·인출 계획으로 비교 필요.</span></div></div>
-    <div class="mt" data-p="m5" tabindex="0"><div class="o">"영수증만 있으면 전부 비용이다"</div><div class="ar">▶</div><div class="s"><span>증빙은 <b>필요조건</b>. 업무 관련성·실제 거래·법정 한도(접대비·승용차 등)까지 충족해야 함.</span></div></div>
+    <div class="mt" data-p="m1" tabindex="0"><div class="o">"배우자에게 몰아주면 무조건 절세다"</div><div class="ar">▶</div><div class="s"><span>당장은 줄지만 <b>2차 상속</b> 때 합산돼 오히려 커질 수 있습니다.</span></div></div>
+    <div class="mt" data-p="m2" tabindex="0"><div class="o">"죽기 전에 현금을 인출해 두면 세금이 없다"</div><div class="ar">▶</div><div class="s"><span>사망 전 1년 2억·2년 5억 원 이상 인출은 <b>용도미입증</b>시 상속재산으로 추정합니다.</span></div></div>
+    <div class="mt" data-p="m3" tabindex="0"><div class="o">"상속재산이 10억 이하면 세금이 없다"</div><div class="ar">▶</div><div class="s"><span><b>배우자가 있을 때</b> 얘기입니다(일괄 5억 + 배우자 5억). 없으면 5억 초과분부터 과세됩니다.</span></div></div>
+    <div class="mt" data-p="m4" tabindex="0"><div class="o">"내가 받은 만큼만 신고하면 된다"</div><div class="ar">▶</div><div class="s"><span>세액은 <b>유산 전체</b>로 계산한 뒤 나눠 부담합니다(유산세). 상속인끼리 연대책임도 있습니다.</span></div></div>
+    <div class="mt" data-p="m5" tabindex="0"><div class="o">"신고 안 하면 세무서가 모를 것이다"</div><div class="ar">▶</div><div class="s"><span>금융·등기 자료로 파악합니다. 무신고 시 부과제척기간 <b>15년</b>, 가산세 20% 이상이 붙습니다.</span></div></div>
   </div>
 </section>
 
 </div>
 <footer class="ft" id="ft">
-  <div class="law">근거 : 법인세법 제13·15·19·25·27조의2·28·55·60·63·64조, 동법 시행령 제44·89조, 국세기본법 제47조의2~제47조의4, 제48조, 국세징수법 제13조, 상속세 및 증여세법 제71조, 지방세법 제103조의20<br>※ 설명용 자료이며 예시는 가정입니다. 2026.11.06 현행법 기준(2026 세제개편안 미반영). 개별 사안은 전문가와 확인하세요.</div>
+  <div class="law">근거 : 상속세 및 증여세법 제3조의2·8·9·10·13·14·15·18·19·20·21·22·26·27·28·60·61·67·70·71·73조, 국세기본법 제26조의2, 제47조의2~제47조의4, 민법 제1019조<br>※ 설명용 자료이며 예시는 가정입니다. 2026.11.06 현행법 기준(2026 세제개편안 미반영). 개별 사안은 전문가와 확인하세요.</div>
   <div class="row"><span class="l" data-ct></span><span class="r">ⓒ<span id="yr">2026</span>. YOON HYUNCHUL, ALL RIGHTS RESERVED.</span></div>
 </footer>
 </main>
@@ -253,7 +255,7 @@ background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 
 <script>
 (function(){
 var sheetEl=document.getElementById("sheet"),mainEl=document.getElementById("main"),ftEl=document.getElementById("ft");
-var FN=location.pathname.split("/").pop()||"corptax_info-admin.html";
+var FN=location.pathname.split("/").pop()||"inhtax_info_admin.html";
 if(!/\.html$/i.test(FN))FN+=".html";
 var KEY="info_edit_"+FN,ov={};
 try{ov=JSON.parse(document.getElementById("pov").textContent||"{}")}catch(e){}
@@ -263,36 +265,37 @@ var ASOF=document.getElementById('qd').textContent;
 document.getElementById('yr').textContent=y;
 
 var P={
-ik:{t:'익금(益金) : 회사가 번 돈',b:'<p><em>쉬운 설명</em>회사의 재산을 늘리는 수익입니다. 매출, 이자·배당, 임대료, 자산을 팔아 남긴 이익 등이 해당합니다.</p><p><em>예시</em>상품 판매대금 10억 원 → 익금 10억 원. 회계상 수익과 대부분 같지만, 세법이 따로 정한 예외(익금산입·익금불산입)가 있습니다.</p>',l:'법인세법 제15조'},
-sg:{t:'손금(損金) : 회사가 쓴 돈',b:'<p><em>쉬운 설명</em>회사의 재산을 줄이는 비용 중 세법이 인정하는 것입니다. 매출원가, 급여, 임차료, 감가상각비, 이자 등이 해당합니다.</p><p><em>3요건</em>① 사업과 관련이 있고 ② 실제로 거래가 있었으며 ③ 적격증빙이 있어야 합니다. 여기에 접대비·승용차처럼 별도 한도가 있는 항목도 있습니다.</p>',l:'법인세법 제19조'},
-adj:{t:'세무조정 : 장부와 세법의 차이 맞추기',b:'<p><em>쉬운 설명</em>회사 장부(회계)와 세법은 기준이 달라 이익이 다르게 계산됩니다. 그 차이를 신고서에서 더하거나 빼는 작업입니다.</p><p><em>더하는 것(+)</em>접대비 한도초과, 승용차 비용 초과, 가지급금 관련 이자 등 (손금불산입·익금산입)</p><p><em>빼는 것(−)</em>세법이 특별히 수익에서 제외해 주는 항목 등 (손금산입·익금불산입)</p><p><em>예시</em>접대비를 5,000만 원 썼는데 한도가 3,600만 원이면 초과 1,400만 원은 비용으로 인정되지 않아 소득에 다시 더해집니다.</p>',l:'법인세법 제14조~제19조, 제60조'},
-tb:{t:'과세표준 : 세율을 곱하는 기준금액',b:'<p><em>쉬운 설명</em>세금을 매기는 "밑바탕 금액"입니다. 각 사업연도 소득에서 이월결손금, 비과세소득, 소득공제를 뺀 금액입니다.</p><p><em>이월결손금</em>과거 적자를 이번 이익에서 빼주는 제도입니다. 2020년 이후 발생분은 15년 이내 공제되며, 공제 한도는 소득의 80%(중소기업은 100%)입니다. 적자 연도에 신고된 결손금만 인정됩니다.</p>',l:'법인세법 제13조'},
-rate:{t:'세율 : 4단계 누진세율',b:'<p><em>쉬운 설명</em>번 돈(과세표준)이 클수록 높은 세율이 적용되는 구조입니다. 2억 원 이하 10%, 2억 초과 200억 이하 20%, 200억 초과 3,000억 이하 22%, 3,000억 초과 25%입니다.</p><p><em>변경</em>2026년 1월 1일 이후 시작하는 사업연도부터 전 구간이 1%p 올랐습니다(종전 9·19·21·24%). 12월 결산 법인은 2026 사업연도분(2027년 3월 신고)부터 적용됩니다.</p>',l:'법인세법 제55조'},
-credit:{t:'감면·공제 : 세액에서 직접 빼는 혜택',b:'<p><em>쉬운 설명</em>계산된 세금(산출세액)에서 바로 차감해 주는 혜택입니다. 중소기업 특별세액감면, 통합고용세액공제, 통합투자세액공제, 연구인력개발비 공제 등이 대표적입니다.</p><p><em>주의</em>감면을 많이 받아도 최저한세(최소한 부담해야 하는 세액) 규정으로 일부가 배제될 수 있고, 요건을 어기면 추징될 수 있습니다.</p><p><em>기납부세액</em>중간예납, 이자소득 원천징수 등으로 이미 낸 세금은 마지막에 차감합니다.</p>',l:'조세특례제한법 제7조(중소기업 특별세액감면), 제10조(연구·인력개발비 세액공제), 제24조(통합투자세액공제), 제132조(최저한세)'},
-pay:{t:'납부세액 : 최종으로 내는 돈',b:'<p><em>쉬운 설명</em>총부담세액에서 이미 낸 세금(중간예납 등)을 뺀 금액을 신고기한까지 냅니다. 이 금액과 별도로 법인지방소득세를 소재지 지자체에 신고·납부합니다.</p><p><em>12월 결산 기준</em>법인세 3월 31일, 지방소득세 4월 30일까지입니다.</p>',l:'법인세법 제64조, 지방세법 제103조의20'},
-prog:{t:'누진공제 : 구간별 계산의 지름길',b:'<p><em>쉬운 설명</em>구간마다 따로 계산하는 대신 "전체 × 해당 세율 − 누진공제"로 한 번에 구하는 방법입니다.</p><p><em>예시</em>과세표준 5억 원 → 5억 × 20% − 2,000만 = <b>8,000만 원</b>. 구간별로 계산해도 2억×10% + 3억×20% = 8,000만 원으로 같습니다.</p><p><em>누진공제액</em>2억 이하 없음 / 200억 이하 2,000만 원 / 3,000억 이하 4억 2,000만 원 / 초과 94억 2,000만 원</p>',l:'법인세법 제55조'},
-local:{t:'법인지방소득세 : 법인세와 별도의 세금',b:'<p><em>쉬운 설명</em>법인세와 같은 과세표준에 지방세법 세율(2026년 귀속 1·2·2.2·2.5%)을 곱하는 독립된 세금입니다. 결과적으로 법인세의 약 10% 수준이라 합산 부담은 11·22·24.2·27.5%가 됩니다.</p><p><em>신고</em>법인세 신고기한이 지난 날부터 1개월 이내(12월 결산 4월 30일)에 본점·사업장 소재지 지자체에 신고·납부합니다(위택스). 소득이 없거나 결손이어도 신고 대상입니다.</p><p><em>예시 표기</em>이 페이지 계산 예시의 600만 원은 이해를 위한 약식 수치입니다.</p>',l:'지방세법 제103조의20'},
-small:{t:'성실신고확인대상 소규모법인',b:'<p><em>쉬운 설명</em>부동산임대업을 주된 사업으로 하는 소규모 법인 등은 2억 이하의 낮은 구간(10%)이 없고, 200억 이하 구간 전체에 20%가 적용됩니다.</p><p><em>부수 효과</em>성실신고확인서를 제출해야 하며, 신고기한이 1개월 연장(12월 결산 4월 30일)됩니다. 미제출 시 가산세가 있습니다.</p><p><em>확인 필요</em>대상 요건(상시근로자 수, 지분율, 임대수입 비중 등)은 사안마다 달라 세무전문가의 확인이 필요합니다.</p>',l:'법인세법 제55조, 제60조의2(성실신고확인서 제출)'},
-ex:{t:'계산 예시의 가정',b:'<p><em>가정</em>12월 결산 중소 제조법인, 2026 사업연도, 이월결손금 없음, 세액공제 1,000만 원, 중간예납 2,000만 원. 모두 이해를 돕기 위한 가정 수치입니다.</p><p><em>핵심</em>회계상 이익(4억)이 곧 과세표준이 아닙니다. 세무조정(+5,000만)을 거쳐 4억 5,000만 원이 과세표준이 됩니다.</p>',l:'법인세법 제55조'},
-exinc:{t:'세율 인상 체감',b:'<p><em>계산</em>과세표준 4억 5,000만 원 기준<br>2025년 세율 : 2억×9% + 2.5억×19% = 1,800만 + 4,750만 = 6,550만 원<br>2026년 세율 : 2억×10% + 2.5억×20% = 2,000만 + 5,000만 = 7,000만 원<br>차이 450만 원 (전 구간 1%p × 4.5억)</p><p><em>의미</em>이익이 클수록 인상 효과도 커집니다. 지방소득세까지 합치면 약 495만 원(450만 × 1.1)입니다.</p>',l:'법인세법 제55조'},
-t_start:{t:'사업연도 : 소득을 계산하는 1년',b:'<p><em>쉬운 설명</em>법인세는 "사업연도" 단위로 계산합니다. 사업연도는 정관 등으로 정하며 1년을 넘을 수 없습니다. 꼭 1~12월이어야 하는 것은 아닙니다.</p>',l:'법인세법 제6조'},
-t_mid:{t:'중간예납 : 상반기에 미리 내는 세금',b:'<p><em>쉬운 설명</em>사업연도 6개월이 지난 날부터 2개월 이내(12월 결산 8월 31일)에 세금을 미리 냅니다. 이 금액은 다음해 3월 신고 때 이미 낸 세금으로 차감되어 정산됩니다.</p><p><em>계산 방법 2가지</em>① 직전 사업연도 법인세의 절반 ② 상반기 실적을 가결산한 금액. 상반기 실적이 작년보다 나쁘면 가결산이 유리할 수 있습니다.</p><p><em>면제</em>중소기업은 직전 사업연도가 결손이거나 중간예납세액이 50만 원 미만이면 납부 의무가 없습니다.</p>',l:'법인세법 제63조, 제63조의2'},
-t_end:{t:'결산 : 장부를 마감하는 시점',b:'<p><em>쉬운 설명</em>사업연도가 끝나면 장부를 마감하고 재무제표를 만든 뒤, 세무조정으로 세금을 계산합니다. 결산이 확정되어야 신고할 수 있으므로 실무에서는 1~3월에 결산과 세무조정이 몰립니다.</p>',l:'법인세법 제60조'},
-t_file:{t:'법인세 신고·납부 : 종료 후 3개월 이내',b:'<p><em>기한</em>사업연도 종료일이 속하는 달의 말일부터 3개월 이내(12월 결산 3월 31일). 성실신고확인 대상 법인은 1개월 연장(4월 30일)됩니다. 외부감사 결산이 늦어지면 최대 1개월 연장을 신청할 수 있으나 이자상당액을 추가로 냅니다.</p><p><em>분납</em>납부할 세액이 1,000만 원을 넘으면 기한 후 1개월(중소기업 2개월) 이내에 나눠 낼 수 있습니다. 1,000만~2,000만 원이면 1,000만 원 초과액, 2,000만 원 초과면 세액의 50% 이하입니다.</p><p><em>적자여도</em>소득이 없어도 신고해야 이월결손금 공제 등 혜택을 이어갈 수 있습니다.</p>',l:'법인세법 제60조, 제64조'},
-c1:{t:'증빙 : 3만 원 넘는 지출은 적격증빙',b:'<p><em>쉬운 설명</em>거래 상대방이 사업자라면 세금계산서·계산서·신용카드 매출전표·현금영수증 같은 적격증빙을 받아야 합니다. 건당 3만 원 이하 등은 예외입니다(경조사비는 건당 20만 원 이하).</p><p><em>불이익</em>적격증빙 없이 쓴 금액의 2%가 증명서류 수취 불성실 가산세로 붙을 수 있습니다.</p><p><em>대응</em>사업용 신용카드·홈택스 현금영수증 등록, 거래처 세금계산서 요청을 습관화하세요.</p>',l:'법인세법 제116조, 제75조의5'},
-c2:{t:'가지급금 : 대표 개인에게 빌려준 것으로 처리된 돈',b:'<p><em>쉬운 설명</em>용도가 분명하지 않은 인출은 장부에 "대표에게 빌려준 돈(가지급금)"으로 남습니다.</p><p><em>불이익</em>① 받지도 않은 이자를 받은 것으로 보아 인정이자(당좌대출이자율 연 4.6%)를 법인 수익으로 과세 ② 업무무관 가지급금이 있으면 그에 대응하는 차입금 이자를 비용으로 인정하지 않음 ③ 오래 방치되면 대표 상여로 보아 소득세와 건강보험료 추가 ④ 금융기관 대출 심사에 불리</p><p><em>대응</em>법인 자금과 개인 자금을 처음부터 분리하고, 불가피한 인출은 급여·배당·정식 대여(약정, 이자 수수)로 정리합니다.</p>',l:'법인세법 제28조, 법인세법 시행령 제89조'},
-c3:{t:'기업업무추진비(구 접대비) 한도',b:'<p><em>한도</em>기본한도(중소기업 연 3,600만 원, 일반법인 1,200만 원, 사업연도 월수 비례) + 수입금액에 일정 비율을 곱한 금액입니다.</p><p><em>예시</em>중소기업 매출 50억 원이면 기본 3,600만 원 + 매출 비례분이 한도(매출이 클수록 비례율은 낮아짐).</p><p><em>주의</em>한도 초과분은 비용으로 인정되지 않고, 건당 3만 원 초과는 법인카드 등 적격증빙이 있어야 합니다. 2024년부터 법령상 용어는 "기업업무추진비"입니다.</p>',l:'법인세법 제25조'},
-c4:{t:'업무용승용차 : 비용 처리 한도',b:'<p><em>핵심</em>업무용승용차 관련비용(감가상각비, 유류비, 보험료, 수선비 등)은 운행기록부를 작성하지 않으면 차량당 연 1,500만 원까지만 비용으로 인정됩니다. 운행기록부를 작성하면 업무사용 비율만큼 인정됩니다.</p><p><em>감가상각비</em>차량당 연 800만 원이 상한이며, 초과분은 이월해 공제합니다.</p><p><em>보험</em>법인은 모든 업무용승용차에 업무전용자동차보험에 가입해야 하며 미가입 시 관련비용이 전액 불인정됩니다.</p>',l:'법인세법 제27조의2'},
-c5:{t:'임원 퇴직금과 정관',b:'<p><em>쉬운 설명</em>임원 퇴직금은 정관(또는 정관이 위임한 퇴직급여지급규정)에 정한 금액까지 비용으로 인정됩니다.</p><p><em>규정이 없다면</em>퇴직 직전 1년간 총급여 × 10% × 근속연수까지만 인정되고, 초과분은 비용 불인정 및 임원 상여로 처분되어 추가 과세될 수 있습니다.</p><p><em>별도 한도</em>퇴직금을 받는 임원 개인 측에도 소득세법상 퇴직소득 한도(2020년 이후 근속분 2배수)가 있어, 초과분은 근로소득으로 과세됩니다.</p><p><em>대응</em>정관과 임원퇴직금지급규정을 미리 정비하세요.</p>',l:'법인세법 시행령 제44조, 소득세법 제22조'},
-c6:{t:'가산세 : 기한을 놓친 대가',b:'<p><em>무신고</em>납부할 세액의 20%(부정행위 40%)</p><p><em>과소신고</em>부족하게 신고한 세액의 10%(부정행위 40%)</p><p><em>납부지연</em>미납세액 × 하루 0.022% × 일수(연 약 8.03%). 고지서 기한까지도 안 내면 3% 추가</p><p><em>줄이는 방법</em>기한 후 신고는 6개월 이내에 한해 무신고 가산세를 50%·30%·20%(1개월 이내·3개월 이내·6개월 이내) 감면, 수정신고는 6개월 이내 90%·75%·50% 등 과소신고 가산세를 감면받습니다. 세무서가 조사에 착수한 것을 알고 신고하면 감면되지 않습니다.</p>',l:'국세기본법 제47조의2, 제47조의3, 제47조의4, 제48조'},
-c7:{t:'분납 : 세금을 나눠 내는 제도',b:'<p><em>요건</em>법인세로 납부할 세액이 1,000만 원을 넘으면 납부기한이 지난 날부터 1개월(중소기업 2개월) 이내에 일부를 나중에 낼 수 있습니다.</p><p><em>분납 금액</em>납부세액 1,000만~2,000만 원이면 1,000만 원을 초과하는 금액, 2,000만 원 초과면 세액의 50% 이하입니다.</p><p><em>예시</em>납부세액 4,000만 원(중소기업) → 신고 때 2,000만 원 이상 납부, 나머지 2,000만 원 이하는 2개월 안에 납부(12월 결산 기준 5월 말 무렵).</p><p><em>주의</em>분납분을 기한 안에 못 내면 그 부분에 납부지연가산세(하루 0.022%)가 붙습니다. 법인지방소득세도 분납 요건이 따로 있습니다.</p>',l:'법인세법 제64조 제2항'},
-c8:{t:'연부연납 : 법인세에는 없고 상속·증여세에 있는 제도',b:'<p><em>쉬운 설명</em>세금을 여러 해에 걸쳐 나눠 내는 제도로 상속세·증여세에 있습니다. 법인세에는 없으니 혼동하지 마세요.</p><p><em>상속·증여세 요건</em>납부세액 2,000만 원 초과, 담보 제공, 세무서장 허가. 금전·보증서 등을 담보로 내면 신청일에 허가된 것으로 봅니다.</p><p><em>기간</em>상속세 최대 10년(가업상속공제 등 대상은 최대 20년), 증여세 최대 5년(조세특례 대상 15년). 이자 성격의 가산금이 붙습니다.</p><p><em>법인세는?</em>분납(1개월·중소기업 2개월)과 납부기한 연장·징수유예로 자금 부담을 조절합니다.</p>',l:'상속세 및 증여세법 제71조, 법인세법 제64조'},
-c9:{t:'납부기한 연장·징수유예',b:'<p><em>쉬운 설명</em>재해를 입었거나 사업에 현저한 손실이 생겨 세금을 낼 수 없을 때 세무서에 신청해 납부기한을 미루는 제도입니다. 기한이 지나기 전에 신청해야 합니다.</p><p><em>직권 연장</em>경기침체 업종 등은 국세청이 직권으로 납부기한을 3개월 연장해 주기도 합니다. 이때 신고는 기한 안에 해야 하고 납부기한만 늦춰집니다.</p><p><em>확인 필요</em>대상 요건, 연장 가능 기간, 담보 여부는 사안마다 다르므로 관할 세무서나 세무전문가와 확인하세요.</p>',l:'국세징수법 제13조(납부기한등의 연장), 제14조(납부고지의 유예)'},
-m1:{t:'오해 1 : 법인 돈은 내 돈이다',b:'<p><em>사실</em>법인은 대표와 별개의 법적 주체입니다. 법인 돈을 개인 용도로 쓰면 ① 급여·상여(근로소득세, 4대보험) ② 배당(배당소득세) ③ 가지급금(인정이자 4.6%, 상여 처분 위험) 중 하나로 처리됩니다.</p><p><em>정리</em>합법적으로 꺼내는 길은 급여, 배당, 퇴직금뿐이며 각각 세금이 따릅니다.</p>',l:'법인세법 제28조, 시행령 제89조'},
-m2:{t:'오해 2 : 비용이 많으면 무조건 절세',b:'<p><em>사실</em>비용 100만 원을 더 쓰면 세금은 세율만큼(법인세 10~25% + 지방소득세 합산 11~27.5%)만 줄어듭니다. 나머지 약 73~89%는 그냥 사라진 돈입니다.</p><p><em>추가</em>업무와 무관한 지출, 증빙 없는 지출, 한도 초과분은 비용으로 인정되지 않아 절세 효과가 없습니다.</p>',l:'법인세법 제19조, 제55조'},
-m3:{t:'오해 3 : 적자면 신고하지 않아도 된다',b:'<p><em>사실</em>영리법인은 소득이 없거나 결손이어도 법인세 신고 의무가 있습니다.</p><p><em>이유</em>이월결손금은 신고된(또는 결정·경정된) 과세표준에 포함된 결손금만 나중 이익에서 공제됩니다. 2020년 이후 발생분은 15년 이내, 공제 한도는 소득의 80%(중소기업 100%)입니다.</p>',l:'법인세법 제13조, 제60조'},
-m4:{t:'오해 4 : 법인세율이 낮으니 법인이 유리',b:'<p><em>사실</em>법인이 번 이익은 법인세를 낸 뒤 개인에게 흘러갈 때 한 번 더 과세됩니다(급여·퇴직금은 법인의 비용이므로 법인세는 줄지만 개인 소득세가 붙고, 배당은 법인세 후 소득에 개인 배당소득세가 붙음).</p><p><em>정리</em>개인사업자(최고 45% 구간)와 법인을 비교할 때는 이익 규모, 대표 급여 수준, 배당·퇴직금 계획까지 합산해 따져야 합니다. 유불리는 사안마다 다릅니다.</p>',l:'법인세법 제55조, 소득세법 제55조'},
-m5:{t:'오해 5 : 영수증만 있으면 비용',b:'<p><em>사실</em>비용이 인정되려면 ① 사업과 관련 ② 실제 거래 ③ 적격증빙 ④ 법정 한도 내여야 합니다. 증빙은 그중 하나일 뿐입니다.</p><p><em>예시</em>가족 여행 카드 결제, 대표 개인 물품 구입은 세금계산서가 있어도 업무 무관으로 비용 불인정되고 대표 상여로 처분될 수 있습니다.</p>',l:'법인세법 제19조, 제25조, 제27조의2'}
+ass:{t:"상속재산 : 물려받는 재산 전체",b:"<p><em>쉬운 설명</em>부동산·예금·주식 같은 본래의 재산에 더해, 세법이 상속재산으로 보는 재산까지 모두 포함합니다.</p><p><em>간주</em>피상속인이 보험료를 낸 사망보험금, 신탁재산, 사망으로 받는 퇴직금은 상속재산으로 봅니다.</p><p><em>추정</em>사망 전 일정 금액 이상 처분·인출했는데 용도를 입증하지 못하면 상속재산으로 추정합니다.</p>",l:"상속세 및 증여세법 제8조, 제9조, 제10조, 제15조"},
+dbt:{t:"채무·장례비 : 상속재산에서 빼는 금액",b:"<p><em>쉬운 설명</em>사망 당시 공과금, 장례비용, 채무는 상속재산에서 뺍니다. 채무는 금융기관 대출, 임대보증금 등 입증 가능한 것만 인정됩니다.</p><p><em>장례비</em>장례비용은 최소 500만 원에서 최대 1,500만 원까지 인정되고, 봉안시설 비용은 최대 500만 원을 따로 인정합니다.</p>",l:"상속세 및 증여세법 제14조"},
+pre:{t:"사전증여 : 생전에 준 재산을 다시 더한다",b:"<p><em>쉬운 설명</em>사망 전에 증여한 재산은 상속세 과세가액에 더합니다. 증여로 세율이 낮은 구간을 여러 번 쓰는 것을 막는 장치입니다.</p><p><em>기간</em>상속인에게는 사망 전 10년, 상속인이 아닌 사람에게는 5년 이내 증여분입니다.</p><p><em>이중과세</em>합산한 증여재산에 대해 이미 낸 증여세는 상속세에서 공제합니다.</p>",l:"상속세 및 증여세법 제13조, 제28조"},
+ded:{t:"상속공제 : 과세가액에서 빼주는 큰 공제",b:"<p><em>일괄공제</em>5억 원을 한 번에 공제합니다. 기초공제 2억 원과 자녀·미성년자·연로자·장애인 인적공제의 합이 5억 원보다 크면 그 합을 선택할 수 있습니다.</p><p><em>배우자공제</em>배우자가 실제 상속받은 금액 기준으로 최소 5억 원, 최대 30억 원이며 법정상속분 한도 안에서 인정됩니다.</p><p><em>금융재산공제</em>순금융재산의 20%(최소 2,000만 원, 최대 2억 원)입니다.</p><p><em>유의</em>배우자가 단독 상속인이면 일괄공제는 쓸 수 없고 기초공제와 인적공제를 적용합니다.</p>",l:"상속세 및 증여세법 제18조, 제19조, 제20조, 제21조, 제22조"},
+tb:{t:"과세표준 : 세율을 곱하는 기준금액",b:"<p><em>쉬운 설명</em>상속세 과세가액에서 상속공제를 빼고 감정평가수수료를 뺀 금액입니다. 이 금액에 세율을 곱합니다.</p><p><em>최저한</em>과세표준이 50만 원 미만이면 상속세를 부과하지 않습니다.</p>",l:"상속세 및 증여세법 제25조"},
+rate:{t:"세율 : 5단계 누진세율",b:"<p><em>쉬운 설명</em>과세표준이 클수록 높은 세율을 적용합니다. 1억 원 이하 10%, 1억~5억 20%, 5억~10억 30%, 10억~30억 40%, 30억 초과 50%입니다.</p><p><em>예시</em>과세표준 10억 원이면 10억 × 30% − 6,000만 = 2.4억 원입니다.</p>",l:"상속세 및 증여세법 제26조"},
+pay:{t:"납부세액 : 신고하고 내는 돈",b:"<p><em>쉬운 설명</em>산출세액에서 증여세액공제, 외국납부세액공제 등을 뺀 금액입니다. 사망월 말일부터 6개월 안에 신고하고 같은 기한까지 납부합니다.</p><p><em>할증</em>자녀가 아닌 직계비속(손자녀)에게 물려주면 산출세액의 30%(미성년자이고 20억 원 초과 시 40%)가 가산됩니다.</p><p><em>분할</em>돈이 모자라면 분납, 연부연납, 물납을 쓸 수 있습니다.</p>",l:"상속세 및 증여세법 제27조, 제28조, 제67조, 제70조"},
+prog:{t:"누진공제 : 구간별 계산의 지름길",b:"<p><em>쉬운 설명</em>구간별로 나눠 계산하는 대신 \"과세표준 × 세율 − 누진공제\" 한 줄로 같은 값을 얻습니다.</p><p><em>검산</em>과세표준 2.2억 원이면 2.2억 × 20% − 1,000만 = 3,400만 원입니다. 구간별로는 1억 × 10% + 1.2억 × 20% = 1,000만 + 2,400만 = 3,400만 원으로 같습니다.</p>",l:"상속세 및 증여세법 제26조"},
+gen:{t:"세대생략 할증 : 한 세대를 건너뛰면 추가 과세",b:"<p><em>쉬운 설명</em>자녀를 건너뛰고 손자녀에게 바로 물려주면 상속세를 한 번 건너뛰는 효과가 생깁니다. 이를 막으려고 산출세액에 30%를 가산합니다.</p><p><em>예외</em>미성년 손자녀가 20억 원을 넘게 받으면 40%입니다. 부모가 먼저 사망해 손자녀가 대신 상속하는 경우(대습상속)는 할증하지 않습니다.</p>",l:"상속세 및 증여세법 제27조"},
+ex:{t:"계산 예시의 가정",b:"<p><em>가정</em>배우자와 자녀가 상속하고 사전증여는 없다고 가정했습니다. 배우자는 법정상속분 안에서 10억 원을 상속하고 순금융재산은 4억 원으로 가정했습니다.</p><p><em>주의</em>실제로는 동거주택상속공제, 가업·영농상속공제, 재해손실공제 등과 부동산 시가 평가가 결과를 크게 바꿉니다. 이 예시에는 반영하지 않았습니다.</p>",l:"상속세 및 증여세법 제18조, 제19조, 제21조, 제22조, 제26조"},
+exb:{t:"배우자공제의 효과",b:"<p><em>비교</em>배우자공제 10억 원을 쓰지 못하면 과세표준은 12.2억 원이 되고, 40% 구간 세율로 산출세액이 12.2억 × 40% − 1.6억 = 3.28억 원이 됩니다. 3,400만 원 대비 약 9.6배입니다.</p><p><em>2차 상속</em>배우자가 받은 재산은 이후 배우자가 사망할 때 다시 과세되므로, 1차 절세가 곧 전체 절세는 아닙니다. 자녀 몫과 배우자 몫을 함께 시뮬레이션하세요.</p>",l:"상속세 및 증여세법 제19조, 제26조"},
+t1:{t:"사망 전 10년 : 사전증여를 더하는 기간",b:"<p><em>쉬운 설명</em>상속인에게 사망 전 10년 안에 증여한 재산, 상속인이 아닌 사람에게는 5년 안에 증여한 재산이 상속세 과세가액에 더해집니다.</p><p><em>추정</em>사망 전 1년 안에 2억 원(2년 안에 5억 원) 이상 처분·인출했다면 용도를 소명해야 합니다.</p>",l:"상속세 및 증여세법 제13조, 제15조"},
+t2:{t:"상속 개시 : 사망일",b:"<p><em>쉬운 설명</em>사망일이 상속 개시일입니다. 재산 평가, 상속공제 적용, 신고기한 계산이 모두 이날을 기준으로 합니다.</p><p><em>상속분</em>민법상 배우자는 직계비속과 공동상속하며 배우자 몫은 자녀 몫의 1.5배입니다.</p>",l:"상속세 및 증여세법 제67조, 민법 제1009조"},
+t3:{t:"상속포기·한정승인 : 3개월 안에",b:"<p><em>쉬운 설명</em>빚이 재산보다 많을 수 있다면 상속 개시를 안 날부터 3개월 안에 가정법원에 상속포기나 한정승인을 신청해야 합니다. 이 기간이 지나면 단순승인으로 봅니다.</p><p><em>유의</em>상속포기를 해도 사망보험금·사전증여는 별도로 과세될 수 있으니 세무 확인이 필요합니다.</p>",l:"민법 제1019조"},
+t4:{t:"신고·납부 : 사망월 말일부터 6개월",b:"<p><em>기한</em>사망일이 속한 달의 말일부터 6개월 이내입니다. 피상속인이나 상속인이 외국에 주소가 있으면 9개월입니다. 상속등기일 기준이 아닙니다.</p><p><em>신청</em>분납은 납부할 때, 연부연납·물납은 신고할 때 신청서를 함께 냅니다.</p>",l:"상속세 및 증여세법 제67조, 제70조"},
+t5:{t:"배우자 상속재산 분할 기한",b:"<p><em>쉬운 설명</em>신고기한까지 배우자 몫을 분할하지 못했다면 신고기한 다음 날부터 9개월 안에 분할하고 신고해야 법정상속분 한도의 배우자공제를 받습니다.</p><p><em>예외</em>소송 등 부득이한 사유가 있으면 기한 연장 효과를 인정받을 수 있으나, 그 사유도 기한 내 신고해야 합니다.</p>",l:"상속세 및 증여세법 제19조"},
+c1:{t:"가산세 : 기한을 놓친 대가",b:"<p><em>기한</em>사망일이 속한 달의 말일부터 6개월(해외 9개월)입니다.</p><p><em>가산세</em>무신고 20%(부정행위 40%), 과소신고 10%, 납부지연 하루 0.022%입니다.</p><p><em>유의</em>연부연납·물납 신청서도 신고기한 안에 신고서와 함께 내야 합니다.</p>",l:"국세기본법 제47조의2, 제47조의3, 제47조의4, 상속세 및 증여세법 제67조"},
+c2:{t:"추정상속재산 : 인출 후 용도를 모르면 상속재산",b:"<p><em>쉬운 설명</em>사망 전 1년 안에 2억 원 이상, 2년 안에 5억 원 이상 재산을 처분하거나 예금을 인출하고 용도를 객관적으로 증명하지 못하면 상속재산으로 추정합니다.</p><p><em>대응</em>병원비·채무 상환·정상 지출 내역을 영수증과 계좌 기록으로 남겨 두어야 합니다.</p>",l:"상속세 및 증여세법 제15조"},
+c3:{t:"사전증여 합산",b:"<p><em>쉬운 설명</em>상속인에게는 10년, 상속인이 아닌 사람에게는 5년 안에 준 증여재산을 상속재산에 더합니다. 증여 당시 가격으로 평가해 더합니다.</p><p><em>공제</em>합산한 증여재산에 이미 낸 증여세는 산출세액에서 공제합니다.</p>",l:"상속세 및 증여세법 제13조, 제28조"},
+c4:{t:"재산 평가 : 시가가 우선",b:"<p><em>쉬운 설명</em>재산은 상속 개시일 현재의 시가로 평가합니다. 매매·감정·수용·경매 가액이 있으면 시가로 보고, 없을 때만 공시가격 같은 보충적 방법을 씁니다.</p><p><em>유의</em>개별 사안에서는 감정평가로 가액이 달라질 수 있어 시가 확인이 중요합니다.</p>",l:"상속세 및 증여세법 제60조, 제61조"},
+c5:{t:"배우자공제와 상속재산 분할",b:"<p><em>쉬운 설명</em>배우자공제는 법정상속분 한도 안에서 실제 상속한 금액을 인정합니다. 분할을 해야 공제액이 확정됩니다.</p><p><em>기한</em>신고기한까지 분할하지 못하면 배우자공제는 최소 5억 원만 적용되고, 이후 9개월 안에 분할해 신고하면 법정상속분 한도까지 추가로 인정받습니다.</p>",l:"상속세 및 증여세법 제19조"},
+c6:{t:"연대납세의무",b:"<p><em>쉬운 설명</em>상속인들은 각자 받았거나 받을 재산을 한도로 서로 상속세를 연대해서 낼 의무가 있습니다. 한 사람이 내지 않으면 다른 상속인에게 청구될 수 있습니다.</p><p><em>대응</em>상속인 간 부담 비율을 미리 합의하고 납부 내역을 서로 확인해 두세요.</p>",l:"상속세 및 증여세법 제3조의2"},
+c7:{t:"분납 : 세금을 나눠 내는 제도",b:"<p><em>쉬운 설명</em>납부세액이 1,000만 원을 넘으면 일부를 납부기한 후 2개월 이내에 낼 수 있습니다.</p><p><em>금액</em>2,000만 원 이하는 1,000만 원 초과분, 2,000만 원 초과는 50% 이하입니다.</p><p><em>유의</em>연부연납 허가를 받으면 분납과 함께 쓸 수 없습니다.</p>",l:"상속세 및 증여세법 제70조, 상속세 및 증여세법 시행령 제66조"},
+c8:{t:"연부연납 : 여러 해에 걸쳐 나눠 내기",b:"<p><em>요건</em>납부세액이 2,000만 원을 넘어야 하고, 신고할 때 신청서를 내고 허가를 받은 뒤 담보를 제공합니다.</p><p><em>기간</em>허가일부터 일반 상속은 10년, 가업상속재산이 포함되면 20년까지 가능하며 각 회분 납부액은 1,000만 원을 넘어야 합니다.</p><p><em>비용</em>연부연납 가산금(이자 성격)이 붙습니다.</p>",l:"상속세 및 증여세법 제71조, 제72조"},
+c9:{t:"물납 : 현물로 내는 상속세",b:"<p><em>요건</em>상속재산 중 부동산·유가증권이 상속재산의 2분의 1을 넘고, 납부세액이 2,000만 원을 넘으며, 납부세액이 금융재산가액을 넘을 때 신청할 수 있습니다.</p><p><em>유의</em>물납 재산은 관리·처분이 부적당하면 거부될 수 있고, 평가 가액으로 수납됩니다.</p>",l:"상속세 및 증여세법 제73조"},
+c10:{t:"납부 원칙 : 6개월 이내 현금 납부",b:"<p><em>원칙</em>상속세는 사망일이 속한 달의 말일부터 6개월(해외 9개월) 이내에 신고하고, 현금(금전)으로 한꺼번에 내는 것이 원칙입니다.</p><p><em>예외</em>납부세액이 1,000만 원을 넘으면 분납, 2,000만 원을 넘으면 연부연납, 요건을 갖추면 물납을 신청할 수 있습니다. 연부연납·물납은 신고기한 안에 신청해야 합니다.</p><p><em>유의</em>재산이 부동산 중심이면 현금이 모자라기 쉬우므로 납부재원을 미리 계산해 두세요. 기한을 넘기면 납부지연가산세(하루 0.022%)가 붙습니다.</p>",l:"상속세 및 증여세법 제67조, 제70조, 제71조, 제73조"},
+m1:{t:"오해 1 : 배우자에게 몰아주면 무조건 절세다",b:"<p><em>사실</em>배우자공제로 1차 상속세는 크게 줄지만, 배우자가 받은 재산은 배우자 사망 때 다시 상속재산이 됩니다.</p><p><em>결과</em>자녀 공제가 거의 없는 상태에서 합산되어 2차 상속세가 더 커질 수 있습니다. 1차·2차를 묶어 비교하세요.</p>",l:"상속세 및 증여세법 제19조"},
+m2:{t:"오해 2 : 죽기 전에 현금을 인출해 두면 세금이 없다",b:"<p><em>사실</em>사망 전 1년 2억 원·2년 5억 원 이상 처분·인출은 용도를 증명하지 못하면 상속재산으로 추정합니다.</p><p><em>결과</em>현금으로 숨겨도 금융거래 내역이 남아 소명 대상이 되고, 가산세도 붙을 수 있습니다.</p>",l:"상속세 및 증여세법 제15조"},
+m3:{t:"오해 3 : 상속재산이 10억 이하면 세금이 없다",b:"<p><em>사실</em>일괄공제 5억 원과 배우자공제 최소 5억 원을 합친 10억 원은 배우자가 있고 배우자가 상속을 받는 경우의 이야기입니다.</p><p><em>결과</em>배우자가 없으면 일괄공제 5억 원 외에 금융재산공제·동거주택공제 등으로 줄일 뿐, 5억 원을 넘는 부분은 과세될 수 있습니다.</p>",l:"상속세 및 증여세법 제19조, 제21조"},
+m4:{t:"오해 4 : 내가 받은 만큼만 신고하면 된다",b:"<p><em>사실</em>상속세는 피상속인이 남긴 재산 전체(유산)를 기준으로 계산한 뒤 상속인이 받은 비율대로 나눠 부담합니다.</p><p><em>결과</em>특정 상속인의 몫만 따로 계산하지 않고, 상속인들은 서로 연대납세의무도 집니다.</p>",l:"상속세 및 증여세법 제3조의2, 제26조"},
+m5:{t:"오해 5 : 신고 안 하면 세무서가 모를 것이다",b:"<p><em>사실</em>사망 신고, 금융기관 거래, 등기, 보험금 지급 자료 등이 세무서에 모입니다. 무신고 시 국세 부과제척기간이 15년으로 길어집니다.</p><p><em>결과</em>추징 시 무신고가산세 20%와 납부지연가산세가 붙습니다.</p>",l:"국세기본법 제26조의2, 제47조의2"}
 };
 
 Object.keys(ov).forEach(function(k){P[k]=ov[k]});
@@ -514,8 +517,8 @@ document.getElementById('bDl').addEventListener('click',function(){
   a.download=FN;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
 });
 onOpen=setPopEdit;
-/* GitHub 반영 : 편집 페이지(-admin)와 조회 페이지를 함께 갱신. 토큰은 이 브라우저의 localStorage에만 저장 */
-var VN=FN.replace('-admin',''),GH={o:'yangji-madang',r:'SLGFC',b:'main',pa:'consult/'+FN,pv:'consult/'+VN},TKEY='info_gh_token',baseVer=sheetEl.getAttribute('data-ver');
+/* GitHub 반영 : 편집 페이지(_admin)와 조회 페이지를 함께 갱신. 토큰은 이 브라우저의 localStorage에만 저장 */
+var VN=FN.replace('_admin',''),GH={o:'yangji-madang',r:'SLGFC',b:'main',pa:'consult/'+FN,pv:'consult/'+VN},TKEY='info_gh_token',baseVer=sheetEl.getAttribute('data-ver');
 document.getElementById('lView').href=VN;
 window.showPending=function(p){gst('법령 변경 확인 필요 '+p.length+'건 : '+p.join(' / '),true)};
 function gst(msg,bad){var e=document.getElementById('gst');e.textContent=msg;e.style.color=bad?'#b3261e':'#17294a'}
@@ -534,7 +537,7 @@ async function ghPush(tk){
     if(!r.ok)throw {msg:'반영 실패 ('+r.status+')'};
   }
   try{
-    if(VN===FN)throw {msg:'파일명에 -admin이 없어 조회 페이지를 구분할 수 없습니다.'};
+    if(VN===FN)throw {msg:'파일명에 _admin이 없어 조회 페이지를 구분할 수 없습니다.'};
     gst('GitHub 파일 확인 중…');
     var ra=await fetch(base+GH.pa+'?ref='+GH.b,{headers:H,cache:'no-store'});chk(ra);
     if(ra.status===404)throw {msg:'저장소나 파일을 찾을 수 없거나 토큰에 접근 권한이 없습니다.'};
