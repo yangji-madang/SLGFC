@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>필요서류 : 제도별 필요서류·정보 매트릭스 · 관리</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:system-ui,-apple-system,'Segoe UI','Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans CJK KR',sans-serif;background:#e9edf3;color:#1d2433;display:flex;flex-direction:column;word-break:keep-all}
+.bar{flex:none;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:6px 12px;background:#17294a;color:#fff;border-bottom:3px solid #e0a43a}
+.bar b{font-size:14px;margin-right:auto}
+.bar small{font-size:11px;color:#d8e6f8}
+.bar a,.bar button{font:inherit;font-size:12px;padding:5px 12px;border:1px solid #fff;border-radius:4px;background:#fff;color:#17294a;text-decoration:none;cursor:pointer}
+.bar button.pri{background:#e0a43a;border-color:#e0a43a;font-weight:700}
+iframe{flex:1;width:100%;border:0;background:#fff;min-height:0}
+.cp{flex:none;text-align:right;font-size:11px;color:#17294a;padding:2px 12px;background:#f3f6fb;border-top:1px solid #c3cde0}
+@media print{.bar,.cp{display:none}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <b>필요서류 : 제도별 필요서류·정보 매트릭스 관리</b>
+  <small>담당자 선택은 이 화면에서만 보이며, 아래 조회 페이지의 하단에 바로 반영됩니다.</small>
+  <span id="ctMount"></span>
+  <a href="gov_support_doc.html" target="_blank" rel="noopener">조회 페이지 열기</a>
+  <button type="button" class="pri" id="prt">인쇄 / PDF 저장</button>
+</div>
+<iframe id="fr" src="gov_support_doc.html" title="필요서류 : 제도별 필요서류·정보 매트릭스"></iframe>
+<div class="cp">ⓒ<span id="yr">2026</span>. YOON HYUNCHUL, ALL RIGHTS RESERVED.</div>
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+document.getElementById('prt').addEventListener('click',function(){var f=document.getElementById('fr');try{f.contentWindow.focus();f.contentWindow.print()}catch(e){window.open('gov_support_doc.html','_blank')}});
+</script>
+<script src="../contacts.js"></script>
+</body></html>

@@ -12,7 +12,10 @@
   ] };
   var cs = document.currentScript, src = cs ? cs.src : '';
   var base = src ? src.replace(/[^\/]*(\?.*)?$/, '') : '';
-  var KEY = 'slgfc_ct_sel:' + location.pathname;
+  /* 담당자 선택 화면은 관리페이지(파일명이 _admin 으로 끝나는 페이지)에서만 보입니다.
+     조회·인쇄 페이지(_print 포함)는 같은 브라우저에서 관리페이지로 고른 값을 따라가며, 고르지 않았으면 표시하지 않습니다. */
+  var ADM = /_admin(\.html)?$/i.test(location.pathname);
+  var KEY = 'slgfc_ct_sel:' + location.pathname.replace(/_(admin|print)(\.html)?$/i, '$2');
   var data = FB, loaded = false, cbs = [];
 
   function list() { return (data.contacts || []).filter(function (x) { return x && String(x.t || '').trim(); }); }
@@ -60,6 +63,7 @@
     d.classList.add('slgct-fl'); document.body.appendChild(d);
   }
   function build() {
+    if (!ADM) return;   /* 조회·인쇄 페이지에는 선택 화면을 만들지 않음 */
     if (document.getElementById('ctSel') && !document.getElementById('ctSel').getAttribute('data-slgct')) return;   /* 페이지 자체 선택 화면 사용 */
     addCss();
     var l = list(), s = sel(), d = document.getElementById('ctSel');
@@ -91,8 +95,11 @@
     } catch (e) { done(); }
   }
 
+  /* 다른 창(관리페이지)에서 선택을 바꾸면 이 페이지도 바로 따라감 */
+  window.addEventListener('storage', function (e) { if (e.key === KEY) { build(); apply(); } });
+
   window.SLGCT = {
-    list: list, sel: sel, text: text, setSel: setSel,
+    list: list, sel: sel, text: text, setSel: setSel, admin: ADM,
     ready: function (f) { if (loaded) { try { f(); } catch (e) {} } else { cbs.push(f); } }
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load); else load();

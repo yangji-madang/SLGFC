@@ -956,7 +956,7 @@ function ctSelGet(l){
 }
 function ctBuild(){
   var l=ctList(),sel=ctSelGet(l),d=$("#ctSel"),h="";
-  d.hidden=!l.length;
+  d.hidden=!l.length||!(window.SLGCT&&SLGCT.admin);   /* 선택 화면은 관리페이지에서만 표시 */
   l.forEach(function(x,i){h+='<label><input type="radio" name="ctR" data-i="'+i+'"'+(sel[i]?' checked':'')+'><span>'+esc(x.t)+'</span></label>';});
   h+='<label style="border-top:1px solid #cbd5e1;margin-top:3px;padding-top:4px"><input type="radio" name="ctR" data-i="-1"'+(sel.some(function(v){return v;})?'':' checked')+'><span>표시하지 않음</span></label>';
   $("#ctPn").innerHTML=h;
