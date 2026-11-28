@@ -78,6 +78,8 @@ tbody tr:hover td{background:#e8f0fe}
 td:nth-child(4){font-weight:700}
 tbody tr.pgb td{border-top:2px solid #64748b}
 .pr{font-weight:700;color:var(--navy);font-size:11.5px}
+td.ca{font-weight:700}td.ca.r{color:#c00000}td.ca.b{color:#1d4ed8}
+#cl{caption-side:top;text-align:left;font-size:11px;padding:3px 6px;background:#fff;color:#334155;white-space:normal}#cl .cr{color:#c00000}#cl .cb{color:#1d4ed8}#cl span{font-size:10px;color:#64748b}
 .w1{width:58px}.w2{width:84px}.w3{width:60px}.w31{width:104px}.w4{width:150px}.w5{width:112px}.w6{width:270px}.w7{width:210px}.w8{width:230px}.w9{width:120px}.w10{width:60px}
 td b.k{color:var(--navy)}
 .tg{display:inline-block;font-size:10.5px;font-weight:700;border-radius:3px;padding:0 4px;margin-right:3px;color:#fff;vertical-align:1px}
@@ -313,6 +315,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 
 <div id="res">
   <table>
+    <caption id="cl"><b class="cr">빨강 굵게</b> = 소득·자격 조건 없는 현금지원 &nbsp;<b class="cb">파랑 굵게</b> = 조건 있는 현금지원 <span>(현금 지급이 확인된 제도만 표시 · 현금·지역화폐 혼합 등 분류가 불명확한 제도는 일반 글씨)</span></caption>
     <thead><tr>
       <th class="w1">기간</th><th class="w2">지원주체</th><th class="w3">유형</th><th class="w31">지원명</th><th class="w4">지원금액</th><th class="w5">지급방식</th>
       <th class="w6">신청방법 (접수처 · 기한 · 서류)</th><th class="w7">기존 대비 변경</th><th class="w8">향후 변경 예정 (시행일)</th><th class="w9">출처</th>
@@ -886,6 +889,15 @@ function cv(d,f){
   });
   return old.length?old.join(" ")+" → "+v:v;
 }
+/* 현금지원 구분(지원금액 글씨색) : r=소득·자격 조건 없는 현금지원(빨강), b=조건 있는 현금지원(파랑). 자료에 근거가 확실한 제도만 지정 */
+var CAR=/^(부모급여|아동수당|화성시 출산지원금|용산구 출산지원금|평택시|안산시|김제시|해남군|부산형 산후조리경비|부안군 출산 산후조리비)/;
+var CAB=/^(가정양육수당|출산전후휴가급여|배우자 출산휴가|육아휴직급여|6\+6|고용보험 미적용자|서울 무주택|남동구 산후조리비|남동구 아빠 육아휴직)/;
+function caCls(d){
+  if(d.auto||d.c==="예정(신설)"||d.end){return "";}
+  if(CAR.test(d.n)){return ' class="ca r"';}
+  if(CAB.test(d.n)){return ' class="ca b"';}
+  return "";
+}
 function row(d){
   var area=d.r==="전국"?'<span class="tg n">전국</span>':'<b>'+d.r+'</b><br><span class="sm">'+d.q+'</span>';
   var ap='<div class="ap"><div><b>접수처</b> : '+cv(d,'w')+'</div><div><b>기한</b> : '+cv(d,'d')+'</div><div><b>서류</b> : '+cv(d,'x')+'</div></div>';
@@ -895,7 +907,7 @@ function row(d){
   var sr='<span class="tg '+rc+'">'+d.rel+'</span>'+(d.chk?'<span class="tg w">확인필요</span>':'')+'<br>';
   d.src.forEach(function(s,i){sr+=(i?'<br>':'')+'<a href="'+s[1]+'" target="_blank" rel="noopener noreferrer">'+s[0]+'</a>';});
   var cls=d.c==="예정(신설)"?"pend":(d.end?"end":"");
-  return '<tr class="'+cls+(d.__pg?' pgb':'')+'"><td data-l="기간"><span class="pr">'+perLab(d)+'</span></td><td data-l="지원주체">'+area+'</td><td data-l="유형">'+d.c+'</td><td data-l="지원명">'+d.n+'</td><td data-l="지원금액">'+cv(d,'a')+'</td><td data-l="지급방식">'+cv(d,'p')+'</td><td data-l="신청방법">'+ap+'</td><td data-l="기존 대비 변경">'+ch+'</td><td data-l="향후 변경 예정">'+fu+'</td><td data-l="출처">'+sr+'</td></tr>';
+  return '<tr class="'+cls+(d.__pg?' pgb':'')+'"><td data-l="기간"><span class="pr">'+perLab(d)+'</span></td><td data-l="지원주체">'+area+'</td><td data-l="유형">'+d.c+'</td><td data-l="지원명">'+d.n+'</td><td data-l="지원금액"'+caCls(d)+'>'+cv(d,'a')+'</td><td data-l="지급방식">'+cv(d,'p')+'</td><td data-l="신청방법">'+ap+'</td><td data-l="기존 대비 변경">'+ch+'</td><td data-l="향후 변경 예정">'+fu+'</td><td data-l="출처">'+sr+'</td></tr>';
 }
 function tyRank(d){
   /* 유형 순서 : 현금(수당·장려금 → 휴직·휴가급여 → 현금지급 산후조리) → 바우처·지역화폐 → 서비스 → 예정(신설) */
