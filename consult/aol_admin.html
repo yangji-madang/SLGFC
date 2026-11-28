@@ -47,7 +47,7 @@ document.getElementById('fs').onchange=function(){
  if(!this.value)return;var px=this.value;ex('fontSize','7');
  doc().querySelectorAll('font[size="7"]').forEach(function(f){var sp=doc().createElement('span');sp.style.fontSize=px+'px';sp.innerHTML=f.innerHTML;f.replaceWith(sp)});
 };
-document.getElementById('vw').onclick=function(){window.open('aol.html','_blank')};document.getElementById('vi').onclick=function(){window.open('aol_info.html','_blank')};
+document.getElementById('vw').onclick=function(){window.open('aol.html','_blank')};document.getElementById('vi').onclick=function(){window.open('aol_info.html','_blank')};document.getElementById('vi').onclick=function(){window.open('aol_info.html','_blank')};
 function collect(){var o={};doc().querySelectorAll('[data-edit]').forEach(function(e){o[e.dataset.edit]=e.innerHTML});return o}
 document.getElementById('dl').onclick=function(){
  var b=new Blob([JSON.stringify(collect(),null,1)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='aol.json';a.click();
