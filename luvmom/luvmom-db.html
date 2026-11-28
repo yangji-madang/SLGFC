@@ -597,6 +597,9 @@ function normByType(c, v){
   if (c.type === 'phone') return normPhone(v);
   return String(v == null ? '' : v).trim();
 }
+const isOverTxt = (c, v) => c.label.replace(/\s/g, '') === '임신주수' && /^\s*\d+\s*주(\s*\d+\s*일)?\s*초과\s*$/.test(String(v == null ? '' : v));
+/* 엑셀·붙여넣기용: 화면 표시용 문구("N주 M일 초과")는 임신주수 원본 값이 아니므로 읽지 않는다 */
+function impNorm(c, v){ return isOverTxt(c, v) ? '' : normByType(c, v); }
 function dupKey(r){
   const n = String(r['고객명'] || '').replace(/\s/g, '');
   const p = String(r['휴대폰'] || '').replace(/\D/g, '');
@@ -1347,7 +1350,7 @@ async function readXlsx(file){
       const o = {}; let any = false;
       Object.keys(colMap).forEach(n => {
         const c = colMap[n], raw = xv(row.getCell(+n).value);
-        const v = normByType(c, raw); o[c.key] = v; if (v !== '') any = true;
+        const v = impNorm(c, raw); o[c.key] = v; if (v !== '') any = true;
       });
       if (any) recs.push(o);
     });
@@ -1358,7 +1361,13 @@ function applyImport(recs, mode, newCols){
   newCols.forEach(c => { if (!state.cols.some(x => x.key === c.key)) state.cols.push(c); });
   let add = 0, upd = 0, skip = 0;
   if (mode === 'replace'){
-    state.rows = recs.map(r => Object.assign({ id: uid() }, r)); add = recs.length;
+    const old = new Map(state.rows.map(r => [dupKey(r), r]));
+    state.rows = recs.map(r => {
+      const o = old.get(dupKey(r)), n = Object.assign({ id: o ? o.id : uid() }, r);
+      if (o){ if (o._h) n._h = o._h; if (!n['임신주수'] && o['임신주수']) n['임신주수'] = o['임신주수']; }
+      return n;
+    });
+    add = recs.length;
   } else {
     const map = new Map(state.rows.map(r => [dupKey(r), r])), fresh = [];
     recs.forEach(r => {
@@ -1440,7 +1449,7 @@ function openPaste(initial){
           if (!c){ c = { key: nm === 'id' ? 'id_' : nm, label: nm, type: 'text', w: 200, area: true, wrap: true, visible: true }; newCols.push(c); }
         } else c = state.cols.find(x => x.key === m);
         if (!c) return;
-        const v = normByType(c, r[j] == null ? '' : r[j]); o[c.key] = v; if (v !== '') any = true;
+        const v = impNorm(c, r[j] == null ? '' : r[j]); o[c.key] = v; if (v !== '') any = true;
       });
       if (!any) return;
       if (nameCol && !o['고객명']){ noName++; return; }
