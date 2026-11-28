@@ -894,8 +894,28 @@ function row(d){
   var cls=d.c==="예정(신설)"?"pend":(d.end?"end":"");
   return '<tr class="'+cls+'"><td data-l="구분">'+area+'</td><td data-l="지원명">'+d.n+'</td><td data-l="유형">'+d.c+'</td><td data-l="지원금액">'+cv(d,'a')+'</td><td data-l="지급방식">'+cv(d,'p')+'</td><td data-l="신청방법">'+ap+'</td><td data-l="기존 대비 변경">'+ch+'</td><td data-l="향후 변경 예정">'+fu+'</td><td data-l="출처">'+sr+'</td></tr>';
 }
+function tyRank(d){
+  /* 유형 순서 : 현금(수당·장려금 → 휴직·휴가급여 → 현금지급 산후조리) → 바우처·지역화폐 → 서비스 → 예정(신설) */
+  var c=d.c,pf=d.pf||[];
+  if(c==="예정(신설)"){return 9;}
+  if(c==="수당·장려금(현금)"){return 0;}
+  if(c==="휴직·휴가급여"){return 1;}
+  if(c==="산후조리·의료"){return pf.indexOf("현금")>=0?2:(pf.indexOf("바우처")>=0||pf.indexOf("지역화폐")>=0?4:6);}
+  if(c==="바우처·지역화폐"||c==="바우처"||c==="지역화폐"){return 3;}
+  return 6;
+}
+function sortRows(a){
+  /* 정렬 : ① 구분(전국 → 지자체) ② 유형(현금 → 바우처·지역화폐 → 그 밖) ③ 기존 등록 순서 */
+  return a.map(function(d,i){return {d:d,i:i};}).sort(function(x,y){
+    var a1=x.d.r==="전국"?0:1,b1=y.d.r==="전국"?0:1;
+    if(a1!==b1){return a1-b1;}
+    var a2=tyRank(x.d),b2=tyRank(y.d);
+    if(a2!==b2){return a2-b2;}
+    return x.i-y.i;
+  }).map(function(o){return o.d;});
+}
 function render(){
-  var rows=DATA.filter(ok);
+  var rows=sortRows(DATA.filter(ok));
   $("#tb").innerHTML=rows.map(row).join("");
   $("#cnt").textContent=rows.length+"건 / 전체 "+DATA.filter(function(d){return !d.auto;}).length+"건";
   $("#empty").hidden=rows.length>0;
