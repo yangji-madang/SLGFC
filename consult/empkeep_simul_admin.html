@@ -97,7 +97,12 @@ body.editing [data-ed]{outline:1px dashed #b08435;outline-offset:1px;cursor:text
 body.editing [data-ed]:focus{outline:2px solid #e0a43a;background:#fffbe9}
 body.editing [data-p]{cursor:text}
 body.editing #pt[contenteditable],body.editing #pbody[contenteditable]{outline:1px dashed #b08435}
-@media print{.edtip,#gst,#cfgPanel,[data-adm]{display:none!important}}
+.fmt{display:none;width:210mm;max-width:100%;margin:4px auto 0;background:#fff;border:1px solid #c3cde0;border-radius:4px;padding:4px 8px;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px;position:sticky;top:0;z-index:15}
+body.editing .fmt{display:flex}
+.fmt select,.fmt input[type=color],.fmt button{font:inherit;font-size:12px;border:1px solid #b8c4d8;border-radius:3px;background:#fff;padding:2px 6px;cursor:pointer}
+.fmt input[type=color]{width:30px;height:24px;padding:0}
+.fmt b.t{color:#17294a}
+@media print{.fmt,.edtip,#gst,#cfgPanel,[data-adm]{display:none!important}}
 </style>
 </head>
 <body>
@@ -114,7 +119,13 @@ body.editing #pt[contenteditable],body.editing #pbody[contenteditable]{outline:1
   
   <button type="button" id="prt">인쇄 / PDF 저장</button>
 </div>
-<div class="edtip" data-adm>편집 모드 : 글자만 수정됩니다(서식 없음). 팝업 설명은 Alt+클릭으로 열어 수정하세요. 편집 완료 후 'GitHub 반영'을 누르면 조회 페이지도 함께 바뀝니다.</div>
+<div class="fmt" data-adm id="fmt"><b class="t">서식</b>
+  <select id="fFont" title="글꼴"><option value="">글꼴</option><option>system-ui</option><option>Malgun Gothic</option><option>Gulim</option><option>Dotum</option><option>Batang</option><option>NanumGothic</option><option>Georgia</option></select>
+  <select id="fSize" title="글자 크기(pt)"><option value="">크기</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>14</option><option>16</option><option>18</option><option>22</option></select>
+  <input type="color" id="fColor" value="#1d2433" title="글자 색">
+  <button type="button" id="fB"><b>B</b></button><button type="button" id="fU"><u>U</u></button><button type="button" id="fClr">서식 지우기</button>
+  <span style="color:#566074">글자를 드래그해 선택한 뒤 적용하세요.</span></div>
+<div class="edtip" data-adm>편집 모드 : 글자와 서식(글꼴·크기·색·굵게·밑줄)을 수정할 수 있습니다. 팝업 설명은 Alt+클릭으로 열어 수정하세요. 편집 완료 후 'GitHub 반영'을 누르면 조회 페이지도 함께 바뀝니다.</div>
 
 <table class="pt"><tbody><tr><td>
 <div class="doc" id="doc">
@@ -369,7 +380,7 @@ function roots(){return Array.prototype.slice.call(document.querySelectorAll('#d
   }
 })();
 var plainOK=(function(){var t=document.createElement('div');try{t.contentEditable='plaintext-only';return t.contentEditable==='plaintext-only'}catch(e){return false}})();
-var CE=plainOK?'plaintext-only':'true';
+var CE='true';
 function skip(el){return el.closest&&el.closest('svg,.qd,.ft .row,.law,.slgct,script,style,.pop,select,option,input,textarea,[data-noedit],[data-cfg]')}
 function hosts(rt){var out=[];(function w(el){
   if(el.nodeType!==1||skip(el)||el.classList.contains('yr')||el.classList.contains('i')||el.hasAttribute('data-ct'))return;
@@ -416,7 +427,7 @@ function insSp(){var o=selRange();if(!o)return;var r=o.r;r.deleteContents();var 
   var tn=document.createTextNode(ch);r.insertNode(tn);r.setStartAfter(tn);r.collapse(true);o.sl.removeAllRanges();o.sl.addRange(r)}
 document.addEventListener('keydown',function(e){
   if(!editing)return;var t=e.target;if(!(t&&t.closest&&t.closest('[contenteditable]')))return;
-  if((e.ctrlKey||e.metaKey)&&/^[biu]$/i.test(e.key)){e.preventDefault();return}
+  if((e.ctrlKey||e.metaKey)&&/^i$/i.test(e.key)){e.preventDefault();return}
   if(e.isComposing)return;
   if(e.key==='Enter'){e.preventDefault();insBr();return}
   if(e.key===' '&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();insSp();return}
@@ -494,12 +505,34 @@ $('bTk').addEventListener('click',function(){
   if(!getTk()){gst('저장된 토큰이 없습니다.');return}
   if(confirm('이 브라우저에 저장된 GitHub 토큰을 삭제합니다.')){try{localStorage.removeItem(TKEY)}catch(e){}gst('토큰을 삭제했습니다.')}
 });
+
+/* 서식 도구 : 선택한 글자에 글꼴·크기·색·굵게·밑줄 적용 */
+(function(){
+var fm=$('fmt');if(!fm)return;
+function selRange(){var sl=window.getSelection();if(!sl.rangeCount)return null;var r=sl.getRangeAt(0);if(r.collapsed)return null;
+  var a=r.commonAncestorContainer;a=a.nodeType===1?a:a.parentNode;if(!a||!a.closest||!a.closest('[contenteditable]'))return null;return r}
+function wrap(css){var r=selRange();if(!r){gst('먼저 편집할 글자를 드래그해 선택하세요.',true);return}
+  var sp=document.createElement('span');for(var k in css)sp.style[k]=css[k];
+  sp.appendChild(r.extractContents());r.insertNode(sp);
+  sp.querySelectorAll('span').forEach(function(c){for(var k in css)c.style[k]=''});
+  var sl=window.getSelection();sl.removeAllRanges();var n=document.createRange();n.selectNodeContents(sp);sl.addRange(n);
+  if(K.boot)K.boot();saveLocal();gst('서식을 적용했습니다.')}
+fm.addEventListener('mousedown',function(e){if(!e.target.closest('select,input'))e.preventDefault()});
+$('fFont').addEventListener('change',function(){if(this.value)wrap({fontFamily:this.value+',sans-serif'});this.value=''});
+$('fSize').addEventListener('change',function(){if(this.value)wrap({fontSize:this.value+'pt'});this.value=''});
+$('fColor').addEventListener('change',function(){wrap({color:this.value})});
+$('fB').addEventListener('click',function(){if(selRange()){document.execCommand('bold');saveLocal()}else gst('먼저 글자를 선택하세요.',true)});
+$('fU').addEventListener('click',function(){if(selRange()){document.execCommand('underline');saveLocal()}else gst('먼저 글자를 선택하세요.',true)});
+$('fClr').addEventListener('click',function(){if(selRange()){document.execCommand('removeFormat');var r=selRange();if(r){var a=r.commonAncestorContainer;a=a.nodeType===1?a:a.parentNode;a.querySelectorAll('span[style]').forEach(function(x){x.removeAttribute('style')})}saveLocal()}});
+})();
 window.showPending=function(p){gst('법령 변경 확인 필요 '+p.length+'건 : '+p.join(' / '),true)};
 window.__emkAdm={cfgChanged:function(){saveLocal();},buildHtml:buildHtml,hosts:hosts};
 })();
 </script>
 <script src="../contacts.js"></script>
 <script src="../copyright.js"></script>
+<script src="../gc.js"></script>
+<script src="../pagetitle.js" data-repo="yangji-madang/SLGFC"></script>
 <script data-adm>
 (function(){
 var K=window.__emk;if(!K||!K.cfg)return;
@@ -525,6 +558,4 @@ d.addEventListener('change',function(e){
 });
 })();
 </script>
-<script src="../gc.js"></script>
-<script src="../pagetitle.js" data-repo="yangji-madang/SLGFC"></script>
 </body></html>

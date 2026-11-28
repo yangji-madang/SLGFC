@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko" data-ver="1795873586859"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>고용 정부지원 인포그래픽 | 대표님 제공용</title>
+<style>
+:root{--navy:#17294a;--blue:#2f5d9a;--sky:#eaf2fb;--gold:#b08435;--goldl:#f6edd6;--gold2:#e0a43a;--ink:#1d2433;--mut:#566074;--line:#d5dbe6;--soft:#f3f6fb;--mint:#e7f4ee;--mintd:#1f6f50;--rose:#fdeceb;--rosed:#a5372f}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#e9edf3}
+body{font-family:system-ui,-apple-system,'Segoe UI','Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans CJK KR',sans-serif;color:var(--ink);font-size:11pt;line-height:1.38;word-break:keep-all;overflow-wrap:normal;text-wrap:pretty;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.bar{display:flex;gap:6px;width:210mm;max-width:100%;margin:8px auto -4px;justify-content:flex-end;flex-wrap:wrap;align-items:center}
+.bar button,.bar a.lk{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--navy);border-radius:4px;cursor:pointer;text-decoration:none}
+.bar button{background:var(--navy);color:#fff}
+.bar a.lk{background:#fff;color:var(--navy)}
+.sheet{width:210mm;height:296.5mm;margin:10px auto;background:#fff;padding:5.5mm 6.5mm 5mm;display:flex;flex-direction:column;box-shadow:0 2px 14px rgba(20,40,80,.18);overflow:hidden;position:relative;page-break-after:always;break-after:page}
+.sheet:last-of-type{page-break-after:auto;break-after:auto}
+.main{display:flex;flex-direction:column;justify-content:space-between;gap:2.4mm;flex:1 1 auto}
+/* 제목 : 공간 최소화 */
+.ttl{position:relative;display:flex;align-items:center;gap:3mm;border-radius:2.4mm;padding:2.6mm 4mm 1.8mm;color:#fff;border-bottom:.9mm solid var(--gold2);background:radial-gradient(70% 220% at 100% 0%,rgba(224,164,58,.38),transparent 62%),linear-gradient(110deg,#17294a 0%,#244a80 55%,#2f6aa8 100%)}
+.ttl h1{flex:none;font-size:18pt;line-height:1.1;white-space:nowrap;letter-spacing:-.01em;font-weight:800}
+.ttl .sub{font-size:9.2pt;font-weight:700;line-height:1.34;flex:1;border-left:1px solid rgba(255,255,255,.6);padding-left:3.2mm;min-width:0}
+.ttl .chips{flex:none;display:flex;flex-direction:column;gap:1mm;align-items:flex-end;padding-top:1.4mm}
+.ttl .chips span{background:rgba(10,24,52,.42);border:1px solid rgba(255,255,255,.6);border-radius:5mm;padding:.2mm 2.2mm;font-size:8.4pt;font-weight:700;white-space:nowrap}
+.ttl .chips b{color:#ffe08a}
+.ttl .qd{position:absolute;top:.8mm;right:3.4mm;font-size:6.8pt;white-space:nowrap;font-weight:600}
+.i{position:absolute;top:1.2mm;right:1.2mm;width:3.6mm;height:3.6mm;line-height:3.6mm;border-radius:50%;background:var(--blue);color:#fff;font-size:6.6pt;text-align:center;font-style:italic;font-family:Georgia,serif}
+[data-p]{cursor:pointer;position:relative}
+[data-p]:hover{box-shadow:0 0 0 1.6px var(--gold2) inset}
+.ic{display:block;width:100%;height:100%}
+.gh{display:flex;align-items:center;gap:2mm;font-size:14pt;font-weight:800;color:var(--navy);margin-bottom:1.6mm}
+.gh:before{content:"";width:1.8mm;height:5.4mm;border-radius:1mm;background:linear-gradient(var(--blue),var(--gold2))}
+.gh small{margin-left:auto;font-size:8.8pt;font-weight:500;color:#6a7488}
+/* 1 흐름 */
+.hero{display:grid;grid-template-columns:1fr 7mm 1fr 7mm 1fr 7mm 1fr;align-items:center;background:var(--sky);border:1px solid #cfe0f3;border-radius:3mm;padding:3mm 3mm 2.6mm}
+.hn{display:flex;flex-direction:column;align-items:center;text-align:center;border-radius:2.4mm;padding:1.2mm .6mm .8mm}
+.hn .ib{width:20mm;height:20mm;border-radius:50%;background:#fff;border:1.2mm solid #b9d2ee;padding:3mm;margin-bottom:1.2mm}
+.hn b{font-size:15.5pt;line-height:1.15;color:var(--navy);white-space:nowrap}
+.hn small{font-size:10.4pt;color:#3d4f6e;font-weight:700;line-height:1.32;margin-top:.5mm}
+.hn.hl .ib{background:#fff6e2;border-color:var(--gold2)}
+.hn.hl b{color:#8a5d10}
+.op{text-align:center;font-size:20pt;font-weight:800;color:var(--gold);line-height:1}
+.fm2{margin-top:1.8mm;text-align:center;background:var(--navy);color:#fff;border-radius:2mm;padding:1.5mm 3mm;font-size:12.6pt;font-weight:800}
+.fm2 i{font-style:normal;color:#ffd277;padding:0 1mm}
+.fm2 span{display:block;font-size:9.6pt;font-weight:600;color:#cfdcf2;margin-top:.3mm}
+/* 2 비율과 예시 */
+.two{display:grid;grid-template-columns:1.06fr .94fr;gap:3mm}
+.box{border:1px solid #d3deee;border-radius:3mm;padding:2.6mm 3mm;background:#fff}
+.rb{display:flex;flex-direction:column;gap:1.7mm;margin-top:.6mm}
+.rr{display:grid;grid-template-columns:31mm 1fr;align-items:center;gap:2mm}
+.rr .nm{font-size:10.6pt;font-weight:800;color:var(--navy);line-height:1.22}
+.rr .nm small{display:block;font-size:8.8pt;font-weight:600;color:var(--mut)}
+.trk{height:9.4mm;background:#eef2f8;border-radius:1.8mm;overflow:hidden}
+.fil{height:100%;display:flex;align-items:center;padding-left:2.2mm;color:#fff;font-size:13.6pt;font-weight:800;white-space:nowrap;background:linear-gradient(90deg,#2f5d9a,#4d86c6)}
+.fil.g{background:linear-gradient(90deg,#b08435,#e0a43a)}
+.fil.m{background:linear-gradient(90deg,#1f6f50,#3aa57d)}
+.fil.s{background:linear-gradient(90deg,#7a8aa6,#9db0cc)}
+.cap{margin-top:2mm;display:flex;gap:2mm}
+.cap div{flex:1;background:var(--goldl);border:1px solid #ead9b0;border-radius:2mm;padding:1.1mm 2mm;text-align:center;font-size:9.6pt;font-weight:700;color:#6b4d12;line-height:1.28}
+.cap b{display:block;font-size:13pt;color:#8a5d10;white-space:nowrap}
+.ex{display:flex;flex-direction:column;gap:1.1mm;margin-top:.6mm;padding-right:4.6mm}.ex .i{right:0;top:0}.ex .tot{margin-right:-4.6mm}
+.ex .r{display:flex;align-items:baseline;justify-content:space-between;gap:2mm;font-size:10.4pt;border-bottom:1px dashed #cdd8ea;padding-bottom:.9mm}
+.ex .r span{color:#2f3b52;font-weight:600}
+.ex .r b{font-size:12.4pt;color:var(--navy);white-space:nowrap}
+.ex .r.g b{color:var(--mintd)}
+.ex .tot{margin-top:.6mm;background:var(--navy);border-radius:2mm;color:#fff;text-align:center;padding:1.4mm 2mm}
+.ex .tot small{display:block;font-size:9.6pt;color:#cfdcf2;font-weight:600}
+.ex .tot b{font-size:20pt;line-height:1.1;color:#ffd277}
+.ex .tot em{font-style:normal;font-size:10pt;font-weight:700;margin-left:1.4mm}
+.pri{position:relative;margin-top:2mm;background:var(--sky);border:1px solid #cfe0f3;border-radius:2mm;padding:1.4mm 5mm 1.4mm 2.4mm;font-size:9.6pt;line-height:1.38;color:#2d3850}.pri b{color:var(--navy)}.pri u{text-decoration:none;font-weight:700;color:var(--navy)}
+.stkc{margin-top:1.8mm;font-size:9.6pt;font-weight:700;color:#2f3b52}.stk{display:flex;height:8.4mm;border-radius:1.8mm;overflow:hidden;margin-top:.8mm;font-size:11pt;font-weight:800;color:#fff}.stk div{display:flex;align-items:center;justify-content:center;white-space:nowrap}.stk .s1{width:66.7%;background:linear-gradient(90deg,#1f6f50,#3aa57d)}.stk .s2{width:33.3%;background:linear-gradient(90deg,#6c7c99,#92a5c4)}
+.assume{font-size:8.4pt;color:#6a7488;margin-top:.6mm}
+/* 3 요건 */
+.req{display:grid;grid-template-columns:repeat(5,1fr);gap:2mm}
+.rq{position:relative;border:1px solid #cfe0f3;border-top:1.2mm solid var(--blue);border-radius:2.2mm;background:var(--sky);padding:1.6mm 1.8mm 1.6mm;text-align:center}
+.rq .n{width:6.4mm;height:6.4mm;line-height:6.4mm;margin:0 auto 1mm;border-radius:50%;background:var(--navy);color:#ffd277;font-weight:800;font-size:11pt}
+.rq b{display:block;font-size:11.4pt;line-height:1.24;color:var(--navy);margin-bottom:.6mm}
+.rq p{font-size:9.6pt;line-height:1.3;color:#34425c}
+.rq p u{text-decoration:none;font-weight:800;color:var(--rosed)}
+/* 4 절차 */
+.tl{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:2mm;padding-top:1mm}
+.tl:before{content:"";position:absolute;left:10%;right:10%;top:8.6mm;height:1.2mm;border-radius:1mm;background:linear-gradient(90deg,var(--gold2),var(--blue))}
+.tn{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;border-radius:2.4mm;padding:0 1mm .8mm}
+.tn .ib{position:relative;z-index:1;width:15.5mm;height:15.5mm;border-radius:50%;background:#fff;border:1.2mm solid var(--gold2);padding:2.4mm}
+.tn .st{margin-top:1.1mm;font-size:9.4pt;font-weight:800;color:var(--gold)}
+.tn .tt{font-size:12.2pt;font-weight:800;color:var(--navy);line-height:1.22}
+.tn p{font-size:9.8pt;color:#3d4a63;line-height:1.32;margin-top:.4mm}
+.tn p u{text-decoration:none;font-weight:800;color:var(--rosed)}
+.tn.hl .ib{border-color:var(--blue);background:var(--sky)}
+.warn{margin-top:1.8mm;display:flex;align-items:center;gap:2.4mm;background:var(--rose);border:1px solid #efc0bb;border-radius:2.4mm;padding:1.4mm 3mm;color:#7a231c;font-size:11pt;font-weight:700;line-height:1.3}
+.warn .wi{width:7.4mm;height:7.4mm;flex:none}
+.warn b{color:var(--rosed);font-size:12.2pt}
+/* 5 카드 */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:2.4mm}
+.gc{display:flex;gap:2.8mm;align-items:flex-start;border:1px solid #d3deee;border-left:1.4mm solid var(--blue);border-radius:2.4mm;background:#fff;padding:2mm 3mm 2mm 2.6mm}
+.gc .ib{flex:none;width:15mm;height:15mm;border-radius:50%;background:var(--sky);padding:2.4mm;border:1px solid #cfe0f3}
+.gc b{display:block;font-size:12.6pt;line-height:1.25;color:var(--navy);margin-bottom:.8mm}
+.gc p{font-size:10.2pt;line-height:1.4;color:#2d3850}
+.gc p u{text-decoration:none;font-weight:800;color:var(--rosed)}
+/* 6 연계 */
+.lk3{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4mm}
+.lc{position:relative;border:1px solid #ead9b0;background:#fffaf0;border-radius:2.4mm;padding:1.8mm 2.6mm 1.8mm}
+.lc b{display:block;font-size:11.6pt;color:#7a540f;line-height:1.25;margin-bottom:.6mm}
+.lc p{font-size:9.8pt;line-height:1.36;color:#3a3226}
+.lc p u{text-decoration:none;font-weight:800;color:#8a5d10}
+/* CTA */
+.cta{border-radius:3mm;color:#fff;padding:2.2mm 4mm 2.4mm;background:linear-gradient(110deg,#17294a 0%,#244a80 60%,#2f6aa8 100%)}
+.cta .ct{font-size:13.4pt;font-weight:800;margin-bottom:1.2mm}
+.cta .ct small{font-size:9.4pt;font-weight:600;color:#cfdcf2;margin-left:2mm}
+.cta .ck{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4mm}
+.cta .ck div{display:flex;align-items:center;gap:1.8mm;background:rgba(10,24,52,.34);border:1px solid rgba(255,255,255,.38);border-radius:2mm;padding:1.3mm 2mm;font-size:10.4pt;font-weight:700;line-height:1.3}
+.cta .ck svg{width:6mm;height:6mm;flex:none}
+/* 바닥 */
+.ft{margin-top:2.4mm;border-top:1.4px solid var(--gold);background:var(--soft);border-radius:0 0 1.5mm 1.5mm;padding:1.3mm 2.5mm 1.4mm;flex-shrink:0}
+.law a{color:inherit;text-decoration:underline dotted;text-underline-offset:1px}.law a:hover{color:#1763ad}
+.ft .law{font-size:6.4pt;color:var(--mut);line-height:1.36}
+.ft .row{display:flex;justify-content:space-between;align-items:center;margin-top:.8mm;font-size:7.6pt;gap:3mm}
+.ft .row .l{color:var(--navy);font-weight:700}
+.ft .row .r{color:var(--navy);font-weight:400;font-size:7pt;margin-left:auto;white-space:nowrap}
+/* 팝업(드래그 이동) */
+.pop{position:fixed;z-index:20;width:min(400px,92vw);background:#fff;border-radius:8px;box-shadow:0 8px 30px rgba(10,25,55,.35);border:1px solid #c8d2e3;font-size:13px;line-height:1.6}
+.pop[hidden]{display:none}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;background:linear-gradient(115deg,#1b2f55,#35598a);color:#f6e6bd;border-radius:8px 8px 0 0;cursor:move;touch-action:none;user-select:none}
+.ph b{font-size:14px}
+.ph button{border:0;background:transparent;color:#fff;font-size:20px;line-height:1;cursor:pointer;padding:0 4px}
+.pb{padding:10px 14px 12px;max-height:68vh;overflow:auto;color:#222}
+.pb p{margin-bottom:7px}
+.pb em{display:inline-block;font-style:normal;font-weight:700;font-size:11px;background:var(--goldl);color:#7a5a1e;border-radius:3px;padding:0 6px;margin-right:6px}
+.pb .lw{margin-top:8px;padding-top:6px;border-top:1px dashed #ccd4e2;font-size:11.5px;color:#5a6577}
+.lw a,.pb a{color:#1763ad}
+@page{size:A4 portrait;margin:0}
+@media print{html,body{background:#fff}.sheet{margin:0;box-shadow:none;zoom:1!important}.bar,.pop{display:none!important}.i{display:none}[data-p]:hover{box-shadow:none}}
+
+.mx{width:100%;table-layout:fixed;border-collapse:collapse;font-size:8.5pt;line-height:1.3}
+.mx th{background:var(--navy);color:#fff;padding:1.1mm 1.2mm;font-size:8.8pt;font-weight:800;border:1px solid var(--navy)}
+.mx td{border:1px solid var(--line);padding:.9mm 1.3mm;vertical-align:middle}
+.mx td.g{width:12mm;text-align:center;font-weight:800;color:#fff;font-size:8.8pt;line-height:1.25}
+.mx td.nm{width:41mm;font-weight:800;color:var(--navy);font-size:9pt}
+.mx td.nm small{display:block;font-weight:600;color:var(--mut);font-size:7.4pt}
+.mx td.tg{width:36mm}
+.mx td.sc{width:45mm;font-weight:700;color:#6b4d12;background:#fffaf0}
+.mx tr[data-p]{cursor:pointer}.mx tr[data-p]:hover td:not(.g){background:#fff3d6}
+.ck{display:inline-block;margin-left:1mm;padding:0 1.2mm;border-radius:2mm;background:var(--rose);border:1px solid #efc0bb;color:var(--rosed);font-size:6.8pt;font-weight:800;font-style:normal;white-space:nowrap;vertical-align:1px}
+.lg{display:flex;gap:3mm;align-items:center;font-size:8pt;color:var(--mut);flex-wrap:wrap}
+.lg span.sw{display:inline-block;width:3mm;height:3mm;border-radius:.8mm;margin-right:1mm;vertical-align:-.5mm}
+.cd2{display:grid;grid-template-columns:1fr 1fr;gap:2mm}
+.c2{border:1px solid #d3deee;border-left:1.4mm solid var(--blue);border-radius:2mm;background:#fff;padding:1.2mm 2mm;font-size:8.2pt;line-height:1.3;cursor:pointer}
+.c2:hover{box-shadow:0 0 0 1.4px var(--gold2) inset}
+.c2 h3{font-size:9.6pt;color:var(--navy);display:flex;gap:1.4mm;align-items:baseline;line-height:1.2;margin-bottom:.5mm}
+.c2 h3 small{margin-left:auto;font-size:7pt;color:var(--mut);font-weight:600}
+.c2 p{margin-top:.3mm}.c2 p b{color:var(--navy);margin-right:1mm}.c2 p.w b{color:var(--rosed)}
+.dt{border:1px solid #cfd8e6;border-radius:2mm;overflow:hidden}
+.dh{color:#fff;padding:1mm 2.4mm;font-weight:800;font-size:10.6pt;display:flex;gap:2mm;align-items:baseline}
+.dh small{margin-left:auto;font-weight:600;font-size:7.8pt;color:#e8eefb}
+.dtb{width:100%;border-collapse:collapse;font-size:8.6pt;line-height:1.32}
+.dtb th{width:17mm;background:var(--soft);color:var(--navy);text-align:center;font-weight:800;border:1px solid var(--line);padding:.8mm .8mm;vertical-align:top}
+.dtb td{border:1px solid var(--line);padding:.8mm 1.8mm;vertical-align:top}
+.dtb ul{list-style:none}.dtb li{padding-left:2.6mm;position:relative}.dtb li:before{content:"•";position:absolute;left:.4mm;color:var(--gold)}
+.dtb tr.cx th{background:var(--rose);color:var(--rosed)}.dtb tr.cx td{background:#fff7f6;color:#7a231c}
+.gd{width:100%;border-collapse:collapse;font-size:9pt;line-height:1.35}
+.gd th{background:var(--navy);color:#fff;padding:1.2mm;border:1px solid var(--navy)}
+.gd td{border:1px solid var(--line);padding:1mm 1.6mm;vertical-align:middle}
+.gd td:first-child{font-weight:800;color:var(--navy);width:52mm;background:var(--soft)}
+.nt{font-size:9pt;line-height:1.4;color:#2d3850}.nt li{margin:.4mm 0 .4mm 4mm}
+</style>
+</head>
+<body>
+<div class="bar"><a class="lk" href="empsupport_info.html">상세내용</a><a class="lk" href="empsupport_simul.html">지원금 시뮬레이션</a><button type="button" id="prt">인쇄 / PDF 저장</button></div>
+<section class="sheet" data-sheet><div class="main">
+<header class="ttl"><h1>고용 정부지원 한눈에 ①</h1><div class="sub">제도별 핵심 요약<br>대상 · 지원명 · 지원규모 · 요건</div><div class="chips"><span><b>17개</b> 제도</span><span>고용·세제 통합</span></div><div class="qd">기준일 <b>2026.11.28</b></div></header>
+<section><div class="gh">고용 관련 정부지원 17개 제도<small>행을 누르면 세부 내용이 열립니다</small></div><table class="mx"><colgroup><col style="width:12mm"><col style="width:41mm"><col style="width:36mm"><col style="width:45mm"><col></colgroup><thead><tr><th>구분</th><th>지원제도</th><th>대상</th><th>지원규모</th><th>핵심 요건</th></tr></thead><tbody><tr data-p="s1" tabindex="0"><td class="g" rowspan="1" style="background:#a5372f">고용유지</td><td class="nm">1. 고용유지지원금<i class="ck">확인 필요</i><small>고용노동부</small></td><td class="tg">매출·생산 감소로 고용조정이 불가피한 사업주</td><td class="sc">유급 : 지급 금품의 2/3(우선지원대상기업)·1/2<br>1일 상한 68,100원, 연 180일</td><td>근로시간 20% 이상 단축 · 계획서 사전 제출 · 매출 15% 감소 등</td></tr><tr data-p="s2" tabindex="0"><td class="g" rowspan="3" style="background:#2f5d9a">고용창출·<br>촉진</td><td class="nm">2. 청년일자리도약장려금<i class="ck">확인 필요</i><small>고용노동부</small></td><td class="tg">청년(만 15~34세)을 정규직으로 신규 채용한 우선지원대상기업</td><td class="sc">기업지원 청년 1인당 최대 720만원(1년)<br>청년 근속지원 지역별 2년 480·600·720만원</td><td>5인 이상 우선지원대상기업 · 주 28시간 이상 · 채용 3개월 내 신청</td></tr><tr data-p="s3" tabindex="0"><td class="nm">3. 정규직 전환 지원<i class="ck">확인 필요</i><small>고용노동부</small></td><td class="tg">비정규직을 정규직으로 전환한 피보험자 30인 미만 사업장</td><td class="sc">전환 근로자 1인당 월 최대 60만원<br>최대 1년</td><td>6개월 이상 근무 비정규직 전환 · 전환 후 1개월 이상 유지</td></tr><tr data-p="s4" tabindex="0"><td class="nm">4. 고용촉진장려금<i class="ck">확인 필요</i><small>고용노동부</small></td><td class="tg">취업취약계층을 채용한 사업주</td><td class="sc">채용 인원당 연 최대 720만원 수준</td><td>고용센터 알선·취업지원 이수 등 취약계층 채용 · 6개월 이상 고용</td></tr><tr data-p="s5" tabindex="0"><td class="g" rowspan="2" style="background:#1f6f50">일·<br>가정양립</td><td class="nm">5. 출산육아기 고용안정장려금<i class="ck">확인 필요</i><small>고용노동부</small></td><td class="tg">육아휴직 등을 허용하고 대체인력을 채용한 우선지원대상기업</td><td class="sc">대체인력지원금 월 최대 140만원(30인 미만)·130만원(30인 이상)</td><td>육아휴직 등 부여 + 대체인력 채용 · 인수인계 최대 2개월</td></tr><tr data-p="s6" tabindex="0"><td class="nm">6. 워라밸일자리장려금(유연근무)<i class="ck">확인 필요</i><small>고용노동부</small></td><td class="tg">소정근로시간 단축 등 유연근무제를 도입한 사업주</td><td class="sc">육아기 10시 출근제 월 30만원 최대 1년</td><td>유연근무제 도입·시행 · 대상 근로자 요건 충족</td></tr><tr data-p="s7" tabindex="0"><td class="g" rowspan="2" style="background:#6b4d9a">고령·<br>장애</td><td class="nm">7. 고령자 계속고용장려금<i class="ck">확인 필요</i><small>고용노동부</small></td><td class="tg">정년 연장·폐지 또는 재고용을 시행하는 사업주</td><td class="sc">근로자 1인당 월 30만원<br>정년 이후 최대 3년(최대 1,080만원)</td><td>정년 1년 이상 운영 · 계속고용제도를 취업규칙에 반영해 신고</td></tr><tr data-p="s8" tabindex="0"><td class="nm">8. 장애인 고용장려금<i class="ck">확인 필요</i><small>고용노동부·한국장애인고용공단</small></td><td class="tg">의무고용률을 넘겨 장애인을 고용한 사업주</td><td class="sc">초과 고용 인원 기준 월 단가 지급<br>신규 개선장려금 50~100인 미만 중증 월 35~45만원</td><td>민간 의무고용률 3.1% 초과 고용</td></tr><tr data-p="s9" tabindex="0"><td class="g" rowspan="3" style="background:#9a6f1c">사회보험·<br>훈련</td><td class="nm">9. 두루누리 사회보험료 지원<i class="ck">확인 필요</i><small>고용노동부·근로복지공단·국민연금공단</small></td><td class="tg">10인 미만 사업장의 월평균보수 270만원 미만 신규가입 근로자</td><td class="sc">고용·국민연금 보험료(사업주·근로자 부담분)의 80%</td><td>신규 가입자(1년 이내 가입이력 없음) · 10인 미만</td></tr><tr data-p="s10" tabindex="0"><td class="nm">10. 소상공인 고용보험료 지원<i class="ck">확인 필요</i><small>중소벤처기업부·소상공인시장진흥공단</small></td><td class="tg">고용보험에 가입한 소상공인 대표(자영업자)</td><td class="sc">보험료의 최대 80%를 5년간</td><td>자영업자 고용보험 가입 소상공인</td></tr><tr data-p="s11" tabindex="0"><td class="nm">11. 사업주 직업능력개발훈련 지원<i class="ck">확인 필요</i><small>고용노동부</small></td><td class="tg">소속 근로자에게 직업능력개발훈련을 실시하는 사업주</td><td class="sc">훈련비 지원<br>한도는 고용24에서 조회</td><td>훈련과정 승인·실시 후 비용 지원 신청</td></tr><tr data-p="s12" tabindex="0"><td class="g" rowspan="6" style="background:#17294a">세제</td><td class="nm">12. 통합고용세액공제<i class="ck">확인 필요</i><small>기획재정부·국세청</small></td><td class="tg">상시근로자를 늘린 중소기업</td><td class="sc">증가 인원 1인당 우대 700·1,600·1,700만원<br>기본 400·900·1,000만원(연차별)</td><td>상시근로자 증가 · 소비성서비스업 제외 · 감소분만 공제 배제</td></tr><tr data-p="s13" tabindex="0"><td class="nm">13. 중소기업 취업자 소득세 감면<i class="ck">확인 필요</i><small>기획재정부·국세청</small></td><td class="tg">중소기업에 취업한 청년·60세 이상·장애인·경력단절여성(근로자)</td><td class="sc">청년 90% 5년 / 기타 70% 3년 감면<br>연 200만원 한도</td><td>중소기업 취업 · 2026.12.31까지 취업분</td></tr><tr data-p="s14" tabindex="0"><td class="nm">14. 근로소득 증대세액공제<i class="ck">확인 필요</i><small>기획재정부·국세청</small></td><td class="tg">평균임금을 직전 3년 평균보다 더 올린 중소·중견기업</td><td class="sc">평균 초과 임금증가분의 20%(중견 10%)<br>정규직 전환자 추가공제</td><td>평균임금 증가율이 직전 3년 평균 초과 · 상시근로자 미감소</td></tr><tr data-p="s15" tabindex="0"><td class="nm">15. 성과공유 중소기업 경영성과급 세액공제<small>기획재정부·국세청</small></td><td class="tg">경영성과급을 지급한 중소기업</td><td class="sc">지급한 경영성과급의 10% 세액공제</td><td>사전 서면 약정 · 영업이익 발생 · 상시근로자 미감소</td></tr><tr data-p="s16" tabindex="0"><td class="nm">16. 고용유지 중소기업 세액공제<i class="ck">확인 필요</i><small>기획재정부·국세청</small></td><td class="tg">임금을 줄여 일자리를 지킨 중소기업</td><td class="sc">임금 감소 총액의 10% + 임금 보전액의 15%</td><td>상시근로자 수·시간당 임금 미감소 · 노사 합의 증빙</td></tr><tr data-p="s17" tabindex="0"><td class="nm">17. 연구·인력개발비 세액공제<i class="ck">확인 필요</i><small>기획재정부·국세청</small></td><td class="tg">직원 교육훈련비 등 인력개발비를 지출한 기업</td><td class="sc">인력개발비 지출액의 일정률 세액공제<br>(중소기업 우대율)</td><td>인력개발비 해당 지출 · 증빙 보관</td></tr></tbody></table></section>
+<div class="lg"><span><span class="sw" style="background:#a5372f"></span>고용유지</span><span><span class="sw" style="background:#2f5d9a"></span>고용창출·촉진</span><span><span class="sw" style="background:#1f6f50"></span>일·가정양립</span><span><span class="sw" style="background:#6b4d9a"></span>고령·장애</span><span><span class="sw" style="background:#9a6f1c"></span>사회보험·훈련</span><span><span class="sw" style="background:#17294a"></span>세제</span><span><i class="ck" style="margin:0">확인 필요</i> 공식 공고·지침·법령 원문 확인 후 사용</span></div>
+</div><footer class="ft"><div class="law" data-law="근로 : {{고용보험법|제19조}}·{{고용보험법|제21조}}, {{고시전체}}, {{고용보험법시행령|제12조}} / 세제 : {{조세특례제한법|제10조}}·{{조세특례제한법|제19조}}·{{조세특례제한법|제29조의4}}·{{조세특례제한법|제29조의8}}·{{조세특례제한법|제30조}}·{{조세특례제한법|제30조의3}}&lt;br&gt;※ 설명용 자료이며 2026.11.28 기준입니다. 금액·요건은 해마다 바뀌므로 신청 전 고용24(work24.go.kr)·관할 고용센터·국세청의 최신 공고와 법령 원문을 확인하세요."></div><div class="row"><span class="l" data-ct=""></span><span class="r">ⓒ<span class="yr">2026</span>. YOON HYUNCHUL, ALL RIGHTS RESERVED.</span></div></footer></section><section class="sheet" data-sheet><div class="main">
+<header class="ttl"><h1>고용 정부지원 한눈에 ②</h1><div class="sub">제도별 세부 내용<br>지원 · 신청 · 주의</div><div class="chips"><span><b>17개</b> 제도</span><span>고용·세제 통합</span></div><div class="qd">기준일 <b>2026.11.28</b></div></header>
+<section><div class="gh">제도별 세부<small>카드를 누르면 요건·서류까지 열립니다</small></div><div class="cd2"><div class="c2" data-p="s1" tabindex="0" style="border-left-color:#a5372f"><h3><span>1. 고용유지지원금<i class="ck">확인 필요</i></span><small>고용유지</small></h3><p><b>지원</b>우선지원대상기업 2/3, 대규모기업 1/2(단축 50% 이상이면 2/3)</p><p><b>신청</b>관할 고용센터 방문 또는 고용24. 지원금은 조치한 달 말일부터 3개월 이내 신청</p><p class="w"><b>주의</b>계획서보다 먼저 시작한 조치는 원칙적으로 지원 제외</p></div><div class="c2" data-p="s2" tabindex="0" style="border-left-color:#2f5d9a"><h3><span>2. 청년일자리도약장려금<i class="ck">확인 필요</i></span><small>고용창출·촉진</small></h3><p><b>지원</b>기업지원금 : 청년 1인당 1년 최대 720만원(6개월차 360만, 9·12개월차 각 180만원)</p><p><b>신청</b>고용24(work24.go.kr) 온라인. 2026.1~12월 참여신청</p><p class="w"><b>주의</b>채용일부터 3개월 이내 신청, 모집 인원 소진 시 조기 종료</p></div><div class="c2" data-p="s3" tabindex="0" style="border-left-color:#2f5d9a"><h3><span>3. 정규직 전환 지원<i class="ck">확인 필요</i></span><small>고용창출·촉진</small></h3><p><b>지원</b>월 최대 60만원, 최대 1년(2026.1 사업 재개, 예산 소진 시 종료)</p><p><b>신청</b>고용24·관할 고용센터</p><p class="w"><b>주의</b>예산 소진 시 접수가 조기에 마감될 수 있음</p></div><div class="c2" data-p="s4" tabindex="0" style="border-left-color:#2f5d9a"><h3><span>4. 고용촉진장려금<i class="ck">확인 필요</i></span><small>고용창출·촉진</small></h3><p><b>지원</b>채용 인원당 연 최대 720만원 수준(2차 출처 기준)</p><p><b>신청</b>관할 고용센터·고용24</p><p class="w"><b>주의</b>취약계층 해당 여부와 채용 시점 요건을 사전에 확인해야 함</p></div><div class="c2" data-p="s5" tabindex="0" style="border-left-color:#1f6f50"><h3><span>5. 출산육아기 고용안정장려금<i class="ck">확인 필요</i></span><small>일·가정양립</small></h3><p><b>지원</b>대체인력지원금 : 30인 미만 월 최대 140만원, 30인 이상 월 최대 130만원</p><p><b>신청</b>고용24·관할 고용센터</p><p class="w"><b>주의</b>선지급 후 요건 미충족 시 환수될 수 있음</p></div><div class="c2" data-p="s6" tabindex="0" style="border-left-color:#1f6f50"><h3><span>6. 워라밸일자리장려금(유연근무)<i class="ck">확인 필요</i></span><small>일·가정양립</small></h3><p><b>지원</b>육아기 10시 출근제 월 30만원, 최대 1년(2차 출처 기준)</p><p><b>신청</b>고용24·관할 고용센터(유연근무 장려금 공고 제2025-510호)</p><p class="w"><b>주의</b>제도별로 신청 시기와 지급 요건이 달라 공고 확인이 필요함</p></div><div class="c2" data-p="s7" tabindex="0" style="border-left-color:#6b4d9a"><h3><span>7. 고령자 계속고용장려금<i class="ck">확인 필요</i></span><small>고령·장애</small></h3><p><b>지원</b>근로자 1인당 월 30만원, 정년 이후 최대 3년(최대 1,080만원)</p><p><b>신청</b>관할 고용센터에 분기별 신청</p><p class="w"><b>주의</b>분기별로 신청해야 하며 기한을 놓치면 해당 분기분을 받기 어려움</p></div><div class="c2" data-p="s8" tabindex="0" style="border-left-color:#6b4d9a"><h3><span>8. 장애인 고용장려금<i class="ck">확인 필요</i></span><small>고령·장애</small></h3><p><b>지원</b>초과 고용 장애인 1인당 월 단가 지급(단가는 연도별 고시 기준)</p><p><b>신청</b>한국장애인고용공단(신고·신청)</p><p class="w"><b>주의</b>단가·지급 구간은 연도별 고시로 달라짐</p></div><div class="c2" data-p="s9" tabindex="0" style="border-left-color:#9a6f1c"><h3><span>9. 두루누리 사회보험료 지원<i class="ck">확인 필요</i></span><small>사회보험·훈련</small></h3><p><b>지원</b>보험료(사업주·근로자 부담분)의 80% 지원</p><p><b>신청</b>4대사회보험 정보연계센터(4insure.or.kr), 근로복지공단·국민연금공단 지사 ☎1588-0075·1355. 연중 신청</p><p class="w"><b>주의</b>지원기간(2차 자료상 최대 36개월)과 제외 기준은 공고 확인 필요</p></div><div class="c2" data-p="s10" tabindex="0" style="border-left-color:#9a6f1c"><h3><span>10. 소상공인 고용보험료 지원<i class="ck">확인 필요</i></span><small>사회보험·훈련</small></h3><p><b>지원</b>보험료 최대 80%, 5년간 지원</p><p><b>신청</b>소상공인시장진흥공단(공고별)</p><p class="w"><b>주의</b>2030년까지 지원 대상을 확대할 계획으로 세부 기준이 바뀔 수 있음</p></div><div class="c2" data-p="s11" tabindex="0" style="border-left-color:#9a6f1c"><h3><span>11. 사업주 직업능력개발훈련 지원<i class="ck">확인 필요</i></span><small>사회보험·훈련</small></h3><p><b>지원</b>훈련 실시 비용 지원(사업장 규모별 한도는 고용24 조회)</p><p><b>신청</b>고용24(훈련 지원 한도 조회·신청), 한국산업인력공단</p><p class="w"><b>주의</b>훈련 실시 전 승인·신고 절차를 확인해야 함</p></div><div class="c2" data-p="s12" tabindex="0" style="border-left-color:#17294a"><h3><span>12. 통합고용세액공제<i class="ck">확인 필요</i></span><small>세제</small></h3><p><b>지원</b>우대(청년·장애인 등) 1·2·3년차 700·1,600·1,700만원</p><p><b>신청</b>법인세·소득세 신고 시 세액공제신청서 제출(신고기한 내)</p><p class="w"><b>주의</b>추가공제는 적용기한이 2026.12.31이라 연장 여부 확인 필요</p></div><div class="c2" data-p="s13" tabindex="0" style="border-left-color:#17294a"><h3><span>13. 중소기업 취업자 소득세 감면<i class="ck">확인 필요</i></span><small>세제</small></h3><p><b>지원</b>청년 90% 5년, 그 밖의 대상 70% 3년 소득세 감면(연 200만원 한도)</p><p><b>신청</b>근로자가 회사에 제출하고 사업주가 원천징수 시 반영</p><p class="w"><b>주의</b>감면 신청은 근로자가 원천징수 시 소득세 감면신청서로 하며 사업주가 이를 확인함</p></div><div class="c2" data-p="s14" tabindex="0" style="border-left-color:#17294a"><h3><span>14. 근로소득 증대세액공제<i class="ck">확인 필요</i></span><small>세제</small></h3><p><b>지원</b>직전 3년 평균 초과 임금증가분의 20%(중견 10%) + 정규직 전환 근로자 임금증가액 추가공제</p><p><b>신청</b>법인세·소득세 신고 시 세액공제신청서 제출(신고기한 내)</p><p class="w"><b>주의</b>적용기한 이후 연장 여부 확인 필요(2026 사업연도 적용 가능 여부)</p></div><div class="c2" data-p="s15" tabindex="0" style="border-left-color:#17294a"><h3><span>15. 성과공유 중소기업 경영성과급 세액공제</span><small>세제</small></h3><p><b>지원</b>지급한 경영성과급의 10% 세액공제</p><p><b>신청</b>법인세·소득세 신고 시 세액공제신청서 제출(신고기한 내)</p><p class="w"><b>주의</b>성과급 지급 기준을 사전에 서면으로 정해 두어야 함</p></div><div class="c2" data-p="s16" tabindex="0" style="border-left-color:#17294a"><h3><span>16. 고용유지 중소기업 세액공제<i class="ck">확인 필요</i></span><small>세제</small></h3><p><b>지원</b>연간 임금 감소 총액 × 10% + 시간당 임금상승에 따른 임금 보전액 × 15% 세액공제</p><p><b>신청</b>과세표준 신고 시 세액공제신청서와 노사 합의 증빙 제출</p><p class="w"><b>주의</b>적용기한이 2026.12.31이라 이후 연장 여부 확인 필요(연장은 입법안 단계)</p></div><div class="c2" data-p="s17" tabindex="0" style="border-left-color:#17294a"><h3><span>17. 연구·인력개발비 세액공제<i class="ck">확인 필요</i></span><small>세제</small></h3><p><b>지원</b>인력개발비 지출액의 일정률 세액공제(중소기업은 대기업보다 높은 공제율)</p><p><b>신청</b>법인세·소득세 신고 시 세액공제신청서 제출(신고기한 내)</p><p class="w"><b>주의</b>공제율과 계산 방식은 연도별 개정 내용을 확인해야 함</p></div></div></section>
+<div class="lg"><span><span class="sw" style="background:#a5372f"></span>고용유지</span><span><span class="sw" style="background:#2f5d9a"></span>고용창출·촉진</span><span><span class="sw" style="background:#1f6f50"></span>일·가정양립</span><span><span class="sw" style="background:#6b4d9a"></span>고령·장애</span><span><span class="sw" style="background:#9a6f1c"></span>사회보험·훈련</span><span><span class="sw" style="background:#17294a"></span>세제</span><span><i class="ck" style="margin:0">확인 필요</i> 공식 공고·지침·법령 원문 확인 후 사용</span></div>
+</div><footer class="ft"><div class="law" data-law="근로 : {{고용보험법|제19조}}·{{고용보험법|제21조}}, {{고시전체}}, {{고용보험법시행령|제12조}} / 세제 : {{조세특례제한법|제10조}}·{{조세특례제한법|제19조}}·{{조세특례제한법|제29조의4}}·{{조세특례제한법|제29조의8}}·{{조세특례제한법|제30조}}·{{조세특례제한법|제30조의3}}&lt;br&gt;※ 설명용 자료이며 2026.11.28 기준입니다. 금액·요건은 해마다 바뀌므로 신청 전 고용24(work24.go.kr)·관할 고용센터·국세청의 최신 공고와 법령 원문을 확인하세요."></div><div class="row"><span class="l" data-ct=""></span><span class="r">ⓒ<span class="yr">2026</span>. YOON HYUNCHUL, ALL RIGHTS RESERVED.</span></div></footer></section>
+<div class="pop" id="pop" role="dialog" aria-modal="false" aria-labelledby="pt" hidden>
+  <div class="ph" id="ph"><b id="pt"></b><button type="button" id="px" aria-label="닫기">×</button></div>
+  <div class="pb" id="pbody"></div>
+</div>
+<script id="pov" type="application/json">{}</script>
+<script>
+(function(){
+var BASE='https://www.law.go.kr/';
+var PN={'고용보험법시행령':'고용보험법 시행령','고용보험법시행규칙':'고용보험법 시행규칙'};
+function lk(s){
+  return s.replace(/\{\{([^|}]+)(?:\|([^|}]+))?(?:\|([^}]+))?\}\}/g,function(m,n,a,sh){
+    if(n==='고시')return '<a href="'+BASE+'행정규칙/'+encodeURIComponent('고용유지지원금신청및지급에관한규정')+'" target="_blank" rel="noopener">고용노동부 고시 제2026-30호</a>';
+    if(n==='고시전체')return '<a href="'+BASE+'행정규칙/'+encodeURIComponent('고용유지지원금신청및지급에관한규정')+'" target="_blank" rel="noopener">고용노동부 고시 제2026-30호(고용유지지원금)</a>';
+    if(n==='행정규칙')return '<a href="'+BASE+'행정규칙/'+encodeURIComponent(a)+'" target="_blank" rel="noopener">'+(sh||a)+'</a>';
+    var u=BASE+'법령/'+encodeURIComponent(n)+(a?'/'+encodeURIComponent(a):'');
+    return '<a href="'+u+'" target="_blank" rel="noopener">'+(sh||((PN[n]||n)+(a?' '+a:'')))+'</a>';
+  });
+}
+document.querySelectorAll('[data-law]').forEach(function(e){e.innerHTML=lk(e.getAttribute('data-law'))});
+document.querySelectorAll('.yr').forEach(function(e){e.textContent=new Date().getFullYear()});
+var P={"s1": {"t": "고용유지지원금", "b": "<p><em>대상</em>매출·생산 감소 등으로 고용조정이 불가피해 휴업·근로시간 단축·휴직을 실시하는 고용보험 가입 사업주.</p><p><em>요건</em></p><p>경영 악화 : 기준 달 매출이 직전 6개월 월평균보다 15% 이상 감소 등</p><p>유급 : 근로자별 월 소정근로시간 20% 이상 단축 + 임금 보전</p><p>고용유지조치계획서를 실시 전날까지 제출(무급은 30일 전), 근로자대표 협의</p><p>조치 기간 중 신규채용, 조치 기간과 이후 1개월 내 고용조정 이직은 제외</p><p>대상 근로자 : 피보험자격 취득 후 90일 경과, 일용·해고예고자 등 제외</p><p><em>지원내용</em></p><p>우선지원대상기업 2/3, 대규모기업 1/2(단축 50% 이상이면 2/3)</p><p>1일 상한 68,100원(구직급여 일액 상한의 60%), 연 180일 한도</p><p>무급은 근로자에게 직접 지급(평균임금 50% 이내), 훈련 시 월 10만원 한도</p><p><em>주의</em></p><p>계획서보다 먼저 시작한 조치는 원칙적으로 지원 제외</p><p>대상자·기간·지급액이 계획의 50% 미만이면 그 달 지원금 미지급</p><p>부정수급 시 반환 + 2배 또는 5배 추가징수, 지급 제한, 형사처벌</p><p><em>필요서류</em>고용유지조치계획서 / 매출 감소 증빙(부가가치세 과세표준증명 등) / 근로자대표 협의·근로자 확인 서류 / 임금대장, 지급내역서, 계좌이체내역, 출퇴근 기록(3년 보관)</p><p><em>신청</em>관할 고용센터 방문 또는 고용24. 지원금은 조치한 달 말일부터 3개월 이내 신청</p><p><em>확인 필요</em>무급 매출 감소 기준(30%/20%)·특별고용지원업종 지원수준은 2차 출처 기준이라 고시 본문 확인 필요</p>", "l": "{{고용보험법|제21조}}, {{고시}}"}, "s2": {"t": "청년일자리도약장려금", "b": "<p><em>대상</em>만 15~34세 청년(군필 최대 39세)을 정규직으로 신규 채용한 5인 이상 우선지원대상기업(5인 미만은 특례업종).</p><p><em>요건</em></p><p>2026.1.1 이후 채용, 주 28시간 이상, 월 평균임금 450만원 이하</p><p>매출 요건 : 기준 피보험자 수 × 1,900만원 이상(업력 1년 미만 면제)</p><p>인위적 감원 시 지원 종료</p><p>소비·향락업, 보험료 체납, 임금체불 명단 공개 사업주는 제외</p><p><em>지원내용</em></p><p>기업지원금 : 청년 1인당 1년 최대 720만원(6개월차 360만, 9·12개월차 각 180만원)</p><p>청년 근속지원 : 지역별 2년 최대 480만원(일반)·600만원(우대)·720만원(특별)</p><p><em>주의</em></p><p>채용일부터 3개월 이내 신청, 모집 인원 소진 시 조기 종료</p><p>2026 수도권형·비수도권형 개편으로 금액 구분이 달라질 수 있음</p><p><em>필요서류</em>참여신청서 및 사업자·피보험자 확인 자료 / 근로계약서, 임금대장 등 채용·임금 증빙 / 고용24 안내 서식(공고별 확인)</p><p><em>신청</em>고용24(work24.go.kr) 온라인. 2026.1~12월 참여신청</p><p><em>확인 필요</em>지역 운영기관 공고 기준 : 전국 공통 지침과 금액 구분은 고용노동부 지침 확인 필요</p>", "l": "{{고용보험법|제19조}}"}, "s3": {"t": "정규직 전환 지원", "b": "<p><em>대상</em>6개월 이상 근무한 기간제·파견 등 비정규직을 정규직으로 전환한 피보험자 30인 미만 사업장(5인 미만 제외).</p><p><em>요건</em></p><p>전환 전 6개월 이상 근무</p><p>전환 후 1개월 이상 고용 유지</p><p>지원 인원은 피보험자 수의 30% 이내</p><p><em>지원내용</em></p><p>월 최대 60만원, 최대 1년(2026.1 사업 재개, 예산 소진 시 종료)</p><p><em>주의</em></p><p>예산 소진 시 접수가 조기에 마감될 수 있음</p><p>전환 후 단기간에 이직·감원이 발생하면 지원이 제한될 수 있음</p><p><em>필요서류</em>정규직 전환 전·후 근로계약서 / 임금대장 및 피보험자격 확인 자료 / 고용24 신청서식(공고별 확인)</p><p><em>신청</em>고용24·관할 고용센터</p><p><em>확인 필요</em>세부 요건·지원단가는 2차 출처 기준이라 2026 사업지침 확인 필요</p>", "l": "{{고용보험법|제19조}}"}, "s4": {"t": "고용촉진장려금", "b": "<p><em>대상</em>취업지원프로그램 이수자, 장기실업자 등 취업취약계층을 신규 채용해 일정 기간 고용을 유지한 사업주.</p><p><em>요건</em></p><p>대상 근로자가 취업취약계층에 해당하는지 고용센터에서 확인</p><p>채용 후 일정 기간 고용 유지</p><p>인위적 감원이 없을 것</p><p><em>지원내용</em></p><p>채용 인원당 연 최대 720만원 수준(2차 출처 기준)</p><p><em>주의</em></p><p>취약계층 해당 여부와 채용 시점 요건을 사전에 확인해야 함</p><p>다른 고용 지원금과 중복 수급이 제한될 수 있음</p><p><em>필요서류</em>근로계약서, 임금대장 / 취업취약계층 해당 확인 서류 / 고용24 신청서식(공고별 확인)</p><p><em>신청</em>관할 고용센터·고용24</p><p><em>확인 필요</em>2026년 대상·지원단가는 지침 확인 필요(2차 출처 기준)</p>", "l": "{{고용보험법|제19조}}"}, "s5": {"t": "출산육아기 고용안정장려금", "b": "<p><em>대상</em>근로자에게 육아휴직·육아기 근로시간 단축 등을 부여하고 대체인력을 채용한 우선지원대상기업.</p><p><em>요건</em></p><p>우선지원대상기업</p><p>육아휴직 등 부여 후 대체인력 채용</p><p>2026.1.1부터 인상, 선지급 방식 적용</p><p><em>지원내용</em></p><p>대체인력지원금 : 30인 미만 월 최대 140만원, 30인 이상 월 최대 130만원</p><p>인수인계 기간 최대 2개월</p><p>업무분담지원금 : 배우자 출산휴가분은 2026.7.1 시행</p><p><em>주의</em></p><p>선지급 후 요건 미충족 시 환수될 수 있음</p><p>휴직 부여 시점과 대체인력 채용 시점을 증빙으로 남겨야 함</p><p><em>필요서류</em>육아휴직 등 부여 확인 서류 / 대체인력 근로계약서·임금대장 / 고용24 신청서식(공고별 확인)</p><p><em>신청</em>고용24·관할 고용센터</p><p><em>확인 필요</em>금액·선지급 방식은 work24 안내 기준 : 세부 지침 확인 필요</p>", "l": "{{고용보험법|제19조}}"}, "s6": {"t": "워라밸일자리장려금(유연근무)", "b": "<p><em>대상</em>소정근로시간 단축제, 육아기 10시 출근제 등 유연근무제를 도입·시행한 사업주(워라밸+4.5 프로젝트는 20인 이상 우선지원대상기업).</p><p><em>요건</em></p><p>제도 도입 후 실제 시행 내역 확인</p><p>대상 근로자의 고용보험 가입과 근로시간 변경 증빙</p><p>실근로시간 단축제는 2026년부터 신규 지원 종료</p><p><em>지원내용</em></p><p>육아기 10시 출근제 월 30만원, 최대 1년(2차 출처 기준)</p><p><em>주의</em></p><p>제도별로 신청 시기와 지급 요건이 달라 공고 확인이 필요함</p><p>2026년 개편으로 신규 지원이 끝난 유형이 있음</p><p><em>필요서류</em>취업규칙 등 제도 도입 확인 서류 / 근로시간 변경 전후 근태·임금 증빙 / 고용24 신청서식(공고별 확인)</p><p><em>신청</em>고용24·관할 고용센터(유연근무 장려금 공고 제2025-510호)</p><p><em>확인 필요</em>2026년 지원단가·대상은 공고 확인 필요(2차 출처 기준)</p>", "l": "{{고용보험법|제19조}}"}, "s7": {"t": "고령자 계속고용장려금", "b": "<p><em>대상</em>정년 연장·폐지 또는 정년퇴직자 재고용 제도를 도입한 우선지원대상기업·중견기업·사회적기업.</p><p><em>요건</em></p><p>정년을 1년 이상 운영한 사업주</p><p>계속고용제도를 취업규칙에 반영해 지방노동청에 신고</p><p>근로자는 제도 시행일부터 5년 이내 정년 도달</p><p><em>지원내용</em></p><p>근로자 1인당 월 30만원, 정년 이후 최대 3년(최대 1,080만원)</p><p><em>주의</em></p><p>분기별로 신청해야 하며 기한을 놓치면 해당 분기분을 받기 어려움</p><p>2026년 지침 변경 여부를 확인해야 함</p><p><em>필요서류</em>변경된 취업규칙 및 신고 확인 서류 / 대상 근로자 명단·임금 증빙 / 고용센터 안내 서식</p><p><em>신청</em>관할 고용센터에 분기별 신청</p><p><em>확인 필요</em>보도(2025.11.5) 기준 : 2026년 지침 변경 여부 확인 필요</p>", "l": "{{고용보험법|제19조}}"}, "s8": {"t": "장애인 고용장려금", "b": "<p><em>대상</em>장애인 의무고용률(민간 3.1%)을 초과해 장애인을 고용한 사업주.</p><p><em>요건</em></p><p>의무고용률 초과 고용 인원에 대해 지급</p><p>장애 정도(중증·경증)와 성별에 따라 단가가 다름</p><p>2026 신규 장애인고용개선장려금은 50~100인 미만 사업장 중증 대상(2차 출처)</p><p><em>지원내용</em></p><p>초과 고용 장애인 1인당 월 단가 지급(단가는 연도별 고시 기준)</p><p>신규 개선장려금 : 중증 월 35~45만원(2차 출처 기준)</p><p><em>주의</em></p><p>단가·지급 구간은 연도별 고시로 달라짐</p><p>의무고용률 미달 시에는 고용부담금 납부 대상이 될 수 있음</p><p><em>필요서류</em>장애인 고용 현황 신고 자료 / 장애인 근로자 임금·근로계약 증빙 / 공단 안내 서식</p><p><em>신청</em>한국장애인고용공단(신고·신청)</p><p><em>확인 필요</em>연도별 단가는 고시 제2025-32호 및 2026 고시 확인 필요, 신규 장려금은 2차 출처 기준</p>", "l": "{{장애인고용촉진 및 직업재활법}}"}, "s9": {"t": "두루누리 사회보험료 지원", "b": "<p><em>대상</em>근로자 10명 미만 사업장에서 월평균보수 270만원 미만 근로자의 고용보험·국민연금 보험료를 부담하는 사업주와 근로자.</p><p><em>요건</em></p><p>지원신청일 기준 1년 이내 사회보험 가입이력이 없는 신규 가입자</p><p>월 지원 상한 : 고용보험 근로자 16,560원·사업주 21,160원, 국민연금 각 82,800원</p><p>예술인·노무제공자는 재산·소득 기준 초과 시 제외</p><p><em>지원내용</em></p><p>보험료(사업주·근로자 부담분)의 80% 지원</p><p><em>주의</em></p><p>지원기간(2차 자료상 최대 36개월)과 제외 기준은 공고 확인 필요</p><p>사업장 규모(10인 미만) 변동 시 지원이 중단될 수 있음</p><p><em>필요서류</em>지원신청서(4대사회보험 정보연계센터) / 사업장·근로자 보수 확인 자료</p><p><em>신청</em>4대사회보험 정보연계센터(4insure.or.kr), 근로복지공단·국민연금공단 지사 ☎1588-0075·1355. 연중 신청</p><p><em>확인 필요</em>지원기간 및 재산·소득 제외기준 세부는 공식 공고 확인 필요</p>", "l": "{{국민연금법}}, {{고용보험법}}"}, "s10": {"t": "소상공인 고용보험료 지원", "b": "<p><em>대상</em>자영업자 고용보험에 가입한 소상공인 대표.</p><p><em>요건</em></p><p>자영업자 고용보험 가입</p><p>세부 소득요건은 공고 기준</p><p><em>지원내용</em></p><p>보험료 최대 80%, 5년간 지원</p><p>비의도적 폐업 시 구직급여 최대 7개월·직업훈련 가능</p><p><em>주의</em></p><p>2030년까지 지원 대상을 확대할 계획으로 세부 기준이 바뀔 수 있음</p><p><em>필요서류</em>소진공 공고별 신청서류</p><p><em>신청</em>소상공인시장진흥공단(공고별)</p><p><em>확인 필요</em>보도(2025.8.27) 기준 : 대상·소득요건·신청방법은 소진공 공고 확인 필요</p>", "l": "{{고용보험법}}"}, "s11": {"t": "사업주 직업능력개발훈련 지원", "b": "<p><em>대상</em>소속 근로자의 직무능력 향상을 위해 훈련을 실시하는 사업주(사업주 직업능력개발훈련 지원규정, 고시 제2026-69호).</p><p><em>요건</em></p><p>지원규정에 따른 훈련과정 요건 충족</p><p>2026.7.1부터 주말훈련 우대지원</p><p><em>지원내용</em></p><p>훈련 실시 비용 지원(사업장 규모별 한도는 고용24 조회)</p><p><em>주의</em></p><p>훈련 실시 전 승인·신고 절차를 확인해야 함</p><p>사업장별 지원 한도가 달라 사전 조회가 필요함</p><p><em>필요서류</em>훈련계획 및 실시 확인 서류 / 훈련비 지출 증빙</p><p><em>신청</em>고용24(훈련 지원 한도 조회·신청), 한국산업인력공단</p><p><em>확인 필요</em>지원단가·한도는 고용24 조회 및 고시 본문 확인 필요</p>", "l": "{{행정규칙|사업주직업능력개발훈련지원규정|고시 제2026-69호}}"}, "s12": {"t": "통합고용세액공제", "b": "<p><em>대상</em>상시근로자 수가 직전 과세연도보다 증가한 중소기업(소비성서비스업 제외).</p><p><em>요건</em></p><p>2026.1.1 이후 개시 과세연도부터 연차별 금액 조정</p><p>실제 근로기간 1년 이상 근로자를 공제 대상으로 인정</p><p>사후관리 : 고용이 줄면 감소분만 공제 배제</p><p><em>지원내용</em></p><p>우대(청년·장애인 등) 1·2·3년차 700·1,600·1,700만원</p><p>기본 400·900·1,000만원(종전은 우대 1,450만·1,550만원, 기본 850만·950만원)</p><p>육아휴직 복귀자 추가공제 1인당 1,300만원(적용기한 2026.12.31)</p><p><em>주의</em></p><p>추가공제는 적용기한이 2026.12.31이라 연장 여부 확인 필요</p><p>수도권·지방 구분과 연차별 금액은 시행령 확인 필요</p><p><em>필요서류</em>세액공제신청서 / 상시근로자 수 산정 자료 / 근로자 명세 등 증빙</p><p><em>신청</em>법인세·소득세 신고 시 세액공제신청서 제출(신고기한 내)</p><p><em>확인 필요</em>KPMG 요약 기준 : 연차별 금액·수도권/지방 구분은 개정 시행령·법령 원문 확인 필요</p>", "l": "{{조세특례제한법|제29조의8}}"}, "s13": {"t": "중소기업 취업자 소득세 감면", "b": "<p><em>대상</em>중소기업에 취업한 청년 등 근로자의 소득세 감면 제도로, 사업주는 채용 시 근로자에게 안내할 수 있는 제도입니다.</p><p><em>요건</em></p><p>2026.12.31까지 취업한 경우에 적용</p><p>연 200만원 한도</p><p>2026 세제개편안의 일몰 폐지·한도 400만원 등은 정부안 단계(확정 전)</p><p><em>지원내용</em></p><p>청년 90% 5년, 그 밖의 대상 70% 3년 소득세 감면(연 200만원 한도)</p><p><em>주의</em></p><p>감면 신청은 근로자가 원천징수 시 소득세 감면신청서로 하며 사업주가 이를 확인함</p><p>개편안이 확정되기 전이라 기한·한도 변동을 확인해야 함</p><p><em>필요서류</em>소득세 감면신청서(근로자 작성) / 감면 대상 확인 서류</p><p><em>신청</em>근로자가 회사에 제출하고 사업주가 원천징수 시 반영</p><p><em>확인 필요</em>2026 세제개편 정부안은 확정 전 : 국회 통과 여부와 시행일 확인 필요</p>", "l": "{{조세특례제한법|제30조}}"}, "s14": {"t": "근로소득 증대세액공제", "b": "<p><em>대상</em>상시근로자 평균임금 증가율이 직전 3년 평균 증가율보다 높은 중소·중견기업.</p><p><em>요건</em></p><p>해당 연도 평균임금 증가율이 직전 3년 평균 증가율보다 클 것</p><p>상시근로자 수가 직전 연도보다 같거나 많을 것</p><p>추가공제 후 1년 내 정규직 전환자 근로관계가 종료되면 추납</p><p><em>지원내용</em></p><p>직전 3년 평균 초과 임금증가분의 20%(중견 10%) + 정규직 전환 근로자 임금증가액 추가공제</p><p><em>주의</em></p><p>적용기한 이후 연장 여부 확인 필요(2026 사업연도 적용 가능 여부)</p><p>정확한 산식은 법령 원문으로 확인해야 함</p><p><em>필요서류</em>세액공제신청서 / 상시근로자 평균임금 산정 자료</p><p><em>신청</em>법인세·소득세 신고 시 세액공제신청서 제출(신고기한 내)</p><p><em>확인 필요</em>적용기한 이후 연장 여부 미확인 : 2026 사업연도 적용 가능 여부 확인 필요</p>", "l": "{{조세특례제한법|제29조의4}}"}, "s15": {"t": "성과공유 중소기업 경영성과급 세액공제", "b": "<p><em>대상</em>상시근로자에게 경영성과급을 지급한 중소기업.</p><p><em>요건</em></p><p>사전 서면 약정, 영업이익 발생, 상시근로자 수 전년 대비 미감소</p><p>총급여 7천만원 초과자와 최대주주·최대출자자 등 특수관계자 제외</p><p><em>지원내용</em></p><p>지급한 경영성과급의 10% 세액공제</p><p><em>주의</em></p><p>성과급 지급 기준을 사전에 서면으로 정해 두어야 함</p><p><em>필요서류</em>세액공제신청서 / 사전 서면 약정서·지급내역</p><p><em>신청</em>법인세·소득세 신고 시 세액공제신청서 제출(신고기한 내)</p>", "l": "{{조세특례제한법|제19조}}"}, "s16": {"t": "고용유지 중소기업 세액공제", "b": "<p><em>대상</em>임금 총액을 줄이되 근로자 수와 시간당 임금은 줄이지 않은 중소기업.</p><p><em>요건</em></p><p>상시근로자 1인당 시간당 임금과 상시근로자 수가 직전 연도보다 감소하지 않을 것</p><p>사업주·근로자대표 간 합의 증빙 서류 첨부</p><p><em>지원내용</em></p><p>연간 임금 감소 총액 × 10% + 시간당 임금상승에 따른 임금 보전액 × 15% 세액공제</p><p><em>주의</em></p><p>적용기한이 2026.12.31이라 이후 연장 여부 확인 필요(연장은 입법안 단계)</p><p><em>필요서류</em>세액공제신청서 / 노사 합의 증빙 서류</p><p><em>신청</em>과세표준 신고 시 세액공제신청서와 노사 합의 증빙 제출</p><p><em>확인 필요</em>적용기한 이후 연장 여부 미확인</p>", "l": "{{조세특례제한법|제30조의3}}"}, "s17": {"t": "연구·인력개발비 세액공제", "b": "<p><em>대상</em>소속 직원의 교육·훈련 등에 인력개발비를 지출한 기업(연구개발비 공제는 별도 요건).</p><p><em>요건</em></p><p>조세특례제한법상 인력개발비에 해당하는 지출일 것</p><p>증빙과 지출 명세 보관</p><p><em>지원내용</em></p><p>인력개발비 지출액의 일정률 세액공제(중소기업은 대기업보다 높은 공제율)</p><p><em>주의</em></p><p>공제율과 계산 방식은 연도별 개정 내용을 확인해야 함</p><p><em>필요서류</em>세액공제신청서 / 인력개발비 명세서 및 지출 증빙</p><p><em>신청</em>법인세·소득세 신고 시 세액공제신청서 제출(신고기한 내)</p><p><em>확인 필요</em>공제율·계산 방식은 법령 원문으로 확인 필요(이 자료에는 수치 미기재)</p>", "l": "{{조세특례제한법|제10조}}"}};
+try{var OV=JSON.parse(document.getElementById('pov').textContent||'{}');for(var k0 in OV)P[k0]=OV[k0]}catch(e0){}
+var pop=document.getElementById('pop'),ph=document.getElementById('ph'),pt=document.getElementById('pt'),pbd=document.getElementById('pbody');
+function openP(id){var o=P[id];if(!o)return;pt.textContent=o.t;pbd.innerHTML=o.b+'<div class="lw">근거 : '+lk(o.l)+'</div>';pbd.scrollTop=0;
+  if(pop.hidden){pop.hidden=false;var w=pop.offsetWidth;pop.style.left=Math.max(8,(window.innerWidth-w)/2)+'px';pop.style.top=Math.max(8,Math.round(window.innerHeight*0.14))+'px'}}
+function closeP(){pop.hidden=true}
+document.addEventListener('click',function(e){if(e.target.closest('a'))return;var t=e.target.closest('[data-p]');if(t)openP(t.getAttribute('data-p'))});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeP();return}
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('[data-p]')){e.preventDefault();openP(e.target.getAttribute('data-p'))}});
+document.getElementById('px').addEventListener('click',closeP);
+var drag=null;
+ph.addEventListener('pointerdown',function(e){if(e.target.closest('button'))return;var r=pop.getBoundingClientRect();drag={dx:e.clientX-r.left,dy:e.clientY-r.top};ph.setPointerCapture(e.pointerId)});
+ph.addEventListener('pointermove',function(e){if(!drag)return;pop.style.left=Math.min(Math.max(0,e.clientX-drag.dx),window.innerWidth-60)+'px';pop.style.top=Math.min(Math.max(0,e.clientY-drag.dy),window.innerHeight-40)+'px'});
+function endDrag(e){drag=null;try{ph.releasePointerCapture(e.pointerId)}catch(_){}}
+ph.addEventListener('pointerup',endDrag);ph.addEventListener('pointercancel',endDrag);
+var MAXZ=1.3;
+function fitSheets(){
+  document.querySelectorAll('[data-sheet]').forEach(function(sh){
+    var main=sh.querySelector('.main'),ft=sh.querySelector('.ft');
+    sh.style.zoom='';main.style.flex='none';main.style.zoom='';main.style.width='';main.style.height='auto';
+    var cs=getComputedStyle(sh),pX=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight),pY=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
+    var innerW=sh.clientWidth-pX,avail=sh.clientHeight-pY-ft.offsetHeight-parseFloat(getComputedStyle(ft).marginTop);
+    var best=0.6;
+    for(var z=MAXZ;z>=0.6;z-=0.01){main.style.zoom=z;main.style.width=(innerW/z)+'px';main.style.height='auto';if(main.offsetHeight*z<=avail+0.5){best=z;break}}
+    main.style.zoom=best;main.style.width=(innerW/best)+'px';main.style.height=(avail/best)+'px';
+  });
+}
+function fitView(){document.querySelectorAll('[data-sheet]').forEach(function(sh){sh.style.zoom='';var w=sh.getBoundingClientRect().width,a=document.documentElement.clientWidth-12;if(a<w)sh.style.zoom=(a/w).toFixed(4)})}
+function boot(){fitSheets();fitView()}
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(boot)}else{boot()}
+window.addEventListener('resize',fitView);
+window.addEventListener('beforeprint',function(){document.querySelectorAll('[data-sheet]').forEach(function(s){s.style.zoom=''})});
+window.addEventListener('afterprint',fitView);
+document.getElementById('prt').addEventListener('click',function(){window.print()});
+window.__emk={P:P,boot:boot,pop:pop,pt:pt,pbd:pbd};
+})();
+</script>
+<script src="../contacts.js"></script>
+<script src="../copyright.js"></script>
+<script src="../gc.js"></script>
+<script src="../pagetitle.js" data-repo="yangji-madang/SLGFC"></script>
+</body></html>
