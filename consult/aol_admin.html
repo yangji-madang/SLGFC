@@ -19,7 +19,7 @@ iframe{width:100%;height:calc(100vh - 100px);border:0;background:#fff;display:bl
 <input type="color" id="fc" value="#12355b" title="글자색">
 <button id="bb"><b>B</b></button><button id="bu"><u>U</u></button><button id="bi"><i>I</i></button>
 <input type="password" id="tk" placeholder="GitHub 토큰">
-<button class="pri" id="sv">GitHub 저장</button><button id="dl">JSON 내려받기</button><button id="vw">보기 페이지</button></div>
+<button class="pri" id="sv">GitHub 저장</button><button id="dl">JSON 내려받기</button><button id="vw">조회 페이지</button><button id="vi">인포그래픽 조회</button></div>
 <div id="st">담당자 표시는 상단 「담당자 표시」에서 고릅니다(기본 표시하지 않음). 편집할 문구를 클릭해 수정하십시오. 표 안의 글자와 링크도 수정됩니다. 저장하면 aol.html 에 반영됩니다.</div>
 <iframe id="fr" src="aol.html"></iframe>
 <div class="cp">ⓒ2026. YOON HYUNCHUL, ALL RIGHTS RESERVED.</div>
@@ -47,7 +47,7 @@ document.getElementById('fs').onchange=function(){
  if(!this.value)return;var px=this.value;ex('fontSize','7');
  doc().querySelectorAll('font[size="7"]').forEach(function(f){var sp=doc().createElement('span');sp.style.fontSize=px+'px';sp.innerHTML=f.innerHTML;f.replaceWith(sp)});
 };
-document.getElementById('vw').onclick=function(){window.open('aol.html','_blank')};
+document.getElementById('vw').onclick=function(){window.open('aol.html','_blank')};document.getElementById('vi').onclick=function(){window.open('aol_info.html','_blank')};
 function collect(){var o={};doc().querySelectorAll('[data-edit]').forEach(function(e){o[e.dataset.edit]=e.innerHTML});return o}
 document.getElementById('dl').onclick=function(){
  var b=new Blob([JSON.stringify(collect(),null,1)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='aol.json';a.click();
