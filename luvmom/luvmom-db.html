@@ -2063,6 +2063,7 @@ function openSyncModal(note){
     '<div class="f"><label>파일 경로</label><input id="syPath" value="' + esc(c.path) + '"></div>' +
     '<div class="f wide"><label>데이터 암호 * (모든 기기에서 같은 암호를 입력)</label><input id="syPass" type="password" autocomplete="off" value="' + esc(c.pass) + '"></div>' +
     '<div class="f wide"><label>GitHub 액세스 토큰 (저장·수정용. 비우면 읽기 전용)</label><input id="syTok" type="password" autocomplete="off" value="' + esc(c.tok) + '"></div>' +
+    '<div class="f wide"><label style="display:flex;gap:6px;align-items:center;font-weight:600"><input type="checkbox" id="syShow" style="width:auto">암호·토큰 입력값 보이기</label></div>' +
     '<div class="f wide"><label style="display:flex;gap:6px;align-items:center;font-weight:600"><input type="checkbox" id="syRem" style="width:auto"' + (c.remember ? ' checked' : '') + '>이 기기에 암호·토큰 기억 (개인 기기에서만 사용하세요)</label></div>' +
     '<div class="err" id="syErr"></div></div>' +
     '<div class="sync-help"><b>안전장치</b> — 고객 정보는 입력하신 암호로 <b>암호화된 상태</b>로만 GitHub에 저장됩니다. 저장소가 공개여도 암호 없이는 내용을 볼 수 없습니다. ' +
@@ -2071,6 +2072,7 @@ function openSyncModal(note){
     '</div><div class="ft"><button class="btn" data-a="cancel">닫기</button>' +
     (c.on ? '<button class="btn danger" data-a="off">연결 해제</button>' : '') +
     '<button class="btn pri" data-a="ok">연결하고 불러오기</button></div>');
+  ov.addEventListener('change', e => { if (e.target.id === 'syShow'){ const t = e.target.checked ? 'text' : 'password'; ov.querySelector('#syPass').type = t; ov.querySelector('#syTok').type = t; } });
   ov.addEventListener('click', async e => {
     const b = e.target.closest('[data-a]'); if (!b) return;
     if (b.dataset.a === 'cancel'){ closeModal(); return; }
