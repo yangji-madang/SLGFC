@@ -82,6 +82,17 @@
        "pin": false
       },
       {
+       "label": "우리 회사 고용지원제도 찾기",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/empsupport_finder.html",
+       "tags": [
+        "고용",
+        "지원",
+        "제도",
+        "Yes/No"
+       ],
+       "pin": false
+      },
+      {
        "label": "출산.육아지원제도",
        "url": "https://yangji-madang.github.io/SLGFC/luvmom/baby_child.html",
        "tags": [

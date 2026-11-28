@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko" data-ver="1795876081226"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>우리 회사 고용지원제도 찾기</title>
+<style>
+:root{--navy:#17294a;--blue:#2f5d9a;--sky:#eaf2fb;--gold:#b08435;--goldl:#f6edd6;--gold2:#e0a43a;--ink:#1d2433;--mut:#566074;--line:#d5dbe6;--soft:#f3f6fb;--mint:#e7f4ee;--mintd:#1f6f50;--rose:#fdeceb;--rosed:#a5372f}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#e9edf3}
+body{font-family:system-ui,-apple-system,'Segoe UI','Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans CJK KR',sans-serif;color:var(--ink);font-size:11pt;line-height:1.38;word-break:keep-all;overflow-wrap:normal;text-wrap:pretty;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.bar{display:flex;gap:6px;width:210mm;max-width:100%;margin:8px auto -4px;justify-content:flex-end;flex-wrap:wrap;align-items:center}
+.bar button,.bar a.lk{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--navy);border-radius:4px;cursor:pointer;text-decoration:none}
+.bar button{background:var(--navy);color:#fff}
+.bar a.lk{background:#fff;color:var(--navy)}
+.sheet{width:210mm;height:296.5mm;margin:10px auto;background:#fff;padding:5.5mm 6.5mm 5mm;display:flex;flex-direction:column;box-shadow:0 2px 14px rgba(20,40,80,.18);overflow:hidden;position:relative;page-break-after:always;break-after:page}
+.sheet:last-of-type{page-break-after:auto;break-after:auto}
+.main{display:flex;flex-direction:column;justify-content:space-between;gap:2.4mm;flex:1 1 auto}
+/* 제목 : 공간 최소화 */
+.ttl{position:relative;display:flex;align-items:center;gap:3mm;border-radius:2.4mm;padding:2.6mm 4mm 1.8mm;color:#fff;border-bottom:.9mm solid var(--gold2);background:radial-gradient(70% 220% at 100% 0%,rgba(224,164,58,.38),transparent 62%),linear-gradient(110deg,#17294a 0%,#244a80 55%,#2f6aa8 100%)}
+.ttl h1{flex:none;font-size:18pt;line-height:1.1;white-space:nowrap;letter-spacing:-.01em;font-weight:800}
+.ttl .sub{font-size:9.2pt;font-weight:700;line-height:1.34;flex:1;border-left:1px solid rgba(255,255,255,.6);padding-left:3.2mm;min-width:0}
+.ttl .chips{flex:none;display:flex;flex-direction:column;gap:1mm;align-items:flex-end;padding-top:1.4mm}
+.ttl .chips span{background:rgba(10,24,52,.42);border:1px solid rgba(255,255,255,.6);border-radius:5mm;padding:.2mm 2.2mm;font-size:8.4pt;font-weight:700;white-space:nowrap}
+.ttl .chips b{color:#ffe08a}
+.ttl .qd{position:absolute;top:.8mm;right:3.4mm;font-size:6.8pt;white-space:nowrap;font-weight:600}
+.i{position:absolute;top:1.2mm;right:1.2mm;width:3.6mm;height:3.6mm;line-height:3.6mm;border-radius:50%;background:var(--blue);color:#fff;font-size:6.6pt;text-align:center;font-style:italic;font-family:Georgia,serif}
+[data-p]{cursor:pointer;position:relative}
+[data-p]:hover{box-shadow:0 0 0 1.6px var(--gold2) inset}
+.ic{display:block;width:100%;height:100%}
+.gh{display:flex;align-items:center;gap:2mm;font-size:14pt;font-weight:800;color:var(--navy);margin-bottom:1.6mm}
+.gh:before{content:"";width:1.8mm;height:5.4mm;border-radius:1mm;background:linear-gradient(var(--blue),var(--gold2))}
+.gh small{margin-left:auto;font-size:8.8pt;font-weight:500;color:#6a7488}
+/* 1 흐름 */
+.hero{display:grid;grid-template-columns:1fr 7mm 1fr 7mm 1fr 7mm 1fr;align-items:center;background:var(--sky);border:1px solid #cfe0f3;border-radius:3mm;padding:3mm 3mm 2.6mm}
+.hn{display:flex;flex-direction:column;align-items:center;text-align:center;border-radius:2.4mm;padding:1.2mm .6mm .8mm}
+.hn .ib{width:20mm;height:20mm;border-radius:50%;background:#fff;border:1.2mm solid #b9d2ee;padding:3mm;margin-bottom:1.2mm}
+.hn b{font-size:15.5pt;line-height:1.15;color:var(--navy);white-space:nowrap}
+.hn small{font-size:10.4pt;color:#3d4f6e;font-weight:700;line-height:1.32;margin-top:.5mm}
+.hn.hl .ib{background:#fff6e2;border-color:var(--gold2)}
+.hn.hl b{color:#8a5d10}
+.op{text-align:center;font-size:20pt;font-weight:800;color:var(--gold);line-height:1}
+.fm2{margin-top:1.8mm;text-align:center;background:var(--navy);color:#fff;border-radius:2mm;padding:1.5mm 3mm;font-size:12.6pt;font-weight:800}
+.fm2 i{font-style:normal;color:#ffd277;padding:0 1mm}
+.fm2 span{display:block;font-size:9.6pt;font-weight:600;color:#cfdcf2;margin-top:.3mm}
+/* 2 비율과 예시 */
+.two{display:grid;grid-template-columns:1.06fr .94fr;gap:3mm}
+.box{border:1px solid #d3deee;border-radius:3mm;padding:2.6mm 3mm;background:#fff}
+.rb{display:flex;flex-direction:column;gap:1.7mm;margin-top:.6mm}
+.rr{display:grid;grid-template-columns:31mm 1fr;align-items:center;gap:2mm}
+.rr .nm{font-size:10.6pt;font-weight:800;color:var(--navy);line-height:1.22}
+.rr .nm small{display:block;font-size:8.8pt;font-weight:600;color:var(--mut)}
+.trk{height:9.4mm;background:#eef2f8;border-radius:1.8mm;overflow:hidden}
+.fil{height:100%;display:flex;align-items:center;padding-left:2.2mm;color:#fff;font-size:13.6pt;font-weight:800;white-space:nowrap;background:linear-gradient(90deg,#2f5d9a,#4d86c6)}
+.fil.g{background:linear-gradient(90deg,#b08435,#e0a43a)}
+.fil.m{background:linear-gradient(90deg,#1f6f50,#3aa57d)}
+.fil.s{background:linear-gradient(90deg,#7a8aa6,#9db0cc)}
+.cap{margin-top:2mm;display:flex;gap:2mm}
+.cap div{flex:1;background:var(--goldl);border:1px solid #ead9b0;border-radius:2mm;padding:1.1mm 2mm;text-align:center;font-size:9.6pt;font-weight:700;color:#6b4d12;line-height:1.28}
+.cap b{display:block;font-size:13pt;color:#8a5d10;white-space:nowrap}
+.ex{display:flex;flex-direction:column;gap:1.1mm;margin-top:.6mm;padding-right:4.6mm}.ex .i{right:0;top:0}.ex .tot{margin-right:-4.6mm}
+.ex .r{display:flex;align-items:baseline;justify-content:space-between;gap:2mm;font-size:10.4pt;border-bottom:1px dashed #cdd8ea;padding-bottom:.9mm}
+.ex .r span{color:#2f3b52;font-weight:600}
+.ex .r b{font-size:12.4pt;color:var(--navy);white-space:nowrap}
+.ex .r.g b{color:var(--mintd)}
+.ex .tot{margin-top:.6mm;background:var(--navy);border-radius:2mm;color:#fff;text-align:center;padding:1.4mm 2mm}
+.ex .tot small{display:block;font-size:9.6pt;color:#cfdcf2;font-weight:600}
+.ex .tot b{font-size:20pt;line-height:1.1;color:#ffd277}
+.ex .tot em{font-style:normal;font-size:10pt;font-weight:700;margin-left:1.4mm}
+.pri{position:relative;margin-top:2mm;background:var(--sky);border:1px solid #cfe0f3;border-radius:2mm;padding:1.4mm 5mm 1.4mm 2.4mm;font-size:9.6pt;line-height:1.38;color:#2d3850}.pri b{color:var(--navy)}.pri u{text-decoration:none;font-weight:700;color:var(--navy)}
+.stkc{margin-top:1.8mm;font-size:9.6pt;font-weight:700;color:#2f3b52}.stk{display:flex;height:8.4mm;border-radius:1.8mm;overflow:hidden;margin-top:.8mm;font-size:11pt;font-weight:800;color:#fff}.stk div{display:flex;align-items:center;justify-content:center;white-space:nowrap}.stk .s1{width:66.7%;background:linear-gradient(90deg,#1f6f50,#3aa57d)}.stk .s2{width:33.3%;background:linear-gradient(90deg,#6c7c99,#92a5c4)}
+.assume{font-size:8.4pt;color:#6a7488;margin-top:.6mm}
+/* 3 요건 */
+.req{display:grid;grid-template-columns:repeat(5,1fr);gap:2mm}
+.rq{position:relative;border:1px solid #cfe0f3;border-top:1.2mm solid var(--blue);border-radius:2.2mm;background:var(--sky);padding:1.6mm 1.8mm 1.6mm;text-align:center}
+.rq .n{width:6.4mm;height:6.4mm;line-height:6.4mm;margin:0 auto 1mm;border-radius:50%;background:var(--navy);color:#ffd277;font-weight:800;font-size:11pt}
+.rq b{display:block;font-size:11.4pt;line-height:1.24;color:var(--navy);margin-bottom:.6mm}
+.rq p{font-size:9.6pt;line-height:1.3;color:#34425c}
+.rq p u{text-decoration:none;font-weight:800;color:var(--rosed)}
+/* 4 절차 */
+.tl{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:2mm;padding-top:1mm}
+.tl:before{content:"";position:absolute;left:10%;right:10%;top:8.6mm;height:1.2mm;border-radius:1mm;background:linear-gradient(90deg,var(--gold2),var(--blue))}
+.tn{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;border-radius:2.4mm;padding:0 1mm .8mm}
+.tn .ib{position:relative;z-index:1;width:15.5mm;height:15.5mm;border-radius:50%;background:#fff;border:1.2mm solid var(--gold2);padding:2.4mm}
+.tn .st{margin-top:1.1mm;font-size:9.4pt;font-weight:800;color:var(--gold)}
+.tn .tt{font-size:12.2pt;font-weight:800;color:var(--navy);line-height:1.22}
+.tn p{font-size:9.8pt;color:#3d4a63;line-height:1.32;margin-top:.4mm}
+.tn p u{text-decoration:none;font-weight:800;color:var(--rosed)}
+.tn.hl .ib{border-color:var(--blue);background:var(--sky)}
+.warn{margin-top:1.8mm;display:flex;align-items:center;gap:2.4mm;background:var(--rose);border:1px solid #efc0bb;border-radius:2.4mm;padding:1.4mm 3mm;color:#7a231c;font-size:11pt;font-weight:700;line-height:1.3}
+.warn .wi{width:7.4mm;height:7.4mm;flex:none}
+.warn b{color:var(--rosed);font-size:12.2pt}
+/* 5 카드 */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:2.4mm}
+.gc{display:flex;gap:2.8mm;align-items:flex-start;border:1px solid #d3deee;border-left:1.4mm solid var(--blue);border-radius:2.4mm;background:#fff;padding:2mm 3mm 2mm 2.6mm}
+.gc .ib{flex:none;width:15mm;height:15mm;border-radius:50%;background:var(--sky);padding:2.4mm;border:1px solid #cfe0f3}
+.gc b{display:block;font-size:12.6pt;line-height:1.25;color:var(--navy);margin-bottom:.8mm}
+.gc p{font-size:10.2pt;line-height:1.4;color:#2d3850}
+.gc p u{text-decoration:none;font-weight:800;color:var(--rosed)}
+/* 6 연계 */
+.lk3{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4mm}
+.lc{position:relative;border:1px solid #ead9b0;background:#fffaf0;border-radius:2.4mm;padding:1.8mm 2.6mm 1.8mm}
+.lc b{display:block;font-size:11.6pt;color:#7a540f;line-height:1.25;margin-bottom:.6mm}
+.lc p{font-size:9.8pt;line-height:1.36;color:#3a3226}
+.lc p u{text-decoration:none;font-weight:800;color:#8a5d10}
+/* CTA */
+.cta{border-radius:3mm;color:#fff;padding:2.2mm 4mm 2.4mm;background:linear-gradient(110deg,#17294a 0%,#244a80 60%,#2f6aa8 100%)}
+.cta .ct{font-size:13.4pt;font-weight:800;margin-bottom:1.2mm}
+.cta .ct small{font-size:9.4pt;font-weight:600;color:#cfdcf2;margin-left:2mm}
+.cta .ck{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4mm}
+.cta .ck div{display:flex;align-items:center;gap:1.8mm;background:rgba(10,24,52,.34);border:1px solid rgba(255,255,255,.38);border-radius:2mm;padding:1.3mm 2mm;font-size:10.4pt;font-weight:700;line-height:1.3}
+.cta .ck svg{width:6mm;height:6mm;flex:none}
+/* 바닥 */
+.ft{margin-top:2.4mm;border-top:1.4px solid var(--gold);background:var(--soft);border-radius:0 0 1.5mm 1.5mm;padding:1.3mm 2.5mm 1.4mm;flex-shrink:0}
+.law a{color:inherit;text-decoration:underline dotted;text-underline-offset:1px}.law a:hover{color:#1763ad}
+.ft .law{font-size:6.4pt;color:var(--mut);line-height:1.36}
+.ft .row{display:flex;justify-content:space-between;align-items:center;margin-top:.8mm;font-size:7.6pt;gap:3mm}
+.ft .row .l{color:var(--navy);font-weight:700}
+.ft .row .r{color:var(--navy);font-weight:400;font-size:7pt;margin-left:auto;white-space:nowrap}
+/* 팝업(드래그 이동) */
+.pop{position:fixed;z-index:20;width:min(400px,92vw);background:#fff;border-radius:8px;box-shadow:0 8px 30px rgba(10,25,55,.35);border:1px solid #c8d2e3;font-size:13px;line-height:1.6}
+.pop[hidden]{display:none}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;background:linear-gradient(115deg,#1b2f55,#35598a);color:#f6e6bd;border-radius:8px 8px 0 0;cursor:move;touch-action:none;user-select:none}
+.ph b{font-size:14px}
+.ph button{border:0;background:transparent;color:#fff;font-size:20px;line-height:1;cursor:pointer;padding:0 4px}
+.pb{padding:10px 14px 12px;max-height:68vh;overflow:auto;color:#222}
+.pb p{margin-bottom:7px}
+.pb em{display:inline-block;font-style:normal;font-weight:700;font-size:11px;background:var(--goldl);color:#7a5a1e;border-radius:3px;padding:0 6px;margin-right:6px}
+.pb .lw{margin-top:8px;padding-top:6px;border-top:1px dashed #ccd4e2;font-size:11.5px;color:#5a6577}
+.lw a,.pb a{color:#1763ad}
+@page{size:A4 portrait;margin:0}
+@media print{html,body{background:#fff}.sheet{margin:0;box-shadow:none;zoom:1!important}.bar,.pop{display:none!important}.i{display:none}[data-p]:hover{box-shadow:none}}
+
+.ft2{display:grid;grid-template-columns:1fr;gap:2.4mm}
+.tp{display:grid;grid-template-columns:repeat(9,1fr);gap:1.6mm}
+.tp button{font:inherit;border:1px solid #cfe0f3;background:var(--sky);border-radius:2mm;padding:1.4mm 1mm;cursor:pointer;text-align:center;color:var(--navy);line-height:1.2}
+.tp button b{display:block;font-size:10pt}.tp button small{display:block;font-size:7.4pt;color:var(--mut);margin-top:.4mm}
+.tp button.on{background:var(--navy);color:#fff;border-color:var(--navy)}.tp button.on small{color:#cfdcf2}
+.tp button:hover{box-shadow:0 0 0 1.6px var(--gold2) inset}
+.flow{display:flex;flex-direction:column;align-items:center;gap:0}
+.nd{width:150mm;max-width:100%;border:1.2px solid #b9d2ee;background:#fff;border-radius:2.4mm;padding:1.6mm 3mm;text-align:center;position:relative}
+.nd .q{font-size:11pt;font-weight:800;color:var(--navy);line-height:1.35}.nd .h{font-size:8.6pt;color:var(--mut);margin-top:.6mm}
+.nd.cur{border:2px solid var(--gold2);background:#fffaf0;box-shadow:0 1px 8px rgba(176,132,53,.3)}
+.nd.done{background:var(--soft)}
+.arw{display:flex;flex-direction:column;align-items:center;height:7mm;position:relative}
+.arw:before{content:"";width:1.2px;flex:1;background:#8aa2c4}
+.arw:after{content:"";border:1.6mm solid transparent;border-top:2mm solid #8aa2c4;border-bottom:0}
+.arw span{position:absolute;left:calc(50% + 3mm);top:1.4mm;font-size:8.6pt;font-weight:800;padding:0 1.6mm;border-radius:2mm}
+.arw .y{background:var(--mint);color:var(--mintd)}.arw .n{background:var(--rose);color:var(--rosed)}
+.yn{display:flex;gap:3mm;justify-content:center;margin-top:1.4mm}
+.yn button{font:inherit;font-size:11pt;font-weight:800;border:0;border-radius:2mm;padding:1.4mm 10mm;cursor:pointer;color:#fff}
+.yn .y{background:var(--mintd)}.yn .n{background:var(--rosed)}
+.ctl{display:flex;gap:2mm;justify-content:center;margin-top:1.4mm}
+.ctl button{font:inherit;font-size:9pt;border:1px solid var(--navy);background:#fff;color:var(--navy);border-radius:2mm;padding:.6mm 3mm;cursor:pointer}
+.res{width:100%;border:2px solid var(--mintd);border-radius:2.4mm;background:#f2faf6;padding:1.6mm 2.4mm}
+.res.none{border-color:#c9a8a4;background:var(--rose)}
+.res .nt2{font-size:9.4pt;font-weight:700;color:#2d3850;margin-bottom:1mm}
+.bag{display:grid;grid-template-columns:1fr 1fr;gap:1.6mm}
+.bg1{border:1px solid #cfd8e6;border-left:1.4mm solid var(--blue);border-radius:2mm;background:#fff;padding:1mm 2mm;font-size:8.6pt;line-height:1.3;cursor:pointer;text-wrap:balance}
+.bg1 h4{font-size:9.6pt;color:var(--navy)}.bg1 p b{color:var(--navy);margin-right:1mm}
+.bg1 a{font-size:8pt}
+.empty{font-size:9.4pt;color:var(--mut);text-align:center;padding:3mm}
+.mapw{overflow:auto;border:1px solid var(--line);border-radius:2mm;padding:3mm;background:#fff}
+.mp{display:inline-flex;flex-direction:column;align-items:center;vertical-align:top}
+.mp>.b{border:1.2px solid #b9d2ee;background:var(--sky);border-radius:2mm;padding:1mm 2mm;font-size:9pt;font-weight:700;color:var(--navy);max-width:62mm;text-align:center}
+.mp>.b.lf{border-color:var(--mintd);background:var(--mint);font-weight:600}.mp>.b.lf.no{border-color:#c9a8a4;background:var(--rose)}
+.mp>.b.hit{outline:2.4px solid var(--gold2)}
+.mp>.kids{display:flex;gap:4mm;margin-top:2mm;position:relative;padding-top:4mm}
+.mp>.kids:before{content:"";position:absolute;top:0;left:25%;right:25%;border-top:1.2px solid #8aa2c4}
+.mp .kid{display:flex;flex-direction:column;align-items:center;position:relative;padding-top:3mm}
+.mp .kid:before{content:"";position:absolute;top:0;height:3mm;border-left:1.2px solid #8aa2c4}
+.mp .kid>em{position:absolute;top:-1mm;left:50%;transform:translateX(3px);font-style:normal;font-size:8pt;font-weight:800}
+.mp .kid.y>em{color:var(--mintd)}.mp .kid.n>em{color:var(--rosed)}
+.vw{display:none}.show .vw{display:block}
+@media print{.tp,.yn,.ctl,.mapw,.lg2{display:none!important}.nd.cur{border-color:#b9d2ee;background:#fff;box-shadow:none}}
+.sheet{height:auto;min-height:296.5mm}@media print{.sheet{height:296.5mm}}.mp .b{font-size:8.4pt}</style></head><body>
+<div class="bar"><a class="lk" href="empsupport_info_graph.html">인포그래픽</a><a class="lk" href="empsupport_info.html">상세내용</a><a class="lk" href="empsupport_simul.html">지원금 시뮬레이션</a><button type="button" id="prt">인쇄 / PDF 저장</button></div>
+<section class="sheet" data-sheet><div class="main">
+<header class="ttl"><h1>우리 회사 지원제도 찾기</h1><div class="sub">예·아니오로 따라가며 받을 수 있는 제도를 좁혀 갑니다<br>주제를 바꿔가며 후보를 모을 수 있습니다</div><div class="chips"><span>Yes / No 지도</span><span>인쇄 가능</span></div><div class="qd">기준일 <b>2026.11.28</b></div></header>
+<section><div class="gh">1. 무엇부터 확인할까요?<small>주제를 고르면 그 주제의 첫 질문으로 시작합니다</small></div><div class="tp" id="tp"></div></section>
+<section><div class="gh">2. 질문 따라가기<small>답한 경로가 위에서 아래로 쌓입니다</small></div><div id="flow"></div>
+<div class="ctl lg2"><button type="button" id="bBack">← 이전 질문</button><button type="button" id="bRst">처음부터</button><button type="button" id="bMap">전체 지도 보기</button></div></section>
+<section class="vw"><div class="gh">전체 지도<small>선택한 주제의 모든 경로 · 내가 지나온 질문은 테두리로 표시</small></div><div class="mapw" id="map"></div></section>
+<section><div class="gh">3. 우리 회사 후보 제도 <small id="bagc"></small><small>카드를 누르면 상세 페이지로 이동합니다</small></div><div id="bag"></div></section>
+</div><footer class="ft"><div class="law" data-law="근거 : {{고용보험법|제19조}}·{{고용보험법|제21조}}, {{고시전체}}, {{조세특례제한법|제29조의8}}&lt;br&gt;※ 질문에 대한 답으로 후보 제도를 좁히는 안내용 도구이며 지원 확정을 뜻하지 않습니다. 세부 요건은 상세 페이지와 공식 공고로 확인하세요. 2026.11.28 기준."></div><div class="row"><span class="l" data-ct=""></span><span class="r">ⓒ<span class="yr">2026</span>. YOON HYUNCHUL, ALL RIGHTS RESERVED.</span></div></footer></section>
+<script>
+(function(){
+var SCH={"s1": {"n": 1, "name": "고용유지지원금", "sup": "우선지원대상기업 2/3, 대규모기업 1/2(단축 50% 이상이면 2/3)", "ap": "관할 고용센터 방문 또는 고용24. 지원금은 조치한 달 말일부터 3개월 이내 신청", "ck": true, "g": 0}, "s2": {"n": 2, "name": "청년일자리도약장려금", "sup": "기업지원금 : 청년 1인당 1년 최대 720만원(6개월차 360만, 9·12개월차 각 180만원)", "ap": "고용24(work24.go.kr) 온라인. 2026.1~12월 참여신청", "ck": true, "g": 1}, "s3": {"n": 3, "name": "정규직 전환 지원", "sup": "월 최대 60만원, 최대 1년(2026.1 사업 재개, 예산 소진 시 종료)", "ap": "고용24·관할 고용센터", "ck": true, "g": 1}, "s4": {"n": 4, "name": "고용촉진장려금", "sup": "채용 인원당 연 최대 720만원 수준(2차 출처 기준)", "ap": "관할 고용센터·고용24", "ck": true, "g": 1}, "s5": {"n": 5, "name": "출산육아기 고용안정장려금", "sup": "대체인력지원금 : 30인 미만 월 최대 140만원, 30인 이상 월 최대 130만원", "ap": "고용24·관할 고용센터", "ck": true, "g": 2}, "s6": {"n": 6, "name": "워라밸일자리장려금(유연근무)", "sup": "육아기 10시 출근제 월 30만원, 최대 1년(2차 출처 기준)", "ap": "고용24·관할 고용센터(유연근무 장려금 공고 제2025-510호)", "ck": true, "g": 2}, "s7": {"n": 7, "name": "고령자 계속고용장려금", "sup": "근로자 1인당 월 30만원, 정년 이후 최대 3년(최대 1,080만원)", "ap": "관할 고용센터에 분기별 신청", "ck": true, "g": 3}, "s8": {"n": 8, "name": "장애인 고용장려금", "sup": "초과 고용 장애인 1인당 월 단가 지급(단가는 연도별 고시 기준)", "ap": "한국장애인고용공단(신고·신청)", "ck": true, "g": 3}, "s9": {"n": 9, "name": "두루누리 사회보험료 지원", "sup": "보험료(사업주·근로자 부담분)의 80% 지원", "ap": "4대사회보험 정보연계센터(4insure.or.kr), 근로복지공단·국민연금공단 지사 ☎1588-0075·1355. 연중 신청", "ck": true, "g": 4}, "s10": {"n": 10, "name": "소상공인 고용보험료 지원", "sup": "보험료 최대 80%, 5년간 지원", "ap": "소상공인시장진흥공단(공고별)", "ck": true, "g": 4}, "s11": {"n": 11, "name": "사업주 직업능력개발훈련 지원", "sup": "훈련 실시 비용 지원(사업장 규모별 한도는 고용24 조회)", "ap": "고용24(훈련 지원 한도 조회·신청), 한국산업인력공단", "ck": true, "g": 4}, "s12": {"n": 12, "name": "통합고용세액공제", "sup": "우대(청년·장애인 등) 1·2·3년차 700·1,600·1,700만원", "ap": "법인세·소득세 신고 시 세액공제신청서 제출(신고기한 내)", "ck": true, "g": 5}, "s13": {"n": 13, "name": "중소기업 취업자 소득세 감면", "sup": "청년 90% 5년, 그 밖의 대상 70% 3년 소득세 감면(연 200만원 한도)", "ap": "근로자가 회사에 제출하고 사업주가 원천징수 시 반영", "ck": true, "g": 5}, "s14": {"n": 14, "name": "근로소득 증대세액공제", "sup": "직전 3년 평균 초과 임금증가분의 20%(중견 10%) + 정규직 전환 근로자 임금증가액 추가공제", "ap": "법인세·소득세 신고 시 세액공제신청서 제출(신고기한 내)", "ck": true, "g": 5}, "s15": {"n": 15, "name": "성과공유 중소기업 경영성과급 세액공제", "sup": "지급한 경영성과급의 10% 세액공제", "ap": "법인세·소득세 신고 시 세액공제신청서 제출(신고기한 내)", "ck": false, "g": 5}, "s16": {"n": 16, "name": "고용유지 중소기업 세액공제", "sup": "연간 임금 감소 총액 × 10% + 시간당 임금상승에 따른 임금 보전액 × 15% 세액공제", "ap": "과세표준 신고 시 세액공제신청서와 노사 합의 증빙 제출", "ck": true, "g": 5}, "s17": {"n": 17, "name": "연구·인력개발비 세액공제", "sup": "인력개발비 지출액의 일정률 세액공제(중소기업은 대기업보다 높은 공제율)", "ap": "법인세·소득세 신고 시 세액공제신청서 제출(신고기한 내)", "ck": true, "g": 5}},TREE={"topics": [{"id": "hire", "t": "채용 계획", "d": "청년·취약계층·장애인 채용"}, {"id": "conv", "t": "정규직 전환", "d": "계약직 → 정규직"}, {"id": "crisis", "t": "경영 악화", "d": "매출 감소·감원 고민"}, {"id": "care", "t": "육아·출산", "d": "휴직·대체인력·유연근무"}, {"id": "senior", "t": "정년·고령", "d": "정년 연장·재고용"}, {"id": "disab", "t": "장애인·취약계층", "d": "의무고용·채용 장려"}, {"id": "ins", "t": "보험료 부담", "d": "사회보험료·고용보험"}, {"id": "edu", "t": "교육훈련", "d": "직무훈련·인력개발비"}, {"id": "tax", "t": "세금 절감", "d": "세액공제·성과급"}], "start": {"hire": "h1", "conv": "c1", "crisis": "k1", "care": "p1", "senior": "o1", "disab": "d1", "ins": "i1", "edu": "e1", "tax": "t1"}, "nodes": {"h1": {"q": "새로 채용할 사람이 만 15~34세 청년(군필자는 최대 39세)인가요?", "y": "h2", "n": "h4"}, "h2": {"q": "정규직으로 채용하고, 5인 이상 우선지원대상기업인가요?", "h": "5인 미만은 지식서비스·문화콘텐츠 등 특례업종만 가능합니다.", "y": {"r": ["s2", "s12", "s13"], "note": "채용일부터 3개월 안에 고용24에서 신청하세요."}, "n": {"r": ["s12", "s13"], "note": "정규직·규모 요건을 채우면 청년일자리도약장려금도 검토하세요."}}, "h4": {"q": "채용 대상이 장애인인가요?", "y": {"r": ["s8", "s12"], "note": "장애인 고용은 의무고용률 초과 여부에 따라 장려금이 달라집니다."}, "n": "h5"}, "h5": {"q": "고용센터 알선·취업지원 이수자 등 취업취약계층을 채용하나요?", "y": {"r": ["s4", "s12"], "note": ""}, "n": {"r": ["s12"], "note": "상시근로자가 늘면 통합고용세액공제 기본공제를 검토하세요."}}, "c1": {"q": "6개월 이상 근무한 비정규직을 정규직으로 전환할 계획인가요?", "y": "c2", "n": {"r": ["s14"], "note": "전환 계획이 없다면 임금 인상 시 근로소득 증대세액공제를 확인하세요."}}, "c2": {"q": "고용보험 피보험자 수가 30인 미만인가요?", "h": "5인 미만 사업장은 제외됩니다.", "y": {"r": ["s3", "s14"], "note": "전환 후 1개월 이상 유지해야 하고, 지원 인원은 피보험자의 30% 이내입니다."}, "n": {"r": ["s14"], "note": "정규직 전환 지원은 30인 미만 사업장 대상입니다."}}, "k1": {"q": "최근 매출이 직전 6개월 월평균보다 15% 이상 줄었나요?", "y": "k2", "n": "k4"}, "k2": {"q": "해고 대신 근로시간 단축·휴업으로 고용을 유지할 계획인가요?", "y": "k3", "n": {"r": [], "note": "인위적 감원(고용조정 이직)은 고용유지지원금 제외 사유입니다. 감원 전 고용센터 상담을 권합니다."}}, "k3": {"q": "근로자대표와 협의하고, 조치를 시작하기 전에 계획서를 낼 수 있나요?", "h": "유급은 조치 전날까지, 무급은 30일 전까지 제출해야 합니다.", "y": {"r": ["s1", "s16"], "note": "임금 총액을 줄이는 경우 고용유지 세액공제도 함께 검토하세요."}, "n": {"r": ["s1"], "note": "계획서를 먼저 내지 않으면 지원받기 어렵습니다. 협의·증빙을 먼저 준비하세요."}}, "k4": {"q": "상시근로자 수와 시간당 임금은 유지하면서 임금 총액을 줄일 계획인가요?", "y": {"r": ["s16"], "note": "노사 합의 증빙이 필요하고, 적용기한(2026.12.31)을 확인하세요."}, "n": {"r": [], "note": "현재 해당하는 고용유지 제도가 없습니다. 매출 감소가 이어지면 다시 확인하세요."}}, "p1": {"q": "육아휴직·육아기 근로시간 단축을 쓰는 직원이 있거나 예정되어 있나요?", "y": "p2", "n": "p4"}, "p2": {"q": "휴직자의 대체인력을 채용했거나 채용할 예정인가요?", "y": "p3", "n": "p4"}, "p3": {"q": "우선지원대상기업인가요?", "y": {"r": ["s5", "s12"], "note": "복귀자는 통합고용세액공제 추가공제(적용기한 2026.12.31)도 확인하세요."}, "n": {"r": ["s12"], "note": "대체인력지원금은 우선지원대상기업 대상입니다."}}, "p4": {"q": "시차출퇴근·소정근로시간 단축 등 유연근무를 도입할 수 있나요?", "y": {"r": ["s6"], "note": ""}, "n": {"r": [], "note": "현재 해당하는 일·가정양립 제도가 없습니다."}}, "o1": {"q": "정년을 1년 이상 운영 중이고, 정년 연장·폐지 또는 재고용을 도입할 의향이 있나요?", "y": "o2", "n": {"r": [], "note": "정년 연장·재고용을 도입할 때 다시 확인하세요."}}, "o2": {"q": "우선지원대상기업·중견기업·사회적기업 중 하나인가요?", "y": {"r": ["s7"], "note": "계속고용제도를 취업규칙에 반영해 지방노동청에 신고해야 합니다."}, "n": {"r": [], "note": "고령자 계속고용장려금은 우선지원대상기업·중견기업·사회적기업이 대상입니다."}}, "d1": {"q": "의무고용률(민간 3.1%)을 넘겨 장애인을 고용하고 있나요?", "y": {"r": ["s8"], "note": ""}, "n": "d2"}, "d2": {"q": "취업취약계층을 새로 채용할 계획인가요?", "y": {"r": ["s4", "s12"], "note": ""}, "n": {"r": [], "note": "현재 해당하는 제도가 없습니다."}}, "i1": {"q": "근로자 10명 미만 사업장인가요?", "y": "i2", "n": "i3"}, "i2": {"q": "월평균보수 270만원 미만이고 최근 1년 안에 사회보험 가입이력이 없는 근로자가 있나요?", "y": {"r": ["s9"], "note": "4대사회보험 정보연계센터에서 신청하세요."}, "n": "i3"}, "i3": {"q": "대표 본인이 소상공인으로 자영업자 고용보험에 가입했거나 가입할 예정인가요?", "y": {"r": ["s10"], "note": ""}, "n": {"r": [], "note": "현재 해당하는 보험료 지원이 없습니다."}}, "e1": {"q": "소속 근로자에게 직무훈련을 실시할 계획인가요?", "y": {"r": ["s11", "s17"], "note": "훈련 전 절차와 지원 한도를 고용24에서 확인하세요."}, "n": {"r": [], "note": "훈련 계획이 생기면 다시 확인하세요."}}, "t1": {"q": "올해 상시근로자 수가 직전 연도보다 늘었나요?", "y": "t2", "n": "t3"}, "t2": {"q": "사전 서면 약정에 따라 경영성과급을 지급하나요?", "y": {"r": ["s12", "s14", "s15"], "note": ""}, "n": {"r": ["s12", "s14"], "note": "평균임금 증가율이 직전 3년 평균보다 높을 때 근로소득 증대세액공제를 적용합니다."}}, "t3": {"q": "임금을 많이 올렸거나 경영성과급을 지급하나요?", "y": {"r": ["s14", "s15"], "note": "상시근로자가 줄지 않아야 합니다."}, "n": "t4"}, "t4": {"q": "중소기업에 취업한 청년 근로자가 있나요?", "y": {"r": ["s13"], "note": "근로자가 소득세 감면신청서를 제출하도록 안내하세요."}, "n": {"r": [], "note": "현재 해당하는 세제 혜택이 없습니다."}}}};
+function $(i){return document.getElementById(i)}
+var st={topic:null,node:null,path:[],res:{},leaf:null};
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function loadTree(cb){try{fetch('empsupport_tree.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(j&&j.nodes&&j.start&&j.topics)TREE=j;cb()}).catch(cb)}catch(e){cb()}}
+function topics(){var h='';TREE.topics.forEach(function(t){h+='<button type="button" data-t="'+t.id+'" class="'+(st.topic===t.id?'on':'')+'"><b>'+esc(t.t)+'</b><small>'+esc(t.d)+'</small></button>'});$('tp').innerHTML=h}
+function start(id){st.topic=id;st.node=TREE.start[id];st.path=[];st.leaf=null;delete st.res[id];render()}
+function ans(a){var n=TREE.nodes[st.node],nx=a?n.y:n.n;st.path.push({id:st.node,a:a});
+  if(typeof nx==='string'){st.node=nx}else{st.node=null;st.leaf=nx;st.res[st.topic]=nx.r||[]}
+  render()}
+function back(){if(!st.path.length)return;var p=st.path.pop();st.node=p.id;st.leaf=null;delete st.res[st.topic];render()}
+function reset(){st={topic:null,node:null,path:[],res:{},leaf:null};render()}
+function flow(){
+  var h='';
+  if(!st.topic){return '<div class="empty">위에서 가장 궁금한 주제를 먼저 골라 주세요. 선택한 주제부터 예·아니오로 한 단계씩 물어봅니다.</div>'}
+  st.path.forEach(function(p){var n=TREE.nodes[p.id];
+    h+='<div class="nd done"><div class="q">'+esc(n.q)+'</div></div><div class="arw"><span class="'+(p.a?'y':'n')+'">'+(p.a?'예':'아니오')+'</span></div>'});
+  if(st.node){var n=TREE.nodes[st.node];
+    h+='<div class="nd cur"><div class="q">'+esc(n.q)+'</div>'+(n.h?'<div class="h">'+esc(n.h)+'</div>':'')+'</div>'+
+      '<div class="yn"><button type="button" class="y" data-a="1">예</button><button type="button" class="n" data-a="0">아니오</button></div>'}
+  else if(st.leaf){var r=st.leaf.r||[];
+    h+='<div class="res'+(r.length?'':' none')+'"><div class="nt2">'+(r.length?'이 주제에서 검토할 제도':'이 주제에서는 해당하는 제도가 없습니다')+(st.leaf.note?' — '+esc(st.leaf.note):'')+'</div>'+
+      (r.length?'<div class="bag">'+r.map(card).join('')+'</div>':'')+'</div>'}
+  return '<div class="flow">'+h+'</div>'}
+function card(id){var s=SCH[id];if(!s)return '';
+  return '<div class="bg1" data-p="'+id+'" tabindex="0"><h4>'+s.n+'. '+esc(s.name)+(s.ck?' <i class="ck">확인 필요</i>':'')+'</h4><p><b>지원</b>'+esc(s.sup)+'</p><p><b>신청</b>'+esc(s.ap)+'</p></div>'}
+function allIds(){var o={};Object.keys(st.res).forEach(function(t){st.res[t].forEach(function(x){o[x]=1})});return Object.keys(o)}
+function bag(){var ids=allIds().sort(function(a,b){return SCH[a].n-SCH[b].n});
+  if(!ids.length)return '<div class="empty">아직 모은 제도가 없습니다. 질문에 답하면 여기에 쌓입니다.</div>';
+  return '<div class="bag">'+ids.map(card).join('')+'</div>'}
+function mapNode(id){var n=TREE.nodes[id],hit=st.path.some(function(p){return p.id===id})||st.node===id;
+  function kid(v,lab,cls){var c;
+    if(typeof v==='string')c=mapNode(v);
+    else{var r=v.r||[];c='<div class="mp"><div class="b lf'+(r.length?'':' no')+'">'+(r.length?r.map(function(x){return SCH[x].n+'. '+esc(SCH[x].name)}).join('<br>'):'해당 제도 없음')+'</div></div>'}
+    return '<div class="kid '+cls+'"><em>'+lab+'</em>'+c+'</div>'}
+  return '<div class="mp"><div class="b'+(hit?' hit':'')+'">'+esc(n.q)+'</div><div class="kids">'+kid(n.y,'예','y')+kid(n.n,'아니오','n')+'</div></div>'}
+function render(){
+  topics();$('flow').innerHTML=flow();$('bag').innerHTML=bag();
+  var c=allIds().length;$('bagc').textContent=c?c+'개':'';
+  $('map').innerHTML=st.topic?mapNode(TREE.start[st.topic]):'<div class="empty">주제를 고르면 전체 지도가 펼쳐집니다.</div>';
+  if(window.__emk)window.__emk.boot&&window.__emk.boot();
+}
+document.addEventListener('click',function(e){var t=e.target.closest('[data-t]');if(t){start(t.getAttribute('data-t'));return}
+  var a=e.target.closest('[data-a]');if(a){ans(a.getAttribute('data-a')==='1');return}
+  if(e.target.id==='bBack')back();if(e.target.id==='bRst')reset();
+  if(e.target.id==='bMap'){document.body.classList.toggle('show');e.target.textContent=document.body.classList.contains('show')?'전체 지도 닫기':'전체 지도 보기'}});
+var BASE='https://www.law.go.kr/';
+document.querySelectorAll('[data-law]').forEach(function(e){e.innerHTML=e.getAttribute('data-law').replace(/\{\{([^|}]+)(?:\|([^|}]+))?(?:\|([^}]+))?\}\}/g,function(m,n,a,sh){
+  if(n==='고시전체')return '<a href="'+BASE+'행정규칙/'+encodeURIComponent('고용유지지원금신청및지급에관한규정')+'" target="_blank" rel="noopener">고용노동부 고시 제2026-30호</a>';
+  return '<a href="'+BASE+'법령/'+encodeURIComponent(n)+(a?'/'+encodeURIComponent(a):'')+'" target="_blank" rel="noopener">'+(sh||n+(a?' '+a:''))+'</a>'})});
+document.querySelectorAll('.yr').forEach(function(e){e.textContent=new Date().getFullYear()});
+/* 제도 카드 클릭 → 상세 페이지로 이동 */
+document.addEventListener('click',function(e){var c=e.target.closest('.bg1[data-p]');if(c)window.open('empsupport_info.html#'+c.getAttribute('data-p'),'_blank')});
+function fit(){var sh=document.querySelector('[data-sheet]'),main=sh.querySelector('.main'),ft=sh.querySelector('.ft');
+  sh.style.zoom='';main.style.zoom='';main.style.width='';main.style.height='auto';main.style.flex='none';
+  var cs=getComputedStyle(sh),pX=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight),pY=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
+  var iw=sh.clientWidth-pX,av=sh.clientHeight-pY-ft.offsetHeight-parseFloat(getComputedStyle(ft).marginTop),best=.6;
+  if(!matchMedia('print').matches){main.style.height='auto';return}
+  for(var z=1.1;z>=.6;z-=.01){main.style.zoom=z;main.style.width=(iw/z)+'px';main.style.height='auto';if(main.offsetHeight*z<=av+.5){best=z;break}}
+  main.style.zoom=best;main.style.width=(iw/best)+'px';main.style.height=(av/best)+'px'}
+window.addEventListener('beforeprint',function(){fit();document.querySelector('[data-sheet]').style.zoom=''});
+window.addEventListener('afterprint',function(){var m=document.querySelector('.main');m.style.zoom='';m.style.width='';m.style.height=''});
+$('prt').addEventListener('click',function(){window.print()});
+loadTree(function(){render()});
+window.__emk={boot:function(){}};
+})();
+</script>
+<script src="../contacts.js"></script><script src="../copyright.js"></script><script src="../gc.js"></script><script src="../pagetitle.js" data-repo="yangji-madang/SLGFC"></script></body></html>
