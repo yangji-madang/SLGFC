@@ -11,7 +11,8 @@ a{color:#0b5cab}a.lw{text-decoration:underline dotted}
 .bar{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;display:flex;gap:6px;align-items:center;padding:6px 12px;flex-wrap:wrap}
 .bar b{font-size:15px;margin-right:auto}
 .bar button{border:1px solid #6f8db0;background:#1d4a7a;color:#fff;border-radius:4px;padding:4px 10px;cursor:pointer;font:inherit;font-size:13px}
-.bar button.on{background:#fff;color:var(--navy);font-weight:700}
+.bar a.btn{border:1px solid #6f8db0;background:#1d4a7a;color:#fff;border-radius:4px;padding:4px 10px;font-size:13px;text-decoration:none}
+.bar button.on,.bar a.btn.on{background:#fff;color:var(--navy);font-weight:700}
 .wrap{max-width:1100px;margin:10px auto;padding:0 8px}
 .a4{background:#fff;width:100%;max-width:794px;margin:0 auto 12px;padding:10px 12px;border:1px solid var(--line);box-shadow:0 1px 4px #0002;position:relative}
 .hd{background:linear-gradient(90deg,var(--navy),var(--teal));color:#fff;border-radius:5px;padding:6px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -81,9 +82,9 @@ a{color:#0b5cab}a.lw{text-decoration:underline dotted}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
-</head><body class="view-info">
+</head><body class="view-detail">
 <div class="bar"><b>정관컨설팅 A to Z</b>
-<button data-v="info">인포그래픽 2p</button><button data-v="detail">상세 study</button>
+<a class="btn" id="goInfo" data-v="info" href="aol_info.html">인포그래픽</a><button data-v="detail">상세 study</button>
 <button id="pr">인쇄</button></div>
 <div class="wrap">
 <div class="a4 infog" id="p1">
@@ -138,7 +139,8 @@ a{color:#0b5cab}a.lw{text-decoration:underline dotted}
  var body=document.body;
  function view(v){body.className='view-'+v;document.querySelectorAll('.bar button[data-v]').forEach(function(b){b.classList.toggle('on',b.dataset.v===v)});try{localStorage.setItem('aol_view',v)}catch(e){}}
  document.querySelectorAll('.bar button[data-v]').forEach(function(b){b.onclick=function(){view(b.dataset.v)}});
- var sv='info';try{sv=localStorage.getItem('aol_view')||'info'}catch(e){} view(sv);
+ var framed=window.self!==window.top;var gi=document.getElementById('goInfo');if(gi)gi.onclick=function(e){if(framed){e.preventDefault();view('info')}};
+ var sv=framed?'info':'detail';try{if(framed)sv=localStorage.getItem('aol_view')||'info';else{sv=localStorage.getItem('aol_view');if(sv!=='detail')sv='detail'}}catch(e){} view(sv);
  document.getElementById('pr').onclick=function(){window.print()};
  // 저장된 편집본 반영
  fetch('aol.json?'+Date.now()).then(function(r){return r.ok?r.json():null}).then(function(j){
