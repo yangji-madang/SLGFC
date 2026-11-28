@@ -10,8 +10,9 @@ p,td,li,small{text-wrap:pretty;line-break:strict}
 h1,h3,h4,.tt{text-wrap:balance}
 .nw{white-space:nowrap}a{overflow-wrap:normal}
 a{color:#0b5cab}a.lw{text-decoration:underline dotted;color:inherit}a.lw:hover{color:#1763ad}
-.bar{position:sticky;top:0;z-index:20;display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap;padding:6px 12px;background:var(--navy)}
-.bar button,.bar a.btn{font:inherit;font-size:13px;padding:4px 12px;border:1px solid #6f8db0;background:#1d4a7a;color:#fff;border-radius:4px;cursor:pointer;text-decoration:none}
+.bar{display:flex;gap:6px;position:static;width:210mm;max-width:100%;margin:8px auto -4px;justify-content:flex-end;flex-wrap:wrap}
+.bar button{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
+.bar a.btn{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--navy);border-radius:4px;background:#fff;color:var(--navy);text-decoration:none}
 .sheet{width:100%;max-width:794px;margin:10px auto;background:#fff;padding:14px 18px 8px;box-shadow:0 2px 14px rgba(20,40,80,.18)}
 .ttl{display:flex;align-items:center;gap:12px;border-radius:8px;padding:7px 16px;color:#fff;border-bottom:3px solid #f2b84b;background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 60%),linear-gradient(110deg,#6b1d2a 0%,#92352c 45%,#b4502c 100%)}
 .ttl h1{margin:0;font-size:22px;white-space:nowrap;font-weight:800}
