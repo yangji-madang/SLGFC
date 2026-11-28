@@ -1467,13 +1467,14 @@ function openPaste(initial){
     const hits = rows[0].filter(x => labels.has(sq(x))).length;
     const hasH = hits >= Math.min(2, rows[0].length);
     const vis = visCols(), fl = fields();
+    const visX = vis.filter(c => c.type !== 'insage' && c.type !== 'dday'); /* 제목 없는 붙여넣기: 엑셀 원본 양식(보험나이·남은날 없음) 순서 기준 */
     const defMap = [];
     for (let j = 0; j < maxc; j++){
       let m = '';
       if (hasH){
         const nm = String(rows[0][j] || '').trim(), c = labels.get(sq(nm));
         m = c ? (c.calc ? '' : c.key) : (nm ? '__new__' : '');
-      } else { const c = vis[j]; m = (c && !c.calc) ? c.key : ''; }
+      } else { const c = visX[j]; m = (c && !c.calc) ? c.key : ''; }
       defMap.push(m);
     }
     let h = '<div style="margin-top:6px"><label style="font-size:13px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="pbHdr"' + (hasH ? ' checked' : '') + '>첫 줄은 항목명(제목)입니다</label></div>';
