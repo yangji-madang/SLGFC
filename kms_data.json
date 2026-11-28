@@ -71,6 +71,17 @@
        "pin": false
       },
       {
+       "label": "고용 정부지원 통합",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/empsupport_info_graph.html",
+       "tags": [
+        "고용",
+        "지원",
+        "제도",
+        "세액공제"
+       ],
+       "pin": false
+      },
+      {
        "label": "출산.육아지원제도",
        "url": "https://yangji-madang.github.io/SLGFC/luvmom/baby_child.html",
        "tags": [
