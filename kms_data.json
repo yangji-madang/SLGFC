@@ -149,7 +149,7 @@
      ]
     },
     {
-     "title": "계약기본정보",
+     "title": "상품정보",
      "pin": false,
      "links": [
       {
@@ -162,6 +162,33 @@
         "보험나이"
        ],
        "pin": true
+      },
+      {
+       "label": "환급률 VS 적금비교",
+       "url": "https://yangji-madang.github.io/SLGFC/Refund_vs_Savings.html",
+       "tags": [],
+       "pin": true
+      },
+      {
+       "label": "종신상품비교",
+       "url": "https://yangji-madang.github.io/SLGFC/Prod/jongsin.html",
+       "tags": [],
+       "pin": true
+      },
+      {
+       "br": true,
+       "pin": true
+      },
+      {
+       "label": "New플러스원 고환급특약 검색",
+       "url": "Prod/newplus1_surrendervalue.html",
+       "tags": [
+        "플러스원",
+        "환급금",
+        "해약환급금",
+        "고환급"
+       ],
+       "pin": false
       },
       {
        "label": "간편보험 비교표",
@@ -182,35 +209,6 @@
         "유병자",
         "인수",
         "심사"
-       ],
-       "pin": false
-      }
-     ]
-    },
-    {
-     "title": "상품정보",
-     "pin": false,
-     "links": [
-      {
-       "label": "환급률 VS 적금비교",
-       "url": "https://yangji-madang.github.io/SLGFC/Refund_vs_Savings.html",
-       "tags": [],
-       "pin": true
-      },
-      {
-       "label": "종신상품비교",
-       "url": "https://yangji-madang.github.io/SLGFC/Prod/jongsin.html",
-       "tags": [],
-       "pin": true
-      },
-      {
-       "label": "New플러스원 고환급특약 검색",
-       "url": "Prod/newplus1_surrendervalue.html",
-       "tags": [
-        "플러스원",
-        "환급금",
-        "해약환급금",
-        "고환급"
        ],
        "pin": false
       }
