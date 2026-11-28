@@ -65,6 +65,7 @@ h1{margin:0 0 4px;font-size:21px;color:#17294a}
     <li>이름·직함·연락처를 한 줄로 입력합니다. 이 줄이 인쇄물 하단 왼쪽에 그대로 찍힙니다.</li>
     <li>수정 후 「GitHub에 반영」을 눌러야 다른 기기와 모든 페이지에 적용됩니다(1~2분 소요).</li>
     <li>Copyright 문구는 「GitHub 반영」 시 함께 저장되며, SLGFC 연동 페이지(copyright.js 사용) 하단 문구에 모두 적용됩니다. 연도는 {YEAR} 표시를 유지하는 한 자동으로 바뀝니다.</li>
+    <li>각 상세페이지(관리화면)의 「담당자 표시」에서 고른 담당자는 GitHub에 함께 저장되어 어느 기기에서나 같은 담당자로 나옵니다(1~2분 소요, 토큰 필요).</li>
     <li>담당자를 삭제하면, 그 담당자를 선택해 둔 페이지는 「표시하지 않음」으로 돌아갑니다.</li>
   </ul>
 </div>
@@ -139,10 +140,11 @@ async function push(tk){
   var clean=rows.map(function(r){return{id:r.id,t:r.t.replace(/\s+/g,' ').trim()}}).filter(function(r){return r.t});
   var ra=await api('GET',url+'?ref='+GH.b,tk);
   if(!ra.ok){throw {msg:(ra.status===401?'토큰이 올바르지 않거나 만료되었습니다.':ra.status===404?'저장소 또는 권한을 확인하세요(404).':'확인 실패 ('+ra.status+')'),bad:ra.status===401}}
-  var ja=await ra.json(),live=null;try{live=JSON.parse(unb64(ja.content)).updated||null}catch(e){}
+  var ja=await ra.json(),live=null,livePages={};try{var LJ=JSON.parse(unb64(ja.content));live=LJ.updated||null;livePages=LJ.pages||{}}catch(e){}
   if(live!==baseUpd){throw {msg:'다른 곳에서 먼저 수정되었습니다. 새로고침 후 다시 수정해 주세요(내용 보호).'}}
   var upd=new Date().toISOString();
-  var out=JSON.stringify({updated:upd,copyright:cpTx,contacts:clean},null,2)+'\n';
+  var okIds={};clean.forEach(function(r){okIds[r.id]=1});var pgs={};Object.keys(livePages).forEach(function(k){if(!livePages[k]||okIds[livePages[k]])pgs[k]=livePages[k]});   /* 삭제된 담당자를 가리키던 페이지는 '표시하지 않음'으로 */
+  var out=JSON.stringify({updated:upd,copyright:cpTx,pages:pgs,contacts:clean},null,2)+'\n';
   var rp=await api('PUT',url,tk,{message:'[담당자 공통 관리] 담당자 목록 수정',content:b64(out),sha:ja.sha,branch:GH.b});
   if(!rp.ok){throw {msg:'반영 실패 ('+rp.status+')'+(rp.status===409?' : 동시에 수정되었습니다. 새로고침 후 다시 시도하세요.':'')}}
   baseUpd=upd;cpOrig=cpTx;rows=clean.map(function(r){return{id:r.id,t:r.t}});orig=rows.map(function(r){return{id:r.id,t:r.t}});draw();

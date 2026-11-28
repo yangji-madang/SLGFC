@@ -24,10 +24,16 @@
   var data = FB, loaded = false, cbs = [];
 
   function list() { return (data.contacts || []).filter(function (x) { return x && String(x.t || '').trim(); }); }
+  var PEND = KEY + '!pending';   /* 게시(GitHub 반영)에 실패해 이 기기에만 저장된 선택 */
+  function lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
   function sel() {
     var ids = list().map(function (x) { return x.id; });
+    /* 1순위: 게시 대기 중인 이 기기의 선택 → 2순위: contacts.json 에 게시된 선택(모든 기기 공통) → 3순위: 예전 방식의 이 기기 선택 */
+    if (lsGet(PEND)) { var pv = lsGet(KEY); if (pv && ids.indexOf(pv) >= 0) return pv; }
+    var pg = data.pages;
+    if (pg && Object.prototype.hasOwnProperty.call(pg, PK)) { var gv = pg[PK]; return (gv && ids.indexOf(gv) >= 0) ? gv : ''; }
     for (var i = 0; i < KEYS.length; i++) {
-      var v = ''; try { v = localStorage.getItem(KEYS[i]) || ''; } catch (e) {}
+      var v = lsGet(KEYS[i]);
       if (v && ids.indexOf(v) >= 0) return v;
     }
     return '';
@@ -48,8 +54,76 @@
     try {
       KEYS.forEach(function (k) { if (k !== KEY) localStorage.removeItem(k); });   /* 예전 이름의 값은 정리 */
       if (id) localStorage.setItem(KEY, id); else localStorage.removeItem(KEY);
+      localStorage.setItem(PEND, '1');
     } catch (e) {}
     build(); apply();
+    if (ADM) publish(id || '');
+  }
+
+  /* ── 선택을 contacts.json 의 pages 항목으로 게시 → 어느 기기·브라우저에서 열어도 같은 담당자 ── */
+  var GH = { o: 'yangji-madang', r: 'SLGFC', b: 'main', p: 'contacts.json' };
+  function tok() { return lsGet('info_gh_token').replace(/\s+/g, ''); }
+  function b64(t) { var by = new TextEncoder().encode(t), bin = ''; by.forEach(function (c) { bin += String.fromCharCode(c); }); return btoa(bin); }
+  function unb64(t) { var bin = atob(String(t).replace(/\s/g, '')), by = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) by[i] = bin.charCodeAt(i); return new TextDecoder().decode(by); }
+  function gh(method, body, tk) {
+    var u = 'https://api.github.com/repos/' + GH.o + '/' + GH.r + '/contents/' + GH.p + (method === 'GET' ? '?ref=' + GH.b + '&t=' + Date.now() : '');
+    return fetch(u, { method: method, cache: 'no-store', headers: { 'Authorization': 'Bearer ' + tk, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }, body: body ? JSON.stringify(body) : undefined });
+  }
+  function note(msg, kind, needTok) {
+    var d = document.getElementById('ctSel'); if (!d) return;
+    var st = d.querySelector('.st'); if (!st) return;
+    st.className = 'st ' + (kind || ''); st.textContent = msg || '';
+    if (needTok) {
+      var w = document.createElement('div'); w.className = 'tk';
+      w.innerHTML = '<input type="password" placeholder="GitHub 토큰 붙여넣기" autocomplete="off"><button type="button">저장 후 반영</button>';
+      st.appendChild(w);
+      w.querySelector('button').onclick = function () {
+        var v = w.querySelector('input').value.replace(/\s+/g, '');
+        if (!v) return;
+        try { localStorage.setItem('info_gh_token', v); } catch (e) {}
+        publish(sel());
+      };
+    }
+  }
+  var busy = false, again = null;
+  function publish(id) {
+    if (busy) { again = id; return; }
+    var tk = tok();
+    if (!tk) { note('토큰이 없어 이 기기에만 저장되었습니다. 토큰을 넣으면 모든 기기에 반영됩니다.', 'er', true); return; }
+    busy = true; note('모든 기기에 반영 중…', '');
+    var tries = 0;
+    function attempt() {
+      tries++;
+      gh('GET', null, tk).then(function (r) {
+        if (r.status === 401) throw { code: 401 };
+        if (!r.ok) throw { code: r.status };
+        return r.json();
+      }).then(function (ja) {
+        var j = JSON.parse(unb64(ja.content));
+        if (!j.pages || typeof j.pages !== 'object') j.pages = {};
+        j.pages[PK] = id;   /* '' = 표시하지 않음(명시적) */
+        /* updated 는 담당자 목록을 고칠 때만 바뀌도록 그대로 둔다(관리페이지의 중복수정 방지 장치와 충돌하지 않게) */
+        return gh('PUT', { message: '[담당자 표시 지정] ' + PK, content: b64(JSON.stringify(j, null, 2) + '\n'), sha: ja.sha, branch: GH.b }, tk).then(function (pr) {
+          if (pr.status === 401) throw { code: 401 };
+          if ((pr.status === 409 || pr.status === 422) && tries < 2) return attempt();
+          if (!pr.ok) throw { code: pr.status };
+          return j;
+        });
+      }).then(function (j) {
+        if (!j) return;
+        data.pages = j.pages;
+        try { localStorage.removeItem(PEND); } catch (e) {}
+        busy = false; build(); apply();
+        note('모든 기기에 반영되었습니다(1~2분 후 다른 기기에서 보입니다).', 'ok');
+        if (again !== null) { var a = again; again = null; publish(a); }
+      }).catch(function (e) {
+        busy = false; again = null;
+        var c = e && e.code;
+        if (c === 401) note('토큰이 만료되었거나 올바르지 않습니다(401). 새 토큰을 넣어 주세요. 그동안은 이 기기에만 저장됩니다.', 'er', true);
+        else note('반영 실패' + (c ? '(' + c + ')' : '') + ' — 이 기기에만 저장되었습니다. 잠시 후 다시 선택해 주세요.', 'er');
+      });
+    }
+    attempt();
   }
 
   var css = '.slgct{position:relative;display:inline-block;font:inherit;font-size:12px;vertical-align:middle}' +
@@ -58,6 +132,7 @@
     '.slgct .pn{position:absolute;z-index:99;top:100%;margin-top:3px;right:0;min-width:270px;max-width:92vw;background:#fff;color:#222;border:1px solid #64748b;border-radius:4px;padding:5px 9px;box-shadow:0 2px 8px #0003;text-align:left}' +
     '.slgct .pn label{display:flex;align-items:flex-start;gap:5px;padding:3px 0;white-space:normal;cursor:pointer;line-height:1.35}' +
     '.slgct .pn label.no{border-top:1px solid #cbd5e1;margin-top:3px;padding-top:5px}' +
+    '.slgct .st{font-size:11px;line-height:1.35;margin-top:4px;color:#475569}.slgct .st.ok{color:#15803d}.slgct .st.er{color:#b91c1c}.slgct .tk{display:flex;gap:4px;margin-top:4px}.slgct .tk input{flex:1;min-width:0;font:inherit;font-size:11px;padding:3px 5px;border:1px solid #94a3b8;border-radius:3px}.slgct .tk button{font:inherit;font-size:11px;padding:3px 7px;border:1px solid #17294a;border-radius:3px;background:#fff;cursor:pointer}' +
     '.slgct-fl{position:fixed;top:8px;right:10px;z-index:90}' +
     '@media print{.slgct,.slgct-fl{display:none!important}}';
   function addCss() {
@@ -81,7 +156,7 @@
     var l = list(), s = sel(), d = document.getElementById('ctSel');
     if (!d) {
       d = document.createElement('details'); d.id = 'ctSel'; d.className = 'slgct'; d.setAttribute('data-slgct', '1');
-      d.innerHTML = '<summary>담당자 표시 ▾</summary><div class="pn"></div>';
+      d.innerHTML = '<summary>담당자 표시 ▾</summary><div class="pn"><div class="rs"></div><div class="st"></div></div>';
       mount(d);
       d.addEventListener('change', function (ev) {
         var r = ev.target; if (r && r.name === 'slgctR') { d.open = false; setSel(r.value); }
@@ -91,7 +166,7 @@
     var h = '';
     l.forEach(function (x) { h += '<label><input type="radio" name="slgctR" value="' + esc(x.id) + '"' + (x.id === s ? ' checked' : '') + '><span>' + esc(x.t) + '</span></label>'; });
     h += '<label class="no"><input type="radio" name="slgctR" value=""' + (s ? '' : ' checked') + '><span>표시하지 않음</span></label>';
-    d.querySelector('.pn').innerHTML = h;
+    d.querySelector('.rs').innerHTML = h;
   }
 
   function done() {
