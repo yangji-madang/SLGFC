@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>정관컨설팅 A to Z 관리</title>
+<style>
+html{font-family:system-ui,-apple-system,"Segoe UI","Malgun Gothic",sans-serif}
+body{margin:0;background:#eef2f6;word-break:keep-all;font-size:14px}
+.tb{position:sticky;top:0;z-index:10;background:#12355b;color:#fff;padding:6px 10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tb b{margin-right:auto}.tb button,.tb select,.tb input{font:inherit;font-size:13px;border-radius:4px;border:1px solid #6f8db0;padding:3px 7px}
+.tb button{background:#1d4a7a;color:#fff;cursor:pointer}.tb button.pri{background:#c8811a;border-color:#c8811a}
+.tb input[type=color]{padding:0;width:32px;height:26px}
+.tb input[type=password]{width:150px}
+#st{padding:4px 10px;font-size:13px;color:#12355b;background:#fff8ec}
+iframe{width:100%;height:calc(100vh - 100px);border:0;background:#fff;display:block}
+.cp{text-align:right;font-size:11px;color:#51606f;padding:3px 10px}
+</style></head><body>
+<div class="tb"><b>정관컨설팅 A to Z 관리</b>
+<select id="ff"><option value="">글꼴</option><option>system-ui</option><option>Malgun Gothic</option><option>Apple SD Gothic Neo</option><option>serif</option><option>monospace</option></select>
+<select id="fs"><option value="">크기</option><option>11</option><option>12</option><option>13</option><option>14</option><option>16</option><option>18</option><option>22</option><option>28</option></select>
+<input type="color" id="fc" value="#12355b" title="글자색">
+<button id="bb"><b>B</b></button><button id="bu"><u>U</u></button><button id="bi"><i>I</i></button>
+<input type="password" id="tk" placeholder="GitHub 토큰">
+<button class="pri" id="sv">GitHub 저장</button><button id="dl">JSON 내려받기</button><button id="vw">보기 페이지</button></div>
+<div id="st">담당자 표시는 상단 「담당자 표시」에서 고릅니다(기본 표시하지 않음). 편집할 문구를 클릭해 수정하십시오. 표 안의 글자와 링크도 수정됩니다. 저장하면 aol.html 에 반영됩니다.</div>
+<iframe id="fr" src="aol.html"></iframe>
+<div class="cp">ⓒ2026. YOON HYUNCHUL, ALL RIGHTS RESERVED.</div>
+<script src="../contacts.js"></script>
+<script src="../copyright.js"></script>
+<script src="../gc.js"></script>
+<script>
+var fr=document.getElementById('fr'),st=document.getElementById('st');
+var REPO='yangji-madang/SLGFC',PATH='consult/aol.json';
+function doc(){return fr.contentDocument}
+fr.onload=function(){
+ var d=doc();var s=d.createElement('style');
+ s.textContent='[data-edit]{outline:1px dashed #c8811a;outline-offset:1px;cursor:text}[data-edit]:focus{outline:2px solid #0e7c86}.bar{display:none!important}.tw{max-height:none!important}';
+ d.head.appendChild(s);
+ setTimeout(function(){d.querySelectorAll('[data-edit]').forEach(function(e){e.contentEditable='true'});
+  d.body.className='view-info';},600);
+};
+function ex(c,v){doc().execCommand(c,false,v||null);fr.contentWindow.focus()}
+document.getElementById('bb').onclick=function(){ex('bold')};
+document.getElementById('bu').onclick=function(){ex('underline')};
+document.getElementById('bi').onclick=function(){ex('italic')};
+document.getElementById('fc').oninput=function(){ex('foreColor',this.value)};
+document.getElementById('ff').onchange=function(){if(this.value)ex('fontName',this.value)};
+document.getElementById('fs').onchange=function(){
+ if(!this.value)return;var px=this.value;ex('fontSize','7');
+ doc().querySelectorAll('font[size="7"]').forEach(function(f){var sp=doc().createElement('span');sp.style.fontSize=px+'px';sp.innerHTML=f.innerHTML;f.replaceWith(sp)});
+};
+document.getElementById('vw').onclick=function(){window.open('aol.html','_blank')};
+function collect(){var o={};doc().querySelectorAll('[data-edit]').forEach(function(e){o[e.dataset.edit]=e.innerHTML});return o}
+document.getElementById('dl').onclick=function(){
+ var b=new Blob([JSON.stringify(collect(),null,1)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='aol.json';a.click();
+};
+document.getElementById('sv').onclick=async function(){
+ var t=document.getElementById('tk').value.trim();if(!t){st.textContent='GitHub 토큰을 입력하십시오.';return}
+ var api='https://api.github.com/repos/'+REPO+'/contents/'+PATH,h={Authorization:'Bearer '+t,Accept:'application/vnd.github+json'};
+ try{
+  st.textContent='저장 중...';var sha;var g=await fetch(api,{headers:h});if(g.ok){sha=(await g.json()).sha}
+  var body=JSON.stringify(collect(),null,1);
+  var enc=btoa(unescape(encodeURIComponent(body)));
+  var r=await fetch(api,{method:'PUT',headers:h,body:JSON.stringify({message:'aol.json 수정',content:enc,sha:sha})});
+  st.textContent=r.ok?'저장 완료 : 보기 페이지에 곧 반영됩니다.':'저장 실패 : '+r.status+' (토큰 권한과 저장소를 확인하십시오)';
+ }catch(e){st.textContent='저장 실패 : '+e.message}
+};
+</script></body></html>
