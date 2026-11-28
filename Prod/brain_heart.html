@@ -54,15 +54,17 @@ tbody tr.hl{background:#FFF3C4;font-weight:700}
 .points p{margin:2px 0}
 .src{margin:6px 0 0;font-size:12.5px}
 .src a{color:var(--navy)}
-.foot{margin-top:8px;display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
-.ct{font-size:12.5px;color:var(--ink)}
-.copy{font-size:12px;color:#555;text-align:right;white-space:nowrap}
+.pgft{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-top:8px;padding-top:3px;border-top:1px solid #cfd7e0}
+.pgft .ct{font-size:12px;color:#34424f}
+.pgft .cp{font-size:11.5px;margin-left:auto;text-align:right;white-space:nowrap;color:#34424f}
 @media(max-width:720px){.grid{grid-template-columns:1fr}.title h1{font-size:18px}}
 @media print{
 @page{size:A4 portrait;margin:8mm}
 body{background:#fff;font-size:11pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .toolbar{display:none}
-.page{box-shadow:none;margin:0;padding:0;max-width:none}
+.page{box-shadow:none;margin:0;padding:0;max-width:none;min-height:279mm;display:flex;flex-direction:column}
+.pgft{margin-top:auto;font-size:9.5px}
+.pgft .ct,.pgft .cp{font-size:9.5px}
 .grid{grid-template-columns:78mm 1fr;gap:4mm}
 tr,.nest,.points{break-inside:avoid}
 }
@@ -118,11 +120,11 @@ tr,.nest,.points{break-inside:avoid}
     삼성화재 약관 별표 예시(<a href="https://dazabi.com/Content/insurance_guides/cerebro_cardiovascular_coverage.php" target="_blank" rel="noopener">다자비</a>) ·
     <a href="https://kbthink.com/insurance/trend/cerebrovascular-disease.html" target="_blank" rel="noopener">KB Think</a> ·
     <a href="https://blog.signalplanner.co.kr/?p=7817" target="_blank" rel="noopener">시그널플래너</a> ·
-    통계청 한국표준질병사인분류(KCD)</p>
+    통계청 KCD</p>
 
-  <footer class="foot">
+  <footer class="pgft">
     <div class="ct"><span data-ct></span></div>
-    <div class="copy" id="ftCopy">ⓒ2026. YOON HYUNCHUL,&nbsp; ALL RIGHTS RESERVED.</div>
+    <div class="cp" id="ftCopy"></div>
   </footer>
 </div>
 
@@ -138,6 +140,7 @@ tr,.nest,.points{break-inside:avoid}
     });
     document.getElementById(id).innerHTML=h+'</tbody>';
   }
+  document.getElementById('ftCopy').textContent='ⓒ'+new Date().getFullYear()+'. YOON HYUNCHUL, ALL RIGHTS RESERVED.';
   build('tb1',['코드','질병명','뇌출혈','뇌졸중','뇌혈관<br>질환'],[
     {c:'I60',n:'지주막하출혈',v:'OOO'},
     {c:'I61',n:'뇌내출혈',v:'OOO'},
