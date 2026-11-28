@@ -62,6 +62,7 @@ table.myth tr:nth-child(even) td.o{background:var(--redl)}table.myth tr:nth-chil
  .tw table{font-size:9.5pt}.mini{font-size:9.5pt}
  .g3,.g4,.g5,.g6,.stp,.why,.rd,.lay,.tl,.kc,.tri{break-inside:avoid;page-break-inside:avoid}
  .ttl h1{font-size:18pt}
+  .layg,.case,.bl li,p.note,.lead,.mini tr,.tl,.stp{break-inside:avoid;page-break-inside:avoid}
  .lead,.tt{break-after:avoid;page-break-after:avoid}
  section.annex{break-before:page;page-break-before:always}
  .pf .r{display:none}
@@ -97,7 +98,7 @@ table.myth tr:nth-child(even) td.o{background:var(--redl)}table.myth tr:nth-chil
 <h4>정관, 결의, 규정은 어떻게 다른가</h4>
 <div data-edit="d_who"><table class="mini"><thead><tr><th>구분</th><th>정하는 내용</th><th>결의 기관</th><th>등기 및 보관</th></tr></thead><tbody><tr><td>정관</td><td>회사 기본 규칙</td><td>주주총회 특별결의</td><td>변경등기 (등기사항 한정)</td></tr><tr><td>임원 보수 한도</td><td>연간 총액 한도</td><td>주주총회 보통결의</td><td>등기 없음, 의사록 보관</td></tr><tr><td>임원 퇴직금 규정</td><td>지급 기준 및 배수</td><td>주주총회 승인 권장</td><td>등기 없음, 별첨 비치</td></tr><tr><td>이사회 규정</td><td>내부 운영 절차</td><td>이사회 결의</td><td>등기 없음</td></tr></tbody></table></div>
 <h4>임원 보수와 퇴직금 3단 구조 (상법 제388조)</h4>
-<div data-edit="d_layers"><div class="lay l1"><b>1층 정관</b><p>임원 보수 및 퇴직금의 근거 조항을 둡니다. 구체 금액은 주총 결의 또는 규정에 위임합니다.</p></div><div class="lay l2"><b>2층 주주총회 결의</b><p>이사 보수 한도는 정관 또는 주총 결의로 정합니다 (상법 제388조). 이사회에 포괄 위임하면 무효 위험이 있습니다.</p></div><div class="lay l3"><b>3층 임원 보수 및 퇴직금 규정</b><p>직급별 기준과 지급률을 정합니다. 주총 승인 후 별첨으로 관리해야 세법상 방어력이 생깁니다.</p></div></div>
+<div data-edit="d_layers" class="layg"><div class="lay l1"><b>1층 정관</b><p>임원 보수 및 퇴직금의 근거 조항을 둡니다. 구체 금액은 주총 결의 또는 규정에 위임합니다.</p></div><div class="lay l2"><b>2층 주주총회 결의</b><p>이사 보수 한도는 정관 또는 주총 결의로 정합니다 (상법 제388조). 이사회에 포괄 위임하면 무효 위험이 있습니다.</p></div><div class="lay l3"><b>3층 임원 보수 및 퇴직금 규정</b><p>직급별 기준과 지급률을 정합니다. 주총 승인 후 별첨으로 관리해야 세법상 방어력이 생깁니다.</p></div></div>
 <h4>꼭 알아야 할 핵심 용어</h4>
 <div class="tw" data-edit="d_terms"><table><thead><tr><th>용어</th><th>쉬운 설명</th><th>근거</th></tr></thead><tbody>
 <tr><td>특별결의</td><td>출석 주주 의결권의 2/3 이상이면서 발행주식총수의 1/3 이상이 찬성하는 결의입니다. 정관변경이 대표적입니다.</td><td><a class="lw" href="https://www.law.go.kr/법령/상법/제434조" target="_blank" rel="noopener">상법 제434조</a></td></tr>
@@ -169,10 +170,11 @@ table.myth tr:nth-child(even) td.o{background:var(--redl)}table.myth tr:nth-chil
  var y=new Date().getFullYear();document.documentElement.style.setProperty('--cr','"ⓒ'+y+'. YOON HYUNCHUL, ALL RIGHTS RESERVED."');document.querySelectorAll('.yrs').forEach(function(e){e.textContent=y});
  document.getElementById('pr').onclick=function(){window.print()};
  fetch('aol.json?'+Date.now()).then(function(r){return r.ok?r.json():null}).then(function(j){
-   if(!j)return;Object.keys(j).forEach(function(k){var e=document.querySelector('[data-edit="'+k+'"]');if(e)e.innerHTML=j[k]});
+   if(!j)return;Object.keys(j).forEach(function(k){var e=document.querySelector('[data-edit="'+k+'"]');if(e)e.innerHTML=j[k]});if(window.glScan)window.glScan(document.body);
  }).catch(function(){});
 })();
 </script>
+<script src="aol_gl.js"></script>
 <script src="../contacts.js"></script>
 <script src="../copyright.js"></script>
 <script src="../gc.js"></script></body></html>
