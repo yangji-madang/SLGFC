@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>정관컨설팅 A to Z | 필수 점검 한눈에 보기</title>
+<style>
+:root{--navy:#17294a;--navy2:#2a4470;--gold:#b08435;--goldl:#f5ecd7;--ink:#1d2433;--mut:#566074;--line:#d5dbe6;--soft:#f3f6fb;--red:#b4443c;--redl:#fbeeec;--grn:#2c7a5b;--grnl:#eaf5ef}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#e9edf3}
+body{font-family:system-ui,-apple-system,'Segoe UI','Malgun Gothic','Apple SD Gothic Neo','Noto Sans CJK KR',sans-serif;color:var(--ink);font-size:8.6pt;line-height:1.36;word-break:keep-all;overflow-wrap:normal;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.bar{display:flex;gap:6px;position:static;width:210mm;max-width:100%;margin:8px auto -4px;justify-content:flex-end;flex-wrap:wrap}
+.bar button{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
+.sheet{width:210mm;height:296.5mm;margin:10px auto;background:#fff;padding:5.5mm 6.5mm 6.5mm;display:flex;flex-direction:column;gap:0;box-shadow:0 2px 14px rgba(20,40,80,.18);overflow:hidden;position:relative}
+/* 제목 */
+.ttl{display:flex;align-items:center;gap:3mm;border-radius:2.2mm;padding:1.8mm 4mm;color:#fff;border-bottom:.8mm solid #f2b84b;text-shadow:0 1px 2px rgba(50,8,12,.6);
+background:radial-gradient(80% 220% at 100% 0%,rgba(255,200,90,.35),transparent 60%),linear-gradient(110deg,#6b1d2a 0%,#92352c 45%,#b4502c 100%)}
+.ttl h1{font-size:16.5pt;line-height:1.1;white-space:nowrap;letter-spacing:-.01em;font-weight:800}
+.ttl .sub{font-size:8pt;font-weight:700;line-height:1.3;flex:1;border-left:1px solid rgba(255,255,255,.6);padding-left:3mm}
+.ttl .sub i{display:block;font-style:normal;font-size:6.4pt;letter-spacing:.12em;color:#ffe8a8;font-weight:700}
+.ttl .chips{display:flex;gap:1.2mm}
+.ttl .chips span{background:rgba(6,30,70,.38);border:1px solid rgba(255,255,255,.6);border-radius:5mm;padding:.3mm 2mm;font-size:6.9pt;font-weight:700;white-space:nowrap}
+.ttl .chips b{color:#ffe08a}
+.ttl .qd{font-size:6.4pt;white-space:nowrap;align-self:flex-start;font-weight:600}
+/* 섹션 머리 */
+.sh{display:flex;align-items:center;gap:1.8mm;font-size:10.2pt;font-weight:700;color:var(--navy);border-bottom:1.4px solid var(--gold);padding-bottom:.8mm;margin-bottom:1.6mm}
+.sh .n{display:inline-flex;align-items:center;justify-content:center;width:5mm;height:5mm;border-radius:50%;background:var(--navy);color:#f1dcab;font-size:8pt}
+.sh .hint{margin-left:auto;font-size:6.8pt;font-weight:400;color:var(--mut)}
+/* 흐름 */
+.chain{display:grid;grid-template-columns:repeat(7,1fr);gap:3.4mm}
+.st{position:relative;border:1px solid var(--line);border-top:.8mm solid var(--navy2);border-radius:1.6mm;background:linear-gradient(#fff,var(--soft));padding:1.3mm 1.7mm 1.5mm;cursor:pointer;min-height:16mm}
+.st:hover,.cd:hover,.rw:hover,.mt:hover,.tn:hover .tb{box-shadow:0 0 0 1.5px var(--gold) inset}
+.st .no{display:inline-block;width:3.6mm;height:3.6mm;line-height:3.6mm;text-align:center;border-radius:50%;background:var(--gold);color:#fff;font-size:6.6pt;margin-right:1mm;vertical-align:1px}
+.st b{font-size:9.4pt;color:var(--navy)}
+.st small{display:block;color:var(--gold);font-weight:700;font-size:7.4pt;margin:.2mm 0 .4mm}
+.st p{font-size:7.3pt;color:var(--mut);line-height:1.3}
+.st:not(:last-child)::after{content:"";position:absolute;top:50%;right:-3.1mm;border-left:2.3mm solid var(--gold);border-top:1.4mm solid transparent;border-bottom:1.4mm solid transparent;transform:translateY(-50%)}
+.i{position:absolute;top:1mm;right:1mm;width:3.2mm;height:3.2mm;line-height:3.2mm;border-radius:50%;background:var(--navy2);color:#fff;font-size:6pt;text-align:center;font-style:italic;font-family:Georgia,serif}
+.fm{white-space:nowrap;margin-top:1.8mm;background:var(--goldl);border:1px solid #e3d3a8;border-radius:1.6mm;padding:1.3mm 3mm;text-align:center;font-weight:700;color:var(--navy);font-size:8.4pt}
+.fm i{font-style:normal;color:var(--gold);font-weight:400}
+.fm span{font-weight:400;color:var(--mut);font-size:7.6pt}
+/* 2열 */
+.two{display:grid;grid-template-columns:67mm 1fr;gap:3.2mm}
+.rt{font-size:7.8pt}
+.rh,.rw{display:grid;grid-template-columns:17mm 1fr 11.5mm 11mm;gap:1.2mm;align-items:center}
+.rh{font-size:6.8pt;color:var(--mut);text-align:center;padding-bottom:.6mm}
+.rw{padding:.9mm .6mm;border-bottom:1px dashed var(--line);cursor:pointer}
+.rw .rl{font-weight:700;color:var(--navy);font-size:7.6pt}
+.rw .bb{position:relative;height:4.4mm;background:#edf1f7;border-radius:1mm;overflow:hidden}
+.rw .bb i{position:absolute;left:0;top:0;bottom:0;border-radius:1mm;background:linear-gradient(90deg,#2a4470,#4d74a8)}
+.rw .bb b{position:absolute;left:1.4mm;top:0;line-height:4.4mm;color:#fff;font-size:8pt}
+.rw .re{text-align:center;color:var(--gold);font-weight:700}
+.rw .rd{text-align:center;color:var(--mut)}
+.note{font-size:6.9pt;color:var(--mut);line-height:1.35;margin-top:1mm}
+.note a,.lk{color:var(--navy2);text-decoration:underline dotted;cursor:pointer}
+.ex{width:100%;border-collapse:collapse;font-size:7.8pt}
+.ex td{padding:.3mm 1.4mm;border-bottom:1px solid #e6eaf1}
+.ex td:nth-child(2){text-align:right;font-weight:700;white-space:nowrap}
+.ex td:nth-child(3){color:var(--mut);font-size:7.2pt}
+.ex tr.hl td{background:var(--soft);font-weight:700;color:var(--navy)}
+.ex tr.fin td{background:var(--navy);color:#f6e6bd;font-weight:700}
+.ex tr.fin td:nth-child(3){color:#dfe6f2}
+.ex .neg td:nth-child(2){color:var(--red)}
+.ex tr[data-p]{cursor:pointer}
+.ex tr.sb td:first-child{padding-left:5.5mm}
+.cap{font-size:6.9pt;color:var(--mut);margin-bottom:.8mm}
+.co{margin-top:1mm;white-space:nowrap;border:1px solid #e3d3a8;background:var(--goldl);border-radius:1.4mm;padding:.9mm 2mm;font-size:7.6pt;cursor:pointer}
+.co b{color:var(--navy)}
+/* 일정 */
+.tl{display:grid;grid-template-columns:repeat(5,1fr);position:relative;gap:2mm}
+.tl::before{content:"";position:absolute;left:10%;right:10%;top:1.5mm;height:.7mm;background:linear-gradient(90deg,var(--navy2),var(--gold))}
+.tn{position:relative;text-align:center;cursor:pointer;padding-top:3.8mm}
+.tn::before{content:"";position:absolute;top:0;left:50%;width:3.2mm;height:3.2mm;margin-left:-1.6mm;border-radius:50%;background:#fff;border:.8mm solid var(--gold)}
+.tn .tb{border:1px solid var(--line);border-radius:1.5mm;background:var(--soft);padding:.9mm 1.4mm 1.1mm}
+.tn .dt{font-weight:700;color:var(--navy);font-size:9pt}
+.tn .tt{font-weight:700;color:var(--gold);font-size:7.8pt}
+.tn p{font-size:7pt;font-weight:700;color:#3a465e;line-height:1.28}
+/* 카드 */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:2.2mm}
+.cd{position:relative;border:1px solid var(--line);border-left:1mm solid var(--gold);border-radius:1.5mm;background:#fff;padding:1.1mm 1.8mm 1.2mm;cursor:pointer}
+.cd .tg{display:inline-block;background:var(--navy);color:#f1dcab;border-radius:1mm;font-size:6.6pt;padding:.1mm 1.4mm;margin-right:1mm}
+.cd b{font-size:8.1pt;color:var(--navy);white-space:nowrap}
+.cd p{font-size:7.3pt;color:var(--ink);line-height:1.32;margin-top:.5mm}
+.cd p u{text-decoration:none;color:var(--red);font-weight:700}
+/* 오해 */
+.myth{display:flex;flex-direction:column;gap:.8mm;flex:1 1 auto}
+.mt{flex:1 0 auto;position:relative;display:grid;grid-template-columns:.95fr 3.4mm 1.5fr;align-items:stretch;border:1px solid var(--line);border-radius:1.5mm;overflow:hidden;cursor:pointer}
+.mt .o{background:var(--redl);padding:.4mm 2mm;color:#6d2a25}
+.mt .o:before{content:"✕ 오해";margin-right:1.2mm;white-space:nowrap;font-weight:700;color:var(--red);font-size:6.8pt}
+.mt .ar{background:linear-gradient(90deg,var(--redl),var(--grnl));display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:7pt}
+.mt .s{background:var(--grnl);padding:.4mm 2mm;color:#1f4d3a}
+.mt .s:before{content:"○ 사실";margin-right:1.2mm;white-space:nowrap;font-weight:700;color:var(--grn);font-size:6.8pt}
+.mt .o,.mt .s{font-size:7.6pt;line-height:1.32;display:flex;align-items:center}
+/* 바닥 */
+.main{display:flex;flex-direction:column;gap:2.1mm;flex:1 1 auto}
+.grow{flex:1 1 auto;display:flex;flex-direction:column}
+.ft{margin-top:2.6mm;border-top:1.4px solid var(--gold);background:var(--soft);border-radius:0 0 1.5mm 1.5mm;padding:1.3mm 2.5mm 1.4mm;flex-shrink:0}
+.law a,.lw a{color:inherit;text-decoration:underline dotted;text-underline-offset:1px}.law a:hover,.lw a:hover{color:#1763ad}
+.ft .law{font-size:5.9pt;color:var(--mut);line-height:1.35}
+.ft .row{display:flex;justify-content:space-between;align-items:center;margin-top:.8mm;font-size:6.6pt}
+.ft .row .l{color:var(--navy);font-weight:700}
+.ft .row .r{color:var(--navy);font-weight:400;font-size:6.1pt;margin-left:auto}
+.hidec .ft .row .l{display:none}.editing.hidec .ft .row .l{display:inline}
+.bar a.lk{font-size:12px;padding:5px 12px;border:1px solid var(--navy);border-radius:4px;color:var(--navy);background:#fff;text-decoration:none}
+#gst{align-self:center;font-size:11px;color:#17294a;margin-right:4px}
+@media print{#gst{display:none!important}}
+/* 팝업 */
+.pop{position:fixed;z-index:20;width:min(390px,92vw);background:#fff;border-radius:8px;box-shadow:0 8px 30px rgba(10,25,55,.35);border:1px solid #c8d2e3;font-size:13px;line-height:1.6}
+.pop[hidden]{display:none}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;background:linear-gradient(115deg,#1b2f55,#35598a);color:#f6e6bd;border-radius:8px 8px 0 0;cursor:move;touch-action:none;user-select:none}
+.ph b{font-size:14px}
+.ph button{border:0;background:transparent;color:#fff;font-size:20px;line-height:1;cursor:pointer;padding:0 4px}
+.pb{padding:10px 14px 12px;max-height:68vh;overflow:auto;color:#222}
+.pb p{margin-bottom:7px}
+.pb em{display:inline-block;font-style:normal;font-weight:700;font-size:11px;background:var(--goldl);color:#7a5a1e;border-radius:3px;padding:0 6px;margin-right:6px}
+.pb .lw{margin-top:8px;padding-top:6px;border-top:1px dashed #ccd4e2;font-size:11.5px;color:#5a6577}
+@page{size:A4 portrait;margin:0}
+@media print{html,body{background:#fff}.sheet{margin:0;box-shadow:none;zoom:1!important}.bar,.pop{display:none!important}.i{display:none}.st:hover,.cd:hover,.rw:hover,.mt:hover,.tn:hover .tb{box-shadow:none}}
+.bar button.sec{background:#fff;color:var(--navy)}
+.editing [data-ed]{outline:1px dashed #e0a43a;outline-offset:1px;cursor:text}
+.editing [data-ed]:focus{outline:2px solid #e0a43a;background:#fffbea}
+.editing [data-p]{cursor:text}
+.edtip{display:none;position:fixed;left:12px;bottom:10px;z-index:6;background:#17294a;color:#ffe8a8;font-size:12px;padding:6px 12px;border-radius:5px}
+.editing .edtip{display:block}
+.pop [contenteditable]{outline:1px dashed #e0a43a}
+@media print{.edtip{display:none!important}}
+/* 정관 인포 : 여백을 글자 크기로 환원 */
+.st b{font-size:10.4pt}.st small{font-size:8.2pt}.st p{font-size:8.4pt}.st{min-height:19mm}
+.cd b{font-size:9.2pt}.cd p{font-size:8.3pt;line-height:1.36}.cd{padding:1.5mm 2mm 1.6mm}
+.mt .o,.mt .s{font-size:8.9pt}.mt .o:before,.mt .s:before{font-size:7.4pt}.fm{font-size:8.8pt}.sh{font-size:11pt}
+</style>
+</head>
+<body class="">
+<div class="bar">
+  <button type="button" id="prt">인쇄 / PDF 저장</button>
+</div>
+
+
+<main class="sheet" id="sheet" data-ver="1795855636283">
+<div class="main" id="main">
+<header class="ttl">
+  <h1>정관컨설팅 A to Z</h1>
+  <div class="sub"><i>CHARTER BRIEFING</i>정관, 법규에 맞게 갖추고 있습니까<br>: 의미 · 점검 · 위험 · 오해</div>
+  <div class="chips"><span>필수기재 <b>8항목</b></span><span>변경 <b>특별결의</b></span><span>변경등기 <b>2주</b></span></div>
+  <div class="qd">기준일 <b id="qd">2026.11.28</b></div>
+</header>
+<section>
+  <div class="sh"><span class="n">1</span>정관의 의미<span class="hint">각 칸을 누르면 쉬운 설명이 열립니다</span></div>
+  <div class="chain" style="grid-template-columns:repeat(4,1fr)">
+    <div class="st" data-p="s1" tabindex="0"><span class="i">i</span><span class="no">1</span><b>회사의 헌법</b><small>조직·운영의 기본 규칙</small><p>대표·주주·이사회가 무엇을 어떻게 정할지의 1차 기준</p></div>
+    <div class="st" data-p="s2" tabindex="0"><span class="i">i</span><span class="no">2</span><b>필수 기재 8항목</b><small>빠지면 무효 사유</small><p>목적·상호·주식총수·액면금액·본점·공고방법 등</p></div>
+    <div class="st" data-p="s3" tabindex="0"><span class="i">i</span><span class="no">3</span><b>변경은 특별결의</b><small>총회 2/3 + 총수 1/3</small><p>이사회만으로 불가, 변경 후 2주 내 변경등기</p></div>
+    <div class="st" data-p="s4" tabindex="0"><span class="i">i</span><span class="no">4</span><b>소규모회사 특례</b><small>자본금 10억 원 미만</small><p>공증 생략·소집통지 10일·서면결의·감사 생략</p></div>
+  </div>
+  <div class="fm" data-p="fm" tabindex="0" style="cursor:pointer">법규 개정 일정 <i>:</i> 2025.7.22 충실의무 <i>·</i> 2026.3.6 자기주식 소각 <i>·</i> 2026.7.23 독립이사 <i>·</i> 2026.9.10 집중투표 <i>·</i> 2027.1.1 전자주총</div>
+</section>
+<section>
+  <div class="sh"><span class="n">2</span>법규 기준 필수 점검사항<span class="hint">각 칸을 누르면 점검 방법이 열립니다</span></div>
+  <div class="grid3">
+    <div class="cd" data-p="c1" tabindex="0"><span class="tg">필수기재</span><b>절대적 기재사항 8개</b><p>하나라도 빠지면 <u>정관 무효 사유</u>.<br>등기부등본과 나란히 대조.</p></div>
+    <div class="cd" data-p="c2" tabindex="0"><span class="tg">주식</span><b>발행예정주식총수 한도</b><p>한도 안에서만 신주 발행.<br>부족하면 <u>먼저 정관 변경</u>.</p></div>
+    <div class="cd" data-p="c3" tabindex="0"><span class="tg">양도제한</span><b>주식 양도 제한 규정</b><p><u>이사회 승인</u> 문구가 없으면 원칙적으로 자유 양도.</p></div>
+    <div class="cd" data-p="c4" tabindex="0"><span class="tg">보수</span><b>임원 보수·상여 지급기준</b><p>정관 또는 주총결의로 한도 설정.<br>초과분은 <u>손금 불인정</u>.</p></div>
+    <div class="cd" data-p="c5" tabindex="0"><span class="tg">퇴직금</span><b>임원 퇴직금 규정</b><p>없으면 <u>직전 1년 총급여×10%×근속연수</u>까지만 비용 인정.</p></div>
+    <div class="cd" data-p="c6" tabindex="0"><span class="tg">이사책임</span><b>충실의무·자기거래</b><p>2025.7.22 개정 반영 여부와<br><u>이사회 승인 절차</u> 점검.</p></div>
+    <div class="cd" data-p="c7" tabindex="0"><span class="tg">배당</span><b>중간배당·현물배당</b><p>정관 <u>근거 규정</u>이 있어야 활용.</p></div>
+    <div class="cd" data-p="c8" tabindex="0"><span class="tg">절차</span><b>변경 절차와 등기</b><p>특별결의 → <u>2주 내 변경등기</u>.<br>소집통지에 의안 요령 기재.</p></div>
+    <div class="cd" data-p="c9" tabindex="0"><span class="tg">소규모</span><b>특례 문구와 요건</b><p>소집 10일·서면결의·감사 생략.<br>자본금 <u>10억 원 이상</u>이면 특례 종료.</p></div>
+  </div>
+</section>
+<section>
+  <div class="sh"><span class="n">3</span>점검하지 않으면 생기는 위험<span class="hint">각 칸을 누르면 근거와 영향이 열립니다</span></div>
+  <div class="grid3">
+    <div class="cd" data-p="r1" tabindex="0"><span class="tg">소송</span><b>주총 결의취소 소송</b><p>결의일 <u>2개월 내</u> 제기 가능.<br>임원 선임·보수 결의가 흔들림.</p></div>
+    <div class="cd" data-p="r2" tabindex="0"><span class="tg">소송</span><b>신주발행 무효 소송</b><p>발행일 <u>6개월 내</u> 제기 가능.<br>증자 후 지분 구조 붕괴 위험.</p></div>
+    <div class="cd" data-p="r3" tabindex="0"><span class="tg">과태료</span><b>변경등기 지연</b><p><u>최대 500만 원</u> 과태료.<br>등기부와 정관 불일치.</p></div>
+    <div class="cd" data-p="r4" tabindex="0"><span class="tg">세무</span><b>보수·상여 비용 불인정</b><p>지급기준 미비·초과분 <u>손금불산입</u>, 대표 상여 처분 가능.</p></div>
+    <div class="cd" data-p="r5" tabindex="0"><span class="tg">세무</span><b>퇴직금 한도 초과</b><p>법인 비용 불인정, 개인은 한도 초과분 <u>근로소득</u> 과세.</p></div>
+    <div class="cd" data-p="r6" tabindex="0"><span class="tg">책임</span><b>이사 손해배상</b><p>충실의무·자기거래 절차 위반 시 <u>회사에 배상 책임</u>.</p></div>
+  </div>
+</section>
+<section class="grow">
+  <div class="sh"><span class="n">4</span>자주 하는 오해, 사실은?<span class="hint">각 줄을 누르면 근거가 열립니다</span></div>
+  <div class="myth">
+    <div class="mt" data-p="m1" tabindex="0"><div class="o">"정관은 한번 만들면 끝이다"</div><div class="ar">▶</div><div class="s"><span>상법 개정, 증자, 본점 이전 때마다 <b>손봐야</b> 합니다. 현행 법규와 어긋난 조항은 분쟁 시 불리합니다.</span></div></div>
+    <div class="mt" data-p="m2" tabindex="0"><div class="o">"소규모회사는 정관이 필요 없다"</div><div class="ar">▶</div><div class="s"><span>정관은 <b>필수</b>입니다. 자본금 10억 원 미만이면 <b>공증만 생략</b>할 수 있습니다.</span></div></div>
+    <div class="mt" data-p="m3" tabindex="0"><div class="o">"정관 변경은 이사회로 충분하다"</div><div class="ar">▶</div><div class="s"><span><b>주주총회 특별결의</b> 사항입니다. 이사회 결의만으로는 효력이 없고 취소 소송 대상이 됩니다.</span></div></div>
+    <div class="mt" data-p="m4" tabindex="0"><div class="o">"정관만 고치면 등기는 안 해도 된다"</div><div class="ar">▶</div><div class="s"><span>등기사항이 바뀌면 <b>2주 내 변경등기</b>. 늦으면 과태료 대상입니다.</span></div></div>
+    <div class="mt" data-p="m5" tabindex="0"><div class="o">"퇴직금은 이사회에서 정하면 된다"</div><div class="ar">▶</div><div class="s"><span>정관에 규정이 없으면 비용 인정 한도가 <b>총급여 10%×근속연수</b>로 줄고, 개인 퇴직소득 한도도 별도입니다.</span></div></div>
+    <div class="mt" data-p="m6" tabindex="0"><div class="o">"주총은 언제나 2주 전에 알려야 한다"</div><div class="ar">▶</div><div class="s"><span>자본금 10억 원 미만은 <b>10일 전</b> 통지와 <b>서면 결의</b>가 가능합니다. 정관이 더 엄격하면 정관이 우선합니다.</span></div></div>
+  </div>
+</section>
+</div>
+<footer class="ft" id="ft">
+  <div class="law">근거 : 상법 제289·292·317·335·363·376·382조의3·383·388·399·400·409·429·433·434조, 제462조의3, 제462조의4, 제635조, 법인세법 시행령 제43·44조, 소득세법 제22조, 소득세법 시행령 제42조의2<br>※ 설명용 자료입니다. 2026.11.28 현행법 기준(법규 개정 일정은 항목별 적용 대상 확인 필요). 개별 사안은 전문가와 확인하세요.</div>
+  <div class="row"><span class="l" data-ct></span><span class="r">ⓒ<span id="yr">2026</span>. YOON HYUNCHUL, ALL RIGHTS RESERVED.</span></div>
+</footer>
+</main>
+
+<div class="pop" id="pop" hidden="" role="dialog" aria-modal="false" aria-labelledby="pt">
+  <div class="ph" id="ph"><b id="pt"></b><button type="button" id="px" aria-label="닫기">×</button></div>
+  <div class="pb" id="pbody"></div>
+</div>
+
+<script id="pov" type="application/json">{}</script>
+<script>
+(function(){
+var sheetEl=document.getElementById("sheet"),mainEl=document.getElementById("main"),ftEl=document.getElementById("ft");
+var FN=location.pathname.split("/").pop()||"aol_info_admin.html";
+if(!/\.html$/i.test(FN))FN+=".html";
+var KEY="info_edit_"+FN,ov={};
+try{ov=JSON.parse(document.getElementById("pov").textContent||"{}")}catch(e){}
+
+var d=new Date(),y=d.getFullYear(),m=('0'+(d.getMonth()+1)).slice(-2),dd=('0'+d.getDate()).slice(-2);
+var ASOF=document.getElementById('qd').textContent;
+document.getElementById('yr').textContent=y;
+
+var P={"s1": {"t": "정관 : 회사의 헌법", "b": "<p><em>쉬운 설명</em>회사의 조직과 운영에 관한 기본 규칙입니다. 대표와 주주, 이사회가 무엇을 어떤 절차로 정할지 이 문서가 1차 기준이 됩니다.</p><p><em>핵심</em>회사 내부 규칙이지만 주식 양도, 임원 보수·퇴직금, 배당 방식까지 정관 유무에 따라 결과가 달라집니다.</p>", "l": "상법 제289조"}, "s2": {"t": "필수 기재 8항목 : 빠지면 정관이 무효", "b": "<p><em>쉬운 설명</em>목적, 상호, 발행예정주식총수, 1주의 액면금액, 설립 시 발행주식총수, 본점 소재지, 공고방법, 발기인의 성명·주민등록번호·주소 8가지는 반드시 적어야 합니다.</p><p><em>주의</em>하나라도 빠지면 정관이 효력을 갖지 못할 수 있어, 오래된 정관일수록 누락·오기 점검이 필요합니다.</p>", "l": "상법 제289조"}, "s3": {"t": "변경은 주총 특별결의와 등기", "b": "<p><em>쉬운 설명</em>정관은 대표 마음대로 고칠 수 없고 주주총회 특별결의가 필요합니다. 출석 주주 의결권의 3분의 2 이상이면서 발행주식총수의 3분의 1 이상이어야 합니다.</p><p><em>절차</em>소집통지에 의안의 요령을 적어야 하고, 등기사항이 바뀌면 변경 후 2주 이내에 변경등기를 해야 합니다.</p>", "l": "상법 제433조, 제434조, 제317조, 제183조"}, "s4": {"t": "소규모회사 특례 : 자본금 10억 원 미만", "b": "<p><em>쉬운 설명</em>자본금 총액이 10억 원 미만인 회사는 절차를 줄여 주는 특례가 있습니다. 정관 공증 생략, 소집통지 10일 전, 서면 결의, 이사 1~2인, 감사 생략이 대표적입니다.</p><p><em>주의</em>특례는 정관에 담아 두어야 안전하게 쓸 수 있습니다. 정관에 문구를 꼭 넣어야 하는지는 항목별로 확인이 필요합니다.</p>", "l": "상법 제292조, 제363조, 제383조, 제409조"}, "c1": {"t": "필수 기재 8항목 점검", "b": "<p><em>점검</em>목적, 상호, 발행예정주식총수, 액면금액, 설립 시 발행주식총수, 본점 소재지, 공고방법, 발기인 인적사항 8가지가 모두 있는지 봅니다.</p><p><em>실무</em>상호·본점 이전, 사업목적 추가 후 정관과 등기부가 어긋난 회사가 많습니다. 등기부등본과 나란히 대조하세요.</p>", "l": "상법 제289조"}, "c2": {"t": "발행예정주식총수", "b": "<p><em>쉬운 설명</em>회사가 앞으로 발행할 수 있는 주식의 최대 수입니다. 정관에 적힌 한도 안에서만 신주를 발행할 수 있습니다.</p><p><em>점검</em>증자 계획이 있다면 남은 한도를 확인하고, 부족하면 먼저 정관을 변경해야 합니다.</p>", "l": "상법 제289조"}, "c3": {"t": "주식 양도 제한", "b": "<p><em>쉬운 설명</em>정관에 \"주식 양도는 이사회 승인을 받아야 한다\"는 규정이 있어야 양도를 제한할 수 있습니다. 규정이 없으면 원칙적으로 자유롭게 양도됩니다.</p><p><em>점검</em>가족·동업 회사는 제3자에게 주식이 넘어가는 상황을 막을 장치가 있는지 확인하세요.</p>", "l": "상법 제335조"}, "c4": {"t": "임원 보수 한도와 지급 기준", "b": "<p><em>쉬운 설명</em>이사의 보수는 정관에 정하거나 주주총회 결의로 정해야 합니다. 정해진 한도를 넘는 지급은 법적으로도 세무적으로도 다툼이 됩니다.</p><p><em>세무</em>임원 상여금은 정관·주총·이사회 결의로 정한 지급 기준을 초과하면 초과분이 손금으로 인정되지 않습니다.</p>", "l": "상법 제388조, 법인세법 시행령 제43조"}, "c5": {"t": "임원 퇴직금 규정", "b": "<p><em>쉬운 설명</em>정관에 퇴직금 규정(또는 정관 위임 퇴직금 지급규정)이 있으면 그 금액까지 비용으로 봅니다. 규정이 없으면 한도가 걸립니다.</p><p><em>세무</em>정관에 규정이 없으면 법인의 비용 인정 한도는 직전 1년 총급여 × 10% × 근속연수입니다. 규정이 있어도 퇴직소득세 한도는 별도로 적용됩니다.</p>", "l": "법인세법 시행령 제44조, 소득세법 시행령 제42조의2"}, "c6": {"t": "이사의 충실의무와 책임", "b": "<p><em>쉬운 설명</em>개정 상법은 이사의 충실의무 대상을 회사뿐 아니라 주주까지 넓혔고 2025년 7월 22일 공포와 함께 시행되었습니다.</p><p><em>점검</em>경업금지, 자기거래 승인, 책임 감경 규정이 현행 상법과 맞는지 보고, 이사회 승인 절차를 문서로 남기세요.</p>", "l": "상법 제382조의3, 제397조, 제398조, 제400조"}, "c7": {"t": "중간배당·현물배당", "b": "<p><em>쉬운 설명</em>중간배당과 현물배당은 정관에 근거 규정이 있어야 할 수 있습니다. 규정이 없으면 결산 배당만 가능합니다.</p><p><em>점검</em>가업·상속 설계에서 배당을 활용하려면 정관에 먼저 반영해 두세요.</p>", "l": "상법 제462조의3, 제462조의4"}, "c8": {"t": "변경 절차 점검", "b": "<p><em>절차</em>① 이사회 소집·주총 소집 결의 ② 소집통지에 의안 요령 기재 ③ 특별결의 ④ 변경 후 2주 이내 변경등기 순서로 진행합니다.</p><p><em>주의</em>소규모회사는 소집통지가 10일 전이지만, 일반 회사는 2주 전입니다. 결의 하자는 취소 소송으로 이어질 수 있습니다.</p>", "l": "상법 제363조, 제433조, 제434조, 제317조"}, "c9": {"t": "소규모회사 특례 반영", "b": "<p><em>특례</em>소집통지 10일 전(제363조 4항), 서면 결의(제363조 5항), 이사 1~2인(제383조), 감사 생략(제409조 4항), 정관 공증 생략(제292조 단서)입니다.</p><p><em>점검</em>특례를 쓰는 회사인지, 자본금이 10억 원 이상으로 커져 특례 요건을 벗어나지 않았는지 확인하세요.</p>", "l": "상법 제292조, 제363조, 제383조, 제409조"}, "fm": {"t": "2025~2027 상법 개정 일정", "b": "<p><em>일정</em>2025.7.22 이사 충실의무 확대 시행, 2026.3.6 자기주식 소각 관련, 2026.7.23 독립이사·3%룰, 2026.9.10 집중투표·분리선출, 2027.1.1 전자주주총회 도입입니다.</p><p><em>주의</em>상장회사에 주로 해당하는 조항이 많습니다. 우리 회사에 적용되는지는 항목별로 확인이 필요합니다.</p>", "l": "상법 제382조의3, 제449조의2, 제542조의8"}, "r1": {"t": "위험 1 : 결의취소 소송", "b": "<p><em>내용</em>정관이 정한 절차를 어기거나 소집통지에 흠이 있으면 주주가 결의일로부터 2개월 이내에 결의취소의 소를 제기할 수 있습니다.</p><p><em>영향</em>취소 판결이 확정되면 그 결의에 기초한 임원 선임, 보수 결정, 정관 변경이 소급해 효력을 잃을 수 있습니다.</p>", "l": "상법 제376조"}, "r2": {"t": "위험 2 : 신주발행 무효 소송", "b": "<p><em>내용</em>발행예정주식총수 초과, 정관 근거 없는 신주 발행 등 중대한 하자가 있으면 발행일로부터 6개월 이내에 신주발행무효의 소가 가능합니다.</p><p><em>영향</em>증자 후 지분 구조가 흔들려 상속·승계 설계가 무너질 수 있습니다.</p>", "l": "상법 제429조"}, "r3": {"t": "위험 3 : 변경등기 과태료", "b": "<p><em>내용</em>정관 변경으로 등기사항이 바뀌었는데 2주 이내에 변경등기를 하지 않으면 대표이사에게 과태료가 부과될 수 있습니다. 상한은 500만 원입니다.</p><p><em>영향</em>등기부와 정관이 달라지면 은행·입찰·정책자금 심사에서 문제로 드러납니다.</p>", "l": "상법 제317조, 제183조, 제635조"}, "r4": {"t": "위험 4 : 임원 보수·상여 비용 불인정", "b": "<p><em>내용</em>보수·상여 지급 기준을 정관·주총·이사회 결의로 정하지 않거나 한도를 넘기면 초과분은 법인의 손금으로 인정되지 않습니다.</p><p><em>영향</em>법인세가 늘고, 소득 귀속에 따라 대표 개인에게 상여 소득세가 추가될 수 있습니다.</p>", "l": "상법 제388조, 법인세법 시행령 제43조"}, "r5": {"t": "위험 5 : 퇴직금 한도 초과", "b": "<p><em>법인</em>정관에 퇴직금 규정이 없으면 직전 1년 총급여 × 10% × 근속연수까지만 비용으로 인정합니다.</p><p><em>개인</em>임원 퇴직소득은 퇴직 전 3년 평균 총급여 × 1/10 × 근속연수에 배수를 곱한 한도까지만 퇴직소득이고, 초과분은 근로소득입니다. 배수는 2012~2019년 근무분 3배, 2020년 이후 근무분 2배이며 2011년 이전 근무분은 한도가 없습니다.</p>", "l": "법인세법 시행령 제44조, 소득세법 제22조, 소득세법 시행령 제42조의2"}, "r6": {"t": "위험 6 : 이사의 손해배상 책임", "b": "<p><em>내용</em>충실의무, 경업금지, 자기거래 승인 절차를 어기면 이사가 회사에 손해배상 책임을 질 수 있습니다.</p><p><em>영향</em>정관에 책임 감경 규정이 없거나 이사회 기록이 부실하면 방어가 어렵습니다.</p>", "l": "상법 제382조의3, 제397조, 제398조, 제399조, 제400조"}, "m1": {"t": "오해 1 : 정관은 한번 만들면 끝", "b": "<p><em>사실</em>상법 개정, 증자, 본점 이전, 사업목적 추가 때마다 정관을 손봐야 합니다. 현행 법규와 어긋난 조항은 분쟁 때 불리하게 작용할 수 있습니다.</p><p><em>권장</em>매년 결산 시기에 정관 점검일을 정해 두세요.</p>", "l": "상법 제289조, 제433조"}, "m2": {"t": "오해 2 : 소규모회사는 정관이 필요 없다", "b": "<p><em>사실</em>소규모회사도 정관이 있어야 설립됩니다. 자본금 10억 원 미만 회사는 공증 절차만 생략할 수 있습니다.</p>", "l": "상법 제289조, 제292조"}, "m3": {"t": "오해 3 : 정관 변경은 이사회로 충분하다", "b": "<p><em>사실</em>정관 변경은 주주총회 특별결의 사항입니다. 이사회 결의만으로는 효력이 없고 결의취소의 대상이 됩니다.</p>", "l": "상법 제433조, 제434조, 제376조"}, "m4": {"t": "오해 4 : 정관만 고치면 등기는 안 해도 된다", "b": "<p><em>사실</em>등기사항이 바뀌면 2주 이내에 변경등기를 해야 하며 늦으면 과태료 대상입니다.</p>", "l": "상법 제317조, 제183조, 제635조"}, "m5": {"t": "오해 5 : 퇴직금은 이사회에서 정하면 된다", "b": "<p><em>사실</em>정관에 규정이 없으면 비용 인정 한도가 직전 1년 총급여 × 10% × 근속연수로 줄어듭니다. 개인 퇴직소득도 별도 한도가 있습니다.</p>", "l": "법인세법 시행령 제44조, 소득세법 시행령 제42조의2"}, "m6": {"t": "오해 6 : 주총은 언제나 2주 전에 알려야 한다", "b": "<p><em>사실</em>자본금 10억 원 미만 회사는 10일 전 통지로 충분하고, 서면 결의도 가능합니다. 단 정관에 더 엄격한 기준이 있으면 그 기준이 먼저입니다.</p>", "l": "상법 제363조"}};
+
+Object.keys(ov).forEach(function(k){P[k]=ov[k]});
+
+/* 법령 조문 링크 (국가법령정보센터) */
+var LAWRE=/((?:상법|법인세법|소득세법|상속세 및 증여세법|조세특례제한법|국세기본법|국세징수법|지방세법|민법)(?: ?시행령)?|동법(?: 시행령)?|시행령)|(제\d+(?:조의\d+|조)?(?:[·~](?:제)?\d+(?:조의\d+|조)?)*)/g;
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function linkLaw(str){
+  var base='',dec=false;
+  return esc(str).replace(LAWRE,function(m,nm,ch){
+    if(nm){
+      if(nm==='시행령'){dec=true;return m}
+      if(nm.indexOf('동법')===0){dec=/시행령/.test(nm);return m}
+      base=nm.replace(/ ?시행령$/,'');dec=/시행령$/.test(nm);return m;
+    }
+    if(!base||ch.indexOf('조')<0)return m;
+    var law=(base+(dec?'시행령':'')).replace(/\s/g,'');
+    return ch.replace(/\d+(?:조의\d+)?/g,function(d){
+      var a=d.split('조의'),art='제'+a[0]+'조'+(a[1]?'의'+a[1]:'');
+      return '<a href="https://www.law.go.kr/법령/'+encodeURIComponent(law)+'/'+encodeURIComponent(art)+'" target="_blank" rel="noopener">'+d+'</a>';
+    });
+  });
+}
+function linkFt(){var l=document.querySelector('#ft .law');if(!l)return;
+  l.querySelectorAll('a').forEach(function(a){a.replaceWith(document.createTextNode(a.textContent))});l.normalize();
+  var parts=[];l.childNodes.forEach(function(n){parts.push(n.nodeType===3?linkLaw(n.nodeValue):(n.nodeName==='BR'?'<br>':esc(n.textContent)))});
+  l.innerHTML=parts.join('')}
+function unlinkFt(){var l=document.querySelector('#ft .law');if(l){l.querySelectorAll('a').forEach(function(a){a.replaceWith(document.createTextNode(a.textContent))});l.normalize()}}
+var editing=false,curId=null,onOpen=null;
+var pop=document.getElementById('pop'),ph=document.getElementById('ph'),pt=document.getElementById('pt'),pbd=document.getElementById('pbody');
+function openP(id){
+  var o=P[id];if(!o)return;curId=id;
+  pt.textContent=o.t;
+  pbd.innerHTML=o.b+'<div class="lw">근거 : '+(editing?esc(o.l):linkLaw(o.l))+'</div>';
+  pbd.scrollTop=0;if(onOpen)onOpen();
+  if(pop.hidden){
+    pop.hidden=false;
+    var w=pop.offsetWidth;
+    pop.style.left=Math.max(8,(window.innerWidth-w)/2)+'px';
+    pop.style.top=Math.max(8,Math.round(window.innerHeight*0.14))+'px';
+  }
+}
+function closeP(){pop.hidden=true}
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-p]');
+  if(t){if(editing&&!e.altKey)return;openP(t.getAttribute('data-p'));}
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){closeP();return}
+  if(!editing&&(e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('[data-p]')){e.preventDefault();openP(e.target.getAttribute('data-p'));}
+});
+document.getElementById('px').addEventListener('click',closeP);
+/* 드래그 */
+var drag=null;
+ph.addEventListener('pointerdown',function(e){
+  if(e.target.closest('button')||(editing&&e.target===pt))return;
+  var r=pop.getBoundingClientRect();
+  drag={dx:e.clientX-r.left,dy:e.clientY-r.top};
+  ph.setPointerCapture(e.pointerId);
+});
+ph.addEventListener('pointermove',function(e){
+  if(!drag)return;
+  var x=e.clientX-drag.dx,yy=e.clientY-drag.dy;
+  x=Math.min(Math.max(0,x),window.innerWidth-60);
+  yy=Math.min(Math.max(0,yy),window.innerHeight-40);
+  pop.style.left=x+'px';pop.style.top=yy+'px';
+});
+function endDrag(e){drag=null;try{ph.releasePointerCapture(e.pointerId)}catch(_){}}
+ph.addEventListener('pointerup',endDrag);
+ph.addEventListener('pointercancel',endDrag);
+
+/* 문장 단위 줄바꿈 : 줄 수가 늘지 않을 때만 문장마다 새 줄 */
+function sentenceBreak(){
+  var els=document.querySelectorAll('.cd p,.mt .s>span,.note,.st p,.tn p');
+  els.forEach(function(el){
+    if(el.dataset.sb)return;
+    var txt=el.textContent;
+    if(!/\.\s+\S/.test(txt))return;
+    var kids=Array.prototype.slice.call(el.childNodes),spans=[],cur=null;
+    function ns(){cur=document.createElement('span');cur.className='sn';spans.push(cur)}
+    ns();
+    kids.forEach(function(n){
+      if(n.nodeType===3){
+        var parts=n.nodeValue.split(/(?<=\.)\s+(?=\S)/);
+        parts.forEach(function(t,i){if(i>0)ns();cur.appendChild(document.createTextNode(i<parts.length-1?t+' ':t))});
+      }else{cur.appendChild(n.cloneNode(true))}
+    });
+    if(spans.length<2)return;
+    var orig=el.innerHTML;
+    var lh=parseFloat(getComputedStyle(el).lineHeight)||12;
+    var n0=Math.round(el.getBoundingClientRect().height/lh);
+    el.innerHTML='';spans.forEach(function(sp){el.appendChild(sp)});
+    el.dataset.sb='1';
+    var n1=Math.round(el.getBoundingClientRect().height/lh);
+    spans.forEach(function(sp){sp.style.display='block'});
+    var n2=Math.round(el.getBoundingClientRect().height/lh);
+    if(n2>n0||n0<2){el.innerHTML=orig;}
+  });
+}
+
+/* 본문 자동 맞춤 : 글꼴이 달라 넘치면 비율 축소 */
+function fitContent(){
+  var oz=sheetEl.style.zoom;sheetEl.style.zoom='';
+  mainEl.style.flex='none';mainEl.style.zoom='';mainEl.style.width='';mainEl.style.height='';
+  var cs=getComputedStyle(sheetEl),pX=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight),pY=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
+  var innerW=sheetEl.clientWidth-pX,avail=sheetEl.clientHeight-pY-ftEl.offsetHeight-parseFloat(getComputedStyle(ftEl).marginTop);
+  var z=1;
+  for(;z>=0.72;z-=0.01){
+    mainEl.style.zoom=z<1?z:'';mainEl.style.width=(innerW/z)+'px';mainEl.style.height=(avail/z)+'px';
+    if(mainEl.scrollHeight<=mainEl.clientHeight+1)break;
+  }
+  sheetEl.style.zoom=oz;
+}
+function setAsof(){var q=document.getElementById('qd');if(q)q.textContent=ASOF;var l=document.querySelector('#ft .law');if(l&&!editing)l.innerHTML=l.innerHTML.replace(/\d{4}\.\d{2}\.\d{2}(?= 현행법 기준)/,ASOF)}
+function boot(){linkFt();setAsof();sentenceBreak();fitContent();}
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(boot)}else{boot()}
+
+
+
+/* 화면 맞춤 및 인쇄 */
+function fitView(){
+  sheetEl.style.zoom='';
+  var w=sheetEl.getBoundingClientRect().width,a=document.documentElement.clientWidth-12;
+  if(a<w){sheetEl.style.zoom=(a/w).toFixed(4)}
+}
+fitView();window.addEventListener('resize',function(){fitView();var z=sheetEl.style.zoom;fitContent();});
+window.addEventListener('beforeprint',function(){sheetEl.style.zoom='';});
+window.addEventListener('afterprint',fitView);
+document.getElementById('prt').addEventListener('click',function(){window.print()});
+})();
+</script>
+
+
+<script src="../contacts.js"></script>
+<script src="../copyright.js"></script>
+<script src="../gc.js"></script>
+<script src="../pagetitle.js" data-repo="yangji-madang/SLGFC"></script>
+</body></html>
