@@ -62,6 +62,9 @@ a{color:#0b5cab}a.lw{text-decoration:underline dotted}
 .view-info .det,.view-detail .infog{display:none}
 .src a{display:block;font-size:12px}
 @media(max-width:640px){.g4,.g5{grid-template-columns:1fr 1fr}.kp{grid-template-columns:1fr 1fr}.g3,.g2,.g6{grid-template-columns:1fr}.tl{grid-template-columns:70px 1fr}}
+#chg{display:none;margin:6px auto;max-width:194mm;border:2px solid #b42318;background:#fff1f0;color:#7a1710;padding:8px 12px;border-radius:6px;font-size:13px;line-height:1.5}
+#chg b{color:#b42318}#chg ul{margin:4px 0 0 18px;padding:0}
+#chg.warn{border-color:#c8811a;background:#fff7e6;color:#6b4300}#chg.warn b{color:#9a5b00}
 @media print{
  @page{size:A4;margin:8mm}
  body{background:#fff;font-size:11px}
@@ -85,8 +88,9 @@ a{color:#0b5cab}a.lw{text-decoration:underline dotted}
 <button data-v="info">인포그래픽 2p</button><button data-v="detail">상세 study</button>
 <button id="pr">인쇄</button></div>
 <div class="wrap">
+<div id="chg" role="alert"></div>
 <div class="a4 infog" id="p1">
- <div class="hd"><h1>정관컨설팅 A to Z</h1><span>정관은 회사의 헌법입니다 : 2025~2026 상법 개정 반영 (기준일 2026.11.28)</span></div>
+ <div class="hd"><h1>정관컨설팅 A to Z</h1><span>정관은 회사의 헌법입니다 : 2025~2026 상법 개정 반영 (기준일 <b id="asof">2026.11.28</b>)</span></div>
  <div class="kp" data-edit="kpi"><div class="kpi"><b>8</b><span>절대적 기재사항</span><small>하나라도 빠지면 정관 무효 (상법 제289조①)</small></div><div class="kpi"><b>2/3 · 1/3</b><span>정관변경 특별결의</span><small>출석 의결권 2/3 이상 + 발행주식총수 1/3 이상</small></div><div class="kpi"><b>2주</b><span>변경등기 기한</span><small>등기사항 변경 시 본점 2주 내</small></div><div class="kpi"><b>500만원</b><span>등기 해태 과태료</span><small>대표이사 등 최대 (상법 제635조①)</small></div></div>
  <div class="h">정관의 기재사항 3종 (<a class="lw" href="https://www.law.go.kr/법령/상법/제289조" target="_blank" rel="noopener">상법 제289조</a>)</div>
  <div class="g3" data-edit="three"><div class="tri c1"><h4>절대적 기재사항</h4><em>빠지면 정관 자체가 무효</em><p>목적 · 상호 · 발행예정주식총수 · 액면주식 1주의 금액 · 설립 시 발행주식 총수 · 본점 소재지 · 공고방법 · 발기인 인적사항</p></div><div class="tri c2"><h4>상대적 기재사항</h4><em>정관에 적어야 효력이 생김</em><p>종류주식 · 주식양도제한 · 중간배당 · 전환사채 · 이사회 위임 사항 · 소규모회사 특례 확인 문구 등</p></div><div class="tri c3"><h4>임의적 기재사항</h4><em>법에 반하지 않으면 자유</em><p>임원 보수 및 퇴직금 지급 기준 · 이사 수 · 사업연도 · 주총 소집지 등 회사 운영 규칙</p></div></div>
@@ -142,6 +146,21 @@ a{color:#0b5cab}a.lw{text-decoration:underline dotted}
  // 저장된 편집본 반영
  fetch('aol.json?'+Date.now()).then(function(r){return r.ok?r.json():null}).then(function(j){
    if(!j)return;Object.keys(j).forEach(function(k){var e=document.querySelector('[data-edit="'+k+'"]');if(e)e.innerHTML=j[k]});
+ }).catch(function(){});
+
+ // 법령 변경 점검 결과 : aol_basis.json (매일 아침 점검 작업이 갱신)
+ fetch('aol_basis.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){
+   if(!j||!j.asof)return;
+   var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(j.asof);if(!m)return;
+   var a=document.getElementById('asof');if(a)a.textContent=m[1]+'.'+m[2]+'.'+m[3];
+   var c=document.getElementById('chg');if(!c)return;
+   function esc(t){return String(t).replace(/[&<>]/g,function(x){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[x]})}
+   if(j.pending&&j.pending.length){
+     c.className='';c.innerHTML='<b>법령 개정 확인 필요</b> : 마지막 정상 점검일 '+m[1]+'.'+m[2]+'.'+m[3]+' 이후 변경 징후가 있습니다. 고객 안내 전에 아래 항목을 법제처 원문으로 확인하시기 바랍니다.<ul>'+j.pending.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>';c.style.display='block';
+   }else{
+     var d=(Date.now()-new Date(+m[1],+m[2]-1,+m[3]).getTime())/86400000;
+     if(d>3){c.className='warn';c.innerHTML='<b>점검 지연</b> : 마지막 점검일이 '+m[1]+'.'+m[2]+'.'+m[3]+'입니다. 매일 아침 점검이 멈췄을 수 있으니 법령 변경 여부를 직접 확인하시기 바랍니다.';c.style.display='block'}
+   }
  }).catch(function(){});
  // 드래그 팝업
  var POPS={"특별결의": "출석한 주주 의결권의 2/3 이상 + 발행주식총수의 1/3 이상 찬성으로 의결하는 방식입니다. 정관변경, 합병 등에 쓰입니다. (상법 제434조)", "의안요령": "정관변경 안건을 주주총회 소집통지에 적을 때 변경 취지와 핵심 내용을 요약한 문구입니다. 누락하면 결의 취소 사유가 될 수 있습니다. (상법 제433조②)", "소규모회사": "자본금 10억 원 미만 주식회사입니다. 이사 1~2인, 감사 생략, 소집통지 10일 단축, 서면결의 등 특례가 있습니다. (상법 제363조③ 등)", "중간배당": "사업연도 중 1회 이사회 결의로 하는 배당입니다. 정관에 근거가 있어야 합니다. (상법 제462조의3)"},pp=document.getElementById('pp');
