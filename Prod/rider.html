@@ -60,6 +60,8 @@ tbody tr.hl{background:#FFF3C4;font-weight:700}
 .pgft .cp{font-size:11.5px;margin-left:auto;text-align:right;white-space:nowrap;color:#34424f}
 @media(max-width:720px){.grid{grid-template-columns:1fr}.title h1{font-size:18px}}
 @media print{
+  #p4 td{padding:4px 6px!important}#p4 .sec{margin-top:2mm!important}#p4 .note,#p4 .warn{margin:2px 0!important}
+
 @page{size:A4 portrait;margin:8mm}
 body{background:#fff;font-size:11pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .toolbar{display:none}
@@ -131,7 +133,7 @@ td.r{text-align:right;white-space:nowrap}
 </style>
 </head>
 <body>
-<div class="tabs"><button type="button" data-p="1">1. 뇌심질환 진단</button><button type="button" data-p="2">2. 암치료 변천사</button><button type="button" data-p="3">3. 우리나라 인구현황</button><button type="button" data-p="4">4. 사망원인 현황</button><button type="button" data-p="5">5. 치매·장기요양</button><button type="button" data-p="6">6. 수술/입원 현황</button><button type="button" data-p="7">7. 연령대별 소득수준</button><button type="button" data-p="8">8. 보험영업 참고</button></div>
+<div class="tabs"><button type="button" data-p="1">1. 뇌심질환 진단</button><button type="button" data-p="2">2. 암치료 변천사</button><button type="button" data-p="3">3. 우리나라 인구현황</button><button type="button" data-p="4">4. 사망원인 현황</button><button type="button" data-p="5">5. 치매·장기요양</button><button type="button" data-p="6">6. 수술/입원 현황</button><button type="button" data-p="7">7. 연령대별 소득수준</button><button type="button" data-p="8">8. 보험영업 참고</button><button type="button" data-p="9">9. 뇌심 보완통계</button></div>
 <div class="toolbar"><button type="button" onclick="window.print()">인쇄</button></div>
 <div class="page" id="page">
   <div class="title">
@@ -213,7 +215,7 @@ td.r{text-align:right;white-space:nowrap}
     <tr><td class="l">국내 비용</td><td class="l">전립선암 12회 환자부담 약 5,000만~5,500만원</td></tr>
     <tr><td class="l">해외 치료(과거)</td><td class="l">1억~1억 7천만원 (일본·독일)</td></tr>
     <tr><td class="l">치료 실적</td><td class="l">437명(전립선암 378명 포함, 보도 시점)</td></tr>
-    <tr><td class="l">확대 암종</td><td class="l">두경부암·육종·재발성 직장암 등</td></tr>
+    <tr><td class="l">확대 암종</td><td class="l">두경부·육종·재발성 직장암 등. 간·폐·췌장 가격은 자료별 상이(6,000만~8,000만 이하)</td></tr>
    </tbody>
   </table>
  </div>
@@ -276,8 +278,8 @@ td.r{text-align:right;white-space:nowrap}
  <h2><span class="no" style="background:var(--navy)">1</span>연령별 사망원인 1~5위 (2024년 사망원인통계, 인구 10만 명당)<span class="ri" data-t="ref_death">i</span></h2>
  <table id="tb4"></table>
  <div class="cols"><div class="chart"><h3>악성신생물(암) 사망률 (10만 명당)</h3><div id="hb4a"></div></div><div class="chart"><h3>고의적 자해(자살) 사망률 (10만 명당)</h3><div id="hb4b"></div></div></div>
- <p class="note">※ 0세는 보고서 그림 4, 나머지는 통계표 7 기준. 사망률 = <a class="tm" data-t="rate">인구 10만 명당 사망자 수</a>.</p>
- <div class="warn">※ <b>전체·남녀별 10대 사망원인(전 연령 합계)</b>은 확인 가능한 수치를 확보하지 못해 수록하지 않았습니다 (연령별 표와 혼동 방지). 통계청(국가데이터처) 보도자료 표 기준으로 추가할지 확인 부탁드립니다.</div>
+ <p class="note">※ 0세는 보고서 그림 4, 나머지는 통계표 7 기준. 사망률 = <a class="tm" data-t="rate">인구 10만 명당 사망자 수</a>. <b>전 연령 합계 1~5위(2024)</b> : 암 · 심장 · 폐렴 · 뇌혈관 · 자살 (총 사망 358,569명, 조사망률 702.6, 암·심장·폐렴 42.6% <a class="tm" data-t="ref_lec">강의자료 인용</a>)</p>
+ <div class="warn">※ <b>남녀별 10대 사망원인(사망률 포함)</b>은 수치를 확보하지 못해 수록하지 않았습니다. 국가데이터처 보도자료 표 기준으로 추가할지 확인 부탁드립니다.</div>
 </section>
 <div class="tlist"><b>용어</b> : <a class="tm" data-t="rate">사망률</a> · <a class="tm" data-t="kcd">KCD</a> · <a class="tm" data-t="malig">악성신생물</a></div>
 </div>
@@ -335,7 +337,8 @@ td.r{text-align:right;white-space:nowrap}
   </tbody>
  </table>
  <p class="note">※ 진료비 기준은 <a class="tm" data-t="noncov">급여</a>만 포함(비급여 제외). 65~69세 진료비 1조 5,068억원으로 연령대 중 최고.</p>
- <div class="warn">※ <b>성별, 병원 종별(상급종합·종합·병원·의원) 비용, 질환별 입원일수·횟수 추이</b>는 수록 가능한 공식 수치를 확보하지 못했습니다. 건강보험통계연보 표 기준으로 추가할지 확인 부탁드립니다.</div>
+ <div class="cols"><div class="chart"><h3>뇌혈관질환 평균 입원일수(일) <span class="ri" data-t="ref_lec">i</span></h3><div id="hb6c"></div><small>뇌=장기 입원, 심장=수술 많음(심수뇌장)</small></div><div class="chart"><h3>2023 총 진료비(억원)</h3><div id="hb6d"></div><small>뇌졸중이 심근경색의 약 5.3배(건강보험 청구)</small></div></div>
+ <div class="warn">※ <b>성별, 병원 종별(상급종합·종합·병원·의원) 비용, 질환별 입원 횟수 추이</b>는 수록 가능한 공식 수치를 확보하지 못했습니다. 건강보험통계연보 표 기준으로 추가할지 확인 부탁드립니다.</div>
 </section>
 <div class="tlist"><b>용어</b> : <a class="tm" data-t="noncov">급여·비급여</a> · <a class="tm" data-t="pci">PCI(스텐트)</a> · <a class="tm" data-t="tert">상급종합병원</a></div>
 </div>
@@ -396,12 +399,49 @@ td.r{text-align:right;white-space:nowrap}
    <tr><td class="l">사망원인</td><td class="l">50대 이후 1위 암, 80세 이상 2위 폐렴·3위 심장</td><td class="l">진단·사망보장</td></tr>
   </tbody>
  </table>
+ <h2 style="font-size:14px;margin:8px 0 3px;color:var(--navy)">발병 후 예상비용 시나리오 <a class="tm" data-t="ref_lec">(강의자료 추정, 공식통계 아님)</a></h2>
+ <table>
+  <thead><tr><th class="l">구분</th><th class="l">항목</th><th class="l">금액(강의자료 가정)</th></tr></thead>
+  <tbody>
+   <tr><td class="l" rowspan="3">암</td><td class="l">소득상실(연봉 5천만원×60%×2~5년)</td><td class="l">6천만~1억원</td></tr>
+   <tr><td class="l">표적·면역항암(비급여 시)</td><td class="l">연 약 7,000만~1억원</td></tr>
+   <tr><td class="l">다빈치 로봇수술(비급여)</td><td class="l">1,000만~1,500만원</td></tr>
+   <tr><td class="l" rowspan="4">뇌·심</td><td class="l">소득상실(연봉 5천만원×60%×2년)</td><td class="l">6천만원</td></tr>
+   <tr><td class="l">진단·입원·수술·약제비</td><td class="l">5,000만원 내외</td></tr>
+   <tr><td class="l">간병(월 280만원×24개월)</td><td class="l">약 6,700만원</td></tr>
+   <tr><td class="l">재활(연 1,000만원×10년 이상)</td><td class="l">1억원 이상</td></tr>
+  </tbody>
+ </table>
  <div class="cols"><div class="chart"><h3>치매 1인 연간 관리비(만원)</h3><div id="hb8a"></div></div><div class="chart"><h3>국내 중입자 치료비(만원)</h3><div id="hb8b"></div><small>해외치료는 1억~1.7억원</small></div></div>
  <p class="note">※ 위 수치는 각 탭의 출처에서 가져왔으며, 제안서 인용 시 최신 발표본을 다시 확인하십시오.</p>
 </section>
 <div class="tlist"><b>용어</b> : <a class="tm" data-t="kcd">KCD</a> · <a class="tm" data-t="noncov">급여·비급여</a> · <a class="tm" data-t="ltc">장기요양등급</a> · <a class="tm" data-t="dem">치매유병률</a></div>
 </div>
 
+<div class="pane" id="p9">
+<section class="sec">
+ <h2><span class="no" style="background:var(--navy)">1</span>뇌졸중·심근경색 발생과 치명률 (2022, 질병관리청)<span class="ri" data-t="ref_brain">i</span></h2>
+ <div class="cols"><div class="chart"><h3>발생 건수(건)</h3><div id="hb9a"></div><small>2013→2022 : 뇌졸중 +11.0%, 심근경색 +41.1%</small></div><div class="chart"><h3>치명률(%)</h3><div id="hb9b"></div><small>골든타임 내 응급실 도착률(2024) 뇌졸중 43.8%, 심근경색 36.7%</small></div></div>
+</section>
+<section class="sec">
+ <h2><span class="no" style="background:var(--brain)">2</span>코드군 환자 비중 <a class="tm" data-t="ref_lec">(강의자료)</a></h2>
+ <div class="cols"><div class="chart"><h3>뇌혈관질환 환자 코드별 비중(%)</h3><div id="hb9c"></div><small>보건의료빅데이터(2018 심사) 누적 기준은 뇌출혈 9.7%·뇌졸중 68.5%로 산정 방식에 따라 상이</small></div><div class="chart"><h3>허혈성심장질환 내 비중(%)</h3><div id="hb9d"></div><small>심사 2018년, 입원·외래 전체 기준. 나머지는 I24·I25 등</small></div></div>
+</section>
+<section class="sec">
+ <h2><span class="no" style="background:var(--heart)">3</span>기타 형태 심장병(I30~I52) 환자수와 '5배 법칙' 점검</h2>
+ <div class="cols" style="grid-template-columns:1.1fr 1fr"><div class="chart"><h3>2022 환자수(명)</h3><div id="hb9e"></div></div>
+  <table>
+   <thead><tr><th class="l">강의 주장</th><th class="l">수치 확인</th></tr></thead>
+   <tbody>
+    <tr><td class="l">뇌경색 ≈ 뇌출혈의 5배</td><td class="l">53.7만 vs 10.7만 → 약 5.0배</td></tr>
+    <tr><td class="l">협심증 ≈ 심근경색의 5배</td><td class="l">비중 68.3% vs 11.4% → 약 6.0배(산출)</td></tr>
+    <tr><td class="l">부정맥 ≈ 뇌출혈의 5배</td><td class="l">I47~I49 환자수 합 약 47.6만 → 약 4.4배(산출, 연도 상이)</td></tr>
+   </tbody>
+  </table></div>
+ <p class="note">※ 위 '산출' 값은 강의자료 수치를 단순 나눈 것으로, 기준 연도·집계 방식이 달라 참고용입니다.</p>
+</section>
+<div class="tlist"><b>용어</b> : <a class="tm" data-t="five">5배 법칙</a> · <a class="tm" data-t="sumok">심수뇌장</a> · <a class="tm" data-t="i671">I67.1</a> · <a class="tm" data-t="i639">I63.9</a> · <a class="tm" data-t="afib">심방세동</a> · <a class="tm" data-t="golden">골든타임</a></div>
+</div>
   <footer class="pgft">
     <div class="ct"><span data-ct></span></div>
     <div class="cp" id="ftCopy"></div>
@@ -441,6 +481,15 @@ ref_carbon:{t:'참고 : 중입자 국내 환경',d:'세브란스 설치비 약 3
 ref_pop:{t:'참고 : 인구현황',d:'국가데이터처 「2025년 인구주택총조사(등록센서스)」(2026.7.28 발표). 총인구는 내·외국인 포함.',s:[['세계일보','https://www.segye.com/newsView/20260728507982'],['경향신문','https://www.khan.co.kr/article/202607282131005']]},
 ref_death:{t:'참고 : 사망원인',d:'「2024년 사망원인통계」 결과 보고서 기준. 순위는 사망률 기준이며 0~9세는 사망 건수가 적어 순위 변동이 큽니다.'},
 ref_cure:{t:'참고 : 중입자 치료성적(해외)',d:'QST 병원 공개 치료성적 및 NIRS 논문 기준. 전립선 5년 생존 95.8%(3,077명, 1995~2018), 천골척삭종 5년 국소제어 88%(95명), 골·연부 종양 5년 국소제어 68%·생존 65%(764명, J-CROS), 절제 가능 췌장암 5년 생존 52%(절제 21명), 후복막 육종 5년 국소제어 72%·생존 49.4%(76명). 일부는 표본이 작아 해석에 주의.',s:[['QST 전립선','https://hospital.qst.go.jp/en/patients/indications/05.html'],['QST 골·연부','https://www.qst.go.jp/site/hospital-en/indications-04.html'],['QST 췌장','https://www.qst.go.jp/site/hospital-en/indications-09.html'],['천골척삭종(BJR)','https://pmc.ncbi.nlm.nih.gov/articles/PMC3473887'],['후복막 육종(MDPI)','https://www.mdpi.com/2072-6694/17/20/3395']]},
+i671:{t:'I67.1 파열되지 않은 뇌동맥류',d:'건강검진(MRA) 등에서 우연히 발견되는 터지지 않은 뇌동맥류. 뇌졸중 진단비가 아닌 뇌혈관질환 진단비로만 보장(강의자료). I67 중 약 50%라는 설명 인용.'},
+i639:{t:'I63.9 상세불명 뇌경색증',d:'뇌경색(I63) 환자의 약 67%를 차지하는 코드(강의 인용). 증상이 없어도 혈관 막힘이 확인되고 I63.9 진단이면 뇌경색에 해당한다는 최근 대법원 판례가 소개됩니다. 사건번호는 확인되지 않아 인용 전 확인이 필요합니다.'},
+five:{t:'3대 5배 법칙(강의 화법)',d:'뇌경색≈뇌출혈 5배, 협심증≈심근경색 5배, 부정맥≈뇌출혈 5배라는 영업 화법. 이 페이지 9번 탭에서 강의 수치로 점검했으며 부정맥은 약 4.4배(산출)였습니다.'},
+sumok:{t:'심수뇌장(心手腦長)',d:'심장은 수술(手)을 자주, 뇌는 입원을 길게(長) 한다는 화법. 평균 입원일수 뇌내출혈 103.1일, 후유증 72.5일, 지주막하 66.4일, 뇌경색 61.9일(강의 인용).'},
+afib:{t:'심방세동',d:'심방이 가늘게 떨리는 부정맥. 혈전이 뇌로 올라가 뇌색전증(뇌경색)을 일으키며, 강의자료는 위험이 약 5배 높아진다고 설명합니다.'},
+golden:{t:'골든타임',d:'뇌경색 혈전용해는 발병 후 2~3시간 이내(강의 인용). 2024년 골든타임 내 응급실 도착률 뇌졸중 43.8%, 심근경색 36.7%(중앙심뇌혈관질환센터).'},
+sanjeong:{t:'산정특례',d:'암 등 중증질환 본인부담 5% 제도. 강의자료는 급여 항목 중 일부본인부담금에 한정되고 비급여 100% 본인 부담, 5년 등록 후 재등록 기준이 있다고 설명합니다. 근거 법령 조문은 확인 후 링크 추가가 필요합니다.'},
+ref_lec:{t:'참고 : 강의자료 인용',d:'교육ON 강의(2504·2605·260808), JK Consulting 교육자료(2606), Sales Master 가이드북 인용. 일부 자료에 FC 교육용이며 고객 제시·교부 불가 표기가 있어 내부 참고용으로 사용하십시오. 강사 재산정 수치와 공식 통계는 기준이 다를 수 있습니다.'},
+ref_brain:{t:'참고 : 뇌심 발생통계',d:'질병관리청 「2022 심뇌혈관질환 발생통계」(2025.12) 및 중앙심뇌혈관질환센터 2024·2023 자료를 강의자료에서 재인용한 수치입니다. 원자료 대조 전입니다.'},
 ref_ltc:{t:'참고 : 장기요양',d:'2025 노인장기요양보험 통계연보 보도 기준. 인정률 90.1%, 인정자 3·4등급 합계 약 73%.',s:[['Bravo My Life','https://bravo.etoday.co.kr/view/atc_view/19530']]},
 ref_surg:{t:'참고 : 수술 통계',d:'국민건강보험공단 「2025 주요수술 통계연보」(보도 기준). 비급여 제외, 건강보험·의료급여 진료비.',s:[['Bravo My Life','https://bravo.etoday.co.kr/view/atc_view/19981']]},
 ref_inc:{t:'참고 : 소득',d:'2025 가계금융복지조사. 29세 이하·30대는 별도 수치를 확보하지 못해 39세 이하로 표기.',s:[['세계일보','https://www.segye.com/newsView/20251204508621']]},
@@ -475,7 +524,7 @@ function sel(n){
   try{history.replaceState(null,'','#'+n)}catch(e){}
 }
 tabs.forEach(function(b){b.onclick=function(){sel(b.getAttribute('data-p'))}});
-sel((location.hash||'#1').slice(1).match(/^[1-8]$/)?location.hash.slice(1):'1');
+sel((location.hash||'#1').slice(1).match(/^[1-9]$/)?location.hash.slice(1):'1');
 
 // 표
 var B='<span class="o">●</span>',X='<span class="n">–</span>',P='<span class="p">△</span>',M={O:B,X:X,P:P};
@@ -518,6 +567,13 @@ hb('hb7a',[['39세 이하',6758,'6,758'],['40대',9333,'9,333'],['50대',9416,'9
 hb('hb7b',[['상대빈곤율 %',37.7,'37.7',R],['부부 적정생활비',341,'341']],400,BL);
 hb('hb8a',[['평균',2220,'2,220'],['중증(CDR3+)',3480,'3,480',R]],3600,R);
 hb('hb8b',[['전립선 12회',5000,'5,000~5,500',BL]],5600,BL);
+hb('hb6c',[['뇌내출혈',103.1,'103.1',R],['뇌혈관 후유증',72.5,'72.5'],['지주막하출혈',66.4,'66.4'],['뇌경색',61.9,'61.9']],110,BL);
+hb('hb6d',[['뇌졸중',30897,'30,897',R],['심근경색증',5835,'5,835',BL]],32000,N);
+hb('hb9a',[['뇌졸중 2013',99581,'99,581'],['뇌졸중 2022',110574,'110,574',R],['심근경색 2013',24786,'24,786'],['심근경색 2022',34969,'34,969',R]],115000,N);
+hb('hb9b',[['뇌졸중 30일',8.2,'8.2'],['뇌졸중 1년',20.1,'20.1',R],['뇌졸중 65+ 1년',32.1,'32.1',R],['심근경색 1년',15.8,'15.8',BL],['심근경색 남',13.3,'13.3',BL],['심근경색 여',23.1,'23.1',BL]],36,N);
+hb('hb9c',[['I63 뇌경색',40,'40'],['I67 기타',30,'30',R],['I65·66',12.5,'12.5'],['I60~62 뇌출혈',8,'8',BL]],45,N);
+hb('hb9d',[['협심증(I20)',68.3,'68.3',R],['급성심근경색',11.4,'11.4',BL]],80,N);
+hb('hb9e',[['심방세동·조동',259052,'259,052',R],['심부전',166206,'166,206'],['기타 부정맥',162360,'162,360'],['발작성 빈맥',54510,'54,510'],['심근병증',51356,'51,356'],['대동맥판 장애',40886,'40,886']],270000,N);
 var D4=[
 ['0세','출생전후기 특정 병태 110.6','선천 기형·염색체 이상 45.1','영아 돌연사 증후군 20.4','가해(타살) 5.2','심장 질환 3.9'],
 ['1~9세','악성신생물(암) 1.8','선천 기형·염색체 이상 1.0','가해(타살) 0.8','운수사고 0.6','심장 질환 0.5'],
