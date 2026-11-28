@@ -14,14 +14,23 @@
   var base = src ? src.replace(/[^\/]*(\?.*)?$/, '') : '';
   /* 담당자 선택 화면은 관리페이지(파일명이 _admin 으로 끝나는 페이지)에서만 보입니다.
      조회·인쇄 페이지(_print 포함)는 같은 브라우저에서 관리페이지로 고른 값을 따라가며, 고르지 않았으면 표시하지 않습니다. */
-  var ADM = /_admin(\.html)?$/i.test(location.pathname);
-  var KEY = 'slgfc_ct_sel:' + location.pathname.replace(/_(admin|print)(\.html)?$/i, '$2');
+  var ADM = /_admin(\.html)?\/?$/i.test(location.pathname);
+  /* 선택값 저장 이름 : 주소의 '.html' 유무·끝의 '/'·_admin/_print 와 상관없이 같은 페이지는 같은 이름을 쓴다.
+     (GitHub Pages 는 .html 을 빼고 열어도 열리므로, 예전 방식은 주소 형태가 다르면 선택이 사라졌음)
+     예전 방식으로 저장된 선택값도 계속 인식한다(KEYS 순서대로 확인). */
+  var PK = location.pathname.replace(/\/+$/, '').replace(/\.html$/i, '').replace(/_(admin|print)$/i, '');
+  var KEY = 'slgfc_ct_sel:' + PK;
+  var KEYS = [KEY, KEY + '.html'];
   var data = FB, loaded = false, cbs = [];
 
   function list() { return (data.contacts || []).filter(function (x) { return x && String(x.t || '').trim(); }); }
   function sel() {
-    var v = ''; try { v = localStorage.getItem(KEY) || ''; } catch (e) {}
-    return list().some(function (x) { return x.id === v; }) ? v : '';
+    var ids = list().map(function (x) { return x.id; });
+    for (var i = 0; i < KEYS.length; i++) {
+      var v = ''; try { v = localStorage.getItem(KEYS[i]) || ''; } catch (e) {}
+      if (v && ids.indexOf(v) >= 0) return v;
+    }
+    return '';
   }
   function text() {
     var s = sel(), r = '';
@@ -36,7 +45,10 @@
     try { document.dispatchEvent(new CustomEvent('slgct', { detail: { text: t } })); } catch (e) {}
   }
   function setSel(id) {
-    try { if (id) localStorage.setItem(KEY, id); else localStorage.removeItem(KEY); } catch (e) {}
+    try {
+      KEYS.forEach(function (k) { if (k !== KEY) localStorage.removeItem(k); });   /* 예전 이름의 값은 정리 */
+      if (id) localStorage.setItem(KEY, id); else localStorage.removeItem(KEY);
+    } catch (e) {}
     build(); apply();
   }
 
@@ -96,7 +108,7 @@
   }
 
   /* 다른 창(관리페이지)에서 선택을 바꾸면 이 페이지도 바로 따라감 */
-  window.addEventListener('storage', function (e) { if (e.key === KEY) { build(); apply(); } });
+  window.addEventListener('storage', function (e) { if (KEYS.indexOf(e.key) >= 0) { build(); apply(); } });
 
   window.SLGCT = {
     list: list, sel: sel, text: text, setSel: setSel, admin: ADM,
