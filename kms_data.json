@@ -211,6 +211,21 @@
         "심사"
        ],
        "pin": false
+      },
+      {
+       "br": true,
+       "pin": false
+      },
+      {
+       "label": "뇌심질환진단비 비교",
+       "url": "https://yangji-madang.github.io/SLGFC/Prod/brain_heart.html",
+       "tags": [
+        "뇌혈관",
+        "심장",
+        "진단",
+        "비교"
+       ],
+       "pin": false
       }
      ]
     },
