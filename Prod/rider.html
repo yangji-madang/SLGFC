@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>각종특약 비교</title>
+<style>
+
+:root{--navy:#1F2A44;--gold:#B8860B;--brain:#2F5DA8;--heart:#C0392B;--line:#C9D0DC;--bg:#F3F5F9;--ink:#2B3550}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Malgun Gothic","맑은 고딕",system-ui,sans-serif;color:var(--ink);background:#E9ECF2;line-height:1.45;font-size:15px}
+.toolbar{max-width:860px;margin:10px auto 0;display:flex;justify-content:flex-end;gap:8px;padding:0 8px}
+.toolbar button{font-family:inherit;font-size:14px;padding:6px 14px;border:1px solid var(--navy);background:#fff;color:var(--navy);border-radius:6px;cursor:pointer;font-weight:700}
+.toolbar button:hover{background:var(--navy);color:#fff}
+.page{max-width:860px;margin:8px auto 16px;background:#fff;padding:16px 20px 12px;box-shadow:0 1px 6px rgba(0,0,0,.15)}
+.title{background:var(--navy);color:#fff;border-radius:8px;padding:9px 16px}
+.title h1{margin:0;font-size:22px;line-height:1.3}
+.title h1 em{font-style:normal;color:#F2C94C}
+.title p{margin:2px 0 0;font-size:13px;color:#D5DCEB}
+.sec{margin-top:14px}
+.sec h2{margin:0 0 6px;font-size:17px;color:var(--navy);display:flex;align-items:center;gap:8px}
+.sec h2 .no{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;color:#fff;font-size:14px;flex:none}
+.grid{display:grid;grid-template-columns:330px 1fr;gap:14px;align-items:start}
+.nest{border:1px solid;border-radius:22px;padding:8px 10px 10px;display:flex;flex-direction:column;justify-content:space-between;text-align:center}
+.nest .l1,.nest .l2,.nest .l3{border:1px solid;border-radius:18px;text-align:center}
+.nest b{display:block;font-size:15px}
+.nest .r{display:block;font-size:13px}
+.nest .x{display:block;font-size:12.5px}
+.nest .lab{padding:2px 4px 6px}
+.nest .l2{margin:0 0 0;padding:6px 8px 8px}
+.nest .l3{margin-top:6px;padding:7px 8px}
+.brain .nest{background:#DCE7F7;border-color:#7C9BCB}
+.brain .l2{background:#A9C2E8;border-color:#7C9BCB}
+.brain .l3{background:#2F5DA8;border-color:#7C9BCB;color:#fff}
+.heart .nest{background:#FBE3E1;border-color:#D58A84}
+.heart .l2{background:#F2A9A3;border-color:#D58A84}
+.heart .l3{background:#C0392B;border-color:#D58A84;color:#fff}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{background:var(--navy);color:#fff;padding:4px 3px;font-size:13px;line-height:1.2}
+td{border:1px solid var(--line);padding:3px 6px;height:28px}
+th{border:1px solid var(--line)}
+td.c{text-align:center;width:56px}
+td.cd{text-align:center;width:66px;white-space:nowrap}
+tbody tr:nth-child(even){background:#F3F5F9}
+tbody tr.hl{background:#FFF3C4;font-weight:700}
+.o{font-weight:700;font-size:15px}
+.brain .o{color:var(--brain)}
+.heart .o{color:var(--heart)}
+.p{color:#C77700;font-weight:700;font-size:15px}
+.n{color:#9AA3B2}
+.note{margin:5px 0 0;font-size:13px}
+.points{margin-top:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13.5px}
+.points b.t{color:var(--navy)}
+.points p{margin:2px 0}
+.src{margin:6px 0 0;font-size:12.5px}
+.src a{color:var(--navy)}
+.pgft{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-top:8px;padding-top:3px;border-top:1px solid #cfd7e0}
+.pgft .ct{font-size:12px;color:#34424f}
+.pgft .cp{font-size:11.5px;margin-left:auto;text-align:right;white-space:nowrap;color:#34424f}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.title h1{font-size:18px}}
+@media print{
+@page{size:A4 portrait;margin:8mm}
+body{background:#fff;font-size:11pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.toolbar{display:none}
+.page{box-shadow:none;margin:0;padding:0;max-width:none;min-height:279mm;display:flex;flex-direction:column}
+.pgft{margin-top:auto;font-size:9.5px}
+.pgft .ct,.pgft .cp{font-size:9.5px}
+.grid{grid-template-columns:78mm 1fr;gap:4mm}
+tr,.nest,.points{break-inside:avoid}
+}
+html{scroll-behavior:auto}
+body,.page,table{word-break:keep-all;overflow-wrap:break-word}
+.tabs{max-width:860px;margin:8px auto 0;display:flex;flex-wrap:wrap;gap:3px;padding:0 8px}
+.tabs button{font-family:inherit;font-size:13px;padding:6px 10px;border:1px solid var(--navy);border-bottom:none;background:#DDE3EE;color:var(--navy);border-radius:7px 7px 0 0;cursor:pointer;font-weight:700}
+.tabs button.on{background:var(--navy);color:#fff}
+.toolbar{margin-top:6px}
+.pane{display:none}.pane.on{display:block}
+.tm{color:#1d4fa3;border-bottom:1px dotted #1d4fa3;cursor:help;text-decoration:none;font-weight:700}
+.tm:hover{background:#FFF3C4}
+.ri{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--gold);color:#fff;font-size:12px;font-weight:700;cursor:pointer;margin-left:6px;vertical-align:middle}
+.srch{display:flex;gap:6px;align-items:center;margin:8px 0 2px;font-size:13px}
+.srch input{flex:1;font-family:inherit;font-size:14px;padding:5px 9px;border:1px solid var(--navy);border-radius:6px}
+.srch .cnt{color:#555;white-space:nowrap}
+.tl{display:grid;grid-template-columns:96px 1fr;gap:0;font-size:13.5px;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.tl div{padding:4px 8px;border-bottom:1px solid var(--line)}
+.tl .y{background:var(--navy);color:#fff;font-weight:700;text-align:center}
+.tl .y.g{background:var(--gold)}
+.bar{display:flex;height:22px;border-radius:5px;overflow:hidden;font-size:12px;color:#fff;font-weight:700;margin:4px 0}
+.bar span{display:flex;align-items:center;justify-content:center}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+.warn{background:#FFF3C4;border:1px solid #E0C050;border-radius:6px;padding:4px 10px;font-size:13px;margin-top:8px}
+.tlist{margin-top:8px;font-size:12.5px;border-top:1px dashed var(--line);padding-top:4px}
+td.l,th.l{text-align:left}
+td.r{text-align:right;white-space:nowrap}
+.hide{display:none}
+#pop{position:fixed;z-index:50;width:340px;max-width:92vw;background:#fff;border:2px solid var(--navy);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.3);display:none;font-size:13.5px}
+#pop .ph{background:var(--navy);color:#fff;padding:5px 10px;cursor:move;display:flex;justify-content:space-between;align-items:center;border-radius:5px 5px 0 0;font-weight:700;user-select:none}
+#pop .ph button{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;line-height:1}
+#pop .pb{padding:8px 10px}
+#pop .pb p{margin:0 0 5px}
+#pop .pb a{color:var(--navy)}
+@media(max-width:720px){.cols{grid-template-columns:1fr}.tl{grid-template-columns:76px 1fr}}
+@media print{
+.tabs,#pop{display:none!important}
+.pane{display:none!important}.pane.on{display:flex!important;flex-direction:column;flex:1}
+.srch{display:none}
+.pane:not(#p1) table{font-size:11.5pt}
+.pane:not(#p1) td{padding:7px 6px;height:auto}
+.pane:not(#p1) th{padding:6px 4px;font-size:11pt}
+.pane:not(#p1) .sec{margin-top:5mm}
+.pane:not(#p1) .sec h2{font-size:14pt}
+.pane:not(#p1) .tl div{padding:7px 8px;font-size:11pt}
+.pane:not(#p1) .note,.pane:not(#p1) .warn,.pane:not(#p1) .tlist{font-size:10.5pt}
+.pane:not(#p1) .bar{height:28px;font-size:11pt}
+.cols{gap:4mm}
+.tl{font-size:9.5pt}
+}
+</style>
+</head>
+<body>
+<div class="tabs"><button type="button" data-p="1">1. 뇌심질환 진단</button><button type="button" data-p="2">2. 암치료 변천사</button><button type="button" data-p="3">3. 우리나라 인구현황</button><button type="button" data-p="4">4. 사망원인 현황</button><button type="button" data-p="5">5. 치매·장기요양</button><button type="button" data-p="6">6. 수술/입원 현황</button><button type="button" data-p="7">7. 연령대별 소득수준</button><button type="button" data-p="8">8. 보험영업 참고</button></div>
+<div class="toolbar"><button type="button" onclick="window.print()">인쇄</button></div>
+<div class="page" id="page">
+  <div class="title">
+    <h1>각종특약 비교 <em>보장 판단을 위한 의료·통계 자료</em></h1>
+    <p>용어(파란 점선)·ⓘ를 누르면 설명과 출처 팝업 | 확인되지 않은 수치는 '확인 필요'로 표시</p>
+  </div>
+<div class="pane" id="p1">
+<section class="sec brain">
+    <h2><span class="no" style="background:var(--brain)">1</span>뇌질환 : 뇌출혈·뇌경색(특정 진단) vs 뇌혈관질환(전체)</h2>
+    <div class="grid">
+      <div class="nest" style="min-height:330px">
+        <div class="lab"><b>뇌혈관질환 진단비</b><span class="r">I60~I69 (가장 넓음)</span><span class="x">+ I64 · I67 · I68 · I69</span></div>
+        <div class="l2"><div class="lab"><b>뇌졸중 진단비</b><span class="r">I60~I63, I65~I66</span><span class="x">+ I63 뇌경색 · I65·I66</span></div>
+          <div class="l3"><b>뇌출혈 진단비</b><span class="r">I60~I62 (가장 좁음)</span><span class="x">I60 지주막하출혈</span><span class="x">I61 뇌내출혈</span><span class="x">I62 기타 두개내출혈</span></div>
+        </div>
+      </div>
+      <div>
+        <table id="tb1"></table>
+        <p class="note">※ 뇌경색(I63)은 뇌출혈 진단비 제외, 뇌졸중·뇌혈관질환 진단비에서 보장</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec heart">
+    <h2><span class="no" style="background:var(--heart)">2</span>심장질환 : 급성심근경색(특정 진단) vs 허혈심장질환(질환군)</h2>
+    <div class="grid">
+      <div class="nest" style="min-height:300px">
+        <div class="lab"><b>확대 심장질환 진단비(상품별)</b><span class="r">허혈심장질환 + 심근병증·부정맥·심부전</span><span class="x">+ I42~I43 · I47~I49 · I50</span></div>
+        <div class="l2"><div class="lab"><b>허혈심장질환 진단비</b><span class="r">I20~I25</span><span class="x">+ I20 협심증 · I24 · I25</span></div>
+          <div class="l3"><b>급성심근경색 진단비</b><span class="r">I21~I23 (가장 좁음)</span><span class="x">I21 급성심근경색증</span><span class="x">I22 후속심근경색증</span><span class="x">I23 후 특정 합병증</span></div>
+        </div>
+      </div>
+      <div><table id="tb2"></table></div>
+    </div>
+  </section>
+
+  <div class="points">
+    <p><b class="t">핵심 포인트</b></p>
+    <p>① 뇌출혈·급성심근경색 특약은 혈관 파열·급성 경색만 보장 → 뇌경색(I63)·협심증(I20)은 제외</p>
+    <p>② 허혈심장질환(I20~I25)은 심장질환 전체가 아님 → 부정맥·심부전은 확대형(상품별)만 보장</p>
+    <p>● 포함 &nbsp; △ 상품·보험사별 확인 &nbsp; – 제외 &nbsp;|&nbsp; 최종 확인: 가입 약관 별표 분류표·진단서의 KCD 코드</p>
+  </div>
+  <p class="src"><b>참고:</b>
+    <a href="https://shinhangroup.com/kr/archive/insight/extend/detail/33164" target="_blank" rel="noopener">신한금융그룹 인사이트(2026.7.22)</a> ·
+    삼성화재 약관 별표 예시(<a href="https://dazabi.com/Content/insurance_guides/cerebro_cardiovascular_coverage.php" target="_blank" rel="noopener">다자비</a>) ·
+    <a href="https://kbthink.com/insurance/trend/cerebrovascular-disease.html" target="_blank" rel="noopener">KB Think</a> ·
+    <a href="https://blog.signalplanner.co.kr/?p=7817" target="_blank" rel="noopener">시그널플래너</a> ·
+    통계청 KCD</p>
+  <div class="tlist"><b>용어</b> : <a class="tm" data-t="kcd">KCD 질병코드</a></div>
+
+</div>
+<div class="pane" id="p2">
+<section class="sec">
+ <h2><span class="no" style="background:var(--navy)">1</span>암 치료의 변천 : 수술 → 약물 → 방사선 → 입자선<span class="ri" data-t="ref_cancer">i</span></h2>
+ <div class="tl">
+  <div class="y">19세기 말~</div><div><b>수술(외과적 절제)</b> : 암 치료의 출발점. 이후 <a class="tm" data-t="radio">방사선치료</a>가 병행 발전 <a class="tm" data-t="gen">(일반 의학사)</a></div>
+  <div class="y">1940년대~</div><div><b>세포독성 항암화학요법</b> : 정상세포 일부도 손상 → 구토·탈모 등 부작용 <a class="tm" data-t="gen">(일반 의학사)</a></div>
+  <div class="y">2000년대~</div><div><b><a class="tm" data-t="target">표적항암제</a></b> : 암세포의 특정 분자만 겨냥 (정밀의료의 시작)</div>
+  <div class="y">2010년대~</div><div><b><a class="tm" data-t="immune">면역항암제</a></b> : 면역세포의 암 공격력을 되살리는 방식</div>
+  <div class="y g">2007</div><div><b><a class="tm" data-t="proton">양성자치료</a></b> 국내 첫 도입 : 국립암센터(2026 현재 국립암센터·삼성서울병원 2곳 운영)</div>
+  <div class="y g">2023.4</div><div><b><a class="tm" data-t="carbon">중입자치료</a></b> 국내 첫 가동 : 세브란스병원, 전립선암 2기 환자 12회 치료</div>
+  <div class="y g">2027~2031</div><div>서울대병원 주관 부산 기장센터(2027 개시 예정) · 서울아산병원(2031 가동 목표)</div>
+ </div>
+</section>
+<section class="sec">
+ <h2><span class="no" style="background:var(--heart)">2</span>중입자치료 : 국내 치료환경 · 비용<span class="ri" data-t="ref_carbon">i</span></h2>
+ <div class="cols">
+  <table>
+   <thead><tr><th class="l">기관</th><th>개시</th></tr></thead>
+   <tbody>
+    <tr><td class="l">세브란스(연세암병원)</td><td class="c" style="width:90px">2023 운영중</td></tr>
+    <tr><td class="l">서울대병원 기장센터</td><td class="c">2027 예정</td></tr>
+    <tr><td class="l">서울아산병원</td><td class="c">2031 목표</td></tr>
+   </tbody>
+  </table>
+  <table>
+   <thead><tr><th class="l">구분</th><th class="l">내용</th></tr></thead>
+   <tbody>
+    <tr><td class="l">국내 비용</td><td class="l">전립선암 12회 환자부담 약 5,000만~5,500만원</td></tr>
+    <tr><td class="l">해외 치료(과거)</td><td class="l">1억~1억 7천만원 (일본·독일)</td></tr>
+    <tr><td class="l">치료 실적</td><td class="l">437명(전립선암 378명 포함, 보도 시점)</td></tr>
+    <tr><td class="l">확대 암종</td><td class="l">두경부암·육종·재발성 직장암 등</td></tr>
+   </tbody>
+  </table>
+ </div>
+ <div class="warn">※ <b>암종별 완치율</b>은 국내 공식 통계가 확인되지 않아 수록하지 않았습니다 (추정치 기재 금지 원칙). 일본 QST 등 해외 치료성적 자료를 추가할지 확인 부탁드립니다.</div>
+</section>
+<section class="sec">
+ <h2><span class="no" style="background:var(--brain)">3</span>암 환자 생존율 (참고)</h2>
+ <table>
+  <thead><tr><th class="l">구분</th><th>5년 <span class="tm" data-t="surv" style="color:#fff">상대생존율</span></th></tr></thead>
+  <tbody>
+   <tr><td class="l">2018~2022년 진단 (국가암등록통계)</td><td class="c" style="width:90px">72.9%</td></tr>
+   <tr><td class="l">2019~2023년 진단 (최신판 보도)</td><td class="c">73.7%</td></tr>
+  </tbody>
+ </table>
+ <p class="note">※ 판(版)에 따라 수치가 달라 병기. 인용 시 발표 연도 확인 필요.</p>
+</section>
+<div class="tlist"><b>용어</b> : <a class="tm" data-t="radio">방사선치료</a> · <a class="tm" data-t="proton">양성자</a> · <a class="tm" data-t="carbon">중입자</a> · <a class="tm" data-t="target">표적항암제</a> · <a class="tm" data-t="immune">면역항암제</a> · <a class="tm" data-t="surv">상대생존율</a></div>
+</div>
+
+<div class="pane" id="p3">
+<section class="sec">
+ <h2><span class="no" style="background:var(--navy)">1</span>2025년 연령구조 (인구주택총조사 · 11.1 기준)<span class="ri" data-t="ref_pop">i</span></h2>
+ <div class="bar"><span style="width:10.1%;background:#6D8BC2">10.1</span><span style="width:69.2%;background:var(--navy)">15~64세 69.2%</span><span style="width:20.7%;background:var(--heart)">65+ 20.7</span></div>
+ <table>
+  <thead><tr><th class="l">구분</th><th>인구</th><th>비중</th><th>전년 대비</th></tr></thead>
+  <tbody>
+   <tr><td class="l">총인구</td><td class="r">5,181.7만명</td><td class="c">100%</td><td class="c">+1.2만명(+0.02%)</td></tr>
+   <tr><td class="l">유소년(0~14세)</td><td class="r">522.5만명</td><td class="c">10.1%</td><td class="c">-19.6만명(-3.6%)</td></tr>
+   <tr><td class="l"><a class="tm" data-t="work">생산연령</a>(15~64세)</td><td class="r">3,587만명</td><td class="c">69.2%</td><td class="c">-39.3만명(-1.1%)</td></tr>
+   <tr class="hl"><td class="l">고령(65세 이상)</td><td class="r">1,072.3만명</td><td class="c">20.7%</td><td class="c">+60.1만명(+5.9%)</td></tr>
+  </tbody>
+ </table>
+</section>
+<section class="sec">
+ <h2><span class="no" style="background:var(--heart)">2</span>10년 추이와 노년층 현황</h2>
+ <div class="cols">
+  <table>
+   <thead><tr><th class="l">지표</th><th>수치</th></tr></thead>
+   <tbody>
+    <tr><td class="l">생산연령 비중 정점</td><td class="r">2015년 73.4% → 2025년 69.2%</td></tr>
+    <tr><td class="l">고령 비중</td><td class="r">2024년 19.5% → 2025년 20.7%</td></tr>
+    <tr><td class="l"><a class="tm" data-t="aging">노령화지수</a></td><td class="r">2020년 132.5 → 2025년 205.2</td></tr>
+    <tr><td class="l"><a class="tm" data-t="dep">노년부양비</a></td><td class="r">29.9명(전년 +2.0)</td></tr>
+    <tr><td class="l">중위연령</td><td class="r">46.8세(+0.6세)</td></tr>
+   </tbody>
+  </table>
+  <table>
+   <thead><tr><th class="l">노년층·가구</th><th>수치</th></tr></thead>
+   <tbody>
+    <tr><td class="l">65세 이상 1인가구</td><td class="r">245.6만 가구(+7.3%)</td></tr>
+    <tr><td class="l">전체 1인가구</td><td class="r">824만(36.6%)</td></tr>
+    <tr><td class="l">최다 연령대(전체 인구)</td><td class="r">50대 16.7%</td></tr>
+    <tr><td class="l">그 다음</td><td class="r">60대 15.3% · 40대 14.8%</td></tr>
+    <tr><td class="l">내국인 / 외국인</td><td class="r">4,971만 / 211만</td></tr>
+   </tbody>
+  </table>
+ </div>
+ <div class="warn">※ <b>연령대별(10세 구간) 10년 시계열</b>은 KOSIS 원자료 확인 전이라 수록하지 않았습니다. 필요 시 KOSIS 표 기준으로 추가하겠습니다.</div>
+</section>
+<div class="tlist"><b>용어</b> : <a class="tm" data-t="work">생산연령인구</a> · <a class="tm" data-t="aging">노령화지수</a> · <a class="tm" data-t="dep">노년부양비</a> · <a class="tm" data-t="super">초고령사회</a></div>
+</div>
+
+<div class="pane" id="p4">
+<div class="srch"><label for="q4"><b>검색</b></label><input id="q4" type="search" placeholder="연령(예: 50대) 또는 사망원인(예: 암, 자해, 폐렴)"><span class="cnt" id="c4"></span></div>
+<section class="sec">
+ <h2><span class="no" style="background:var(--navy)">1</span>연령별 사망원인 1~5위 (2024년 사망원인통계, 인구 10만 명당)<span class="ri" data-t="ref_death">i</span></h2>
+ <table id="tb4"></table>
+ <p class="note">※ 0세는 보고서 그림 4, 나머지는 통계표 7 기준. 사망률 = <a class="tm" data-t="rate">인구 10만 명당 사망자 수</a>.</p>
+ <div class="warn">※ <b>전체·남녀별 10대 사망원인(전 연령 합계)</b>은 확인 가능한 수치를 확보하지 못해 수록하지 않았습니다 (연령별 표와 혼동 방지). 통계청(국가데이터처) 보도자료 표 기준으로 추가할지 확인 부탁드립니다.</div>
+</section>
+<div class="tlist"><b>용어</b> : <a class="tm" data-t="rate">사망률</a> · <a class="tm" data-t="kcd">KCD</a> · <a class="tm" data-t="malig">악성신생물</a></div>
+</div>
+
+<div class="pane" id="p5">
+<div class="srch"><label for="q5"><b>검색</b></label><input id="q5" type="search" placeholder="등급(예: 3등급), 용어(예: 인지지원, 유병률)"><span class="cnt" id="c5"></span></div>
+<section class="sec">
+ <h2><span class="no" style="background:var(--navy)">1</span>장기요양 등급 기준과 2025년 인정자<span class="ri" data-t="ref_ltc">i</span></h2>
+ <table id="tb5"></table>
+ <p class="note">근거 : <a href="https://www.law.go.kr/법령/노인장기요양보험법시행령" target="_blank" rel="noopener">노인장기요양보험법 시행령 제7조</a> · 전체 인정자 1,235,045명(2024년 1,165,030명)</p>
+</section>
+<section class="sec">
+ <h2><span class="no" style="background:var(--heart)">2</span>치매 환자 현황 (65세 이상 <a class="tm" data-t="dem">추정치매환자</a>)</h2>
+ <table id="tb5b"></table>
+ <div class="warn">※ 자료마다 추정 기준(역학조사·인구추계)이 달라 수치가 다릅니다. <b>성별·연령대별 연도별 환자 수</b>는 확보하지 못해 수록하지 않았습니다. 중앙치매센터 「대한민국 치매현황」 표 기준으로 추가할지 확인 부탁드립니다.</div>
+</section>
+<div class="tlist"><b>용어</b> : <a class="tm" data-t="ltc">장기요양인정점수</a> · <a class="tm" data-t="cog">인지지원등급</a> · <a class="tm" data-t="dem">치매유병률</a> · <a class="tm" data-t="mci">경도인지장애</a></div>
+</div>
+
+<div class="pane" id="p6">
+<section class="sec">
+ <h2><span class="no" style="background:var(--navy)">1</span>2025년 주요 35개 수술 (건강보험 통계연보)<span class="ri" data-t="ref_surg">i</span></h2>
+ <div class="cols">
+  <table>
+   <thead><tr><th class="l">구분</th><th>수치</th></tr></thead>
+   <tbody>
+    <tr><td class="l">총 진료비</td><td class="r">10조 6,738억원</td></tr>
+    <tr><td class="l">전년 대비</td><td class="r">+14.7% (9조 3,075억원)</td></tr>
+    <tr><td class="l">5년 연평균 증가율</td><td class="r">6.0%</td></tr>
+    <tr><td class="l">수술 환자</td><td class="r">1,783,270명</td></tr>
+    <tr><td class="l">60세 이상 비중</td><td class="r">환자 57.7% · 진료비 65.3%</td></tr>
+   </tbody>
+  </table>
+  <table>
+   <thead><tr><th class="l">진료비 상위 수술</th><th>진료비</th></tr></thead>
+   <tbody>
+    <tr><td class="l">일반 척추수술</td><td class="r">1조 161억원</td></tr>
+    <tr><td class="l">관상동맥 스텐트(<a class="tm" data-t="pci">PCI</a>)</td><td class="r">1조 33억원(+19.2%)</td></tr>
+    <tr><td class="l">백내장수술</td><td class="r">9,074억원</td></tr>
+    <tr><td class="l">인공 무릎관절치환</td><td class="r">8,996억원</td></tr>
+   </tbody>
+  </table>
+ </div>
+</section>
+<section class="sec">
+ <h2><span class="no" style="background:var(--heart)">2</span>연령대별 수술 환자 수</h2>
+ <table>
+  <thead><tr><th class="l">연령대</th><th>환자 수</th><th class="l">상위 수술(환자 수)</th></tr></thead>
+  <tbody>
+   <tr><td class="l">60대</td><td class="r">414,141명</td><td class="l">백내장 157,403 · 척추 46,433 · 무릎관절 25,972 · 스텐트 22,041</td></tr>
+   <tr><td class="l">70대</td><td class="r">408,932명</td><td class="l">백내장 176,945 · 척추 52,821 · 무릎관절 42,597 · 스텐트 19,302</td></tr>
+   <tr><td class="l">80세 이상</td><td class="r">206,707명</td><td class="l">백내장·척추 순(건수 미확인) · 담도 · 고관절 · 무릎관절</td></tr>
+  </tbody>
+ </table>
+ <p class="note">※ 진료비 기준은 <a class="tm" data-t="noncov">급여</a>만 포함(비급여 제외). 65~69세 진료비 1조 5,068억원으로 연령대 중 최고.</p>
+ <div class="warn">※ <b>성별, 병원 종별(상급종합·종합·병원·의원) 비용, 질환별 입원일수·횟수 추이</b>는 수록 가능한 공식 수치를 확보하지 못했습니다. 건강보험통계연보 표 기준으로 추가할지 확인 부탁드립니다.</div>
+</section>
+<div class="tlist"><b>용어</b> : <a class="tm" data-t="noncov">급여·비급여</a> · <a class="tm" data-t="pci">PCI(스텐트)</a> · <a class="tm" data-t="tert">상급종합병원</a></div>
+</div>
+
+<div class="pane" id="p7">
+<section class="sec">
+ <h2><span class="no" style="background:var(--navy)">1</span>가구주 연령대별 평균소득 (2025 가계금융복지조사)<span class="ri" data-t="ref_inc">i</span></h2>
+ <table>
+  <thead><tr><th class="l">가구주 연령</th><th>평균소득(연)</th><th>전년 대비 증가율</th></tr></thead>
+  <tbody>
+   <tr><td class="l">39세 이하</td><td class="r">6,758만원</td><td class="c">1.4% (30대 이하 기준)</td></tr>
+   <tr><td class="l">40대</td><td class="r">9,333만원</td><td class="c">2.7%</td></tr>
+   <tr class="hl"><td class="l">50대</td><td class="r">9,416만원</td><td class="c">5.9%</td></tr>
+   <tr><td class="l">60세 이상</td><td class="r">5,767만원</td><td class="c">4.6%</td></tr>
+  </tbody>
+ </table>
+</section>
+<section class="sec">
+ <h2><span class="no" style="background:var(--heart)">2</span>은퇴연령층(66세 이상)과 노후 생활자금</h2>
+ <div class="cols">
+  <table>
+   <thead><tr><th class="l">은퇴연령층 지표</th><th>수치</th></tr></thead>
+   <tbody>
+    <tr><td class="l"><a class="tm" data-t="relpov">상대적 빈곤율</a></td><td class="r">37.7% (-2.1%p)</td></tr>
+    <tr><td class="l"><a class="tm" data-t="gini">지니계수</a></td><td class="r">0.377 (-0.003)</td></tr>
+    <tr><td class="l"><a class="tm" data-t="quint">5분위 배율</a></td><td class="r">6.90배 (-0.21)</td></tr>
+   </tbody>
+  </table>
+  <table>
+   <thead><tr><th class="l">노후 준비(가구 전체)</th><th>수치</th></tr></thead>
+   <tbody>
+    <tr><td class="l">예상 은퇴 연령</td><td class="r">68.6세</td></tr>
+    <tr><td class="l">부부 월 적정 생활비</td><td class="r">341만원 (+5만원)</td></tr>
+    <tr><td class="l">은퇴 전 가구 비율</td><td class="r">83.0%</td></tr>
+   </tbody>
+  </table>
+ </div>
+ <p class="note">개선 요인 : 66세 이상 취업자 증가, 국민연금·기초연금 등 이전소득 및 재산소득 증가</p>
+ <div class="warn">※ <b>순자산·연령대별 노후 생활자금(실제 지출) 세부</b>는 기사 원문에 없어 수록하지 않았습니다. 통계청 원자료 기준 추가 여부 확인 부탁드립니다.</div>
+</section>
+<div class="tlist"><b>용어</b> : <a class="tm" data-t="relpov">상대적 빈곤율</a> · <a class="tm" data-t="gini">지니계수</a> · <a class="tm" data-t="quint">5분위 배율</a> · <a class="tm" data-t="hfs">가계금융복지조사</a></div>
+</div>
+
+<div class="pane" id="p8">
+<section class="sec">
+ <h2><span class="no" style="background:var(--navy)">1</span>보험영업 참고 : 보장 필요성 근거 수치<span class="ri" data-t="ref_biz">i</span></h2>
+ <table>
+  <thead><tr><th class="l">영역</th><th class="l">핵심 수치</th><th class="l">연계 특약</th></tr></thead>
+  <tbody>
+   <tr><td class="l">치매 관리비</td><td class="l">1인당 연 약 2,220만원(2022), 중증(CDR 3 이상) 연 3,480만원</td><td class="l">치매·간병</td></tr>
+   <tr><td class="l">치매 진료비</td><td class="l">2023년 3조 3,372억원 (10년간 +141.4%)</td><td class="l">치매진단</td></tr>
+   <tr><td class="l">치매 환자</td><td class="l">65세 이상 추정 2024년 약 105만명(중앙치매센터)</td><td class="l">치매진단</td></tr>
+   <tr><td class="l">장기요양 인정자</td><td class="l">2025년 123.5만명, 인정률 90.1%</td><td class="l">간병·장기요양</td></tr>
+   <tr><td class="l">중입자 치료</td><td class="l">전립선암 12회 약 5,000만~5,500만원</td><td class="l">암 치료비·표적/중입자</td></tr>
+   <tr><td class="l">수술 진료비</td><td class="l">스텐트 1조 33억원(+19.2%), 급여 기준</td><td class="l">수술비·심장질환</td></tr>
+   <tr><td class="l">노후 생활비</td><td class="l">부부 월 적정 341만원, 예상 은퇴 68.6세</td><td class="l">연금·노후</td></tr>
+   <tr><td class="l">사망원인</td><td class="l">50대 이후 1위 암, 80세 이상 2위 폐렴·3위 심장</td><td class="l">진단·사망보장</td></tr>
+  </tbody>
+ </table>
+ <p class="note">※ 위 수치는 각 탭의 출처에서 가져왔으며, 제안서 인용 시 최신 발표본을 다시 확인하십시오.</p>
+</section>
+<div class="tlist"><b>용어</b> : <a class="tm" data-t="kcd">KCD</a> · <a class="tm" data-t="noncov">급여·비급여</a> · <a class="tm" data-t="ltc">장기요양등급</a> · <a class="tm" data-t="dem">치매유병률</a></div>
+</div>
+
+  <footer class="pgft">
+    <div class="ct"><span data-ct></span></div>
+    <div class="cp" id="ftCopy"></div>
+  </footer>
+</div>
+<div id="pop"><div class="ph" id="popH"><span id="popT"></span><button type="button" id="popX" aria-label="닫기">×</button></div><div class="pb" id="popB"></div></div>
+<script>
+(function(){
+var G={
+kcd:{t:'KCD (한국표준질병사인분류)',d:'질병·사망원인을 코드로 분류한 국가 표준. 보험 약관 별표의 보장 질병 범위도 이 코드로 정해집니다. 최종 판단은 약관 별표와 진단서의 코드 기준.',s:[['통계분류포털','https://kssc.kostat.go.kr']]},
+radio:{t:'방사선치료',d:'고에너지 방사선으로 암세포 DNA를 손상시켜 치료하는 방법. 엑스선(광자선) 외에 양성자·중입자 같은 입자선이 있습니다.'},
+proton:{t:'양성자치료',d:'수소 원자핵(양성자)을 가속해 암 부위에서 에너지를 집중 방출하는 입자선 치료. 국내는 국립암센터·삼성서울병원 2곳 운영(2026 보도 기준).',s:[['코메디닷컴','https://kormedi.com/2875632/']]},
+carbon:{t:'중입자치료',d:'탄소 이온을 빛 속도의 약 70%로 가속해 암세포를 정밀 타격하는 입자선 치료. 국내는 세브란스가 2023년 첫 가동, 서울대(기장) 2027, 서울아산 2031 목표.',s:[['YTN(2023.4)','https://www.ytn.co.kr/_ln/0103_202304292237163807'],['뉴스토마토','https://newstomato.com/ReadNews.aspx?no=1303892']]},
+target:{t:'표적항암제',d:'암세포의 특정 유전자·단백질만 겨냥해 작용하는 항암제. 기존 세포독성 항암제보다 정상세포 손상이 적은 것을 목표로 합니다.'},
+immune:{t:'면역항암제',d:'환자 본인의 면역세포가 암을 공격하도록 돕는 약물(예: 면역관문억제제).'},
+surv:{t:'5년 상대생존율',d:'암 환자의 5년 생존 비율을 같은 성별·연령 일반인구의 기대 생존 비율과 비교한 값. 국가암등록통계에서 3~4년 주기로 판이 갱신됩니다.',s:[['국가암정보센터','https://www.cancer.go.kr']]},
+gen:{t:'일반 의학사',d:'해당 시기 구분은 일반 의학사 서술이며, 이 페이지에 별도 인용 출처를 붙이지 못했습니다. 제안서 인용 전 확인이 필요합니다.'},
+work:{t:'생산연령인구',d:'만 15~64세 인구. 2025년 69.2%로 비중이 70% 아래로 처음 내려갔습니다(2015년 73.4% 정점).'},
+aging:{t:'노령화지수',d:'유소년(0~14세) 인구 100명당 고령(65세 이상) 인구. 2025년 205.2명.'},
+dep:{t:'노년부양비',d:'생산연령인구 100명당 부양해야 할 65세 이상 인구. 2025년 29.9명.'},
+super:{t:'초고령사회',d:'65세 이상 인구 비중이 20% 이상인 사회(UN 기준). 우리나라는 2025년 20.7%로 진입했습니다.',s:[['세계일보(2026.7.28)','https://www.segye.com/newsView/20260728507982']]},
+rate:{t:'사망률',d:'인구 10만 명당 사망자 수. 인구 규모가 다른 집단을 비교하기 위해 사용합니다.'},
+malig:{t:'악성신생물(암)',d:'KCD 상 암의 공식 분류명. 사망원인 통계에서는 대부분 연령대(50대 이후)에서 1위입니다.'},
+ltc:{t:'장기요양인정점수',d:'52개 항목 인정조사 결과로 산정하는 점수. 1등급 95점 이상, 2등급 75~95점 미만, 3등급 60~75점 미만, 4등급 51~60점 미만, 5등급 45~51점 미만(치매), 인지지원등급 45점 미만(치매).',s:[['보건복지부','https://www.mohw.go.kr/menu.es?mid=a10712030100'],['노인장기요양보험법 시행령','https://www.law.go.kr/법령/노인장기요양보험법시행령']]},
+cog:{t:'인지지원등급',d:'치매 환자이면서 장기요양인정점수가 45점 미만인 경우 부여. 시행령 제2조의 노인성 질병에 해당하는 치매로 한정됩니다.'},
+dem:{t:'치매 유병률·추정환자',d:'65세 이상 인구 중 치매 환자 비율과 추정 환자 수. 2023년 역학조사 유병률 9.25%(2016년 9.50%), 85세 이상 21.18%.',s:[['바로가기(2023 치매역학조사)','https://bravo.etoday.co.kr/view/atc_view/16142']]},
+mci:{t:'경도인지장애',d:'치매 전 단계로, 치매로 이어질 위험이 높은 상태. 2025년 추정 298만명(복지부·중앙치매센터 자료 보도).'},
+noncov:{t:'급여·비급여',d:'급여는 건강보험이 비용을 일부 부담하는 항목, 비급여는 전액 본인부담 항목. 건강보험 통계연보의 진료비는 급여(+의료급여)만 포함합니다.'},
+pci:{t:'PCI (관상동맥 스텐트 삽입술)',d:'좁아진 관상동맥을 풍선과 스텐트로 넓히는 시술. 허혈심장질환(I20~I25) 치료에 사용됩니다.'},
+tert:{t:'상급종합병원',d:'중증질환 중심의 최상위 요양기관 종별. 종별(상급종합·종합·병원·의원) 간 비용 차이 수치는 이 페이지에 수록하지 못했습니다.'},
+relpov:{t:'상대적 빈곤율',d:'중위소득의 50% 미만 소득 인구의 비율. 66세 이상은 2025년 37.7%로 통계 작성 이래 최저.'},
+gini:{t:'지니계수',d:'소득 불평등 지표(0=완전 평등, 1=완전 불평등).'},
+quint:{t:'5분위 배율',d:'소득 상위 20% 평균소득 ÷ 하위 20% 평균소득.'},
+hfs:{t:'가계금융복지조사',d:'국가데이터처(구 통계청)가 가구의 자산·부채·소득을 매년 조사하는 통계. 2025년 결과는 12월 발표.',s:[['세계일보 보도','https://www.segye.com/newsView/20251204508621']]},
+ref_cancer:{t:'참고 : 암치료 변천사',d:'국내 입자선 시설 현황·비용은 언론 보도(2026) 기준이며 병원 공식 비용표와 다를 수 있습니다. 완치율은 미수록.',s:[['뉴스토마토','https://newstomato.com/ReadNews.aspx?no=1303892'],['코메디닷컴','https://kormedi.com/1593303/'],['메디칼타임즈','https://medicaltimes.com/Main/News/NewsView.html?ID=1169197']]},
+ref_carbon:{t:'참고 : 중입자 국내 환경',d:'세브란스 설치비 약 3,000억원, 서울아산 센터는 일본 도시바 장비 도입 계획. 치료 실적 437명은 해당 보도 시점 수치입니다.',s:[['코메디닷컴(세브란스 실적)','https://kormedi.com/1738129/'],['연세암병원 확대','https://www.mt.co.kr/thebio/2026/08/20/2026081923562490966']]},
+ref_pop:{t:'참고 : 인구현황',d:'국가데이터처 「2025년 인구주택총조사(등록센서스)」(2026.7.28 발표). 총인구는 내·외국인 포함.',s:[['세계일보','https://www.segye.com/newsView/20260728507982'],['경향신문','https://www.khan.co.kr/article/202607282131005']]},
+ref_death:{t:'참고 : 사망원인',d:'「2024년 사망원인통계」 결과 보고서 기준. 순위는 사망률 기준이며 0~9세는 사망 건수가 적어 순위 변동이 큽니다.'},
+ref_ltc:{t:'참고 : 장기요양',d:'2025 노인장기요양보험 통계연보 보도 기준. 인정률 90.1%, 인정자 3·4등급 합계 약 73%.',s:[['Bravo My Life','https://bravo.etoday.co.kr/view/atc_view/19530']]},
+ref_surg:{t:'참고 : 수술 통계',d:'국민건강보험공단 「2025 주요수술 통계연보」(보도 기준). 비급여 제외, 건강보험·의료급여 진료비.',s:[['Bravo My Life','https://bravo.etoday.co.kr/view/atc_view/19981']]},
+ref_inc:{t:'참고 : 소득',d:'2025 가계금융복지조사. 29세 이하·30대는 별도 수치를 확보하지 못해 39세 이하로 표기.',s:[['세계일보','https://www.segye.com/newsView/20251204508621']]},
+ref_biz:{t:'참고 : 보험영업 활용',d:'치매 관리비·진료비는 중앙치매센터·건강보험연구원 인용 보도, 나머지는 각 탭 출처와 동일.',s:[['한국경제(2025.2.23)','https://www.hankyung.com/article/2025022332921'],['SBS Biz','https://biz.sbs.co.kr/amp/article/20000332967']]}
+};
+var pop=document.getElementById('pop'),pt=document.getElementById('popT'),pb=document.getElementById('popB');
+function show(k,ev){
+  var g=G[k];if(!g)return;
+  pt.textContent=g.t;
+  var h='<p>'+g.d+'</p>';
+  if(g.s)h+='<p>출처 : '+g.s.map(function(x){return '<a href="'+x[1]+'" target="_blank" rel="noopener">'+x[0]+'</a>'}).join(' · ')+'</p>';
+  pb.innerHTML=h;pop.style.display='block';
+  var x=Math.min(ev.clientX+12,window.innerWidth-pop.offsetWidth-8),y=Math.min(ev.clientY+12,window.innerHeight-pop.offsetHeight-8);
+  pop.style.left=Math.max(4,x)+'px';pop.style.top=Math.max(4,y)+'px';
+}
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-t]');
+  if(t){e.preventDefault();show(t.getAttribute('data-t'),e);return}
+});
+document.getElementById('popX').onclick=function(){pop.style.display='none'};
+var dr=null;
+document.getElementById('popH').addEventListener('mousedown',function(e){dr={x:e.clientX-pop.offsetLeft,y:e.clientY-pop.offsetTop};e.preventDefault()});
+document.addEventListener('mousemove',function(e){if(dr){pop.style.left=(e.clientX-dr.x)+'px';pop.style.top=(e.clientY-dr.y)+'px'}});
+document.addEventListener('mouseup',function(){dr=null});
+
+// 탭
+var tabs=document.querySelectorAll('.tabs button');
+function sel(n){
+  tabs.forEach(function(b){b.classList.toggle('on',b.getAttribute('data-p')===n)});
+  document.querySelectorAll('.pane').forEach(function(p){p.classList.toggle('on',p.id==='p'+n)});
+  pop.style.display='none';
+  try{history.replaceState(null,'','#'+n)}catch(e){}
+}
+tabs.forEach(function(b){b.onclick=function(){sel(b.getAttribute('data-p'))}});
+sel((location.hash||'#1').slice(1).match(/^[1-8]$/)?location.hash.slice(1):'1');
+
+// 표
+var B='<span class="o">●</span>',X='<span class="n">–</span>',P='<span class="p">△</span>',M={O:B,X:X,P:P};
+function build(id,head,rows){
+  var h='<thead><tr>'+head.map(function(t){return '<th>'+t+'</th>'}).join('')+'</tr></thead><tbody>';
+  rows.forEach(function(r){
+    h+='<tr'+(r.hl?' class="hl"':'')+'><td class="cd">'+r.c+'</td><td>'+r.n+'</td>'+r.v.split('').map(function(k){return '<td class="c">'+M[k]+'</td>'}).join('')+'</tr>';
+  });
+  document.getElementById(id).innerHTML=h+'</tbody>';
+}
+function plain(id,head,rows,cls){
+  var h='<thead><tr>'+head.map(function(t,i){return '<th'+(i==0||cls&&cls[i]=='l'?' class="l"':'')+'>'+t+'</th>'}).join('')+'</tr></thead><tbody>';
+  rows.forEach(function(r){
+    h+='<tr'+(r.hl?' class="hl"':'')+'>'+r.v.map(function(c,i){return '<td class="'+((i==0||cls&&cls[i]=='l')?'l':(cls&&cls[i])||'c')+'">'+c+'</td>'}).join('')+'</tr>';
+  });
+  document.getElementById(id).innerHTML=h+'</tbody>';
+}
+document.getElementById('ftCopy').textContent='ⓒ'+new Date().getFullYear()+'. YOON HYUNCHUL, ALL RIGHTS RESERVED.';
+build('tb1',['코드','질병명','뇌출혈','뇌졸중','뇌혈관<br>질환'],[
+ {c:'I60',n:'지주막하출혈',v:'OOO'},{c:'I61',n:'뇌내출혈',v:'OOO'},{c:'I62',n:'기타 비외상성 두개내출혈',v:'OOO'},
+ {c:'I63',n:'뇌경색증',v:'XOO',hl:1},{c:'I64',n:'출혈·경색 미명시 뇌졸중',v:'XPO'},{c:'I65',n:'뇌전동맥 폐쇄·협착',v:'XOO'},
+ {c:'I66',n:'대뇌동맥 폐쇄·협착',v:'XOO'},{c:'I67',n:'기타 뇌혈관질환',v:'XXO'},{c:'I68',n:'달리 분류된 뇌혈관장애',v:'XXO'},{c:'I69',n:'뇌혈관질환의 후유증',v:'XXO'}]);
+build('tb2',['코드','질병명','급성<br>심근','허혈<br>심장','확대<br>심장'],[
+ {c:'I20',n:'협심증',v:'XOO',hl:1},{c:'I21',n:'급성심근경색증',v:'OOO'},{c:'I22',n:'후속심근경색증',v:'OOO'},{c:'I23',n:'심근경색 후 특정 합병증',v:'OOO'},
+ {c:'I24',n:'기타 급성 허혈심장질환',v:'XOO'},{c:'I25',n:'만성 허혈심장병',v:'XOO'},{c:'I42~I43',n:'심근병증',v:'XXP'},{c:'I47~I49',n:'부정맥',v:'XXP'},{c:'I50',n:'심부전증',v:'XXP'}]);
+
+var D4=[
+['0세','출생전후기 특정 병태 110.6','선천 기형·염색체 이상 45.1','영아 돌연사 증후군 20.4','가해(타살) 5.2','심장 질환 3.9'],
+['1~9세','악성신생물(암) 1.8','선천 기형·염색체 이상 1.0','가해(타살) 0.8','운수사고 0.6','심장 질환 0.5'],
+['10대','고의적 자해(자살) 8.0','악성신생물(암) 2.0','운수사고 1.4','심장 질환 0.5','선천 기형·염색체 이상 0.5'],
+['20대','고의적 자해(자살) 22.5','악성신생물(암) 4.5','운수사고 3.1','심장 질환 0.9','뇌혈관 질환 0.7'],
+['30대','고의적 자해(자살) 30.4','악성신생물(암) 10.3','심장 질환 3.7','간 질환 3.1','운수사고 2.9'],
+['40대','고의적 자해(자살) 36.2','악성신생물(암) 34.2','간 질환 12.2','심장 질환 9.6','뇌혈관 질환 7.4'],
+['50대','악성신생물(암) 103.2','고의적 자해(자살) 36.5','심장 질환 24.2','간 질환 23.8','뇌혈관 질환 17.1'],
+['60대','악성신생물(암) 257.1','심장 질환 52.0','뇌혈관 질환 39.1','고의적 자해(자살) 31.9','간 질환 26.0'],
+['70대','악성신생물(암) 614.4','심장 질환 146.4','뇌혈관 질환 126.8','폐렴 118.1','당뇨병 61.1'],
+['80세 이상','악성신생물(암) 1,319.5','폐렴 953.5','심장 질환 853.7','뇌혈관 질환 592.9','알츠하이머병 444.3']];
+function r4(q){
+  var rows=D4.filter(function(r){return !q||r.join(' ').indexOf(q)>-1});
+  plain('tb4',['연령','1위','2위','3위','4위','5위'],rows.map(function(r){return {v:r,hl:r[0]==='50대'}}),['l','l','l','l','l','l']);
+  document.getElementById('c4').textContent=q?rows.length+'개 연령 일치':'';
+}
+r4('');
+document.getElementById('q4').addEventListener('input',function(){r4(this.value.trim())});
+
+var D5=[
+['1등급','95점 이상','전적으로 도움 필요','54,999'],
+['2등급','75점 이상 ~ 95점 미만','상당 부분 도움 필요','100,686'],
+['3등급','60점 이상 ~ 75점 미만','부분적 도움 필요','325,661'],
+['4등급','51점 이상 ~ 60점 미만','일정 부분 도움 필요','577,572'],
+['5등급','45점 이상 ~ 51점 미만','치매 환자','146,088'],
+['인지지원등급','45점 미만','치매 환자','30,039']];
+var D5b=[
+['2020','84.0만명 (유병률 10.3%)','중앙치매센터 보고서'],
+['2023','유병률 9.25% (2016년 9.50%) · 85세 이상 21.18%','2023 치매역학조사'],
+['2024','약 105.3만명 (처음 100만 초과)','중앙치매센터, 한국경제'],
+['2030·2050 전망','142만명 · 315만명','중앙치매센터 전망'],
+['성별 비중','여성 약 65% (2030년 전망)','건강보험연구원 추계']];
+function r5(q){
+  var a=D5.filter(function(r){return !q||r.join(' ').indexOf(q)>-1});
+  var b=D5b.filter(function(r){return !q||r.join(' ').indexOf(q)>-1});
+  plain('tb5',['등급','인정점수','심신 상태','2025 인정자(명)'],a.map(function(r){return {v:r,hl:r[0]==='4등급'}}),['l','l','l','r']);
+  plain('tb5b',['시점','수치','출처'],b.map(function(r){return {v:r}}),['l','l','l']);
+  document.getElementById('c5').textContent=q?(a.length+b.length)+'건 일치':'';
+}
+r5('');
+document.getElementById('q5').addEventListener('input',function(){r5(this.value.trim())});
+})();
+</script>
+<script src="../contacts.js"></script>
+<script src="../copyright.js"></script>
+<script src="../gc.js"></script>
+<script src="../pagetitle.js" data-repo="yangji-madang/SLGFC"></script>
+</body>
+</html>
