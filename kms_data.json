@@ -8,6 +8,147 @@
    "pin": false,
    "groups": [
     {
+     "title": "컨설팅 테마",
+     "pin": true,
+     "links": [
+      {
+       "label": "정관 컨설팅 개요",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/aol.html",
+       "tags": [
+        "정관"
+       ],
+       "pin": true
+      },
+      {
+       "br": true,
+       "pin": true
+      },
+      {
+       "label": "중소기업 정부지원정책 보기",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support.html",
+       "tags": [
+        "정부",
+        "지원",
+        "정책",
+        "세제"
+       ],
+       "pin": true
+      },
+      {
+       "label": "정부지원제도별 필요서류",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support_doc.html",
+       "tags": [
+        "정부",
+        "지원",
+        "제도",
+        "서류"
+       ],
+       "pin": true
+      },
+      {
+       "label": "내 회사에 맞는 정부지원정책 찾기",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support_match.html",
+       "tags": [
+        "정부",
+        "지원",
+        "정책",
+        "내회사"
+       ],
+       "pin": true
+      },
+      {
+       "br": true,
+       "pin": false
+      },
+      {
+       "label": "고용유지지원제도",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/empkeep_info_graph.html",
+       "tags": [
+        "고용",
+        "지원",
+        "제도"
+       ],
+       "pin": false
+      },
+      {
+       "label": "출산.육아지원제도",
+       "url": "https://yangji-madang.github.io/SLGFC/luvmom/baby_child.html",
+       "tags": [
+        "출산",
+        "육아",
+        "모성보호"
+       ],
+       "pin": false
+      }
+     ]
+    },
+    {
+     "title": "세제",
+     "pin": true,
+     "links": [
+      {
+       "label": "개념 : 1. 법인세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/corptax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "법인세"
+       ],
+       "pin": true
+      },
+      {
+       "label": "개념 : 2. 상속세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/inhtax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "상속세"
+       ],
+       "pin": true
+      },
+      {
+       "label": "개념 : 3. 증여세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/gifttax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "증여세"
+       ],
+       "pin": true
+      },
+      {
+       "label": "개념 : 4. 소득세",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/inctax_info.html",
+       "tags": [
+        "세금",
+        "이해",
+        "개요",
+        "소득세"
+       ],
+       "pin": true
+      },
+      {
+       "br": true,
+       "pin": true
+      },
+      {
+       "label": "세금 시물레이터",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/tax_simul.html",
+       "tags": [
+        "세금",
+        "법인세",
+        "소득세",
+        "상속",
+        "증여"
+       ],
+       "pin": false
+      }
+     ]
+    },
+    {
      "title": "계약기본정보",
      "pin": false,
      "links": [
@@ -70,72 +211,6 @@
         "환급금",
         "해약환급금",
         "고환급"
-       ],
-       "pin": false
-      }
-     ]
-    },
-    {
-     "title": "세제",
-     "pin": false,
-     "links": [
-      {
-       "label": "개념 : 1. 법인세",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/corptax_info.html",
-       "tags": [
-        "세금",
-        "이해",
-        "개요",
-        "법인세"
-       ],
-       "pin": true
-      },
-      {
-       "label": "개념 : 2. 상속세",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/inhtax_info.html",
-       "tags": [
-        "세금",
-        "이해",
-        "개요",
-        "상속세"
-       ],
-       "pin": true
-      },
-      {
-       "label": "개념 : 3. 증여세",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/gifttax_info.html",
-       "tags": [
-        "세금",
-        "이해",
-        "개요",
-        "증여세"
-       ],
-       "pin": true
-      },
-      {
-       "label": "개념 : 4. 소득세",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/inctax_info.html",
-       "tags": [
-        "세금",
-        "이해",
-        "개요",
-        "소득세"
-       ],
-       "pin": true
-      },
-      {
-       "br": true,
-       "pin": true
-      },
-      {
-       "label": "세금 시물레이터",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/tax_simul.html",
-       "tags": [
-        "세금",
-        "법인세",
-        "소득세",
-        "상속",
-        "증여"
        ],
        "pin": false
       }
@@ -211,81 +286,6 @@
         "네이버",
         "보험",
         "비교"
-       ],
-       "pin": false
-      }
-     ]
-    },
-    {
-     "title": "컨설팅 테마",
-     "pin": false,
-     "links": [
-      {
-       "label": "정관 컨설팅 개요",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/aol.html",
-       "tags": [
-        "정관"
-       ],
-       "pin": true
-      },
-      {
-       "br": true,
-       "pin": true
-      },
-      {
-       "label": "중소기업 정부지원정책 보기",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support.html",
-       "tags": [
-        "정부",
-        "지원",
-        "정책",
-        "세제"
-       ],
-       "pin": true
-      },
-      {
-       "label": "정부지원제도별 필요서류",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support_doc.html",
-       "tags": [
-        "정부",
-        "지원",
-        "제도",
-        "서류"
-       ],
-       "pin": true
-      },
-      {
-       "label": "내 회사에 맞는 정부지원정책 찾기",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support_match.html",
-       "tags": [
-        "정부",
-        "지원",
-        "정책",
-        "내회사"
-       ],
-       "pin": true
-      },
-      {
-       "br": true,
-       "pin": false
-      },
-      {
-       "label": "고용유지지원제도",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/empkeep_info_graph.html",
-       "tags": [
-        "고용",
-        "지원",
-        "제도"
-       ],
-       "pin": false
-      },
-      {
-       "label": "출산.육아지원제도",
-       "url": "https://yangji-madang.github.io/SLGFC/luvmom/baby_child.html",
-       "tags": [
-        "출산",
-        "육아",
-        "모성보호"
        ],
        "pin": false
       }
