@@ -65,6 +65,15 @@ td.fr.fc{z-index:6}
 .fc-last{border-right:2px solid #5b83bd !important}
 td.act,th.act{text-align:center;padding:0 4px;cursor:default}
 td.sel{cursor:pointer}
+td.ce{cursor:text}
+td.ce:hover{outline:2px solid #bcd3f2;outline-offset:-2px}
+td.ed-on{padding:2px 3px !important;overflow:visible;outline:2px solid var(--pri);outline-offset:-2px;white-space:normal;background:#fff !important}
+td.ed-on input,td.ed-on textarea{width:100%;box-sizing:border-box;font:inherit;border:0;outline:0;background:#fff;padding:3px 4px;margin:0;resize:none;display:block;min-height:26px}
+td.ed-on textarea{overflow:hidden;line-height:1.35}
+td.ed-on .dtin{display:flex;gap:2px}
+td.ed-on .dtin input{min-width:0;font-size:12px;padding:3px 2px}
+td.ed-on .dtin input[type=date]{flex:1.5}
+td.ed-on .dtin input[type=time]{flex:1}
 td.sel:hover{outline:2px solid #7fb0ee;outline-offset:-2px}
 .ar{float:right;color:#8aa0bf;font-size:10px;margin-left:6px;line-height:inherit}
 #pickMenu{display:none;position:fixed;z-index:121;background:#fff;border:1px solid #9fb2cc;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.3);min-width:170px;max-width:300px;padding:4px}
@@ -611,7 +620,9 @@ function viewRows(){
 }
 const actW = () => state.set.noW + state.set.editW;
 const KEYCOLS = new Set(['고객명', '생년월일', '나이', '보험나이', '휴대폰', '주소', '관심항목']);
+let cellEd = null;
 function render(){
+  cellEd = null;
   applyFmt();
   const grid = $('#grid'), S = state.set, vis = visCols();
   const fc = Math.min(S.freezeCols, vis.length), fr = S.freezeRows;
@@ -646,9 +657,9 @@ function render(){
          '<button class="ib" data-act="ins" title="이 행 아래에 새 고객 삽입">＋</button><button class="ib del" data-act="del" title="삭제">✕</button></td>';
     vis.forEach((c, k) => {
       const v = cellVal(r, c);
-      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), ((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'num' : ''), (c.wrap ? 'wc' : ''), (resTone(c, v) ? 'rs-' + resTone(c, v) : '')].filter(Boolean).join(' ');
+      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), ((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'num' : ''), (c.wrap ? 'wc' : ''), ((!c.calc && c.type !== 'select') ? 'ce' : ''), (resTone(c, v) ? 'rs-' + resTone(c, v) : '')].filter(Boolean).join(' ');
       const isSel = c.type === 'select', ar = isSel ? '<span class="ar">▾</span>' : '', cls2 = cls + (isSel ? ' sel' : '');
-      h += '<td class="' + cls2 + '"' + (isSel ? ' data-ck="' + esc(c.key) + '"' : '') + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(dispVal(c, v)) + '">' + ((c.wrap || S.wrap) ? '<div class="ci"' + (N ? ' style="-webkit-line-clamp:' + N + '"' : '') + '>' + ar + esc(dispVal(c, v)) + '</div>' : ar + esc(dispVal(c, v))) + '</td>';
+      h += '<td class="' + cls2 + '"' + (!c.calc ? ' data-ck="' + esc(c.key) + '"' : '') + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(dispVal(c, v)) + '">' + ((c.wrap || S.wrap) ? '<div class="ci"' + (N ? ' style="-webkit-line-clamp:' + N + '"' : '') + '>' + ar + esc(dispVal(c, v)) + '</div>' : ar + esc(dispVal(c, v))) + '</td>';
     });
     h += '</tr>';
   });
@@ -736,6 +747,8 @@ gridEl.addEventListener('click', e => {
   if (e.target.closest('.rz') || state.justResized) return;
   const seltd = e.target.closest('td.sel');
   if (seltd && !e.target.closest('button')){ closeColMenu(); openPick(seltd); return; }
+  const cetd = e.target.closest('td.ce');
+  if (cetd && !e.target.closest('button') && !e.target.closest('.rg')){ if (!(cellEd && cellEd.td === cetd)) startCellEdit(cetd.closest('tr').dataset.id, cetd.dataset.ck); return; }
   const cmb = e.target.closest('.cm');
   if (cmb){ const r = cmb.getBoundingClientRect(); openColMenu(cmb.dataset.cm, r.left, r.bottom + 4); return; }
   const b = e.target.closest('button[data-act]');
@@ -753,9 +766,6 @@ gridEl.addEventListener('click', e => {
     else { state.sortKey = k; state.sortDir = 1; }
     render();
   }
-});
-gridEl.addEventListener('dblclick', e => {
-  const tr = e.target.closest('tbody tr'); if (tr && !e.target.closest('button') && !e.target.closest('.rg') && !e.target.closest('.rz')) openForm(tr.dataset.id);
 });
 $('#wrap').addEventListener('click', e => {
   const g = e.target.closest('[data-go]'); if (!g) return;
@@ -987,6 +997,110 @@ $('#pickMenu').addEventListener('click', e => {
 document.addEventListener('pointerdown', e => { if (pkCtx && !e.target.closest('#pickMenu') && !e.target.closest('td.sel')) closePick(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && pkCtx) closePick(); });
 $('#grid').parentElement.addEventListener('scroll', closePick);
+
+/* ───────── 셀 직접 수정 (셀 클릭 → 그 칸만 수정) ───────── */
+let cellRdPend = false, cellPtr = false;
+document.addEventListener('pointerdown', () => { cellPtr = true; setTimeout(() => { cellPtr = false; }, 600); }, true);
+function flushCellRender(){ if (cellEd) return; if (cellRdPend){ cellRdPend = false; render(); } }
+function laterCellRender(){
+  cellRdPend = true;
+  if (cellPtr){ document.addEventListener('click', () => setTimeout(flushCellRender, 0), { once: true }); setTimeout(flushCellRender, 700); }
+  else flushCellRender();
+}
+const isLongCell = (c, v) => c.type === 'text' && c.area && (c.w >= 200 || /\n/.test(String(v || '')));
+function cellErr(c, v){
+  if (c.key === '고객명' && !v) return '고객명은 비울 수 없습니다.';
+  if (c.key === '생년월일' && v && !(/^\d{8}$/.test(v) && parseYMD(v))) return '생년월일 형식을 확인해 주세요. (예: 19920414)';
+  return '';
+}
+function applyCell(row, c, v){
+  const changed = String(row[c.key] || '') !== v;
+  if (changed){ row[c.key] = v; save(); }
+  return changed;
+}
+function startCellEdit(rowId, key){
+  const td = gridEl.querySelector('tr[data-id="' + rowId + '"] td[data-ck="' + key + '"]');
+  const row = state.rows.find(r => r.id === rowId), c = state.cols.find(k => k.key === key);
+  if (!td || !row || !c || c.calc || c.type === 'select') return;
+  if (cellEd && cellEd.td === td) return;
+  if (cellEd) endCellEdit(true, 'switch');
+  const td2 = gridEl.querySelector('tr[data-id="' + rowId + '"] td[data-ck="' + key + '"]'); if (!td2) return;
+  const v0 = String(row[key] || '');
+  if (isLongCell(c, v0)){ editLongCell(row, c); return; }
+  closePick();
+  const ed = cellEd = { td: td2, id: rowId, c: c, html: td2.innerHTML, v0: v0 };
+  td2.classList.add('ed-on');
+  let el;
+  if (c.type === 'datetime'){
+    const m = v0.match(/^(\d{4}-\d{2}-\d{2})(?: (\d{2}:\d{2}))?$/);
+    td2.innerHTML = '<div class="dtin"><input type="date" data-p="d" value="' + (m ? m[1] : '') + '"><input type="time" data-p="t" value="' + (m && m[2] ? m[2] : '') + '"></div>';
+    el = td2.querySelector('[data-p="d"]');
+  } else if (c.type === 'date'){
+    td2.innerHTML = '<input type="date" value="' + esc(v0) + '">'; el = td2.firstChild;
+  } else if (c.area){
+    td2.innerHTML = '<textarea rows="1">' + esc(v0) + '</textarea>'; el = td2.firstChild;
+    const fit = () => { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 200) + 'px'; };
+    el.addEventListener('input', fit); fit();
+  } else {
+    td2.innerHTML = '<input type="' + (c.type === 'phone' ? 'tel' : 'text') + '"' + (c.type === 'birth' ? ' inputmode="numeric" maxlength="10" placeholder="YYYYMMDD"' : '') + ' value="' + esc(v0) + '">';
+    el = td2.firstChild;
+  }
+  ed.el = el;
+  td2.addEventListener('keydown', e => {
+    if (!cellEd || cellEd.td !== td2) return;
+    if (e.key === 'Escape'){ e.preventDefault(); endCellEdit(false, 'esc'); }
+    else if (e.key === 'Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); endCellEdit(true, 'enter'); }
+    else if (e.key === 'Tab' && !e.isComposing){ e.preventDefault(); endCellEdit(true, e.shiftKey ? 'prev' : 'next'); }
+  });
+  td2.addEventListener('focusout', e => {
+    if (td2.contains(e.relatedTarget)) return;
+    setTimeout(() => { if (cellEd && cellEd.td === td2 && !td2.contains(document.activeElement)) endCellEdit(true, 'blur'); }, 0);
+  });
+  el.focus(); if (el.select && c.type !== 'date') { try { el.select(); } catch (x) {} }
+}
+function readCellEd(ed){
+  const c = ed.c, td = ed.td;
+  if (c.type === 'datetime'){
+    const d = td.querySelector('[data-p="d"]').value, t = td.querySelector('[data-p="t"]').value;
+    const legacy = ed.v0 && !/^\d{4}-\d{2}-\d{2}( \d{2}:\d{2})?$/.test(ed.v0);
+    return d ? (t ? d + ' ' + t : d) : (legacy ? ed.v0 : '');
+  }
+  return normByType(c, td.querySelector('input,textarea').value);
+}
+function endCellEdit(commit, why){
+  const ed = cellEd; if (!ed) return;
+  const row = state.rows.find(r => r.id === ed.id);
+  let changed = false;
+  if (commit && row){
+    const v = readCellEd(ed), msg = cellErr(ed.c, v);
+    if (msg){
+      toast(msg, 2800);
+      if (why === 'enter' || why === 'next' || why === 'prev'){ ed.el.focus(); return; }
+      commit = false;
+    } else changed = applyCell(row, ed.c, v);
+  }
+  cellEd = null;
+  ed.td.classList.remove('ed-on');
+  if (changed || cellRdPend){ if (why === 'blur' || why === 'switch') laterCellRender(); else { cellRdPend = false; render(); } }
+  else ed.td.innerHTML = ed.html;
+  if (why === 'next' || why === 'prev'){
+    const keys = visCols().filter(k => !k.calc && k.type !== 'select').map(k => k.key), i = keys.indexOf(ed.c.key), j = i + (why === 'next' ? 1 : -1);
+    if (j >= 0 && j < keys.length) startCellEdit(ed.id, keys[j]);
+  }
+}
+function editLongCell(row, c){
+  closePick();
+  const ov = openModal('<h2>' + esc(c.label) + ' <small style="font-weight:400;color:var(--sub)">· ' + esc(row['고객명'] || '(이름 없음)') + '</small></h2><div class="bd form"><div class="f wide"><textarea id="lcIn" rows="12" style="min-height:230px"></textarea></div>' +
+    '<div class="note-l">줄바꿈은 Enter · 저장은 Ctrl+Enter(또는 아래 저장 버튼) · 취소는 Esc</div></div>' +
+    '<div class="ft"><button class="btn" data-a="cancel">취소</button><button class="btn pri" data-a="save">저장</button></div>', false);
+  const ta = ov.querySelector('#lcIn'); ta.value = row[c.key] || ''; ta.focus(); try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch (x) {}
+  const done = ok => {
+    if (ok){ const v = normByType(c, ta.value); if (applyCell(row, c, v)) render(); }
+    closeModal();
+  };
+  ta.addEventListener('keydown', e => { if (e.key === 'Escape'){ e.preventDefault(); done(false); } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); done(true); } });
+  ov.addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (b) done(b.dataset.a === 'save'); });
+}
 
 /* ───────── 행 높이 조절 ───────── */
 let rgs = null;
