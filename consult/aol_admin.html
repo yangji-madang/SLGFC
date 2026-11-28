@@ -35,7 +35,7 @@ fr.onload=function(){
  s.textContent='[data-edit]{outline:1px dashed #c8811a;outline-offset:1px;cursor:text}[data-edit]:focus{outline:2px solid #0e7c86}.bar{display:none!important}.tw{max-height:none!important}';
  d.head.appendChild(s);
  setTimeout(function(){d.querySelectorAll('[data-edit]').forEach(function(e){e.contentEditable='true'});
-  d.body.className='view-info';},600);
+  },600);
 };
 function ex(c,v){doc().execCommand(c,false,v||null);fr.contentWindow.focus()}
 document.getElementById('bb').onclick=function(){ex('bold')};
@@ -63,5 +63,4 @@ document.getElementById('sv').onclick=async function(){
   st.textContent=r.ok?'저장 완료 : 보기 페이지에 곧 반영됩니다.':'저장 실패 : '+r.status+' (토큰 권한과 저장소를 확인하십시오)';
  }catch(e){st.textContent='저장 실패 : '+e.message}
 };
-</script><script src="../pagetitle.js" data-repo="yangji-madang/SLGFC"></script>
-</body></html>
+</script></body></html>
