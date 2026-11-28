@@ -60,6 +60,10 @@ tbody tr.hl{background:#FFF3C4;font-weight:700}
 .pgft .cp{font-size:11.5px;margin-left:auto;text-align:right;white-space:nowrap;color:#34424f}
 @media(max-width:720px){.grid{grid-template-columns:1fr}.title h1{font-size:18px}}
 @media print{
+  #p4 #tb4 td,#p4 #tb4 th{font-size:10pt!important;padding:3px 5px!important}#p4 .hb{margin:1px 0!important}
+
+  #p4 table.sx{font-size:10pt}#p4 table.sx td{padding:2px 5px!important}
+
   #p4 td{padding:4px 6px!important}#p4 .sec{margin-top:2mm!important}#p4 .note,#p4 .warn{margin:2px 0!important}
 
 @page{size:A4 portrait;margin:8mm}
@@ -130,6 +134,7 @@ td.r{text-align:right;white-space:nowrap}
 .cols{gap:4mm}
 .tl{font-size:9.5pt}
 }
+table.sx td,table.sx th{font-size:12px;padding:2px 6px}
 </style>
 </head>
 <body>
@@ -277,10 +282,11 @@ td.r{text-align:right;white-space:nowrap}
 <section class="sec">
  <h2><span class="no" style="background:var(--navy)">1</span>연령별 사망원인 1~5위 (2024년 사망원인통계, 인구 10만 명당)<span class="ri" data-t="ref_death">i</span></h2>
  <table id="tb4"></table>
- <div class="cols"><div class="chart"><h3>악성신생물(암) 사망률 (10만 명당)</h3><div id="hb4a"></div></div><div class="chart"><h3>고의적 자해(자살) 사망률 (10만 명당)</h3><div id="hb4b"></div></div></div>
- <p class="note">※ 0세는 보고서 그림 4, 나머지는 통계표 7 기준. 사망률 = <a class="tm" data-t="rate">인구 10만 명당 사망자 수</a>. <b>전 연령 합계 1~5위(2024)</b> : 암 · 심장 · 폐렴 · 뇌혈관 · 자살 (총 사망 358,569명, 조사망률 702.6, 암·심장·폐렴 42.6% <a class="tm" data-t="ref_lec">강의자료 인용</a>)</p>
- <div class="warn">※ <b>남녀별 10대 사망원인(사망률 포함)</b>은 수치를 확보하지 못해 수록하지 않았습니다. 국가데이터처 보도자료 표 기준으로 추가할지 확인 부탁드립니다.</div>
-</section>
+ <div class="cols" style="grid-template-columns:1.05fr 1fr"><div><div class="chart"><h3>악성신생물(암) 사망률 (10만 명당)</h3><div id="hb4a"></div></div>
+  <div class="chart"><h3>고의적 자해(자살) 사망률 (10만 명당)</h3><div id="hb4b"></div></div></div><div class="chart"><h3>남녀별 10대 사망원인 (전 연령, 2024, 10만 명당)</h3><table class="sx"><thead><tr><th>순위</th><th class="l">남자</th><th>사망률</th><th class="l">여자</th><th>사망률</th></tr></thead><tbody><tr><td>1</td><td class="l">악성신생물(암)</td><td>215.1</td><td class="l">악성신생물(암)</td><td>133.7</td></tr><tr><td>2</td><td class="l">심장 질환</td><td>66.2</td><td class="l">심장 질환</td><td>65.3</td></tr><tr><td>3</td><td class="l">폐렴</td><td>61.5</td><td class="l">폐렴</td><td>56.5</td></tr><tr><td>4</td><td class="l">뇌혈관 질환</td><td>48.1</td><td class="l">뇌혈관 질환</td><td>48.3</td></tr><tr><td>5</td><td class="l">고의적 자해(자살)</td><td>41.8</td><td class="l">알츠하이머병</td><td>32.8</td></tr><tr><td>6</td><td class="l">당뇨병</td><td>23.2</td><td class="l">고혈압성 질환</td><td>20.5</td></tr><tr><td>7</td><td class="l">간 질환</td><td>21.8</td><td class="l">당뇨병</td><td>20.2</td></tr><tr><td>8</td><td class="l">만성 하기도 질환</td><td>16.6</td><td class="l">패혈증</td><td>18.1</td></tr><tr><td>9</td><td class="l">알츠하이머병</td><td>15.0</td><td class="l">고의적 자해(자살)</td><td>16.6</td></tr><tr><td>10</td><td class="l">패혈증</td><td>12.1</td><td class="l">간 질환</td><td>8.8</td></tr></tbody></table></div></div>
+ <p class="note">※ 0세는 보고서 그림 4, 나머지는 통계표 7 기준. 사망률 = <a class="tm" data-t="rate">인구 10만 명당 사망자 수</a>. <b>전 연령 합계 1~5위</b> : 암 · 심장 · 폐렴 · 뇌혈관 · 자살 (총 사망 358,569명, 조사망률 702.6). 남녀별은 통계표 7(보고서 p.49) 기준.</p>
+
+ </section>
 <div class="tlist"><b>용어</b> : <a class="tm" data-t="rate">사망률</a> · <a class="tm" data-t="kcd">KCD</a> · <a class="tm" data-t="malig">악성신생물</a></div>
 </div>
 
@@ -479,7 +485,7 @@ hfs:{t:'가계금융복지조사',d:'국가데이터처(구 통계청)가 가구
 ref_cancer:{t:'참고 : 암치료 변천사',d:'국내 입자선 시설 현황·비용은 언론 보도(2026) 기준이며 병원 공식 비용표와 다를 수 있습니다. 완치율은 미수록.',s:[['뉴스토마토','https://newstomato.com/ReadNews.aspx?no=1303892'],['코메디닷컴','https://kormedi.com/1593303/'],['메디칼타임즈','https://medicaltimes.com/Main/News/NewsView.html?ID=1169197']]},
 ref_carbon:{t:'참고 : 중입자 국내 환경',d:'세브란스 설치비 약 3,000억원, 서울아산 센터는 일본 도시바 장비 도입 계획. 치료 실적 437명은 해당 보도 시점 수치입니다.',s:[['코메디닷컴(세브란스 실적)','https://kormedi.com/1738129/'],['연세암병원 확대','https://www.mt.co.kr/thebio/2026/08/20/2026081923562490966']]},
 ref_pop:{t:'참고 : 인구현황',d:'국가데이터처 「2025년 인구주택총조사(등록센서스)」(2026.7.28 발표). 총인구는 내·외국인 포함.',s:[['세계일보','https://www.segye.com/newsView/20260728507982'],['경향신문','https://www.khan.co.kr/article/202607282131005']]},
-ref_death:{t:'참고 : 사망원인',d:'「2024년 사망원인통계」 결과 보고서 기준. 순위는 사망률 기준이며 0~9세는 사망 건수가 적어 순위 변동이 큽니다.'},
+ref_death:{t:'참고 : 사망원인',d:'「2024년 사망원인통계」 결과 보고서(국가데이터처) 기준. 남녀별 순위는 통계표 7 \'전체\' 열이며, 같은 표의 \'10대\'는 10~19세 연령대라 전 연령과 구별했습니다. 순위는 사망률 기준이며 0~9세는 사망 건수가 적어 순위 변동이 큽니다.'},
 ref_cure:{t:'참고 : 중입자 치료성적(해외)',d:'QST 병원 공개 치료성적 및 NIRS 논문 기준. 전립선 5년 생존 95.8%(3,077명, 1995~2018), 천골척삭종 5년 국소제어 88%(95명), 골·연부 종양 5년 국소제어 68%·생존 65%(764명, J-CROS), 절제 가능 췌장암 5년 생존 52%(절제 21명), 후복막 육종 5년 국소제어 72%·생존 49.4%(76명). 일부는 표본이 작아 해석에 주의.',s:[['QST 전립선','https://hospital.qst.go.jp/en/patients/indications/05.html'],['QST 골·연부','https://www.qst.go.jp/site/hospital-en/indications-04.html'],['QST 췌장','https://www.qst.go.jp/site/hospital-en/indications-09.html'],['천골척삭종(BJR)','https://pmc.ncbi.nlm.nih.gov/articles/PMC3473887'],['후복막 육종(MDPI)','https://www.mdpi.com/2072-6694/17/20/3395']]},
 i671:{t:'I67.1 파열되지 않은 뇌동맥류',d:'건강검진(MRA) 등에서 우연히 발견되는 터지지 않은 뇌동맥류. 뇌졸중 진단비가 아닌 뇌혈관질환 진단비로만 보장(강의자료). I67 중 약 50%라는 설명 인용.'},
 i639:{t:'I63.9 상세불명 뇌경색증',d:'뇌경색(I63) 환자의 약 67%를 차지하는 코드(강의 인용). 증상이 없어도 혈관 막힘이 확인되고 I63.9 진단이면 뇌경색에 해당한다는 최근 대법원 판례가 소개됩니다. 사건번호는 확인되지 않아 인용 전 확인이 필요합니다.'},
@@ -487,7 +493,7 @@ five:{t:'3대 5배 법칙(강의 화법)',d:'뇌경색≈뇌출혈 5배, 협심�
 sumok:{t:'심수뇌장(心手腦長)',d:'심장은 수술(手)을 자주, 뇌는 입원을 길게(長) 한다는 화법. 평균 입원일수 뇌내출혈 103.1일, 후유증 72.5일, 지주막하 66.4일, 뇌경색 61.9일(강의 인용).'},
 afib:{t:'심방세동',d:'심방이 가늘게 떨리는 부정맥. 혈전이 뇌로 올라가 뇌색전증(뇌경색)을 일으키며, 강의자료는 위험이 약 5배 높아진다고 설명합니다.'},
 golden:{t:'골든타임',d:'뇌경색 혈전용해는 발병 후 2~3시간 이내(강의 인용). 2024년 골든타임 내 응급실 도착률 뇌졸중 43.8%, 심근경색 36.7%(중앙심뇌혈관질환센터).'},
-sanjeong:{t:'산정특례',d:'암 등 중증질환 본인부담 5% 제도. 강의자료는 급여 항목 중 일부본인부담금에 한정되고 비급여 100% 본인 부담, 5년 등록 후 재등록 기준이 있다고 설명합니다. 근거 법령 조문은 확인 후 링크 추가가 필요합니다.'},
+sanjeong:{t:'산정특례',d:'암 등 중증질환의 본인일부부담금을 낮추는 제도(암 5%, 등록일로부터 5년). 급여 항목의 본인부담에만 적용되며 비급여는 대상이 아닙니다(강의자료). 근거 : 국민건강보험법 시행령 제19조제1항 [별표 2] 제3호, 세부 대상·기준은 보건복지부 고시 「본인일부부담금 산정특례에 관한 기준」. 암 5%·5년 수치는 2차 자료 기준이므로 고시 원문 확인 후 인용하십시오.',s:[['국민건강보험법 시행령','https://www.law.go.kr/법령/국민건강보험법시행령'],['산정특례 기준 고시(건보공단)','https://www.nhis.or.kr/lm/lmxsrv/law/lawFullContent.do?SEQ=45']]},
 ref_lec:{t:'참고 : 강의자료 인용',d:'교육ON 강의(2504·2605·260808), JK Consulting 교육자료(2606), Sales Master 가이드북 인용. 일부 자료에 FC 교육용이며 고객 제시·교부 불가 표기가 있어 내부 참고용으로 사용하십시오. 강사 재산정 수치와 공식 통계는 기준이 다를 수 있습니다.'},
 ref_brain:{t:'참고 : 뇌심 발생통계',d:'질병관리청 「2022 심뇌혈관질환 발생통계」(2025.12) 및 중앙심뇌혈관질환센터 2024·2023 자료를 강의자료에서 재인용한 수치입니다. 원자료 대조 전입니다.'},
 ref_ltc:{t:'참고 : 장기요양',d:'2025 노인장기요양보험 통계연보 보도 기준. 인정률 90.1%, 인정자 3·4등급 합계 약 73%.',s:[['Bravo My Life','https://bravo.etoday.co.kr/view/atc_view/19530']]},
