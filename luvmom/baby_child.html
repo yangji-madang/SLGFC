@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>출산·육아 지원금 검색</title>
 <style>
-:root{--navy:#14365d;--bd:#cbd5e1;--bg2:#f1f5f9;--tx:#1a1a1a;--c1:#dbeafe;--c1b:#1e40af;--c2:#dcfce7;--c2b:#166534;--c3:#fef3c7;--c3b:#92400e;--c4:#fce7f3;--c4b:#9d174d;--c1w:64px;--c2w:132px}
+:root{--navy:#14365d;--bd:#cbd5e1;--bg2:#f1f5f9;--tx:#1a1a1a;--c1:#dbeafe;--c1b:#1e40af;--c2:#dcfce7;--c2b:#166534;--c3:#fef3c7;--c3b:#92400e;--c4:#fce7f3;--c4b:#9d174d;--c1w:58px;--c2w:84px}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{font:13px/1.35 "Malgun Gothic","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;color:var(--tx);background:#fff}
@@ -65,7 +65,7 @@ s.oldv{color:#9ca3af;text-decoration:line-through;text-decoration-color:#9ca3af}
 #flt button{font:inherit;font-size:12px;height:24px;padding:0 10px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
 #cnt{font-weight:700;color:var(--navy);margin-left:auto;font-size:12.5px}
 #res{height:62vh;min-height:300px;overflow:auto;position:relative}
-table{border-collapse:separate;border-spacing:0;width:100%;min-width:1340px;table-layout:fixed}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:1200px;table-layout:fixed}
 th,td{padding:3px 5px;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);vertical-align:top;font-size:12px;line-height:1.35;word-break:keep-all;overflow-wrap:anywhere;background:#fff}
 thead th{position:sticky;top:0;z-index:3;background:var(--navy);color:#fff;font-size:12.5px;text-align:center;vertical-align:middle;border-color:#3b5b85}
 td:nth-child(1),th:nth-child(1){position:sticky;left:0;z-index:2;width:var(--c1w)}
@@ -75,8 +75,10 @@ tbody tr:nth-child(even) td{background:#f8fafc}
 tbody tr.pend td{background:#fff7e6}
 tbody tr.end td{background:#fdecec}
 tbody tr:hover td{background:#e8f0fe}
-td:nth-child(2){font-weight:700}
-.w3{width:70px}.w4{width:190px}.w5{width:140px}.w6{width:270px}.w7{width:210px}.w8{width:230px}.w9{width:120px}.w10{width:60px}
+td:nth-child(4){font-weight:700}
+tbody tr.pgb td{border-top:2px solid #64748b}
+.pr{font-weight:700;color:var(--navy);font-size:11.5px}
+.w1{width:58px}.w2{width:84px}.w3{width:60px}.w31{width:104px}.w4{width:150px}.w5{width:112px}.w6{width:270px}.w7{width:210px}.w8{width:230px}.w9{width:120px}.w10{width:60px}
 td b.k{color:var(--navy)}
 .tg{display:inline-block;font-size:10.5px;font-weight:700;border-radius:3px;padding:0 4px;margin-right:3px;color:#fff;vertical-align:1px}
 .tg.c{background:#b45309}.tg.f{background:#9d174d}.tg.w{background:#b91c1c}.tg.o{background:#166534}.tg.n{background:#1d4ed8}.tg.r{background:#92400e}
@@ -183,7 +185,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
  #res td::before{content:attr(data-l);display:block;font-weight:700;color:var(--navy);font-size:11px}
  #res td:nth-child(1),#res td:nth-child(2){display:inline-block;border:0}
  #res td:nth-child(1)::before,#res td:nth-child(2)::before{display:none}
- #res td:nth-child(2){font-size:14px}
+ #res td:nth-child(4){font-size:14px;font-weight:700}
  #res td:last-child{border-bottom:0}
  #sim .cards,#sim .sv{grid-template-columns:repeat(2,1fr)}
  #sim .st{font-size:16px}
@@ -240,7 +242,9 @@ body{word-break:keep-all;overflow-wrap:break-word}
  #simN{margin-top:2px}
  #ov{max-height:none;overflow:visible}
  #res{overflow:visible;height:auto}
- #res table{min-width:0;table-layout:auto}
+ #res table{min-width:0;table-layout:fixed;width:100%}
+ #res th.w1{width:5%}#res th.w2{width:7%}#res th.w3{width:6%}#res th.w31{width:9%}#res th.w4{width:12%}#res th.w5{width:9%}#res th.w6{width:19%}#res th.w7{width:13%}#res th.w8{width:12%}#res th.w9{width:8%}
+ #res .pr{font-size:8.5px}
  #res th,#res td{position:static!important;box-shadow:none!important;font-size:8.5px;padding:2px 3px}
  #res thead th{position:static!important}
  #res thead{display:table-header-group}
@@ -310,7 +314,7 @@ body{word-break:keep-all;overflow-wrap:break-word}
 <div id="res">
   <table>
     <thead><tr>
-      <th>구분</th><th>지원명</th><th class="w3">유형</th><th class="w4">지원금액</th><th class="w5">지급방식</th>
+      <th class="w1">기간</th><th class="w2">지원주체</th><th class="w3">유형</th><th class="w31">지원명</th><th class="w4">지원금액</th><th class="w5">지급방식</th>
       <th class="w6">신청방법 (접수처 · 기한 · 서류)</th><th class="w7">기존 대비 변경</th><th class="w8">향후 변경 예정 (시행일)</th><th class="w9">출처</th>
     </tr></thead>
     <tbody id="tb"></tbody>
@@ -892,7 +896,7 @@ function row(d){
   var sr='<span class="tg '+rc+'">'+d.rel+'</span>'+(d.chk?'<span class="tg w">확인필요</span>':'')+'<br>';
   d.src.forEach(function(s,i){sr+=(i?'<br>':'')+'<a href="'+s[1]+'" target="_blank" rel="noopener noreferrer">'+s[0]+'</a>';});
   var cls=d.c==="예정(신설)"?"pend":(d.end?"end":"");
-  return '<tr class="'+cls+'"><td data-l="구분">'+area+'</td><td data-l="지원명">'+d.n+'</td><td data-l="유형">'+d.c+'</td><td data-l="지원금액">'+cv(d,'a')+'</td><td data-l="지급방식">'+cv(d,'p')+'</td><td data-l="신청방법">'+ap+'</td><td data-l="기존 대비 변경">'+ch+'</td><td data-l="향후 변경 예정">'+fu+'</td><td data-l="출처">'+sr+'</td></tr>';
+  return '<tr class="'+cls+(d.__pg?' pgb':'')+'"><td data-l="기간"><span class="pr">'+perLab(d)+'</span></td><td data-l="지원주체">'+area+'</td><td data-l="유형">'+d.c+'</td><td data-l="지원명">'+d.n+'</td><td data-l="지원금액">'+cv(d,'a')+'</td><td data-l="지급방식">'+cv(d,'p')+'</td><td data-l="신청방법">'+ap+'</td><td data-l="기존 대비 변경">'+ch+'</td><td data-l="향후 변경 예정">'+fu+'</td><td data-l="출처">'+sr+'</td></tr>';
 }
 function tyRank(d){
   /* 유형 순서 : 현금(수당·장려금 → 휴직·휴가급여 → 현금지급 산후조리) → 바우처·지역화폐 → 서비스 → 예정(신설) */
@@ -904,15 +908,41 @@ function tyRank(d){
   if(c==="바우처·지역화폐"||c==="바우처"||c==="지역화폐"){return 3;}
   return 6;
 }
+var PL=["임신기","출산(출생)","0세","1세","2~8세","9세 이상"];
+function perOf(d){
+  /* 상단 요약표(개요)의 기간 구분에 맞춘 [시작,끝] 인덱스. 0 임신기·1 출산(출생)·2 0세·3 1세·4 2~8세·5 9세 이상 */
+  var n=d.n;
+  if(/임신·출산 진료비|임산부 교통비/.test(n)){return [0,0];}
+  if(/배우자 출산휴가/.test(n)){return [0,0];}
+  if(/육아수당/.test(n)){return [0,5];}
+  if(/부모급여/.test(n)&&!/6\+6/.test(n)){return [2,3];}
+  if(/아동수당/.test(n)){return [2,4];}
+  if(/가정양육수당/.test(n)){return [4,4];}
+  if(/육아휴직급여|6\+6|육아휴직 장려금|주거비/.test(n)){return [2,3];}
+  if(/아이돌봄/.test(n)){return [4,4];}
+  if(/아이맞이/.test(n)){return [1,3];}
+  if(/아동기본수당/.test(n)){return [2,5];}
+  if(/천사/.test(n)){return [3,4];}
+  if(/아이\(i\) 꿈|아이 꿈/.test(n)){return [4,5];}
+  if(/강화군/.test(n)){return [1,5];}
+  return [1,1];
+}
+function perLab(d){
+  var p=perOf(d),a=PL[p[0]],b=PL[p[1]];
+  return p[0]===p[1]?a:a+" ~<br>"+b;
+}
 function sortRows(a){
-  /* 정렬 : ① 구분(전국 → 지자체) ② 유형(현금 → 바우처·지역화폐 → 그 밖) ③ 기존 등록 순서 */
-  return a.map(function(d,i){return {d:d,i:i};}).sort(function(x,y){
+  /* 정렬 : ① 기간(요약표 순서, 시작 기간 기준) ② 지원주체(전국 → 지자체) ③ 유형(현금 → 바우처·지역화폐 → 그 밖) ④ 기존 등록 순서 */
+  var r=a.map(function(d,i){return {d:d,i:i,p:perOf(d)};}).sort(function(x,y){
+    if(x.p[0]!==y.p[0]){return x.p[0]-y.p[0];}
     var a1=x.d.r==="전국"?0:1,b1=y.d.r==="전국"?0:1;
     if(a1!==b1){return a1-b1;}
     var a2=tyRank(x.d),b2=tyRank(y.d);
     if(a2!==b2){return a2-b2;}
     return x.i-y.i;
-  }).map(function(o){return o.d;});
+  });
+  r.forEach(function(o,i){o.d.__pg=(i>0&&r[i-1].p[0]!==o.p[0]);});
+  return r.map(function(o){return o.d;});
 }
 function render(){
   var rows=sortRows(DATA.filter(ok));
