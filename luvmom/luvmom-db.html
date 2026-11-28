@@ -1071,7 +1071,8 @@ function startCellEdit(rowId, key){
     if (td2.contains(e.relatedTarget)) return;
     setTimeout(() => { if (cellEd && cellEd.td === td2 && !td2.contains(document.activeElement)) endCellEdit(true, 'blur'); }, 0);
   });
-  el.focus(); if (el.select && c.type !== 'date') { try { el.select(); } catch (x) {} }
+  el.focus();
+  if (c.type !== 'date' && c.type !== 'datetime' && el.setSelectionRange) { try { el.setSelectionRange(el.value.length, el.value.length); } catch (x) {} }
 }
 function readCellEd(ed){
   const c = ed.c, td = ed.td;
