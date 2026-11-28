@@ -772,6 +772,12 @@ $('#wrap').addEventListener('click', e => {
   if (g.dataset.go === 'up') $('#fileX').click(); else openForm();
 });
 
+gridEl.addEventListener('dblclick', e => {
+  const tr = e.target.closest('tbody tr'); if (!tr || e.target.closest('button') || e.target.closest('.rg') || e.target.closest('.rz')) return;
+  if (cellEd) endCellEdit(true, 'dbl');
+  openForm(tr.dataset.id);
+});
+
 /* ───────── 열 너비 조정 ───────── */
 const W_MIN = 40, W_MAX = 900;
 let rzs = null, rzRaf = 0;
@@ -1026,9 +1032,8 @@ function startCellEdit(rowId, key){
   if (cellEd) endCellEdit(true, 'switch');
   const td2 = gridEl.querySelector('tr[data-id="' + rowId + '"] td[data-ck="' + key + '"]'); if (!td2) return;
   const v0 = String(row[key] || '');
-  if (isLongCell(c, v0)){ editLongCell(row, c); return; }
   closePick();
-  const ed = cellEd = { td: td2, id: rowId, c: c, html: td2.innerHTML, v0: v0 };
+  const ed = cellEd = { td: td2, id: rowId, c: c, html: td2.innerHTML, v0: v0, long: isLongCell(c, v0) };
   td2.classList.add('ed-on');
   let el;
   if (c.type === 'datetime'){
@@ -1049,7 +1054,7 @@ function startCellEdit(rowId, key){
   td2.addEventListener('keydown', e => {
     if (!cellEd || cellEd.td !== td2) return;
     if (e.key === 'Escape'){ e.preventDefault(); endCellEdit(false, 'esc'); }
-    else if (e.key === 'Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); endCellEdit(true, 'enter'); }
+    else if (e.key === 'Enter' && !e.isComposing && (cellEd.long ? (e.ctrlKey || e.metaKey) : !e.shiftKey)){ e.preventDefault(); endCellEdit(true, 'enter'); }
     else if (e.key === 'Tab' && !e.isComposing){ e.preventDefault(); endCellEdit(true, e.shiftKey ? 'prev' : 'next'); }
   });
   td2.addEventListener('focusout', e => {
