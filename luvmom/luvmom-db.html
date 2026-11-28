@@ -66,6 +66,7 @@ td.fr.fc{z-index:6}
 td.act,th.act{text-align:center;padding:0 4px;cursor:default}
 td.sel{cursor:pointer}
 td.ce{cursor:text}
+td.ov{color:#d00000;font-weight:700}
 td.ce:hover{outline:2px solid #bcd3f2;outline-offset:-2px}
 td.ed-on{padding:2px 3px !important;overflow:visible;outline:2px solid var(--pri);outline-offset:-2px;white-space:normal;background:#fff !important}
 td.ed-on input,td.ed-on textarea{width:100%;box-sizing:border-box;font:inherit;border:0;outline:0;background:#fff;padding:3px 4px;margin:0;resize:none;display:block;min-height:26px}
@@ -129,6 +130,7 @@ body.resizing-y,body.resizing-y *{cursor:row-resize !important;user-select:none}
   #printArea table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:9pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #printArea thead{display:table-header-group}
   #printArea tr{break-inside:avoid;page-break-inside:avoid}
+  #printArea td.ov{color:#d00000 !important;font-weight:700}
   #printArea th,#printArea td{border:1px solid #777;padding:2px 4px;height:auto;white-space:pre-wrap;word-break:break-all;overflow:visible;vertical-align:top;text-align:left;background:#fff;color:#000;position:static;font-weight:400;cursor:default}
   #printArea tr.ph th{background:#dfe8f5;font-weight:700;text-align:center;vertical-align:middle}
   #printArea tr.pt th{border:none;padding:0 0 4px;background:#fff}
@@ -563,6 +565,7 @@ function cellVal(r, c){
   const v = r[c.key]; return v == null ? '' : v;
 }
 const DOW = ['일', '월', '화', '수', '목', '금', '토'];
+const isOverCell = (c, r) => (c.type === 'dday' && daysLeft(r['출산예정일'], state.asOf) < 0) || (c.label.replace(/\s/g, '') === '임신주수' && !!overWeeks(r));
 function overWeeks(r){
   const n = r ? daysLeft(r['출산예정일'], state.asOf) : '';
   if (n === '' || n >= 0) return '';
@@ -664,7 +667,7 @@ function render(){
          '<button class="ib" data-act="ins" title="이 행 아래에 새 고객 삽입">＋</button><button class="ib del" data-act="del" title="삭제">✕</button></td>';
     vis.forEach((c, k) => {
       const v = cellVal(r, c);
-      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), ((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'num' : ''), (c.wrap ? 'wc' : ''), ((!c.calc && c.type !== 'select') ? 'ce' : ''), (resTone(c, v) ? 'rs-' + resTone(c, v) : '')].filter(Boolean).join(' ');
+      const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), ((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'num' : ''), (c.wrap ? 'wc' : ''), ((!c.calc && c.type !== 'select') ? 'ce' : ''), (isOverCell(c, r) ? 'ov' : ''), (resTone(c, v) ? 'rs-' + resTone(c, v) : '')].filter(Boolean).join(' ');
       const isSel = c.type === 'select', ar = isSel ? '<span class="ar">▾</span>' : '', cls2 = cls + (isSel ? ' sel' : '');
       h += '<td class="' + cls2 + '"' + (!c.calc ? ' data-ck="' + esc(c.key) + '"' : '') + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(dispVal(c, v, r)) + '">' + ((c.wrap || S.wrap) ? '<div class="ci"' + (N ? ' style="-webkit-line-clamp:' + N + '"' : '') + '>' + ar + esc(dispVal(c, v, r)) + '</div>' : ar + esc(dispVal(c, v, r))) + '</td>';
     });
@@ -864,7 +867,7 @@ function applyFmt(){
   const F = getFmt(); let el = $('#fmtStyle');
   if (!el){ el = document.createElement('style'); el.id = 'fmtStyle'; document.head.appendChild(el); }
   el.textContent = fmtRule('#grid th:not(.act)', F.head) + fmtRule('#grid td:not(.act)', F.cell, true) +
-    (F.cell.color ? '#grid td:not(.act):not(.bad){color:' + F.cell.color + ' !important}' : '');
+    (F.cell.color ? '#grid td:not(.act):not(.bad):not(.ov){color:' + F.cell.color + ' !important}' : '');
 }
 let fmtTarget = 'all';
 function renderFmt(){
@@ -1189,7 +1192,7 @@ function doPrint(cols, land, withNo){
   rows.forEach((r, i) => {
     h += '<tr>' + (withNo ? '<td class="c">' + (i + 1) + '</td>' : '') + cols.map(c => {
       const v = cellVal(r, c), t = resTone(c, v);
-      return '<td class="' + [((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'c' : ''), (t ? 'rs-' + t : '')].filter(Boolean).join(' ') + '">' + esc(dispVal(c, v, r)) + '</td>';
+      return '<td class="' + [((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'c' : ''), (t ? 'rs-' + t : ''), (isOverCell(c, r) ? 'ov' : '')].filter(Boolean).join(' ') + '">' + esc(dispVal(c, v, r)) + '</td>';
     }).join('') + '</tr>';
   });
   h += '</tbody></table><div class="pcp">ⓒ' + d.getFullYear() + '. YOON HYUNCHUL, ALL RIGHTS RESERVED.</div>';
@@ -1538,6 +1541,7 @@ async function exportXlsx(){
       const c = vis[n - 1];
       cell.font = { name: '맑은 고딕', size: 10 }; cell.border = bd;
       cell.alignment = { vertical: 'middle', horizontal: ((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'center' : 'left'), wrapText: !!(c.area || c.wrap) };
+      if (isOverCell(c, r)) cell.font = { name: '맑은 고딕', size: 10, bold: true, color: { argb: 'FFD00000' } };
       { const tn = resTone(c, String(cellVal(r, c))); if (tn) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: tn === 'r' ? 'FFFFD5D5' : 'FFFFF6BF' } }; }
       if (c.type === 'date') cell.numFmt = 'yyyy-mm-dd';
       if (c.type === 'datetime') cell.numFmt = / \d{2}:\d{2}$/.test(String(cellVal(r, c))) ? 'yyyy-mm-dd(ddd) hh:mm' : 'yyyy-mm-dd(ddd)';
