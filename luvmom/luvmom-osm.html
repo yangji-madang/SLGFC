@@ -563,8 +563,15 @@ function cellVal(r, c){
   const v = r[c.key]; return v == null ? '' : v;
 }
 const DOW = ['일', '월', '화', '수', '목', '금', '토'];
-function dispVal(c, v){
-  if (c.type === 'dday'){ if (v === '' || v == null) return ''; const n = +v; return n > 0 ? n + '일' : (n === 0 ? '오늘' : (-n) + '일 지남'); }
+function overWeeks(r){
+  const n = r ? daysLeft(r['출산예정일'], state.asOf) : '';
+  if (n === '' || n >= 0) return '';
+  const o = -n, w = Math.floor(o / 7), d = o % 7;
+  return w + '주' + (d ? ' ' + d + '일' : '') + ' 초과';
+}
+function dispVal(c, v, r){
+  if (r && c.label.replace(/\s/g, '') === '임신주수'){ const ow = overWeeks(r); if (ow) return ow; }
+  if (c.type === 'dday'){ if (v === '' || v == null) return ''; const n = +v; return n > 0 ? n + '일' : (n === 0 ? '오늘' : (-n) + '일 초과'); }
   if (c.type !== 'datetime' || !v) return v;
   const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})(.*)$/); if (!m) return v;
   const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])); if (d.getUTCMonth() !== +m[2] - 1) return v;
@@ -659,7 +666,7 @@ function render(){
       const v = cellVal(r, c);
       const cls = [(frozen ? 'fr' : ''), (k < fc ? 'fc' : ''), (k === fc - 1 ? 'fc-last' : ''), (isBad(r, c) ? 'bad' : ''), ((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'num' : ''), (c.wrap ? 'wc' : ''), ((!c.calc && c.type !== 'select') ? 'ce' : ''), (resTone(c, v) ? 'rs-' + resTone(c, v) : '')].filter(Boolean).join(' ');
       const isSel = c.type === 'select', ar = isSel ? '<span class="ar">▾</span>' : '', cls2 = cls + (isSel ? ' sel' : '');
-      h += '<td class="' + cls2 + '"' + (!c.calc ? ' data-ck="' + esc(c.key) + '"' : '') + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(dispVal(c, v)) + '">' + ((c.wrap || S.wrap) ? '<div class="ci"' + (N ? ' style="-webkit-line-clamp:' + N + '"' : '') + '>' + ar + esc(dispVal(c, v)) + '</div>' : ar + esc(dispVal(c, v))) + '</td>';
+      h += '<td class="' + cls2 + '"' + (!c.calc ? ' data-ck="' + esc(c.key) + '"' : '') + (k < fc ? ' style="left:' + left[k] + 'px"' : '') + ' title="' + esc(dispVal(c, v, r)) + '">' + ((c.wrap || S.wrap) ? '<div class="ci"' + (N ? ' style="-webkit-line-clamp:' + N + '"' : '') + '>' + ar + esc(dispVal(c, v, r)) + '</div>' : ar + esc(dispVal(c, v, r))) + '</td>';
     });
     h += '</tr>';
   });
@@ -828,7 +835,7 @@ function autoFit(key){
   ctx.font = '700 ' + cs.fontSize + ' ' + cs.fontFamily;
   let m = ctx.measureText(c.label).width + (c.calc ? 44 : 14);
   ctx.font = cs.fontSize + ' ' + cs.fontFamily;
-  viewRows().slice(0, 1000).forEach(r => { const w = ctx.measureText(String(dispVal(c, cellVal(r, c)))).width; if (w > m) m = w; });
+  viewRows().slice(0, 1000).forEach(r => { const w = ctx.measureText(String(dispVal(c, cellVal(r, c), r))).width; if (w > m) m = w; });
   c.w = Math.max(c.calc ? 80 : 50, Math.min(600, Math.ceil(m) + 22)); save(); render();
 }
 gridEl.addEventListener('dblclick', e => { const h = e.target.closest('.rz'); if (h){ e.preventDefault(); autoFit(h.dataset.rz); } });
@@ -1182,7 +1189,7 @@ function doPrint(cols, land, withNo){
   rows.forEach((r, i) => {
     h += '<tr>' + (withNo ? '<td class="c">' + (i + 1) + '</td>' : '') + cols.map(c => {
       const v = cellVal(r, c), t = resTone(c, v);
-      return '<td class="' + [((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'c' : ''), (t ? 'rs-' + t : '')].filter(Boolean).join(' ') + '">' + esc(dispVal(c, v)) + '</td>';
+      return '<td class="' + [((c.type === 'age' || c.type === 'insage' || c.type === 'dday') ? 'c' : ''), (t ? 'rs-' + t : '')].filter(Boolean).join(' ') + '">' + esc(dispVal(c, v, r)) + '</td>';
     }).join('') + '</tr>';
   });
   h += '</tbody></table><div class="pcp">ⓒ' + d.getFullYear() + '. YOON HYUNCHUL, ALL RIGHTS RESERVED.</div>';
@@ -1524,6 +1531,7 @@ async function exportXlsx(){
       if (c.type === 'date'){ const p = parseYMD(v); if (p) return new Date(Date.UTC(p[0], p[1] - 1, p[2])); }
       if (c.type === 'datetime'){ const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})(?: (\d{2}):(\d{2}))?$/); if (m) return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0))); }
       if (c.type === 'dday') return dispVal(c, v);
+      if (c.label.replace(/\s/g, '') === '임신주수'){ const ow = overWeeks(r); if (ow) return ow; }
       return v;
     }));
     row.eachCell({ includeEmpty: true }, (cell, n) => {
