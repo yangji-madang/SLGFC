@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-27",
- "title": "Mr. Yoon's KMS",
+ "updated": "2026-11-28",
+ "title": "Mr. Yoon's PORTAL",
  "sections": [
   {
    "title": "SLI GFC",
@@ -217,9 +217,21 @@
      ]
     },
     {
-     "title": "정부 지원 정책",
+     "title": "컨설팅 테마",
      "pin": false,
      "links": [
+      {
+       "label": "정관 컨설팅 개요",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/aoi.html",
+       "tags": [
+        "정관"
+       ],
+       "pin": true
+      },
+      {
+       "br": true,
+       "pin": true
+      },
       {
        "label": "중소기업 정부지원정책 보기",
        "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support.html",
@@ -228,17 +240,6 @@
         "지원",
         "정책",
         "세제"
-       ],
-       "pin": true
-      },
-      {
-       "label": "내 회사에 맞는 정부지원정책 찾기",
-       "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support_match.html",
-       "tags": [
-        "정부",
-        "지원",
-        "정책",
-        "내회사"
        ],
        "pin": true
       },
@@ -254,8 +255,19 @@
        "pin": true
       },
       {
-       "br": true,
+       "label": "내 회사에 맞는 정부지원정책 찾기",
+       "url": "https://yangji-madang.github.io/SLGFC/consult/gov_support_match.html",
+       "tags": [
+        "정부",
+        "지원",
+        "정책",
+        "내회사"
+       ],
        "pin": true
+      },
+      {
+       "br": true,
+       "pin": false
       },
       {
        "label": "고용유지지원제도",
@@ -265,10 +277,6 @@
         "지원",
         "제도"
        ],
-       "pin": false
-      },
-      {
-       "br": true,
        "pin": false
       },
       {
@@ -711,6 +719,6 @@
   "notice": "※ 고객상담시에는 반드시 시스템(사랑ON, 유퍼트너) 및 최선 법령을 확인하시기 바랍니다.",
   "copyright": "ⓒ2026. YOON HYUNCHUL, ALL RIGHTS RESERVED."
  },
- "bg": "kms_bg_20261028024604.jpg",
+ "bg": "kms_bg_20261128083137.jpg",
  "bgY": 62
 }
