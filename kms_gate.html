@@ -314,6 +314,7 @@ const root = document.getElementById("gate");
 function upA(t){ return String(t).replace(/[a-z]+/g, function(m){ return m.toUpperCase(); }); }
 
 function start(data){
+  if (typeof data.title === "string" && data.title.trim()) document.title = data.title.trim();   /* 페이지 제목 (관리화면에서 수정) */
   /* 하단 문구·배경 사진 (관리화면에서 수정) */
   if (data.footer) {
     if (data.footer.notice) document.getElementById("fNotice").textContent = data.footer.notice;

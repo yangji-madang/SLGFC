@@ -157,6 +157,7 @@
     <details id="setd">
       <summary>화면 설정 (하단 문구 · 배경 사진)</summary>
       <div class="set">
+        <label>페이지 제목 (조회 페이지의 브라우저 탭 제목)<input type="text" id="sTitle" autocomplete="off"></label>
         <label>하단 안내문 (굵게 표시되는 문구)<input type="text" id="sNotice" autocomplete="off"></label>
         <label>저작권 문구 (저장 시 영문은 자동으로 대문자)<input type="text" id="sCopy" autocomplete="off"></label>
         <div>
@@ -203,7 +204,7 @@ var ko = function(a, b){
 var $ = function(id){ return document.getElementById(id); };
 var DRAFT = "kms_admin_draft_v1", CFG = "kms_admin_cfg_v1";
 var data = null, sha = null, dirty = false;
-var DEF_NOTICE = "※ 고객상담시에는 반드시 시스템을 확인하시기 바랍니다.", DEF_COPY = "ⓒ2026. YOON HYUNCHUL, ALL RIGHTS RESERVED.", DEF_BG = "kms_bg.jpg";
+var DEF_TITLE = "Mr. Yoon's KMS", DEF_NOTICE = "※ 고객상담시에는 반드시 시스템을 확인하시기 바랍니다.", DEF_COPY = "ⓒ2026. YOON HYUNCHUL, ALL RIGHTS RESERVED.", DEF_BG = "kms_bg.jpg";
 function upA(t){ return String(t).replace(/[a-z]+/g, function(m){ return m.toUpperCase(); }); }   /* 영문만 대문자 (ⓒ 기호는 그대로) */
 var pendingBg = null;   /* 새로 고른 사진: { dataUrl } — 저장할 때 함께 올림 */
 
@@ -400,11 +401,14 @@ function applyBg(){
   $("bgThumb").style.backgroundImage = 'url("' + bgUrl() + '")';
   $("bgYv").textContent = data.bgY + "%";
 }
+function applyTitle(){ document.title = (data.title || DEF_TITLE) + " 관리"; }
 function syncSettings(){
+  $("sTitle").value = data.title; applyTitle();
   $("sNotice").value = data.footer.notice; $("sCopy").value = data.footer.copyright; $("sBgY").value = data.bgY;
   $("fNotice").textContent = data.footer.notice; $("fCopy").textContent = upA(data.footer.copyright);
   applyBg();
 }
+$("sTitle").addEventListener("input", function(){ data.title = this.value; applyTitle(); changed(); });
 $("sNotice").addEventListener("input", function(){ data.footer.notice = this.value; $("fNotice").textContent = this.value; changed(); });
 $("sCopy").addEventListener("input", function(){ data.footer.copyright = this.value; $("fCopy").textContent = upA(this.value); changed(); });
 $("sBgY").addEventListener("input", function(){ data.bgY = Number(this.value); applyBg(); changed(); });
@@ -429,6 +433,7 @@ $("fBg").addEventListener("change", function(){
 function validate(){
   var errs = [];
   if (!data.sections.length) errs.push("대분류가 하나도 없습니다.");
+  if (!data.title.trim()) errs.push("페이지 제목이 비어 있습니다.");
   if (!data.footer.notice.trim()) errs.push("하단 안내문이 비어 있습니다.");
   if (!data.footer.copyright.trim()) errs.push("저작권 문구가 비어 있습니다.");
   data.sections.forEach(function(s){
@@ -447,6 +452,7 @@ function validate(){
 function clean(){
   var d = JSON.parse(JSON.stringify(data));
   d.updated = new Date().toISOString().slice(0, 10);
+  d.title = data.title.trim();
   d.footer = { notice: data.footer.notice.trim(), copyright: upA(data.footer.copyright.trim()) };
   d.bgY = Number(data.bgY);
   d.sections.forEach(function(s){ s.sort = false; s.pin = !!s.pin;
@@ -464,6 +470,7 @@ function adopt(d){
       })};
     })};
   });
+  d.title = (typeof d.title === "string" && d.title.trim()) ? d.title : DEF_TITLE;
   d.footer = { notice: (d.footer && d.footer.notice) || DEF_NOTICE, copyright: (d.footer && d.footer.copyright) || DEF_COPY };
   d.bg = d.bg || DEF_BG; d.bgY = (typeof d.bgY === "number") ? d.bgY : 62;
   data = d;
